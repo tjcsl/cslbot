@@ -52,7 +52,10 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 args = msg[len(cmd)+1:]
                 mod = self.modules[cmd[1:]]
-                mod.cmd(c, args)
+                try:
+                    mod.cmd(c, args)
+                except Exception as e:
+                    c.privmsg(CHANNEL, str(e))
                 return
 
         #special commands -- must be a admin
@@ -142,12 +145,6 @@ class MyHandler():
             c.privmsg(CHANNEL,
                       choice(choices) % thing)
             return
-        # !excuse
-        match = re.match("\!excuse", msg)
-        if match:
-            x = choice(open("excuses", "r").readlines())
-            c.privmsg(CHANNEL, x.rstrip())
-            return
         # ++ and --
         match = re.match(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if match:
@@ -181,16 +178,4 @@ class MyHandler():
             t = lxml.html.parse(match.group(1))
             c.privmsg(CHANNEL, t.find(".//title").text)
             return
-        # !award
-        match = re.match("\!award (.*)", msg)
-        if match:
-            uname = match.group(1)
-            c.privmsg(CHANNEL,
-                      "%s: I hereby award you this gold medal." % uname)
-            return
 
-        # !dialup
-        match = re.match("\!dialup", msg)
-        if match:
-            c.privmsg(CHANNEL,
-                      "creffett: %s" % ("get dialup " * 15))
