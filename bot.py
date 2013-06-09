@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -OO
 import logging
 import irc.bot
-import config
+from config import CHANNEL, NICK, HOST
 import handler
 
 
@@ -20,7 +20,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
 
 def main():
-    bot = MyBot(config.CHANNEL, config.NICK, config.HOST)
+    bot = MyBot(CHANNEL, NICK, HOST)
     bot.start()
 
 if __name__ == '__main__':

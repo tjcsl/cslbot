@@ -1,4 +1,4 @@
-from config import CHANNEL, ADMINS
+from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
@@ -7,15 +7,11 @@ import sys
 import subprocess
 import json
 import importlib
+import imp
 
 
 def isadmin(nick):
     return nick in ADMINS
-
-
-def getwtf(wtf):
-    answer = subprocess.check_output(["wtf", wtf])
-    return answer
 
 
 def geteix(eix):
@@ -27,18 +23,21 @@ def geteix(eix):
 class MyHandler():
     def __init__(self):
         self.ignored = []
-        self.commands = self.loadcommands()
+        self.modules = self.loadmodules()
 
     def ignore(self, nick):
         self.ignored.append(nick)
 
-    def loadcommands(self):
+    def loadmodules(self):
+        modulemap = {}
         cmds = []
         for f in glob('commands/*.py'):
-            if os.access(f,os.X_OK):
+            if os.access(f, os.X_OK):
                 cmd = os.path.basename(f).split('.')[0]
                 cmds.append(cmd)
-        return cmds
+        for cmd in cmds:
+            modulemap[cmd] = importlib.import_module("commands."+cmd)
+        return modulemap
 
     def pubmsg(self, c, e):
         nick = e.source.nick
@@ -50,9 +49,9 @@ class MyHandler():
         # is this a command?
         cmd = msg.split()[0]
         if cmd[0] == '!':
-            if cmd[1:] in self.commands:
+            if cmd[1:] in self.modules:
                 args = msg[len(cmd)+1:]
-                mod = importlib.import_module("commands."+cmd[1:])
+                mod = self.modules[cmd[1:]]
                 mod.cmd(c, args)
                 return
 
@@ -62,7 +61,9 @@ class MyHandler():
                 return
             if cmd[1:] == 'reload':
                 c.privmsg(CHANNEL, "Aye Aye Capt'n")
-                self.commands = self.loadcommands()
+                self.modules = self.loadmodules()
+                for x in self.modules.values():
+                    imp.reload(x)
                 return
             elif cmd[1:] == 'quit':
                 c.quit("Goodbye, Cruel World!")
@@ -85,14 +86,6 @@ class MyHandler():
             self.ignored = []
             c.privmsg(CHANNEL, "Ignore list cleared.")
             print(self.ignored)
-            return
-        # !wtf
-        match = re.match('\!wtf ([A-Za-z0-9]+)', msg)
-        if match:
-            wtf = match.group(1)
-            c.privmsg(CHANNEL,
-                      "%s" % (getwtf(wtf).decode().strip("\n")
-                      .replace("\n", ", ")))
             return
         # !eix
         match = re.match('\!eix ([A-Za-z0-9][A-Za-z0-9\\-_/]*)', msg)
