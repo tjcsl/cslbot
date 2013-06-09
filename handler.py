@@ -1,4 +1,4 @@
-from config import CHANNEL
+from config import CHANNEL, ADMINS
 import re
 import os
 from glob import glob
@@ -10,10 +10,7 @@ import importlib
 
 
 def isadmin(nick):
-    admins = json.loads(open("admins").read())
-    if nick in admins:
-        return True
-    return False
+    return nick in ADMINS
 
 
 def getwtf(wtf):
@@ -38,8 +35,9 @@ class MyHandler():
     def loadcommands(self):
         cmds = []
         for f in glob('commands/*.py'):
-            cmd = os.path.basename(f).split('.')[0]
-            cmds.append(cmd)
+            if os.access(f,os.X_OK):
+                cmd = os.path.basename(f).split('.')[0]
+                cmds.append(cmd)
         return cmds
 
     def pubmsg(self, c, e):
@@ -62,12 +60,13 @@ class MyHandler():
         if cmd[0] == '!':
             if not isadmin(nick):
                 return
-            if cmd[1] == 'reload':
-                c.privmsg(CHANNEL, "Aye, Aye Capt'n")
+            if cmd[1:] == 'reload':
+                c.privmsg(CHANNEL, "Aye Aye Capt'n")
                 self.commands = self.loadcommands()
                 return
-            elif cmd[1] == 'quit':
-                c.disconnect("Goodbye, Cruel World!")
+            elif cmd[1:] == 'quit':
+                c.quit("Goodbye, Cruel World!")
+                sys.exit(0)
                 return
 
         # !ignore
@@ -78,14 +77,6 @@ class MyHandler():
             self.ignore(match.group(1))
             c.privmsg(CHANNEL,
                       "Now igoring %s." % match.group(1))
-        #FIXME: implement reload
-        match = re.match('\!admin reload', msg)
-        if match:
-            if not isadmin(nick):
-                return
-            #reload(handler)
-            #c.privmsg(CHANNEL, str(handler))
-            return
         # !cignore
         match = re.match("\!cignore", msg)
         if match:
@@ -94,15 +85,6 @@ class MyHandler():
             self.ignored = []
             c.privmsg(CHANNEL, "Ignore list cleared.")
             print(self.ignored)
-            return
-        # !quit
-        match = re.match('\!quit', msg)
-        if match:
-            if isadmin(nick):
-                sys.exit(0)
-            else:
-                c.privmsg(CHANNEL,
-                          "No.")
             return
         # !wtf
         match = re.match('\!wtf ([A-Za-z0-9]+)', msg)
