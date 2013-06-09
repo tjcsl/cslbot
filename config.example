@@ -1,0 +1,4 @@
+HOST = 'irc.freenode.net'
+PORT = 6667
+NICK = 'tjhsstBot'
+CHANNELS = ['#tjhsst']
