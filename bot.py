@@ -1,11 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3 -OO
 import config
 import logging
 from oyoyo.client import IRCClient
 from oyoyo import helpers
 import handler
-
-logging.basicConfig(level=logging.ERROR)
 
 
 def connect_cb(cli):
@@ -14,14 +12,14 @@ def connect_cb(cli):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
 
     cli = IRCClient(handler.MyHandler, host=config.HOST, port=config.PORT,
                     nick=config.NICK, connect_cb=connect_cb)
     conn = cli.connect()
 
     while True:
-        next(conn)	   # python 3
+        next(conn)
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     main()
