@@ -1,38 +1,44 @@
-import imp
 import re
-import time
-from oyoyo.client import IRCClient
 from oyoyo.cmdhandler import DefaultCommandHandler
 from oyoyo import helpers
 from random import choice
 import sys
 import subprocess
-import os
 import json
 import handler
+
+
 def isadmin(nick):
     admins = [
-    "wikipedia/Fox-Wilson",
-    "pool-96-231-161-251.washdc.fios.verizon.net",
-    "wikipedia/Vacation9",
-    "botters/staff/adran"
+        "wikipedia/Fox-Wilson",
+        "pool-96-231-161-251.washdc.fios.verizon.net",
+        "wikipedia/Vacation9",
+        "botters/staff/adran"
     ]
     if str(nick, encoding='utf8').split("@")[1] in admins:
         return True
     return False
+
+
 def getwtf(wtf):
     answer = subprocess.check_output(["wtf", wtf])
     return answer
+
+
 def geteix(eix):
     answer = subprocess.check_output(["eix", "-c", eix])
     answer = str(answer, "ascii").split("\n")[0]
     return answer
+
+
 class MyHandler(DefaultCommandHandler):
     def __init__(self, *args, **kwargs):
         DefaultCommandHandler.__init__(self, *args, **kwargs)
         self.ignored = []
+
     def ignore(self, nick):
         self.ignored.append(nick)
+
     def privmsg(self, nick, chan, msg):
         msg = msg.decode()
         if not isadmin(nick):
@@ -47,7 +53,7 @@ class MyHandler(DefaultCommandHandler):
                 return
             self.ignore(match.group(1))
             helpers.msg(self.client, chan,
-            "Now igoring %s." % match.group(1))
+                        "Now igoring %s." % match.group(1))
         match = re.match('\!admin reload', msg)
         if match:
             if not isadmin(nick):
@@ -58,7 +64,8 @@ class MyHandler(DefaultCommandHandler):
         # !cignore
         match = re.match("\!cignore", msg)
         if match:
-            if not isadmin(nick): return
+            if not isadmin(nick):
+                return
             self.ignored = []
             helpers.msg(self.client, chan, "Ignore list cleared.")
             print(self.ignored)
@@ -70,22 +77,22 @@ class MyHandler(DefaultCommandHandler):
                 sys.exit(0)
             else:
                 helpers.msg(self.client, chan,
-                "No.")
+                            "No.")
             return
         # !wtf
         match = re.match('\!wtf ([A-Za-z0-9]+)', msg)
         if match:
             wtf = match.group(1)
-            helpers.msg(self.client, chan, 
-            "%s" % (getwtf(wtf).decode().strip("\n")\
-            .replace("\n", ", ")))
+            helpers.msg(self.client, chan,
+                        "%s" % (getwtf(wtf).decode().strip("\n")
+                        .replace("\n", ", ")))
             return
         # !eix
         match = re.match('\!eix ([A-Za-z0-9][A-Za-z0-9\\-_/]*)', msg)
         if match:
             wtf = match.group(1)
-            helpers.msg(self.client, chan, 
-            "%s" % (geteix(wtf)))
+            helpers.msg(self.client, chan,
+                        "%s" % (geteix(wtf)))
             return
 
         # !throw
@@ -100,7 +107,7 @@ class MyHandler(DefaultCommandHandler):
             user = match.group(1)
             if user.lower() == "tjhsstbot":
                 helpers.msg(self.client, chan,
-                "I'm not that stupid!")
+                            "I'm not that stupid!")
                 return
             helpers.msg(self.client, chan, "Die, %s!" % user)
         # !say
@@ -122,23 +129,24 @@ class MyHandler(DefaultCommandHandler):
         match = re.match("\!pester ([a-zA-Z0-9]+) (.*)", msg)
         if match:
             s = match.group(2)
-            helpers.msg(self.client, chan, "%s: %s %s %s" % (match.group(1), s, s, s))
+            helpers.msg(self.client, chan,
+                        "%s: %s %s %s" % (match.group(1), s, s, s))
             return
         # !slogan
         match = re.match("\!slogan (.*)", msg)
         if match:
             thing = match.group(1).strip()
             choices = [
-            "%s -- awesome.",
-            "%s -- the future.",
-            "The sight of %s.",
-            "The wonder of %s!",
-            "Amazing %s.",
-            "%s is the best!",
-            "%s: bug-free!"
+                "%s -- awesome.",
+                "%s -- the future.",
+                "The sight of %s.",
+                "The wonder of %s!",
+                "Amazing %s.",
+                "%s is the best!",
+                "%s: bug-free!"
             ]
-            helpers.msg(self.client, chan, \
-            choice(choices) % thing)
+            helpers.msg(self.client, chan,
+                        choice(choices) % thing)
             return
         # !excuse
         match = re.match("\!excuse", msg)
@@ -164,9 +172,13 @@ class MyHandler(DefaultCommandHandler):
         match = re.match("\!score ([a-zA-Z0-9]+)", msg)
         if match:
             uname = match.group(1)
-            try: score = json.loads(open("score").read())[uname]
-            except: score = 0
-            finally: helpers.msg(self.client, chan, "%s has %i points!" % (uname, score))
+            try:
+                score = json.loads(open("score").read())[uname]
+            except:
+                score = 0
+            finally:
+                helpers.msg(self.client, chan,
+                            "%s has %i points!" % (uname, score))
             return
         match = re.match(r".*((?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))).*", msg)
         if match:
@@ -179,11 +191,12 @@ class MyHandler(DefaultCommandHandler):
         match = re.match("\!award (.*)", msg)
         if match:
             uname = match.group(1)
-            helpers.msg(self.client, chan, "%s: I hereby award you this gold medal." % uname)
+            helpers.msg(self.client, chan,
+                        "%s: I hereby award you this gold medal." % uname)
             return
 
         # !dialup
         match = re.match("\!dialup", msg)
         if match:
-            helpers.msg(self.client, chan, "creffett: %s" % ("get dialup " * 15))
-
+            helpers.msg(self.client, chan,
+                        "creffett: %s" % ("get dialup " * 15))
