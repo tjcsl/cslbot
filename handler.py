@@ -6,6 +6,7 @@ from random import choice
 import sys
 import subprocess
 import json
+import importlib
 
 
 def isadmin(nick):
@@ -43,17 +44,31 @@ class MyHandler():
 
     def pubmsg(self, c, e):
         nick = e.source.nick
-        msg = ''.join(e.arguments)
+        msg = e.arguments[0]
         if not isadmin(nick):
             for nick in self.ignored:
                 print("Ignoring!")
                 return
-        # is a command
-        cmd = [e.arguments[0][0], e.arguments[0][1:]]
+        # is this a command?
+        cmd = msg.split()[0]
         if cmd[0] == '!':
-            c.privmsg(CHANNEL,'commands: '.join(self.commands))
-            if cmd[1] in self.commands:
-                c.privmsg(CHANNEL, "exec "+cmd[1])
+            if cmd[1:] in self.commands:
+                args = msg[len(cmd)+1:]
+                mod = importlib.import_module("commands."+cmd[1:])
+                mod.cmd(c, args)
+                return
+
+        #special commands -- must be a admin
+        if cmd[0] == '!':
+            if not isadmin(nick):
+                return
+            if cmd[1] == 'reload':
+                c.privmsg(CHANNEL, "Aye, Aye Capt'n")
+                self.commands = self.loadcommands()
+                return
+            elif cmd[1] == 'quit':
+                c.disconnect("Goodbye, Cruel World!")
+                return
 
         # !ignore
         match = re.match('\!ignore (.*)', msg)
