@@ -7,4 +7,5 @@ Created by fwilson (Fox Wilson, Class of 2016).
 
 Setup
 -----
-copy config.example to config.py and change values as needed.
+Copy config.example to config.py and change values as needed.
+Install irc (https://pypi.python.org/pypi/irc)
