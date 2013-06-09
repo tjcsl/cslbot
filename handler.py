@@ -1,6 +1,5 @@
+import config
 import re
-from oyoyo.cmdhandler import DefaultCommandHandler
-from oyoyo import helpers
 from random import choice
 import sys
 import subprocess
@@ -10,7 +9,7 @@ import handler
 
 def isadmin(nick):
     admins = json.loads(open("admins").read())
-    if str(nick, encoding='utf8').split("@")[1] in admins:
+    if nick in admins:
         return True
     return False
 
@@ -26,16 +25,16 @@ def geteix(eix):
     return answer
 
 
-class MyHandler(DefaultCommandHandler):
-    def __init__(self, *args, **kwargs):
-        DefaultCommandHandler.__init__(self, *args, **kwargs)
+class MyHandler():
+    def __init__(self):
         self.ignored = []
 
     def ignore(self, nick):
         self.ignored.append(nick)
 
-    def privmsg(self, nick, chan, msg):
-        msg = msg.decode()
+    def pubmsg(self, c, e):
+        nick = e.source.nick
+        msg = ''.join(e.arguments)
         if not isadmin(nick):
             for i in self.ignored:
                 if i in str(nick):
@@ -47,14 +46,14 @@ class MyHandler(DefaultCommandHandler):
             if not isadmin(nick):
                 return
             self.ignore(match.group(1))
-            helpers.msg(self.client, chan,
-                        "Now igoring %s." % match.group(1))
+            c.privmsg(config.CHANNEL,
+                      "Now igoring %s." % match.group(1))
         match = re.match('\!admin reload', msg)
         if match:
             if not isadmin(nick):
                 return
             reload(handler)
-            helpers.msg(self.client, chan, str(handler))
+            c.privmsg(config.CHANNEL, str(handler))
             return
         # !cignore
         match = re.match("\!cignore", msg)
@@ -62,7 +61,7 @@ class MyHandler(DefaultCommandHandler):
             if not isadmin(nick):
                 return
             self.ignored = []
-            helpers.msg(self.client, chan, "Ignore list cleared.")
+            c.privmsg(config.CHANNEL, "Ignore list cleared.")
             print(self.ignored)
             return
         # !quit
@@ -71,29 +70,29 @@ class MyHandler(DefaultCommandHandler):
             if isadmin(nick):
                 sys.exit(0)
             else:
-                helpers.msg(self.client, chan,
-                            "No.")
+                c.privmsg(config.CHANNEL,
+                          "No.")
             return
         # !wtf
         match = re.match('\!wtf ([A-Za-z0-9]+)', msg)
         if match:
             wtf = match.group(1)
-            helpers.msg(self.client, chan,
-                        "%s" % (getwtf(wtf).decode().strip("\n")
-                        .replace("\n", ", ")))
+            c.privmsg(config.CHANNEL,
+                      "%s" % (getwtf(wtf).decode().strip("\n")
+                      .replace("\n", ", ")))
             return
         # !eix
         match = re.match('\!eix ([A-Za-z0-9][A-Za-z0-9\\-_/]*)', msg)
         if match:
             wtf = match.group(1)
-            helpers.msg(self.client, chan,
-                        "%s" % (geteix(wtf)))
+            c.privmsg(config.CHANNEL,
+                      "%s" % (geteix(wtf)))
             return
 
         # !throw
         match = re.match('\!throw (.*) at (.*)', msg)
         if match:
-            helpers.msg(self.client, chan, "%s has been\
+            c.privmsg(config.CHANNEL, "%s has been\
  thrown at %s!" % (match.group(1), match.group(2)))
             return
         # !kill
@@ -101,31 +100,31 @@ class MyHandler(DefaultCommandHandler):
         if match:
             user = match.group(1)
             if user.lower() == "tjhsstbot":
-                helpers.msg(self.client, chan,
-                            "I'm not that stupid!")
+                c.privmsg(config.CHANNEL,
+                          "I'm not that stupid!")
                 return
-            helpers.msg(self.client, chan, "Die, %s!" % user)
+            c.privmsg(config.CHANNEL, "Die, %s!" % user)
         # !say
         match = re.match('\!say (.*)', msg)
         if match:
             to_say = match.group(1).strip()
             print('Saying, "%s"' % to_say)
-            helpers.msg(self.client, chan, to_say)
+            c.privmsg(config.CHANNEL, to_say)
             return
         # !bike
         bicycle1 = " _f_,_"
         bicycle2 = "(_)`(_)"
         match = re.match("\!bike", msg)
         if match:
-            helpers.msg(self.client, chan, bicycle1)
-            helpers.msg(self.client, chan, bicycle2)
+            c.privmsg(config.CHANNEL, bicycle1)
+            c.privmsg(config.CHANNEL, bicycle2)
             return
         # !pester
         match = re.match("\!pester ([a-zA-Z0-9]+) (.*)", msg)
         if match:
             s = match.group(2)
-            helpers.msg(self.client, chan,
-                        "%s: %s %s %s" % (match.group(1), s, s, s))
+            c.privmsg(config.CHANNEL,
+                      "%s: %s %s %s" % (match.group(1), s, s, s))
             return
         # !slogan
         match = re.match("\!slogan (.*)", msg)
@@ -140,14 +139,14 @@ class MyHandler(DefaultCommandHandler):
                 "%s is the best!",
                 "%s: bug-free!"
             ]
-            helpers.msg(self.client, chan,
-                        choice(choices) % thing)
+            c.privmsg(config.CHANNEL,
+                      choice(choices) % thing)
             return
         # !excuse
         match = re.match("\!excuse", msg)
         if match:
             x = choice(open("excuses", "r").readlines())
-            helpers.msg(self.client, chan, x)
+            c.privmsg(config.CHANNEL, x.rstrip())
             return
         # ++ and --
         match = re.match(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
@@ -172,26 +171,26 @@ class MyHandler(DefaultCommandHandler):
             except:
                 score = 0
             finally:
-                helpers.msg(self.client, chan,
-                            "%s has %i points!" % (uname, score))
+                c.privmsg(config.CHANNEL,
+                          "%s has %i points!" % (uname, score))
             return
         match = re.match(r".*((?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))).*", msg)
         if match:
             print(match.group(1))
             import lxml.html
             t = lxml.html.parse(match.group(1))
-            helpers.msg(self.client, chan, t.find(".//title").text)
+            c.privmsg(config.CHANNEL, t.find(".//title").text)
             return
         # !award
         match = re.match("\!award (.*)", msg)
         if match:
             uname = match.group(1)
-            helpers.msg(self.client, chan,
-                        "%s: I hereby award you this gold medal." % uname)
+            c.privmsg(config.CHANNEL,
+                      "%s: I hereby award you this gold medal." % uname)
             return
 
         # !dialup
         match = re.match("\!dialup", msg)
         if match:
-            helpers.msg(self.client, chan,
-                        "creffett: %s" % ("get dialup " * 15))
+            c.privmsg(config.CHANNEL,
+                      "creffett: %s" % ("get dialup " * 15))
