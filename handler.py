@@ -9,12 +9,7 @@ import handler
 
 
 def isadmin(nick):
-    admins = [
-        "wikipedia/Fox-Wilson",
-        "pool-96-231-161-251.washdc.fios.verizon.net",
-        "wikipedia/Vacation9",
-        "botters/staff/adran"
-    ]
+    admins = json.loads(open("admins").read())
     if str(nick, encoding='utf8').split("@")[1] in admins:
         return True
     return False
