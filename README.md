@@ -10,3 +10,9 @@ Setup
 -----
 Copy config.example to config.py and change values as needed.  
 Install irc (https://pypi.python.org/pypi/irc)
+
+Adding Modules
+--------------
+To add a module place a <mod>.py file in the commands dir.  
+The file must contain a def cmd(c, msg): method definition.  
+The file will only be run if it is marked executable.
