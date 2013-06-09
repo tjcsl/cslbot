@@ -14,12 +14,6 @@ def isadmin(nick):
     return nick in ADMINS
 
 
-def geteix(eix):
-    answer = subprocess.check_output(["eix", "-c", eix])
-    answer = str(answer, "ascii").split("\n")[0]
-    return answer
-
-
 class MyHandler():
     def __init__(self):
         self.ignored = []
@@ -55,7 +49,7 @@ class MyHandler():
                 try:
                     mod.cmd(c, args)
                 except Exception as e:
-                    c.privmsg(CHANNEL, str(e))
+                    c.privmsg(CHANNEL, 'Exception: ' + str(e))
                 return
 
         #special commands -- must be a admin
@@ -90,23 +84,7 @@ class MyHandler():
             c.privmsg(CHANNEL, "Ignore list cleared.")
             print(self.ignored)
             return
-        # !eix
-        match = re.match('\!eix ([A-Za-z0-9][A-Za-z0-9\\-_/]*)', msg)
-        if match:
-            wtf = match.group(1)
-            c.privmsg(CHANNEL,
-                      "%s" % (geteix(wtf)))
-            return
 
-        # !kill
-        match = re.match('\!kill (.*)', msg)
-        if match:
-            user = match.group(1)
-            if user.lower() == "tjhsstbot":
-                c.privmsg(CHANNEL,
-                          "I'm not that stupid!")
-                return
-            c.privmsg(CHANNEL, "Die, %s!" % user)
         # !say
         match = re.match('\!say (.*)', msg)
         if match:
@@ -114,36 +92,12 @@ class MyHandler():
             print('Saying, "%s"' % to_say)
             c.privmsg(CHANNEL, to_say)
             return
-        # !bike
-        bicycle1 = " _f_,_"
-        bicycle2 = "(_)`(_)"
-        match = re.match("\!bike", msg)
-        if match:
-            c.privmsg(CHANNEL, bicycle1)
-            c.privmsg(CHANNEL, bicycle2)
-            return
         # !pester
         match = re.match("\!pester ([a-zA-Z0-9]+) (.*)", msg)
         if match:
             s = match.group(2)
             c.privmsg(CHANNEL,
                       "%s: %s %s %s" % (match.group(1), s, s, s))
-            return
-        # !slogan
-        match = re.match("\!slogan (.*)", msg)
-        if match:
-            thing = match.group(1).strip()
-            choices = [
-                "%s -- awesome.",
-                "%s -- the future.",
-                "The sight of %s.",
-                "The wonder of %s!",
-                "Amazing %s.",
-                "%s is the best!",
-                "%s: bug-free!"
-            ]
-            c.privmsg(CHANNEL,
-                      choice(choices) % thing)
             return
         # ++ and --
         match = re.match(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
