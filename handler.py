@@ -49,8 +49,13 @@ class MyHandler():
                     c.privmsg(CHANNEL, 'Exception: ' + str(e))
                 return
 
-        #special commands -- must be a admin
+        #special commands
         if cmd[0] == '!':
+            if cmd[1:] == 'help':
+                cmdlist = self.modules.keys()
+                cmdlist = ' !'.join([x for x in sorted(self.modules)])
+                c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
+            # everything below this point requires admin
             if not isadmin(nick):
                 return
             if cmd[1:] == 'reload':
@@ -80,7 +85,8 @@ class MyHandler():
             if "+" in match.group(2):
                 score = 1
                 if name == nick:
-                    c.privmsg(CHANNEL, "%s: No self promotion! You lose 10 points." % nick)
+                    c.privmsg(CHANNEL, nick +
+                              ": No self promotion! You lose 10 points.")
                     score = -10
             else:
                 score = -1
