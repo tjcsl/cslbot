@@ -10,5 +10,5 @@ def cmd(e, c, msg):
                 answer = subprocess.check_output(['wtf', match.group(1)],
                                                  stderr=subprocess.STDOUT)
                 c.privmsg(CHANNEL, answer.decode().rstrip())
-            except subprocess.CalledProcessError as e:
-                c.privmsg(CHANNEL, e.output.decode().rstrip())
+            except subprocess.CalledProcessError as ex:
+                c.privmsg(CHANNEL, ex.output.decode().rstrip())
