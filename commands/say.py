@@ -1,5 +1,5 @@
 from config import CHANNEL
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
         c.privmsg(CHANNEL, msg)

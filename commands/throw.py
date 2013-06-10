@@ -2,7 +2,7 @@ import re
 from config import CHANNEL
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
         match = re.match('(.*) at (.*)', msg)
         if match:
             c.privmsg(CHANNEL, '%s has been thrown at %s'

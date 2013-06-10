@@ -44,9 +44,9 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 try:
-                    mod.cmd(c, args)
-                except Exception as e:
-                    c.privmsg(CHANNEL, 'Exception: ' + str(e))
+                    mod.cmd(e, c, args)
+                except Exception as ex:
+                    c.privmsg(CHANNEL, 'Exception: ' + str(ex))
                 return
 
         #special commands

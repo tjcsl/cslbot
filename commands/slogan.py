@@ -3,7 +3,7 @@ import re
 from urllib.request import urlopen
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
         if not msg:
             return
         msg = msg.replace(' ', '%20')

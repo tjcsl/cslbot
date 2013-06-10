@@ -1,7 +1,7 @@
 from config import CHANNEL, NICK
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
     if not msg:
         return
     if msg.lower() == NICK.lower():

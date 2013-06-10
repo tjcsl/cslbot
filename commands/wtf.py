@@ -3,7 +3,7 @@ import subprocess
 from config import CHANNEL
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
         match = re.match('([A-Za-z0-9]+)', msg)
         if match:
             try:

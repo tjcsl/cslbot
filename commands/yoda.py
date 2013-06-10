@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from lxml.html import parse
 
 
-def cmd(c, msg):
+def cmd(e, c, msg):
         if not msg:
             return
         data = urlencode({'YodaMe': msg}).encode('UTF-8')
