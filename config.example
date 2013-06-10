@@ -1,4 +1,4 @@
 HOST = 'irc.freenode.net'
 NICK = 'tjhsstBot'
 CHANNEL = '#tjhsst'
-ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk']
+ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk', 'TechFilmer']
