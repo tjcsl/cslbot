@@ -78,8 +78,8 @@ class MyHandler():
                 c.privmsg(CHANNEL,
                           "Now igoring %s." % args)
             elif cmd[1:] == 'join':
-	        c.join(args)
-		c.privmsg(args, "Joined at the request of" + nick)
+                c.join(args)
+                c.privmsg(args, "Joined at the request of " + nick)
 
         # ++ and --
         match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)

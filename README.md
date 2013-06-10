@@ -9,7 +9,7 @@ Improved by pfoley (Peter Foley, Class of 2013).
 Setup
 -----
 Copy config.example to config.py and change values as needed.  
-Install irc (https://pypi.python.org/pypi/irc)
+Install irc (https://pypi.python.org/pypi/irc) and lxml (https://pypi.python.org/pypi/lxml)
 
 Adding Modules
 --------------
