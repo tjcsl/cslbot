@@ -1,6 +1,6 @@
 import re
 import time
-from config import CHANNEL
+from config import CHANNEL, ADMINS
 
 
 def do_nuke(c):
@@ -41,6 +41,12 @@ def cmd(e, c, msg):
             c.privmsg(CHANNEL, 'Power level?')
         else:
             level = int(match.group(1))
+            if level > 10:
+                c.privmsg(CHANNEL, 'Aborting to prevent extinction of human race.')
+                return
+            if level > 7 and e.source.nick not in ADMINS:
+                c.privmsg(CHANNEL, "I'm sorry. Nukes are a admin-only feature")
+                return
             for i in range(1, level+1):
                 if i == 8:
                     do_nuke(c)
