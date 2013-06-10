@@ -18,6 +18,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_pubmsg(self, c, e):
         self.handler.pubmsg(c, e)
 
+    def get_version(self):
+        return "Ircbot -- 1.0"
+
 
 def main():
     bot = MyBot(CHANNEL, NICK, HOST)
