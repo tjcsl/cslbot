@@ -13,7 +13,12 @@ def cmd(e, c, msg):
                        % (apikey, msg)).read().decode()
         forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
                                % (apikey, msg)).read().decode()
-        data = json.loads(html)['current_observation']
+        data = json.loads(html)
+        if 'current_observation' in data:
+            data = data['current_observation']
+        else:
+            c.privmsg(CHANNEL, "Invalid or Ambiguous Location")
+            return
         forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
         c.privmsg(CHANNEL, "%s: Current weather for %s"
                   % (e.source.nick, data['display_location']['full']))
