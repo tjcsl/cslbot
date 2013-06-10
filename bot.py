@@ -1,13 +1,17 @@
 #!/usr/bin/python3 -OO
 import logging
 import irc.bot
-from config import CHANNEL, NICK, HOST
+from config import CHANNEL, NICK, NICKPASS, HOST
 import handler
 
 
 class MyBot(irc.bot.SingleServerIRCBot):
-    def __init__(self, channel, nick, host, port=6667):
-        irc.bot.SingleServerIRCBot.__init__(self, [(host, port)], nick, nick)
+    def __init__(self, channel, nick, nickpass, host, port=6667):
+        if nickpass != '':
+            server = irc.bot.ServerSpec(host, port, nickpass)
+        else:
+            server = irc.bot.ServerSpec(host, port)
+        irc.bot.SingleServerIRCBot.__init__(self, [server], nick, nick)
         self.channel = channel
         self.handler = handler.MyHandler()
 
@@ -23,7 +27,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
 
 def main():
-    bot = MyBot(CHANNEL, NICK, HOST)
+    bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
     bot.start()
 
 if __name__ == '__main__':

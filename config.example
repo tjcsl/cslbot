@@ -1,4 +1,5 @@
 HOST = 'irc.freenode.net'
 NICK = 'tjhsstBot'
+NICKPASS = ''
 CHANNEL = '#tjhsst'
 ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk', 'TechFilmer', 'csssuf']
