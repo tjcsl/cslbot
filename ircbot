@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-command="/home/peter/ircbot/bot.py"
+command="/home/ircbot/bot/bot.py"
 start_stop_daemon_args="--stdout=/var/log/ircbot.log --stderr=/var/log/ircbot.log"
 command_background=1
 pidfile="/run/ircbot.pid"
