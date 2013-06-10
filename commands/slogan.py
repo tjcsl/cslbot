@@ -8,6 +8,6 @@ def cmd(e, c, msg):
             return
         msg = msg.replace(' ', '%20')
         html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
-                       + msg).read().decode()
+                       + msg, timeout=1).read().decode()
         match = re.search('>(.*)<', html)
         c.privmsg(CHANNEL, match.group(1))

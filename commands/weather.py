@@ -10,9 +10,9 @@ def cmd(e, c, msg):
             # default to TJHSST
             msg = '22312'
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                       % (apikey, msg)).read().decode()
+                       % (apikey, msg), timeout=1).read().decode()
         forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
-                               % (apikey, msg)).read().decode()
+                               % (apikey, msg), timeout=1).read().decode()
         data = json.loads(html)
         if 'current_observation' in data:
             data = data['current_observation']
