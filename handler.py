@@ -22,7 +22,7 @@ class MyHandler():
     def loadmodules(self):
         modulemap = {}
         cmds = []
-        for f in glob('commands/*.py'):
+        for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
             if os.access(f, os.X_OK):
                 cmd = os.path.basename(f).split('.')[0]
                 cmds.append(cmd)
