@@ -1,6 +1,4 @@
-import re
 import subprocess
-import logging
 from config import CHANNEL
 
 

@@ -2,9 +2,7 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
-from random import choice
 import sys
-import subprocess
 import json
 import importlib
 import imp
@@ -18,9 +16,6 @@ class MyHandler():
     def __init__(self):
         self.ignored = []
         self.modules = self.loadmodules()
-
-    def ignore(self, nick):
-        self.ignored.append(nick)
 
     def loadmodules(self):
         modulemap = {}
@@ -42,9 +37,9 @@ class MyHandler():
                 return
         # is this a command?
         cmd = msg.split()[0]
+        args = msg[len(cmd)+1:]
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
-                args = msg[len(cmd)+1:]
                 mod = self.modules[cmd[1:]]
                 try:
                     mod.cmd(c, args)
@@ -66,70 +61,44 @@ class MyHandler():
                 c.quit("Goodbye, Cruel World!")
                 sys.exit(0)
                 return
+            elif cmd[1:] == 'cignore':
+                self.ignored = []
+                c.privmsg(CHANNEL, "Ignore list cleared.")
+            elif cmd[1:] == 'ignore':
+                if args in self.ignored:
+                    return
+                self.ignored.append(args)
+                c.privmsg(CHANNEL,
+                          "Now igoring %s." % args)
 
-        # !ignore
-        match = re.match('\!ignore (.*)', msg)
-        if match:
-            if not isadmin(nick):
-                return
-            self.ignore(match.group(1))
-            c.privmsg(CHANNEL,
-                      "Now igoring %s." % match.group(1))
-        # !cignore
-        match = re.match("\!cignore", msg)
-        if match:
-            if not isadmin(nick):
-                return
-            self.ignored = []
-            c.privmsg(CHANNEL, "Ignore list cleared.")
-            print(self.ignored)
-            return
-
-        # !say
-        match = re.match('\!say (.*)', msg)
-        if match:
-            to_say = match.group(1).strip()
-            print('Saying, "%s"' % to_say)
-            c.privmsg(CHANNEL, to_say)
-            return
-        # !pester
-        match = re.match("\!pester ([a-zA-Z0-9]+) (.*)", msg)
-        if match:
-            s = match.group(2)
-            c.privmsg(CHANNEL,
-                      "%s: %s %s %s" % (match.group(1), s, s, s))
-            return
         # ++ and --
-        match = re.match(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
+        match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if match:
-            uname = match.group(1)
-            score = 1 if "+" in match.group(2) else -1
-            scores = json.loads(open("score").read())
-            if uname in scores:
-                scores[uname] += score
+            name = match.group(1)
+            if "+" in match.group(2):
+                score = 1
+                if name == nick:
+                    c.privmsg(CHANNEL, "%s: No self promotion! You lose 10 points." % nick)
+                    score = -10
             else:
-                scores[uname] = score
+                score = -1
+            if os.path.isfile("score"):
+                scores = json.load(open("score"))
+            else:
+                scores = {}
+            if name in scores:
+                scores[name] += score
+            else:
+                scores[name] = score
             f = open("score", "w")
-            f.write(json.dumps(scores))
+            json.dump(scores, f)
             f.close()
             return
-        # !score
-        match = re.match("\!score ([a-zA-Z0-9]+)", msg)
-        if match:
-            uname = match.group(1)
-            try:
-                score = json.loads(open("score").read())[uname]
-            except:
-                score = 0
-            finally:
-                c.privmsg(CHANNEL,
-                          "%s has %i points!" % (uname, score))
-            return
+
+        # crazy regex to match urls
         match = re.match(r".*((?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))).*", msg)
         if match:
-            print(match.group(1))
             import lxml.html
             t = lxml.html.parse(match.group(1))
             c.privmsg(CHANNEL, t.find(".//title").text)
             return
-
