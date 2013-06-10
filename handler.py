@@ -2,6 +2,8 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
+import lxml.html
+import urllib.request
 import sys
 import json
 import importlib
@@ -30,7 +32,7 @@ class MyHandler():
 
     def pubmsg(self, c, e):
         nick = e.source.nick
-        msg = e.arguments[0]
+        msg = e.arguments[0].strip()
         if not isadmin(nick):
             for nick in self.ignored:
                 print("Ignoring!")
@@ -96,9 +98,8 @@ class MyHandler():
             return
 
         # crazy regex to match urls
-        match = re.match(r".*((?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))).*", msg)
+        match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
-            import lxml.html
-            t = lxml.html.parse(match.group(1))
+            t = lxml.html.parse(urllib.request.urlopen(match.group(1)))
             c.privmsg(CHANNEL, t.find(".//title").text)
             return
