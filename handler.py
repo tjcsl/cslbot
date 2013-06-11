@@ -3,7 +3,7 @@ import re
 import os
 from glob import glob
 from lxml.html import parse
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.error import URLError
 import json
 import importlib
@@ -134,11 +134,13 @@ class MyHandler():
                 url = match.group(1)
                 if not url.startswith('http'):
                     url = 'http://' + url
-                t = parse(urlopen(url, timeout=2))
+                # Wikipedia doesn't like the default User-Agent
+                req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                t = parse(urlopen(req, timeout=2))
                 c.privmsg(CHANNEL, t.find(".//title").text)
             except URLError as ex:
                 # website does not exist
-                if ex.reason.errno == socket.EAI_NONAME:
+                if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     return
                 else:
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
