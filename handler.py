@@ -150,5 +150,5 @@ class MyHandler():
                 return
             except Exception as ex:
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
-        if CHANNEL == "#msbob" and random() > 0.5:
+        if CHANNEL == "#msbob" and random() < 0.25:
             self.modules['slogan'].cmd(e, c, 'MS BOB')
