@@ -105,7 +105,7 @@ class MyHandler():
         # ++ and --
         match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if match:
-            name = match.group(1)
+            name = match.group(1).lower()
             if "+" in match.group(2):
                 score = 1
                 if name == nick:
