@@ -128,7 +128,7 @@ class MyHandler():
             return
 
         # crazy regex to match urls
-        match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
+        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             try:
                 url = match.group(1)
@@ -149,4 +149,5 @@ class MyHandler():
                 return
             except Exception as ex:
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
-        return
+        if CHANNEL == "#msbob":
+            self.modules['slogan'].cmd(e, c, 'MS BOB')
