@@ -4,7 +4,6 @@ import os
 from glob import glob
 from lxml.html import parse
 import urllib.request
-import sys
 import json
 import importlib
 import imp
@@ -81,26 +80,25 @@ class MyHandler():
                 cmdlist = ' !'.join([x for x in sorted(self.modules)])
                 c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
             # everything below this point requires admin
-            if nick not in ADMINS:
-                break
-            if cmd[1:] == 'reload':
-                c.privmsg(CHANNEL, "Aye Aye Capt'n")
-                self.modules = self.loadmodules()
-                for x in self.modules.values():
-                    imp.reload(x)
-                return
-            elif cmd[1:] == 'cignore':
-                self.ignored = []
-                c.privmsg(CHANNEL, "Ignore list cleared.")
-            elif cmd[1:] == 'ignore':
-                self.ignore(c, args)
-            #FIXME: CHANNEL is hardcoded in config.py
-            elif cmd[1:] == 'join':
-                c.join(args)
-                c.privmsg(args, "Joined at the request of " + nick)
-            elif cmd[1:] == 'part':
-                c.privmsg(args, "Leaving at the request of " + nick)
-                c.part(args)
+            if nick in ADMINS:
+                if cmd[1:] == 'reload':
+                    c.privmsg(CHANNEL, "Aye Aye Capt'n")
+                    self.modules = self.loadmodules()
+                    for x in self.modules.values():
+                        imp.reload(x)
+                    return
+                elif cmd[1:] == 'cignore':
+                    self.ignored = []
+                    c.privmsg(CHANNEL, "Ignore list cleared.")
+                elif cmd[1:] == 'ignore':
+                    self.ignore(c, args)
+                #FIXME: CHANNEL is hardcoded in config.py
+                elif cmd[1:] == 'join':
+                    c.join(args)
+                    c.privmsg(args, "Joined at the request of " + nick)
+                elif cmd[1:] == 'part':
+                    c.privmsg(args, "Leaving at the request of " + nick)
+                    c.part(args)
         # ++ and --
         match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if match:
