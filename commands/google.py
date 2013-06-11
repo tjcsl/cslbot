@@ -3,6 +3,7 @@ import urllib.parse
 import os
 import re
 
+
 def cmd(e, c, msg):
         url = urllib.parse.quote(msg)
         c.privmsg(CHANNEL, url)

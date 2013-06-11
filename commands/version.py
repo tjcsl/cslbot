@@ -3,6 +3,7 @@ from config import CHANNEL
 from urllib.request import urlopen
 import json
 
+
 def cmd(e, c, msg):
         apiOutput = json.loads(urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
         try:

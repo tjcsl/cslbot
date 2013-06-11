@@ -4,7 +4,7 @@ from urllib.request import urlopen
 
 
 def cmd(e, c, msg):
-        msg.replace(' ', '_')
+        msg = msg.replace(' ', '_')
         html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch='+msg)
         data = json.loads(html.read().decode())
         try:
