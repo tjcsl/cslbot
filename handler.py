@@ -101,7 +101,9 @@ class MyHandler():
             elif cmd[1:] == 'join':
                 c.join(args)
                 c.privmsg(args, "Joined at the request of " + nick)
-
+            elif cmd[1:] == 'part':
+                c.privmsg(args, "Leaving at the request of " + nick)
+                c.part(args)
         # ++ and --
         match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if match:
