@@ -50,6 +50,7 @@ class MyHandler():
             c.privmsg(CHANNEL,"%s is a Bot Abuser" % nick)
             self.ignore(c, nick)
             return False
+        return True
 
 
     def pubmsg(self, c, e):
@@ -66,8 +67,9 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 try:
-                    if hasattr(mod,'limit'):
-                        if self.abusecheck(c, e, mod.limit) != False:
+                    if hasattr(mod,'limit') and self.abusecheck(c, e, mod.limit):
+                            mod.cmd(e, c, args)
+                    else:
                             mod.cmd(e, c, args)
                 except Exception as ex:
                     c.privmsg(CHANNEL, 'Exception: ' + str(ex))
