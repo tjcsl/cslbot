@@ -28,6 +28,13 @@ class MyHandler():
             modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
+    def ignore(self, c, nick):
+        if nick in self.ignored:
+            return
+        self.ignored.append(nick)
+        c.privmsg(CHANNEL,
+                  "Now igoring %s." % nick)
+
     def abusecheck(self, c, e, limit):
         nick = e.source.nick
         if nick not in self.abuselist:
@@ -37,8 +44,12 @@ class MyHandler():
         count = 0
         for x in self.abuselist[nick]:
             # 30 seconds - arbitrary cuttoff
-            if time.time() - x > 30:
-                e.privmsg(CHANNEL,"Bot Abuser")
+            if (time.time() - x) < 30:
+                count = count + 1
+        if count > limit:
+            c.privmsg(CHANNEL,"%s is a Bot Abuser" % nick)
+            self.ignore(c, nick)
+            return False
 
 
     def pubmsg(self, c, e):
@@ -56,8 +67,8 @@ class MyHandler():
                 mod = self.modules[cmd[1:]]
                 try:
                     if hasattr(mod,'limit'):
-                        self.abusecheck(c, e, mod.limit)
-                    mod.cmd(e, c, args)
+                        if self.abusecheck(c, e, mod.limit) != False:
+                            mod.cmd(e, c, args)
                 except Exception as ex:
                     c.privmsg(CHANNEL, 'Exception: ' + str(ex))
                 return
@@ -85,11 +96,7 @@ class MyHandler():
                 self.ignored = []
                 c.privmsg(CHANNEL, "Ignore list cleared.")
             elif cmd[1:] == 'ignore':
-                if args in self.ignored:
-                    return
-                self.ignored.append(args)
-                c.privmsg(CHANNEL,
-                          "Now igoring %s." % args)
+                self.ignore(c, args)
             elif cmd[1:] == 'join':
                 c.join(args)
                 c.privmsg(args, "Joined at the request of " + nick)

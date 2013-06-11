@@ -2,7 +2,7 @@ import re
 import time
 from config import CHANNEL, ADMINS
 
-limit = 2
+limit = 5
 
 
 def do_nuke(c):
@@ -55,5 +55,4 @@ def cmd(e, c, msg):
                 else:
                     c.privmsg(CHANNEL, levels[i])
                 time.sleep(1)
-            time.sleep(1)
             c.privmsg(CHANNEL, 'Ding, your %s is ready.' % match.group(2))
