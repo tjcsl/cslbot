@@ -140,10 +140,10 @@ class MyHandler():
                 if ex.reason.errno == socket.EAI_NONAME:
                     return
                 else:
-                    c.privmsg(CHANNEL, '%s: %s' %(type(ex), str(ex)))
+                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
                 return
             except Exception as ex:
-                    c.privmsg(CHANNEL, '%s: %s' %(type(ex), str(ex)))
+                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
         return
