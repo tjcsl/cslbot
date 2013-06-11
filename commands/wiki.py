@@ -12,4 +12,5 @@ def cmd(e, c, msg):
         except Exception:
             c.privmsg(CHANNEL, "%s isn't important enough to have a wikipedia article." % msg)
             return
+        url = url.replace(' ', '_')
         c.privmsg(CHANNEL, 'http://en.wikipedia.org/wiki/'+url)
