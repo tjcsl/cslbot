@@ -17,6 +17,7 @@ class MyHandler():
         self.ignored = []
         self.modules = self.loadmodules()
         self.abuselist = {}
+        self.scorefile = os.path.dirname(__file__)+'/score'
 
     def loadmodules(self):
         modulemap = {}
@@ -113,15 +114,15 @@ class MyHandler():
                     score = -10
             else:
                 score = -1
-            if os.path.isfile("score"):
-                scores = json.load(open("score"))
+            if os.path.isfile(self.scorefile):
+                scores = json.load(open(self.scorefile))
             else:
                 scores = {}
             if name in scores:
                 scores[name] += score
             else:
                 scores[name] = score
-            f = open("score", "w")
+            f = open(self.scorefile, "w")
             json.dump(scores, f)
             f.close()
             return

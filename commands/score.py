@@ -1,4 +1,5 @@
 import re
+import os
 import json
 from config import CHANNEL
 
@@ -8,7 +9,7 @@ def cmd(e, c, msg):
     if match:
         name = match.group(1)
         try:
-            score = json.load(open("score"))[name]
+            score = json.load(open(os.path.dirname(__file__)+"/../score"))[name]
             c.privmsg(CHANNEL,
                       "%s has %i points!" % (name, score))
         except:
