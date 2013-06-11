@@ -82,22 +82,19 @@ class MyHandler():
                 c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
             # everything below this point requires admin
             if nick not in ADMINS:
-                return
+                break
             if cmd[1:] == 'reload':
                 c.privmsg(CHANNEL, "Aye Aye Capt'n")
                 self.modules = self.loadmodules()
                 for x in self.modules.values():
                     imp.reload(x)
                 return
-            elif cmd[1:] == 'quit':
-                c.quit("Goodbye, Cruel World!")
-                sys.exit(0)
-                return
             elif cmd[1:] == 'cignore':
                 self.ignored = []
                 c.privmsg(CHANNEL, "Ignore list cleared.")
             elif cmd[1:] == 'ignore':
                 self.ignore(c, args)
+            #FIXME: CHANNEL is hardcoded in config.py
             elif cmd[1:] == 'join':
                 c.join(args)
                 c.privmsg(args, "Joined at the request of " + nick)

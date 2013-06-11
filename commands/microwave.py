@@ -7,7 +7,7 @@ limit = 5
 
 
 def do_nuke(nick, target, c):
-    c.privmsg(CHANNEL, "Now Nuking " + target)
+    c.privmsg(CHANNEL, "Please Stand By, Nuking " + target)
     c.privmsg_many([nick, target], "        ____________________          ")
     c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:       ")
     c.privmsg_many([nick, target], "    /    (          /   /      \\      ")
