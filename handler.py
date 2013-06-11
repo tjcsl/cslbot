@@ -73,7 +73,7 @@ class MyHandler():
                     else:
                             mod.cmd(e, c, args)
                 except Exception as ex:
-                    c.privmsg(CHANNEL, 'Exception: ' + str(ex))
+                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
                 return
 
         #special commands
