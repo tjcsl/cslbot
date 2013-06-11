@@ -10,14 +10,11 @@ import importlib
 import imp
 
 
-def isadmin(nick):
-    return nick in ADMINS
-
-
 class MyHandler():
     def __init__(self):
         self.ignored = []
         self.modules = self.loadmodules()
+        self.abuselist = {}
 
     def loadmodules(self):
         modulemap = {}
@@ -33,7 +30,7 @@ class MyHandler():
     def pubmsg(self, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
-        if not isadmin(nick):
+        if nick not in ADMINS:
             for nick in self.ignored:
                 print("Ignoring!")
                 return
@@ -56,7 +53,7 @@ class MyHandler():
                 cmdlist = ' !'.join([x for x in sorted(self.modules)])
                 c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
             # everything below this point requires admin
-            if not isadmin(nick):
+            if nick not in ADMINS:
                 return
             if cmd[1:] == 'reload':
                 c.privmsg(CHANNEL, "Aye Aye Capt'n")
