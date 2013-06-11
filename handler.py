@@ -8,6 +8,7 @@ import sys
 import json
 import importlib
 import imp
+import time
 
 
 class MyHandler():
@@ -28,6 +29,7 @@ class MyHandler():
         return modulemap
 
     def abusecheck(self, c, e, limit):
+        nick = e.source.nick
         if nick not in self.abuselist:
             self.abuselist[nick] = [time.time()]
         else:
@@ -121,5 +123,8 @@ class MyHandler():
         match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             t = lxml.html.parse(urllib.request.urlopen(match.group(1), timeout=1))
-            c.privmsg(CHANNEL, t.find(".//title").text)
+            try:
+                c.privmsg(CHANNEL, t.find(".//title").text)
+            except AttributeError:
+                return
             return
