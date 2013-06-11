@@ -2,6 +2,8 @@ import re
 import time
 from config import CHANNEL, ADMINS
 
+limit = 2
+
 
 def do_nuke(c):
     c.privmsg(CHANNEL, "        ____________________          ")

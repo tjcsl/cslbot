@@ -27,6 +27,18 @@ class MyHandler():
             modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
+    def abusecheck(self, c, e, limit):
+        if nick not in self.abuselist:
+            self.abuselist[nick] = [time.time()]
+        else:
+            self.abuselist[nick].append(time.time())
+        count = 0
+        for x in self.abuselist[nick]:
+            # 30 seconds - arbitrary cuttoff
+            if time.time() - x > 30:
+                e.privmsg(CHANNEL,"Bot Abuser")
+
+
     def pubmsg(self, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
@@ -41,6 +53,8 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 try:
+                    if hasattr(mod,'limit'):
+                        self.abusecheck(c, e, mod.limit)
                     mod.cmd(e, c, args)
                 except Exception as ex:
                     c.privmsg(CHANNEL, 'Exception: ' + str(ex))
