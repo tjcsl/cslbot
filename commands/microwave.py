@@ -1,30 +1,33 @@
 import re
 import time
+import sys
 from config import CHANNEL, ADMINS
 
 limit = 5
 
 
-def do_nuke(c):
-    c.privmsg(CHANNEL, "        ____________________          ")
-    c.privmsg(CHANNEL, "     :-'     ,   '; .,   )  '-:       ")
-    c.privmsg(CHANNEL, "    /    (          /   /      \\      ")
-    c.privmsg(CHANNEL, "   /  ;'  \\   , .  /        )   \\    ")
-    c.privmsg(CHANNEL, "  (  ( .   ., ;        ;  '    ; )    ")
-    c.privmsg(CHANNEL, "   \\    ,---:----------:---,    /    ")
-    c.privmsg(CHANNEL, "    '--'     \\ \\     / /    '--'     ")
-    c.privmsg(CHANNEL, "              \\ \\   / /              ")
-    c.privmsg(CHANNEL, "               \\     /                ")
-    c.privmsg(CHANNEL, "               |  .  |               ")
-    c.privmsg(CHANNEL, "               |, '; |               ")
-    c.privmsg(CHANNEL, "               |  ,. |               ")
-    c.privmsg(CHANNEL, "               | ., ;|               ")
-    c.privmsg(CHANNEL, "               |:; ; |               ")
-    c.privmsg(CHANNEL, "      ________/;';,.',\\ ________     ")
-    c.privmsg(CHANNEL, "     (  ;' . ;';,.;', ;  ';  ;  )    ")
+def do_nuke(nick, target, c):
+    c.privmsg(CHANNEL, "Now Nuking " + target)
+    c.privmsg_many([nick, target], "        ____________________          ")
+    c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:       ")
+    c.privmsg_many([nick, target], "    /    (          /   /      \\      ")
+    c.privmsg_many([nick, target], "   /  ;'  \\   , .  /        )   \\    ")
+    c.privmsg_many([nick, target], "  (  ( .   ., ;        ;  '    ; )    ")
+    c.privmsg_many([nick, target], "   \\    ,---:----------:---,    /    ")
+    c.privmsg_many([nick, target], "    '--'     \\ \\     / /    '--'     ")
+    c.privmsg_many([nick, target], "              \\ \\   / /              ")
+    c.privmsg_many([nick, target], "               \\     /                ")
+    c.privmsg_many([nick, target], "               |  .  |               ")
+    c.privmsg_many([nick, target], "               |, '; |               ")
+    c.privmsg_many([nick, target], "               |  ,. |               ")
+    c.privmsg_many([nick, target], "               | ., ;|               ")
+    c.privmsg_many([nick, target], "               |:; ; |               ")
+    c.privmsg_many([nick, target], "      ________/;';,.',\\ ________     ")
+    c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
 def cmd(e, c, msg):
+        nick = e.source.nick
         levels = {1: 'Whirr...',
                   2: 'Vrrm...',
                   3: 'Zzzzhhhh...',
@@ -32,27 +35,35 @@ def cmd(e, c, msg):
                   5: 'GEEEEZZSH...',
                   6: 'PLAAAAIIID...',
                   7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
-                  8: 'Insert Nuke Here',
+                  8: 'Nuke',
                   9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
-                  10: 'ssh root@remote.tjhsst.edu rm -rf ~'+e.source.nick}
+                  10: 'ssh root@remote.tjhsst.edu rm -rf ~'+nick}
         if msg == '':
             c.privmsg(CHANNEL, 'What to microwave?')
             return
-        match = re.match('([0-9]*) (.*)', msg)
+        match = re.match('(-?[0-9]*) (.*)', msg)
         if not match:
             c.privmsg(CHANNEL, 'Power level?')
         else:
             level = int(match.group(1))
+            target = match.group(2)
             if level > 10:
                 c.privmsg(CHANNEL, 'Aborting to prevent extinction of human race.')
                 return
-            if level > 7 and e.source.nick not in ADMINS:
+            if level < 1:
+                c.privmsg(CHANNEL, 'Anti-matter not yet implemented.')
+                return
+            if level > 7 and nick not in ADMINS:
                 c.privmsg(CHANNEL, "I'm sorry. Nukes are a admin-only feature")
                 return
             for i in range(1, level+1):
                 if i == 8:
-                    do_nuke(c)
+                    do_nuke(nick, target, c)
                 else:
                     c.privmsg(CHANNEL, levels[i])
                 time.sleep(1)
-            c.privmsg(CHANNEL, 'Ding, your %s is ready.' % match.group(2))
+            c.privmsg(CHANNEL, 'Ding, your %s is ready.' % target)
+            if level == 10:
+                time.sleep(5)
+                c.quit("Caught in backwash.")
+                sys.exit(0)

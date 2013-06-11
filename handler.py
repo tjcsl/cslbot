@@ -2,7 +2,7 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
-import lxml.html
+from lxml.html import parse
 import urllib.request
 import sys
 import json
@@ -47,11 +47,10 @@ class MyHandler():
             if (time.time() - x) < 30:
                 count = count + 1
         if count > limit:
-            c.privmsg(CHANNEL,"%s is a Bot Abuser" % nick)
+            c.privmsg(CHANNEL, "%s is a Bot Abuser" % nick)
             self.ignore(c, nick)
             return False
         return True
-
 
     def pubmsg(self, c, e):
         nick = e.source.nick
@@ -67,7 +66,7 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 try:
-                    if hasattr(mod,'limit') and self.abusecheck(c, e, mod.limit):
+                    if hasattr(mod, 'limit') and self.abusecheck(c, e, mod.limit):
                             mod.cmd(e, c, args)
                     else:
                             mod.cmd(e, c, args)
@@ -131,7 +130,7 @@ class MyHandler():
         # crazy regex to match urls
         match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
-            t = lxml.html.parse(urllib.request.urlopen(match.group(1), timeout=1))
+            t = parse(urllib.request.urlopen(match.group(1), timeout=1))
             try:
                 c.privmsg(CHANNEL, t.find(".//title").text)
             except AttributeError:
