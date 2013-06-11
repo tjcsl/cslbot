@@ -3,11 +3,13 @@ import re
 import os
 from glob import glob
 from lxml.html import parse
-import urllib.request
+from urllib.request import urlopen
+from urllib.error import URLError
 import json
 import importlib
 import imp
 import time
+import socket
 
 
 class MyHandler():
@@ -127,10 +129,21 @@ class MyHandler():
         # crazy regex to match urls
         match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
-            t = parse(urllib.request.urlopen(match.group(1), timeout=1))
             try:
+                url = match.group(1)
+                if not url.startswith('http'):
+                    url = 'http://' + url
+                t = parse(urlopen(url, timeout=2))
                 c.privmsg(CHANNEL, t.find(".//title").text)
+            except URLError as ex:
+                # website does not exist
+                if ex.reason.errno == socket.EAI_NONAME:
+                    return
+                else:
+                    c.privmsg(CHANNEL, '%s: %s' %(type(ex), str(ex)))
+            # page does not contain a title
             except AttributeError:
                 return
-            return
-
+            except Exception as ex:
+                    c.privmsg(CHANNEL, '%s: %s' %(type(ex), str(ex)))
+        return
