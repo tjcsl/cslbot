@@ -2,6 +2,7 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
+from random import random
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -149,5 +150,5 @@ class MyHandler():
                 return
             except Exception as ex:
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
-        if CHANNEL == "#msbob":
+        if CHANNEL == "#msbob" and random() > 0.5:
             self.modules['slogan'].cmd(e, c, 'MS BOB')
