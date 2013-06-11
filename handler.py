@@ -136,3 +136,8 @@ class MyHandler():
             except AttributeError:
                 return
             return
+        # control channel
+        def privmsg(self, nick, chan, msg):
+            if chan == "#fwilbot":
+                if "wikipedia/Fox-Wilson" not in nick: return
+                self.client.send(msg)
