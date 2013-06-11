@@ -3,6 +3,7 @@ import urllib.parse
 import os
 import re
 
+
 def cmd(e, c, msg):
         url = urllib.parse.quote(msg)
         f = os.popen('lynx --head --dump "http://www.google.com/search?q=%s&btnI=I%%27m+Feeling+Lucky"' % url)
