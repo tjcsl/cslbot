@@ -4,4 +4,4 @@ NICKPASS = ''
 CHANNEL = '#tjhsst'
 ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk', 'TechFilmer', 'csssuf']
 STEAMAPIKEY = ''
-STEAMENBALE = False
+STEAMENABLE = False
