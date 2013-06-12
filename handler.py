@@ -119,7 +119,7 @@ class MyHandler():
                 name = match[0].lower()
                 if match[1] == "++":
                     score = 1
-                    if name == nick:
+                    if name == nick.lower():
                         c.privmsg(CHANNEL, nick +
                                   ": No self promotion! You lose 10 points.")
                         score = -10
