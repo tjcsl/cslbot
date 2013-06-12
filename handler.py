@@ -144,7 +144,7 @@ class MyHandler():
                 # Wikipedia doesn't like the default User-Agent
                 req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 t = parse(urlopen(req, timeout=2))
-                c.privmsg(CHANNEL, 'Website Info: ', t.find(".//title").text)
+                c.privmsg(CHANNEL, 'Website Info: ' t.find(".//title").text)
             except URLError as ex:
                 # website does not exist
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
