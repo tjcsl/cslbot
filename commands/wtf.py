@@ -9,6 +9,6 @@ def cmd(e, c, msg):
             try:
                 answer = subprocess.check_output(['wtf', match.group(1)],
                                                  stderr=subprocess.STDOUT)
-                c.privmsg(CHANNEL, answer.decode().rstrip())
+                c.privmsg(CHANNEL, answer.decode().rstrip().replace('\n', ' or '))
             except subprocess.CalledProcessError as ex:
                 c.privmsg(CHANNEL, ex.output.decode().rstrip())
