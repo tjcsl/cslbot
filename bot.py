@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -OO
 import logging
+import imp
 import irc.bot
 from config import CHANNEL, NICK, NICKPASS, HOST
 import handler
@@ -23,6 +24,11 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.channel = self.channels[CHANNEL]
 
     def on_pubmsg(self, c, e):
+        command = e.arguments[0].strip().split()[0]
+        if command == '!reload':
+            imp.reload(handler)
+            self.handler = handler.MyHandler()
+            self.handler.channel = self.channels[CHANNEL]
         self.handler.pubmsg(c, e)
 
     def get_version(self):
