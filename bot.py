@@ -24,12 +24,15 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.channel = self.channels[CHANNEL]
 
     def on_pubmsg(self, c, e):
-        command = e.arguments[0].strip().split()[0]
-        if command == '!reload':
-            imp.reload(handler)
-            self.handler = handler.MyHandler()
-            self.handler.channel = self.channels[CHANNEL]
-        self.handler.pubmsg(c, e)
+        try:
+            command = e.arguments[0].strip().split()[0]
+            if command == '!reload':
+                imp.reload(handler)
+                self.handler = handler.MyHandler()
+                self.handler.channel = self.channels[CHANNEL]
+            self.handler.pubmsg(c, e)
+        except Exception as ex:
+            c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
 
     def get_version(self):
         return "Ircbot -- 1.0"

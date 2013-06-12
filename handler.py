@@ -75,13 +75,9 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                try:
-                    if hasattr(mod, 'limit') and self.abusecheck(c, e, mod.limit):
-                            mod.cmd(e, c, args)
-                    else:
-                            mod.cmd(e, c, args)
-                except Exception as ex:
-                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+                if hasattr(mod, 'limit'):
+                    self.abusecheck(c, e, mod.limit)
+                mod.cmd(e, c, args)
                 return
 
         #special commands
@@ -117,28 +113,30 @@ class MyHandler():
                     c.privmsg(args, "Leaving at the request of " + nick)
                     c.part(args)
         # ++ and --
-        match = re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
-        if match:
-            name = match.group(1).lower()
-            if "+" in match.group(2):
-                score = 1
-                if name == nick:
-                    c.privmsg(CHANNEL, nick +
-                              ": No self promotion! You lose 10 points.")
-                    score = -10
-            else:
-                score = -1
-            if os.path.isfile(self.scorefile):
-                scores = json.load(open(self.scorefile))
-            else:
-                scores = {}
-            if name in scores:
-                scores[name] += score
-            else:
-                scores[name] = score
-            f = open(self.scorefile, "w")
-            json.dump(scores, f)
-            f.close()
+        matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
+        if matches:
+            for match in matches:
+                name = match[0].lower()
+                if match[1] == "++":
+                    score = 1
+                    if name == nick:
+                        c.privmsg(CHANNEL, nick +
+                                  ": No self promotion! You lose 10 points.")
+                        score = -10
+                else:
+                    score = -1
+                if os.path.isfile(self.scorefile):
+                    scores = json.load(open(self.scorefile))
+                else:
+                    scores = {}
+                if name in scores:
+                    scores[name] += score
+                else:
+                    scores[name] = score
+                f = open(self.scorefile, "w")
+                json.dump(scores, f)
+                f.write("\n")
+                f.close()
             return
 
         # crazy regex to match urls
@@ -160,8 +158,6 @@ class MyHandler():
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
-                return
-            except Exception as ex:
-                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+                pass
         if CHANNEL == "#msbob" and random() < 0.25:
             self.modules['slogan'].cmd(e, c, 'MS BOB')
