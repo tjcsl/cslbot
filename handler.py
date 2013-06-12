@@ -150,7 +150,7 @@ class MyHandler():
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     return
                 else:
-                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+                    c.privmsg(CHANNEL, 'Website Info: %s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
                 return
