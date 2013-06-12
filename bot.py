@@ -19,6 +19,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
         logging.info("Connected to server")
         c.join(self.channel)
 
+    def on_join(self, c, e):
+        self.handler.channel = self.channels[CHANNEL]
+
     def on_pubmsg(self, c, e):
         self.handler.pubmsg(c, e)
 

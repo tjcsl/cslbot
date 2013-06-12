@@ -2,6 +2,7 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
+from random import random, choice
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -78,10 +79,16 @@ class MyHandler():
 
         #special commands
         if cmd[0] == '!':
+            #FIXME: these should be split out
             if cmd[1:] == 'help':
                 cmdlist = self.modules.keys()
                 cmdlist = ' !'.join([x for x in sorted(self.modules)])
                 c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
+            if cmd[1:] == 'blame':
+                user = choice(self.channel.users())
+                if args:
+                    args = " for " + args
+                c.privmsg(CHANNEL, "I blame " + user + args)
             # everything below this point requires admin
             if nick in ADMINS:
                 if cmd[1:] == 'reload':
@@ -128,7 +135,7 @@ class MyHandler():
             return
 
         # crazy regex to match urls
-        match = re.match(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
+        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             try:
                 url = match.group(1)
@@ -149,4 +156,5 @@ class MyHandler():
                 return
             except Exception as ex:
                     c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
-        return
+        if CHANNEL == "#msbob" and random() < 0.25:
+            self.modules['slogan'].cmd(e, c, 'MS BOB')

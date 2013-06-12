@@ -9,5 +9,5 @@ def cmd(e, c, msg):
         msg = msg.replace(' ', '%20')
         html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
                        + msg, timeout=1).read().decode()
-        match = re.search('>(.*)<', html)
-        c.privmsg(CHANNEL, match.group(1))
+        slogan = re.search('>(.*)<', html).group(1).replace('\\', '')
+        c.privmsg(CHANNEL, slogan)

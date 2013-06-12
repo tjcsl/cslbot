@@ -1,11 +1,11 @@
 import json
 from config import CHANNEL
 from urllib.request import urlopen
+from urllib.parse import quote
 
 
 def cmd(e, c, msg):
-        msg = msg.replace(' ', '_')
-        html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch='+msg)
+        html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch='+quote(msg))
         data = json.loads(html.read().decode())
         try:
             url = data['query']['search'][0]['title']
