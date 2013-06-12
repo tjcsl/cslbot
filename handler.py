@@ -80,13 +80,13 @@ class MyHandler():
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and not self.abusecheck(c, nick, mod.limit):
                     return
-                args = {'args': cmdargs, 'target': target}
+                args = {'args': cmdargs, 'c': c, 'target': target}
                 for arg in mod.args:
                     if arg == 'channel':
                         args['channel'] = self.channel
                     else:
                         raise Exception("Invalid Argument: " + arg)
-                mod.cmd(e, c, args)
+                mod.cmd(c, args)
                 return
 
         #special commands
