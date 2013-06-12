@@ -4,7 +4,7 @@ def cmd(send, msg, args):
             return
         type = randrange(1, 5)
         if(type == 1):
-                type = 'test gold'
+                type = 'gold'
         elif(type == 2):
                 type = 'silver'
         elif(type == 3):
@@ -13,4 +13,4 @@ def cmd(send, msg, args):
                 type = 'platinum'
         else:
                 pass
-        send(msg + ': I hereby award you this' + type + 'medal.')
+        send(msg + ': I hereby award you this ' + type + ' medal.')
