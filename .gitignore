@@ -1,4 +1,5 @@
 config.py
+steamids.py
 score
 __pycache__
 *.sw?

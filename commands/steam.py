@@ -3,6 +3,7 @@ from steamids import idlist
 from urllib.request import urlopen
 import json
 
+
 def cmd(e, c, msg):
         try:
             if STEAMENABLE:
@@ -23,6 +24,7 @@ def cmd(e, c, msg):
                 c.privmsg(CHANNEL, 'Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
         except:
             pass
+
 
 def getStatus(vals):
         state = vals['personastate']

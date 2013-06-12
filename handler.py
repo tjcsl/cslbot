@@ -54,12 +54,14 @@ class MyHandler():
             self.ignore(c, nick)
             return False
         return True
+
     def privmsg(self, c, e):
         nick = e.source.nick
         if re.search(r'[^\s]+(--|++)'):
             c.privmsg(nick, 'Hey, no points in private messages!')
             return
-        pubmsg(self, c, e)
+        self.pubmsg(self, c, e)
+
     def pubmsg(self, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
