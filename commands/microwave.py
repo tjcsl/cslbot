@@ -56,14 +56,19 @@ def cmd(e, c, msg):
             if level > 7 and nick not in ADMINS:
                 c.privmsg(CHANNEL, "I'm sorry. Nukes are a admin-only feature")
                 return
-            for i in range(1, level+1):
-                if i == 8:
-                    do_nuke(nick, target, c)
-                else:
-                    c.privmsg(CHANNEL, levels[i])
-                time.sleep(1)
+            msg = levels[1]
+            for i in range(2, level+1):
+                if i < 8:
+                    msg += ' ' + levels[i]
+            c.privmsg(CHANNEL, msg)
+            if level >= 8:
+                do_nuke(nick, target, c)
+            if level >= 9:
+                c.privmsg(CHANNEL, levels[9])
+            if level == 10:
+                c.privmsg(CHANNEL, levels[10])
             c.privmsg(CHANNEL, 'Ding, your %s is ready.' % target)
             if level == 10:
-                time.sleep(5)
+                time.sleep(7)
                 c.quit("Caught in backwash.")
                 sys.exit(0)
