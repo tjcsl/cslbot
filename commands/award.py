@@ -4,7 +4,7 @@ def cmd(send, msg, args):
             return
         type = randrange(1, 5)
         if(type == 1):
-                type = 'gold'
+                type = 'test gold'
         elif(type == 2):
                 type = 'silver'
         elif(type == 3):
