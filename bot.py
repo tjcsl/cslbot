@@ -13,14 +13,15 @@ class MyBot(irc.bot.SingleServerIRCBot):
         else:
             server = irc.bot.ServerSpec(host, port)
         irc.bot.SingleServerIRCBot.__init__(self, [server], nick, nick)
-        self.channel = channel
         self.handler = handler.MyHandler()
 
     def on_welcome(self, c, e):
         logging.info("Connected to server")
-        c.join(self.channel)
+        handler.c = c
+        c.join(CHANNEL)
 
     def on_join(self, c, e):
+        logging.info("Joined channel")
         self.handler.channel = self.channels[CHANNEL]
 
     def handle_msg(self, msgtype, c, e):
