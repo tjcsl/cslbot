@@ -1,7 +1,6 @@
 from config import ADMINS, CHANNEL
 import re
 import os
-import sys
 from glob import glob
 from random import random, choice
 from lxml.html import parse
@@ -94,11 +93,10 @@ class MyHandler():
             if nick in ADMINS:
                 if cmd[1:] == 'reload':
                     c.privmsg(CHANNEL, "Aye Aye Capt'n")
-                    os.execl(sys.executable, *([sys.executable]+sys.argv))
-                    #self.modules = self.loadmodules()
-                    #for x in self.modules.values():
-                    #    imp.reload(x)
-                    #return
+                    self.modules = self.loadmodules()
+                    for x in self.modules.values():
+                        imp.reload(x)
+                    return
                 elif cmd[1:] == 'cignore':
                     self.ignored = []
                     c.privmsg(CHANNEL, "Ignore list cleared.")
