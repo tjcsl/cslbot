@@ -1,6 +1,5 @@
-from config import CHANNEL
-
-
-def cmd(e, c, msg):
-        msg = msg.replace(' ', '+')
-        c.privmsg(CHANNEL, 'http://lmgtfy.com/?q=' + msg)
+def cmd(send, msg, args):
+    if not msg:
+        return
+    msg = msg.replace(' ', '+')
+    send('http://lmgtfy.com/?q=' + msg)

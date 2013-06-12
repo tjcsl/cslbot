@@ -1,5 +1,2 @@
-from config import CHANNEL
-
-
-def cmd(e, c, msg):
-        c.privmsg(CHANNEL, 'creffett: %s' % ("get dialup " * 15))
+def cmd(send, msg, args):
+        send('creffett: %s' % ("get dialup " * 15))

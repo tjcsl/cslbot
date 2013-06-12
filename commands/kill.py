@@ -1,10 +1,10 @@
-from config import CHANNEL, NICK
+from config import NICK
 
 
-def cmd(e, c, msg):
+def cmd(send, msg, args):
     if not msg:
         return
     if msg.lower() == NICK.lower():
-        c.privmsg(CHANNEL, '%s is not feeling suicidal right now.' % msg)
+        send('%s is not feeling suicidal right now.' % msg)
     else:
-        c.privmsg(CHANNEL, 'Die, %s!' % msg)
+        send('Die, %s!' % msg)

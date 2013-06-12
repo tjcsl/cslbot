@@ -1,14 +1,13 @@
 import re
 import subprocess
-from config import CHANNEL
 
 
-def cmd(e, c, msg):
+def cmd(send, msg, args):
         match = re.match('([A-Za-z0-9]+)', msg)
         if match:
             try:
                 answer = subprocess.check_output(['wtf', match.group(1)],
                                                  stderr=subprocess.STDOUT)
-                c.privmsg(CHANNEL, answer.decode().rstrip().replace('\n', ' or '))
+                send(answer.decode().rstrip().replace('\n', ' or '))
             except subprocess.CalledProcessError as ex:
-                c.privmsg(CHANNEL, ex.output.decode().rstrip())
+                send(ex.output.decode().rstrip())

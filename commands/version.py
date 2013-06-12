@@ -1,22 +1,23 @@
 import subprocess
-from config import CHANNEL
 from urllib.request import urlopen
 import json
 import os
 
 
-def cmd(e, c, msg):
+def cmd(send, msg, args):
         apiOutput = json.loads(urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
         gitdir = os.path.dirname(__file__)+"/../.git"
         try:
             version = subprocess.check_output(['git', '--git-dir='+gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
         except subprocess.CalledProcessError:
-            c.privmsg(CHANNEL, "Couldn't get the version.")
-        if msg != '':
-            if msg == 'master':
-                c.privmsg(CHANNEL, apiOutput['commit']['sha'])
-            elif msg == 'check':
-                same = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
-                c.privmsg(CHANNEL, same)
+            send("Couldn't get the version.")
+        if not msg:
+            send(version)
         else:
-            c.privmsg(CHANNEL, version)
+            if msg == 'master':
+                send(apiOutput['commit']['sha'])
+            elif msg == 'check':
+                check = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
+                send(check)
+            else:
+                send('Invalid argument')

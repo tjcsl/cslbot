@@ -1,6 +1,3 @@
-from config import CHANNEL
-
-
-def cmd(e, c, msg):
-        c.privmsg(CHANNEL, ' _f_,_')
-        c.privmsg(CHANNEL, '(_)`(_)')
+def cmd(send, msg, args):
+        send(' _f_,_')
+        send('(_)`(_)')

@@ -1,10 +1,12 @@
 import sys
-from config import CHANNEL, ADMINS
+from config import ADMINS
+
+args = ['nick', 'connection']
 
 
-def cmd(e, c, msg):
-    if e.source.nick not in ADMINS:
-        c.privmsg(CHANNEL, "Nope.")
+def cmd(send, msg, args):
+    if args['nick'] not in ADMINS:
+        send("Nope.")
     else:
-        c.quit('Goodbye, Cruel World.')
+        args['connection'].quit('Goodbye, Cruel World.')
         sys.exit(0)

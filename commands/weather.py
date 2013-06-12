@@ -1,9 +1,8 @@
-from config import CHANNEL
 from urllib.request import urlopen
 import json
 
 
-def cmd(e, c, msg):
+def cmd(send, msg, args):
         # pfoley's api key -- do not abuse
         apikey = 'c685cf5a0aa40e4f'
         if not msg:
@@ -17,11 +16,10 @@ def cmd(e, c, msg):
         if 'current_observation' in data:
             data = data['current_observation']
         else:
-            c.privmsg(CHANNEL, "Invalid or Ambiguous Location")
+            send("Invalid or Ambiguous Location")
             return
         forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
-        c.privmsg(CHANNEL, "%s: Current weather for %s"
-                  % (e.source.nick, data['display_location']['full']))
+        send("Current weather for %s:" % data['display_location']['full'])
         current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
             data['weather'],
             data['temp_f'],
@@ -32,5 +30,6 @@ def cmd(e, c, msg):
             forecastdata['conditions'],
             forecastdata['high']['fahrenheit'],
             forecastdata['low']['fahrenheit'])
-        c.privmsg(CHANNEL, current)
-        c.privmsg(CHANNEL, forecast)
+        send(current)
+        send("Forecast for %s:" % data['display_location']['full'])
+        send(forecast)

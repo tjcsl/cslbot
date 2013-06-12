@@ -1,9 +1,7 @@
 import re
-from config import CHANNEL
 
 
-def cmd(e, c, msg):
+def cmd(send, msg, args):
         match = re.match('(.*) at (.*)', msg)
         if match:
-            c.privmsg(CHANNEL, '%s has been thrown at %s'
-                      % (match.group(1), match.group(2)))
+            send('%s has been thrown at %s' % (match.group(1), match.group(2)))

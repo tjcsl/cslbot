@@ -2,7 +2,7 @@ from config import ADMINS, CHANNEL
 import re
 import os
 from glob import glob
-from random import random, choice
+from random import random
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -49,7 +49,7 @@ class MyHandler():
         if count > limit:
             self.send(CHANNEL, "%s is a Bot Abuser" % nick)
             self.ignore(send, nick)
-            return False
+            return True
 
     def privmsg(self, c, e):
         nick = e.source.nick
@@ -81,12 +81,18 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 args = {}
-                if hasattr(mod, 'limit') and not self.abusecheck(send, nick, mod.limit):
+                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit) and nick not in ADMINS:
                     return
                 if hasattr(mod, 'args'):
                     for arg in mod.args:
                         if arg == 'channel':
                             args['channel'] = self.channel
+                        elif arg == 'connection':
+                            args['connection'] = self.connection
+                        elif arg == 'nick':
+                            args['nick'] = nick
+                        elif arg == 'modules':
+                            args['modules'] = self.modules
                         else:
                             raise Exception("Invalid Argument: " + arg)
                 mod.cmd(send, cmdargs, args)
@@ -94,25 +100,13 @@ class MyHandler():
 
         #special commands
         if cmd[0] == '!':
-            #FIXME: these should be split out
-            if cmd[1:] == 'help':
-                cmdlist = self.modules.keys()
-                cmdlist = ' !'.join([x for x in sorted(self.modules)])
-                send('Commands: !' + cmdlist)
-            if cmd[1:] == 'blame':
-                user = choice(self.channel.users())
-                if args:
-                    args = " for " + args
-                send("I blame " + user + args)
+            if cmd[1:] == 'reload':
+                c.privmsg(CHANNEL, "Aye Aye Capt'n")
+                for x in self.modules.values():
+                    imp.reload(x)
             # everything below this point requires admin
             if nick in ADMINS:
-                if cmd[1:] == 'reload':
-                    send("Aye Aye Capt'n")
-                    self.modules = self.loadmodules()
-                    for x in self.modules.values():
-                        imp.reload(x)
-                    return
-                elif cmd[1:] == 'cignore':
+                if cmd[1:] == 'cignore':
                     self.ignored = []
                     send("Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
@@ -164,11 +158,11 @@ class MyHandler():
             except URLError as ex:
                 # website does not exist
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
-                    return
+                    pass
                 else:
                     send('%s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
                 pass
         if target == "#msbob" and random() < 0.25:
-            self.modules['slogan'].cmd(e, c, {'args': 'MS BOB'})
+            self.modules['slogan'].cmd(send, 'MS BOB', {})
