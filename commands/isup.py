@@ -3,6 +3,8 @@ from urllib.request import urlopen
 
 
 def cmd(e, c, msg):
+    if not msg:
+        return
     nick = e.source.nick
     isup = urlopen("http://isup.me/%s" % msg.replace(' ', '%20')).read().decode('utf-8')
     if "looks down from here" in isup:
