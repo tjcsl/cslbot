@@ -31,15 +31,12 @@ class MyHandler():
             modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
-    def ignore(self, c, nick):
+    def ignore(self, send, nick):
         if nick not in self.ignored:
             self.ignored.append(nick)
-            self.send(CHANNEL, "Now igoring %s." % nick)
+            send("Now igoring %s." % nick)
 
-    def send(self, target, msg):
-        self.c.privmsg(target, msg)
-
-    def abusecheck(self, c, nick, limit):
+    def abusecheck(self, send, nick, limit):
         if nick not in self.abuselist:
             self.abuselist[nick] = [time.time()]
         else:
@@ -51,7 +48,7 @@ class MyHandler():
                 count = count + 1
         if count > limit:
             self.send(CHANNEL, "%s is a Bot Abuser" % nick)
-            self.ignore(c, nick)
+            self.ignore(send, nick)
             return False
 
     def privmsg(self, c, e):
@@ -65,12 +62,17 @@ class MyHandler():
     def pubmsg(self, c, e):
         self.handle_msg('pub', c, e)
 
+    #FIXME: remove this
+    def send(self, target, msg):
+        self.connection.privmsg(target, msg)
+
     def handle_msg(self, msgtype, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
         target = CHANNEL if msgtype == 'pub' else nick
+        send = lambda msg: self.connection.privmsg(target, msg)
         if nick not in ADMINS and nick in self.ignored:
-            print("Ignoring!")
+            send("Ignoring!" + nick)
             return
         # is this a command?
         cmd = msg.split()[0]
@@ -78,15 +80,16 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                if hasattr(mod, 'limit') and not self.abusecheck(c, nick, mod.limit):
+                args = {}
+                if hasattr(mod, 'limit') and not self.abusecheck(send, nick, mod.limit):
                     return
-                args = {'args': cmdargs, 'c': c, 'target': target}
-                for arg in mod.args:
-                    if arg == 'channel':
-                        args['channel'] = self.channel
-                    else:
-                        raise Exception("Invalid Argument: " + arg)
-                mod.cmd(c, args)
+                if hasattr(mod, 'args'):
+                    for arg in mod.args:
+                        if arg == 'channel':
+                            args['channel'] = self.channel
+                        else:
+                            raise Exception("Invalid Argument: " + arg)
+                mod.cmd(send, cmdargs, args)
                 return
 
         #special commands
@@ -95,25 +98,25 @@ class MyHandler():
             if cmd[1:] == 'help':
                 cmdlist = self.modules.keys()
                 cmdlist = ' !'.join([x for x in sorted(self.modules)])
-                self.send(target, 'Commands: !' + cmdlist)
+                send('Commands: !' + cmdlist)
             if cmd[1:] == 'blame':
                 user = choice(self.channel.users())
                 if args:
                     args = " for " + args
-                self.send(target, "I blame " + user + args)
+                send("I blame " + user + args)
             # everything below this point requires admin
             if nick in ADMINS:
                 if cmd[1:] == 'reload':
-                    self.send(target, "Aye Aye Capt'n")
+                    send("Aye Aye Capt'n")
                     self.modules = self.loadmodules()
                     for x in self.modules.values():
                         imp.reload(x)
                     return
                 elif cmd[1:] == 'cignore':
                     self.ignored = []
-                    self.send(target, "Ignore list cleared.")
+                    send("Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
-                    self.ignore(c, args)
+                    self.ignore(send, args)
                 #FIXME: CHANNEL is hardcoded in config.py
                 elif cmd[1:] == 'join':
                     c.join(args)
@@ -129,8 +132,7 @@ class MyHandler():
                 if match[1] == "++":
                     score = 1
                     if name == nick.lower():
-                        self.send(target, nick +
-                                  ": No self promotion! You lose 10 points.")
+                        send(nick + ": No self promotion! You lose 10 points.")
                         score = -10
                 else:
                     score = -1
@@ -158,13 +160,13 @@ class MyHandler():
                 # Wikipedia doesn't like the default User-Agent
                 req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 t = parse(urlopen(req, timeout=2))
-                self.send(target, 'Website Title: ' + t.find(".//title").text.strip())
+                send('Website Title: ' + t.find(".//title").text.strip())
             except URLError as ex:
                 # website does not exist
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     return
                 else:
-                    self.send(target, '%s: %s' % (type(ex), str(ex)))
+                    send('%s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
                 pass

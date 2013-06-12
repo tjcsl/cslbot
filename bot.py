@@ -17,7 +17,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
     def on_welcome(self, c, e):
         logging.info("Connected to server")
-        handler.c = c
+        self.handler.connection = c
         c.join(CHANNEL)
 
     def on_join(self, c, e):
@@ -31,6 +31,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
                 imp.reload(handler)
                 self.handler = handler.MyHandler()
                 self.handler.channel = self.channels[CHANNEL]
+                self.handler.connection = c
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))

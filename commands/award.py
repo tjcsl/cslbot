@@ -1,7 +1,4 @@
-from config import CHANNEL
-
-
-def cmd(e, c, msg):
+def cmd(send, msg, args):
         if not msg:
             return
-        c.privmsg(CHANNEL, msg + ': I hereby award you this gold medal.')
+        send(msg + ': I hereby award you this gold medal.')
