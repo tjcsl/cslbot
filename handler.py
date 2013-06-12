@@ -55,28 +55,22 @@ class MyHandler():
             return False
         return True
 
-    def privmsg(self, c, e):
-        nick = e.source.nick
-        if re.search(r'[^\s]+(--|++)'):
-            c.privmsg(nick, 'Hey, no points in private messages!')
-            return
-        self.pubmsg(self, c, e)
-
-    def pubmsg(self, c, e):
+    def handle_msg(self, msgtype, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
-        if nick not in ADMINS:
-            for nick in self.ignored:
-                print("Ignoring!")
-                return
+        target = CHANNEL if msgtype == 'pub' else nick
+        if nick not in ADMINS and nick in self.ignored:
+            print("Ignoring!")
+            return
         # is this a command?
         cmd = msg.split()[0]
-        args = msg[len(cmd)+1:]
+        cmdargs = msg[len(cmd)+1:]
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit'):
                     self.abusecheck(c, e, mod.limit)
+                args = {'args': cmdargs, 'target': target, 'channel': self.channel}
                 mod.cmd(e, c, args)
                 return
 
@@ -86,23 +80,23 @@ class MyHandler():
             if cmd[1:] == 'help':
                 cmdlist = self.modules.keys()
                 cmdlist = ' !'.join([x for x in sorted(self.modules)])
-                c.privmsg(CHANNEL, 'Commands: !' + cmdlist)
+                c.privmsg(target, 'Commands: !' + cmdlist)
             if cmd[1:] == 'blame':
                 user = choice(self.channel.users())
                 if args:
                     args = " for " + args
-                c.privmsg(CHANNEL, "I blame " + user + args)
+                c.privmsg(target, "I blame " + user + args)
             # everything below this point requires admin
             if nick in ADMINS:
                 if cmd[1:] == 'reload':
-                    c.privmsg(CHANNEL, "Aye Aye Capt'n")
+                    c.privmsg(target, "Aye Aye Capt'n")
                     self.modules = self.loadmodules()
                     for x in self.modules.values():
                         imp.reload(x)
                     return
                 elif cmd[1:] == 'cignore':
                     self.ignored = []
-                    c.privmsg(CHANNEL, "Ignore list cleared.")
+                    c.privmsg(target, "Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
                     self.ignore(c, args)
                 #FIXME: CHANNEL is hardcoded in config.py
@@ -120,7 +114,7 @@ class MyHandler():
                 if match[1] == "++":
                     score = 1
                     if name == nick.lower():
-                        c.privmsg(CHANNEL, nick +
+                        c.privmsg(target, nick +
                                   ": No self promotion! You lose 10 points.")
                         score = -10
                 else:
@@ -149,15 +143,26 @@ class MyHandler():
                 # Wikipedia doesn't like the default User-Agent
                 req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 t = parse(urlopen(req, timeout=2))
-                c.privmsg(CHANNEL, 'Website Title: ' + t.find(".//title").text.strip())
+                c.privmsg(target, 'Website Title: ' + t.find(".//title").text.strip())
             except URLError as ex:
                 # website does not exist
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     return
                 else:
-                    c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+                    c.privmsg(target, '%s: %s' % (type(ex), str(ex)))
             # page does not contain a title
             except AttributeError:
                 pass
-        if CHANNEL == "#msbob" and random() < 0.25:
-            self.modules['slogan'].cmd(e, c, 'MS BOB')
+        if target == "#msbob" and random() < 0.25:
+            self.modules['slogan'].cmd(e, c, {'args': 'MS BOB'})
+
+    def privmsg(self, c, e):
+        nick = e.source.nick
+        msg = e.arguments[0].strip()
+        if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
+            c.privmsg(nick, 'Hey, no points in private messages!')
+            return
+        self.handle_msg('priv', c, e)
+
+    def pubmsg(self, c, e):
+        self.handle_msg('pub', c, e)

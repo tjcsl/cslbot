@@ -23,16 +23,22 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_join(self, c, e):
         self.handler.channel = self.channels[CHANNEL]
 
-    def on_pubmsg(self, c, e):
+    def handle_msg(self, msgtype, c, e):
         try:
             command = e.arguments[0].strip().split()[0]
             if command == '!reload':
                 imp.reload(handler)
                 self.handler = handler.MyHandler()
                 self.handler.channel = self.channels[CHANNEL]
-            self.handler.pubmsg(c, e)
+            getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+
+    def on_pubmsg(self, c, e):
+        self.handle_msg('pubmsg', c, e)
+
+    def on_privmsg(self, c, e):
+        self.handle_msg('privmsg', c, e)
 
     def get_version(self):
         return "Ircbot -- 1.0"

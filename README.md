@@ -12,7 +12,7 @@ Install irc (https://pypi.python.org/pypi/irc) and lxml (https://pypi.python.org
 Adding Modules
 --------------
 To add a module place a <mod>.py file in the commands dir.  
-The file must contain a def cmd(e, c, msg): method definition.  
+The file must contain a def cmd(e, c, args): method definition.  
 The file will only be run if it is marked executable.
 
 
