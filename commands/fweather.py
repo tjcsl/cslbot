@@ -10,6 +10,6 @@ def cmd(e, c, msg):
             temp, remark, flavor = soup.findAll('p')
             c.privmsg(CHANNEL, str(temp.contents[0].contents[0])  + ' F? ' + str(remark.contents[0]))
         except ValueError:
-            c.privmsg(CHANNEL, 'No results for location ' + msg + '.')
+            c.privmsg(CHANNEL, 'NO FUCKING RESULTS.')
         except socket.timeout:
-            c.privmsg(CHANNEL, 'Connection timed out.')
+            c.privmsg(CHANNEL, 'CONNECTION TIMED THE FUCK OUT.')
