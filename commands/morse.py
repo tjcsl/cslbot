@@ -8,6 +8,6 @@ def cmd(send, msg, args):
                "9":"----.","0":"-----"," ":"   "}
     morse = ""
     for i in msg:
-        morse = morse + morse_codes[i] + " "
+        morse = morse + morse_codes[i.lower()] + " "
     send(morse)
 	
