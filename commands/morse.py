@@ -14,5 +14,5 @@ def cmd(send, msg, args):
         try:
             morse += morse_codes[i.lower()] + " "
         except Exception:
-            morse += "......... "
+            morse += "? "
     send(morse)
