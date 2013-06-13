@@ -1,6 +1,6 @@
 import time
 bold = '\u0002'
 def cmd(send, msg, args):
-        time = time.localtime()
-        send(bold + 'Date:' + bold + time[1] + '/' + time[2] + '/' + time[0] +
-             bold + 'Time' + bold + time[3] + ':' + time[4] + ':' + time[5])
+        ctime = time.localtime()
+        send(bold + 'Date:' + bold + ctime[1] + '/' + ctime[2] + '/' + ctime[0] +
+             bold + 'Time' + bold + ctime[3] + ':' + ctime[4] + ':' + ctime[5])
