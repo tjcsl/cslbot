@@ -1,0 +1,12 @@
+#!/bin/bash
+cd ~ircbot/bot
+if [ "$1" = "dev" ]; then
+	git checkout dev
+	git reset --hard origin/dev -q
+	git pull -q > /dev/null
+else
+	git checkout master
+	git reset --hard origin/master -q
+	git pull -q > /dev/null
+fi
+echo "Deploy completed successfully!"
