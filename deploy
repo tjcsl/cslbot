@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 cd ~ircbot/bot
 if [ "$1" = "dev" ]; then
 	git checkout dev
