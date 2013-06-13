@@ -1,4 +1,3 @@
-bold = '\u0002'
 def cmd(send, msg, args):
-        msg = bold + msg + bold
-        send(msg)
+    bold = '\u0002'
+    send(bold + msg + bold)
