@@ -1,4 +1,6 @@
 from random import randrange
+
+
 def cmd(send, msg, args):
         if not msg:
             return
