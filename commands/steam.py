@@ -5,22 +5,22 @@ import json
 
 
 def cmd(send, msg, args):
-    if STEAMENABLE:
-        try:
-            output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
-        except KeyError:
-            send("I don't have that player in my database.")
-            return
-        except:
-            send('Error retrieving API data.')
-            return
-        jsonOut = json.loads(output)
-        try:
-            finalarr = jsonOut['response']['players'][0]
-        except KeyError:
-            send('Invalid Steam ID in database?')
-            return
-        send('Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
+        if STEAMENABLE:
+            try:
+                output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
+            except KeyError:
+                send("I don't have that player in my database.")
+                return
+            except:
+                send('Error retrieving API data.')
+                return
+            jsonOut = json.loads(output)
+            try:
+                finalarr = jsonOut['response']['players'][0]
+            except KeyError:
+                send('Invalid Steam ID in database?')
+                return
+            send('Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
 
 
 def getStatus(vals):
