@@ -1,4 +1,4 @@
-from config import ADMINS, CHANNEL
+from config import ADMINS, CHANNEL, NICK, LOGFILE
 import re
 import os
 from glob import glob
@@ -19,6 +19,10 @@ class MyHandler():
         self.modules = self.loadmodules()
         self.abuselist = {}
         self.scorefile = os.path.dirname(__file__)+'/score'
+        self.log = open(LOGFILE, 'a')
+
+    def __del__(self):
+        self.log.close()
 
     def loadmodules(self):
         modulemap = {}
@@ -47,7 +51,7 @@ class MyHandler():
             if (time.time() - x) < 30:
                 count = count + 1
         if count > limit:
-            self.send(CHANNEL, "%s is a Bot Abuser" % nick)
+            self.send(CHANNEL, nick, "%s is a Bot Abuser" % nick)
             self.ignore(send, nick)
             return True
 
@@ -55,21 +59,31 @@ class MyHandler():
         nick = e.source.nick
         msg = e.arguments[0].strip()
         if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
-            self.send(nick, 'Hey, no points in private messages!')
+            self.send(nick, nick, 'Hey, no points in private messages!')
             return
         self.handle_msg('priv', c, e)
 
     def pubmsg(self, c, e):
         self.handle_msg('pub', c, e)
 
-    def send(self, target, msg):
+    def send(self, target, nick, msg):
+        self.do_log(nick, msg)
         self.connection.privmsg(target, msg)
+
+    def do_log(self, nick, msg):
+        if nick in self.channel.opers():
+            nick = '@' + nick
+        currenttime = time.strftime('%H:%M:%S')
+        log = '%s <%s> %s' % (currenttime, nick, msg)
+        self.log.write(log)
+        self.log.flush()
 
     def handle_msg(self, msgtype, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
+        self.do_log(nick, msg)
         target = CHANNEL if msgtype == 'pub' else nick
-        send = lambda msg: self.connection.privmsg(target, msg)
+        send = lambda msg: self.send(target, NICK, msg)
         if nick not in ADMINS and nick in self.ignored:
             send("Ignoring!" + nick)
             return
@@ -113,9 +127,9 @@ class MyHandler():
                 #FIXME: CHANNEL is hardcoded in config.py
                 elif cmd[1:] == 'join':
                     c.join(args)
-                    self.send(args, "Joined at the request of " + nick)
+                    self.send(args, nick, "Joined at the request of " + nick)
                 elif cmd[1:] == 'part':
-                    self.send(args, "Leaving at the request of " + nick)
+                    self.send(args, nick, "Leaving at the request of " + nick)
                     c.part(args)
         # ++ and --
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
