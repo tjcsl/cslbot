@@ -1,2 +1,5 @@
 def cmd(send, msg, args):
-    send("Yum!")
+    if not msg:
+        send("This tastes yummy!")
+    else:
+        send(msg.capitalize() + " tastes yummy!")

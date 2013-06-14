@@ -62,7 +62,6 @@ class MyHandler():
     def pubmsg(self, c, e):
         self.handle_msg('pub', c, e)
 
-    #FIXME: remove this
     def send(self, target, msg):
         self.connection.privmsg(target, msg)
 
@@ -81,8 +80,9 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 args = {}
-                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit) and nick not in ADMINS:
-                    return
+                if hasattr(mod, 'limit') and nick not in ADMINS:
+                    if self.abusecheck(send, nick, mod.limit):
+                        return
                 if hasattr(mod, 'args'):
                     for arg in mod.args:
                         if arg == 'channel':
@@ -96,7 +96,6 @@ class MyHandler():
                         else:
                             raise Exception("Invalid Argument: " + arg)
                 mod.cmd(send, cmdargs, args)
-                return
 
         #special commands
         if cmd[0] == '!':

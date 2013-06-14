@@ -21,7 +21,7 @@ def cmd(send, msg, args):
                 sorted_data = sorted(data, key=data.get)
                 if match.group(1) == 'high':
                     send('High Scores:')
-                    for x in reversed(range(0, 3)):
+                    for x in [-1, -2, -3]:
                         try:
                             name = sorted_data[x]
                             send("%s: %s" % (name, data[name]))
