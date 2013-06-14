@@ -1,3 +1,6 @@
+limit = 2
+
+
 def cmd(send, msg, args):
     if not msg:
         return
