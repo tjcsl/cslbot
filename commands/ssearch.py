@@ -8,7 +8,6 @@ def cmd(send, msg, args):
         except:
             send('Error opening id file!')
             return
-        matchlist = []
         for i in idfile.keys():
             match = i.lower().find(msg)
             if match != -1:

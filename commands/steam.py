@@ -1,11 +1,17 @@
 from config import STEAMENABLE, STEAMAPIKEY
-from steamids import idlist
 from urllib.request import urlopen
 import json
+import pickle
+
+
+def get_ids():
+    steamidfile = open('steamids.pickle', 'rb')
+    return pickle.load(steamidfile)
 
 
 def cmd(send, msg, args):
         if STEAMENABLE:
+            idlist = get_ids()
             try:
                 output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
             except KeyError:
