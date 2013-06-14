@@ -74,7 +74,7 @@ class MyHandler():
         if nick in self.channel.opers():
             nick = '@' + nick
         currenttime = time.strftime('%H:%M:%S')
-        log = '%s <%s> %s' % (currenttime, nick, msg)
+        log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.log.write(log)
         self.log.flush()
 
