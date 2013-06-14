@@ -7,4 +7,5 @@ def cmd(send, msg, args):
         msg += '\n'
         proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output = proc.communicate(msg.encode())[0]
-        send(output.decode().strip())
+        output = output.decode().strip().replace('\n', ' ')
+        send(output)
