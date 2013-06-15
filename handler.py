@@ -105,9 +105,8 @@ class MyHandler():
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 args = {}
-                if hasattr(mod, 'limit') and nick not in ADMINS:
-                    if self.abusecheck(send, nick, mod.limit):
-                        return
+                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit):
+                    return
                 if hasattr(mod, 'args'):
                     for arg in mod.args:
                         if arg == 'channel':
