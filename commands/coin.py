@@ -11,7 +11,7 @@ def cmd(send, msg, args):
         while int(msg) > len(flips):
             flip = choice(coin)
             if flip == 'heads':
-                headFlips++
+                headFlips = headFlips + 1
             elif flip == 'tail':
-                tailFlips++
+                tailFlips = tailFlips + 1
         send('The coins land on heads ' + headFlips + ' times and on tails ' + tailFlips + ' times.')
