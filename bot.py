@@ -35,7 +35,10 @@ class MyBot(irc.bot.SingleServerIRCBot):
             command = e.arguments[0].strip().split()[0]
             if command == '!reload':
                 imp.reload(handler)
+                # preserve log
+                log = list(self.handler.log)
                 self.handler = handler.MyHandler()
+                self.handler.log = log
                 self.handler.channel = self.channels[CHANNEL]
                 self.handler.connection = c
             getattr(self.handler, msgtype)(c, e)

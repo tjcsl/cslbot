@@ -19,10 +19,11 @@ class MyHandler():
         self.modules = self.loadmodules()
         self.abuselist = {}
         self.scorefile = os.path.dirname(__file__)+'/score'
-        self.log = open(LOGFILE, 'a')
+        self.logfile = open(LOGFILE, 'a')
+        self.log = []
 
     def __del__(self):
-        self.log.close()
+        self.logfile.close()
 
     def loadmodules(self):
         modulemap = {}
@@ -74,9 +75,17 @@ class MyHandler():
         if nick in self.channel.opers():
             nick = '@' + nick
         currenttime = time.strftime('%H:%M:%S')
+        day = int(time.strftime('%d'))
+        if len(self.log) > 0:
+            if day != self.log[-1][0]:
+                log = time.strftime('New Day: %a, %b %d, %Y\n')
+                self.log.append([day, log])
+                self.logfile.write(log)
+                self.logfile.flush()
         log = '%s <%s> %s\n' % (currenttime, nick, msg)
-        self.log.write(log)
-        self.log.flush()
+        self.log.append([day, log])
+        self.logfile.write(log)
+        self.logfile.flush()
 
     def handle_msg(self, msgtype, c, e):
         nick = e.source.nick
