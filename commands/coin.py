@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 
 
 def cmd(send, msg, args):
