@@ -8,8 +8,10 @@ def cmd(send, msg, args):
     elif msg.isdigit():
         headFilps = 0
         tailFlips = 0
-        while int(msg) > headFlips + tailFlips:
+        flips = 0
+        while int(msg) > flips:
             flip = choice(coin)
+            flips = flips + 1
             if flip == 'heads':
                 headFlips = headFlips + 1
             elif flip == 'tail':
