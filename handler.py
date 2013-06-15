@@ -48,8 +48,8 @@ class MyHandler():
             self.abuselist[nick].append(time.time())
         count = 0
         for x in self.abuselist[nick]:
-            # 30 seconds - arbitrary cuttoff
-            if (time.time() - x) < 30:
+            # 60 seconds - arbitrary cuttoff
+            if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
             self.send(CHANNEL, nick, "%s is a Bot Abuser" % nick)

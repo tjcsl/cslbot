@@ -1,5 +1,7 @@
 import re
 
+limit = 1
+
 
 def cmd(send, msg, args):
         match = re.match('([a-zA-Z0-9]+) (.*)', msg)

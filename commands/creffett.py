@@ -1,4 +1,4 @@
-limit = 2
+limit = 1
 
 
 def cmd(send, msg, args):
