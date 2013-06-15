@@ -1,12 +1,12 @@
 from random import choice
-coin = ['heads', 'tails']
-flips = []
 
 
 def cmd(send, msg, args):
-        if not msg:
-                send('The coin lands on...' + choice(coin) + '.')
-        else:
-                while msg < len(flips):
-                        flips.append(choice(coin))
-                send('The coins land on...' + flips + '.')
+    coin = ['heads', 'tails']
+    if not msg:
+        send('The coin lands on... ' + choice(coin) + '.')
+    elif msg.isdigit():
+        flips = []
+        while int(msg) > len(flips):
+            flips.append(choice(coin))
+        send('The coins land on... ' + ', '.join(flips) + '.')
