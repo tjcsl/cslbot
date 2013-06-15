@@ -7,9 +7,9 @@ def cmd(send, msg, args):
         send('The coin lands on... ' + choice(coin) + '.')
     else:
         flips = 0
+        headFlips = 0
+        tailFlips = 0
         while int(msg) > flips:
-            headFlips = 0
-            tailFlips = 1
             flip = choice(coin)
             flips = flips + 1
             if flip == 'heads':
