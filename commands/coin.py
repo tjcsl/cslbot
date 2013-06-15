@@ -5,11 +5,11 @@ def cmd(send, msg, args):
     coin = ['heads', 'tails']
     if not msg:
         send('The coin lands on... ' + choice(coin) + '.')
-    elif msg.isdigit():
-        headFilps = 0
-        tailFlips = 0
+    else:
         flips = 0
         while int(msg) > flips:
+            headFlips = 0
+            tailFlips = 1
             flip = choice(coin)
             flips = flips + 1
             if flip == 'heads':
