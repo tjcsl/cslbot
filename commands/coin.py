@@ -16,4 +16,4 @@ def cmd(send, msg, args):
                 headFlips = headFlips + 1
             elif flip == 'tail':
                 tailFlips = tailFlips + 1
-        send('The coins land on heads ' + headFlips + ' times and on tails ' + tailFlips + ' times.')
+        send('The coins land on heads ' + str(headFlips) + ' times and on tails ' + str(tailFlips) + ' times.')
