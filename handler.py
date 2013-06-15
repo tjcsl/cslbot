@@ -125,7 +125,7 @@ class MyHandler():
         #special commands
         if cmd[0] == '!':
             if cmd[1:] == 'reload':
-                c.privmsg(CHANNEL, "Aye Aye Capt'n")
+                send("Aye Aye Capt'n")
                 for x in self.modules.values():
                     imp.reload(x)
             # everything below this point requires admin
