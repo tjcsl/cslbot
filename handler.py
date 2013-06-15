@@ -82,6 +82,8 @@ class MyHandler():
                 self.log.append([day, log])
                 self.logfile.write(log)
                 self.logfile.flush()
+        # strip ctrl chars
+        msg = ''.join(c for c in msg if ord(c) >= 32)
         log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.log.append([day, log])
         self.logfile.write(log)
