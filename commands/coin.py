@@ -8,5 +8,5 @@ def cmd(send, msg, args):
                 send('The coin lands on...' + choice(coin) + '.')
         else:
                 while msg < len(flips):
-                        choice(coin).append
+                        flips.append(choice(coin))
                 send('The coins land on...' + flips + '.')
