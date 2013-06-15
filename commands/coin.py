@@ -6,14 +6,6 @@ def cmd(send, msg, args):
     if not msg:
         send('The coin lands on... ' + choice(coin) + '.')
     else:
-        flips = 0
-        headFlips = 0
-        tailFlips = 0
-        while int(msg) > flips:
-            flip = choice(coin)
-            flips = flips + 1
-            if flip == 'heads':
-                headFlips = headFlips + 1
-            elif flip == 'tail':
-                tailFlips = tailFlips + 1
+        headFlips = randint(int(msg))
+        tailFlips = int(msg) - headFlips
         send('The coins land on heads ' + str(headFlips) + ' times and on tails ' + str(tailFlips) + ' times.')
