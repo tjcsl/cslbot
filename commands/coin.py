@@ -6,7 +6,12 @@ def cmd(send, msg, args):
     if not msg:
         send('The coin lands on... ' + choice(coin) + '.')
     elif msg.isdigit():
-        flips = []
+        headFilps = 0
+        tailFlips = 0
         while int(msg) > len(flips):
-            flips.append(choice(coin))
-        send('The coins land on... ' + ', '.join(flips) + '.')
+            flip = choice(coin)
+            if flip == 'heads':
+                headFlips++
+            elif flip == 'tail':
+                tailFlips++
+        send('The coins land on heads ' + headFlips + ' times and on tails ' + tailFlips + ' times.')
