@@ -72,6 +72,8 @@ class MyHandler():
         self.connection.privmsg(target, msg)
 
     def do_log(self, nick, msg):
+        if type(msg) != str:
+            raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         if nick in self.channel.opers():
             nick = '@' + nick
         currenttime = time.strftime('%H:%M:%S')
@@ -135,6 +137,8 @@ class MyHandler():
                     send("Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
                     self.ignore(send, cmdargs)
+                elif cmd[1:] == 'showignore':
+                    send(str(self.ignored))
                 elif cmd[1:] == 'join':
                     if not cmdargs:
                         return
