@@ -52,7 +52,7 @@ class MyHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            self.send(CHANNEL, nick, "%s is a Bot Abuser" % nick)
+            self.send(CHANNEL, nick, "\x02%s\x02 is a Bot Abuser and is now ignored." % nick)
             self.ignore(send, nick)
             return True
 
@@ -96,7 +96,7 @@ class MyHandler():
         target = CHANNEL if msgtype == 'pub' else nick
         send = lambda msg: self.send(target, NICK, msg)
         if nick not in ADMINS and nick in self.ignored:
-            send("Ignoring!" + nick)
+            #send("Ignoring!" + nick)
             return
         # is this a command?
         cmd = msg.split()[0]
