@@ -93,7 +93,7 @@ class MyHandler():
         nick = e.source.nick
         msg = e.arguments[0].strip()
         self.do_log(nick, msg)
-        target = CHANNEL if msgtype == 'pub' else nick
+        target = e.target if msgtype == 'pub' else nick
         send = lambda msg: self.send(target, NICK, msg)
         if nick not in ADMINS and nick in self.ignored:
             send("Ignoring!" + nick)
@@ -136,13 +136,20 @@ class MyHandler():
                     send("Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
                     self.ignore(send, cmdargs)
-                #FIXME: CHANNEL is hardcoded in config.py
                 elif cmd[1:] == 'join':
+                    if not cmdargs:
+                        return
                     if cmdargs[0] != '#':
                         cmdargs = '#' + cmdargs
                     c.join(cmdargs)
                     self.send(cmdargs, nick, "Joined at the request of " + nick)
                 elif cmd[1:] == 'part':
+                    if not cmdargs:
+                        # don't leave the primary channel
+                        if target == CHANNEL:
+                            return
+                        else:
+                            cmdargs = target
                     if cmdargs[0] != '#':
                         cmdargs = '#' + cmdargs
                     self.send(cmdargs, nick, "Leaving at the request of " + nick)
