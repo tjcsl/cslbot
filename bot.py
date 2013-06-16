@@ -4,7 +4,6 @@ import imp
 import irc.bot
 from config import CHANNEL, NICK, NICKPASS, HOST
 import handler
-import time
 
 
 class MyBot(irc.bot.SingleServerIRCBot):
@@ -17,18 +16,16 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler = handler.MyHandler()
 
     def on_welcome(self, c, e):
-        logging.info("Connected to server")
+        logging.info("Connected to server " + HOST)
         self.handler.connection = c
         c.join(CHANNEL)
 
     def on_join(self, c, e):
-        logging.info("Joined channel")
+        logging.info("Joined channel " + e.target)
         self.handler.channel = self.channels[CHANNEL]
 
     def on_part(self, c, e):
-        logging.info("Parted channel")
-        time.sleep(5)
-        c.join(CHANNEL)
+        logging.info("Parted channel " + e.target)
 
     def handle_msg(self, msgtype, c, e):
         try:

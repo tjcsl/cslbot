@@ -155,6 +155,9 @@ class MyHandler():
                             cmdargs = target
                     if cmdargs[0] != '#':
                         cmdargs = '#' + cmdargs
+                    # don't leave the primary channel
+                    if cmdargs == CHANNEL:
+                        return
                     self.send(cmdargs, nick, "Leaving at the request of " + nick)
                     c.part(cmdargs)
         # ++ and --
