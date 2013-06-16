@@ -117,6 +117,8 @@ class MyHandler():
                             args['nick'] = nick
                         elif arg == 'modules':
                             args['modules'] = self.modules
+                        elif arg == 'ignore':
+                            args['ignore'] = lambda nick: self.ignore(send, nick)
                         else:
                             raise Exception("Invalid Argument: " + arg)
                 mod.cmd(send, cmdargs, args)
