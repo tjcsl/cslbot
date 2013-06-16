@@ -133,14 +133,18 @@ class MyHandler():
                     self.ignored = []
                     send("Ignore list cleared.")
                 elif cmd[1:] == 'ignore':
-                    self.ignore(send, args)
+                    self.ignore(send, cmdargs)
                 #FIXME: CHANNEL is hardcoded in config.py
                 elif cmd[1:] == 'join':
-                    c.join(args)
-                    self.send(args, nick, "Joined at the request of " + nick)
+                    if cmdargs[0] != '#':
+                        cmdargs = '#' + cmdargs
+                    c.join(cmdargs)
+                    self.send(cmdargs, nick, "Joined at the request of " + nick)
                 elif cmd[1:] == 'part':
-                    self.send(args, nick, "Leaving at the request of " + nick)
-                    c.part(args)
+                    if cmdargs[0] != '#':
+                        cmdargs = '#' + cmdargs
+                    self.send(cmdargs, nick, "Leaving at the request of " + nick)
+                    c.part(cmdargs)
         # ++ and --
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if matches:
