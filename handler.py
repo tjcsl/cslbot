@@ -96,7 +96,6 @@ class MyHandler():
         target = e.target if msgtype == 'pub' else nick
         send = lambda msg: self.send(target, NICK, msg)
         if nick not in ADMINS and nick in self.ignored:
-            send("Ignoring!" + nick)
             return
         # is this a command?
         cmd = msg.split()[0]
