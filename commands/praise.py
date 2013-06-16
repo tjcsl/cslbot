@@ -16,4 +16,4 @@ def cmd(send, msg, args):
     praise = gen_praise(msg)
     while not praise:
         praise = gen_praise(msg)
-    send(msg + ': ' + slogan)
+    send(msg + ': ' + praise)
