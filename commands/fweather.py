@@ -8,8 +8,8 @@ def cmd(send, msg, args):
             html = urlopen('http://thefuckingweather.com/?where=' + msg.replace(' ', '%20'), timeout=5).read()
             soup = BeautifulSoup(html)
             temp, remark, flavor = soup.findAll('p')
-            send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("UCKING", "!@#$%^"))
+            send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
         except ValueError:
-            send('NO !@#$%^& RESULTS.')
+            send('NO FSCKING RESULTS.')
         except socket.timeout:
-            send('CONNECTION TIMED THE !@#$ OUT.')
+            send('CONNECTION TIMED THE FSCK OUT.')
