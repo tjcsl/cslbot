@@ -2,7 +2,7 @@ args = ['nick', 'ignore']
 
 
 def cmd(send, msg, args):
-    if args['nick'] != 'creffett':
+    if not args['nick'].startswith('creffett'):
         send("You're not creffett!")
         args['ignore'](args['nick'])
         return
