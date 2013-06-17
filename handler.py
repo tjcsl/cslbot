@@ -73,8 +73,10 @@ class MyHandler():
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         if target[0] == "#":
-            if nick in self.channels[target].opers():
-                nick = '@' + nick
+            try: 
+                if nick in self.channels[target].opers():
+                    nick = '@' + nick
+            except: pass
         currenttime = time.strftime('%H:%M:%S')
         day = int(time.strftime('%d'))
         if len(self.log) > 0:
