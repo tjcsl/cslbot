@@ -63,7 +63,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
     bot.start()
 
