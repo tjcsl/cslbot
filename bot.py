@@ -1,8 +1,10 @@
 #!/usr/bin/python3 -OO
 import logging
+import traceback
 import imp
 import irc.bot
 from config import CHANNEL, NICK, NICKPASS, HOST
+from os.path import basename
 import handler
 
 
@@ -21,10 +23,11 @@ class MyBot(irc.bot.SingleServerIRCBot):
         c.join(CHANNEL)
 
     def on_join(self, c, e):
+        self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
-        self.handler.channel = self.channels[CHANNEL]
 
     def on_part(self, c, e):
+        del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
     def handle_msg(self, msgtype, c, e):
@@ -35,14 +38,19 @@ class MyBot(irc.bot.SingleServerIRCBot):
                 # preserve log and ignored list
                 log = list(self.handler.log)
                 ignored = list(self.handler.ignored)
+                channels = dict(self.handler.channels)
                 self.handler = handler.MyHandler()
                 self.handler.log = log
                 self.handler.ignored = ignored
-                self.handler.channel = self.channels[CHANNEL]
+                self.handler.channels = channels
                 self.handler.connection = c
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
-            c.privmsg(CHANNEL, '%s: %s' % (type(ex), str(ex)))
+            trace = traceback.extract_tb(ex.__traceback__)[-1]
+            trace = [basename(trace[0]), trace[1]]
+            name = type(ex).__name__
+            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
+            c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
     def on_pubmsg(self, c, e):
         self.handle_msg('pubmsg', c, e)
@@ -55,9 +63,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
     bot.start()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     main()

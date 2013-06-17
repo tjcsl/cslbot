@@ -15,25 +15,23 @@ import socket
 
 class MyHandler():
     def __init__(self):
+        self.log = []
         self.ignored = []
-        self.modules = self.loadmodules()
+        self.channels = {}
         self.abuselist = {}
+        self.modules = self.loadmodules()
         self.scorefile = os.path.dirname(__file__)+'/score'
         self.logfile = open(LOGFILE, 'a')
-        self.log = []
 
     def __del__(self):
         self.logfile.close()
 
     def loadmodules(self):
         modulemap = {}
-        cmds = []
         for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
             if os.access(f, os.X_OK):
                 cmd = os.path.basename(f).split('.')[0]
-                cmds.append(cmd)
-        for cmd in cmds:
-            modulemap[cmd] = importlib.import_module("commands."+cmd)
+                modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
     def ignore(self, send, nick):
@@ -68,14 +66,15 @@ class MyHandler():
         self.handle_msg('pub', c, e)
 
     def send(self, target, nick, msg):
-        self.do_log(nick, msg)
+        self.do_log(target, nick, msg)
         self.connection.privmsg(target, msg)
 
-    def do_log(self, nick, msg):
+    def do_log(self, target, nick, msg):
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
-        if nick in self.channel.opers():
-            nick = '@' + nick
+        if target[0] == "#":
+            if nick in self.channels[target].opers():
+                nick = '@' + nick
         currenttime = time.strftime('%H:%M:%S')
         day = int(time.strftime('%d'))
         if len(self.log) > 0:
@@ -91,11 +90,30 @@ class MyHandler():
         self.logfile.write(log)
         self.logfile.flush()
 
+    def handle_args(self, modargs, send, nick):
+            args = {}
+            for arg in modargs:
+                if arg == 'channels':
+                    args['channels'] = self.channels
+                elif arg == 'connection':
+                    args['connection'] = self.connection
+                elif arg == 'nick':
+                    args['nick'] = nick
+                elif arg == 'modules':
+                    args['modules'] = self.modules
+                elif arg == 'scorefile':
+                    args['scorefile'] = self.scorefile
+                elif arg == 'ignore':
+                    args['ignore'] = lambda nick: self.ignore(send, nick)
+                else:
+                    raise Exception("Invalid Argument: " + arg)
+            return args
+
     def handle_msg(self, msgtype, c, e):
         nick = e.source.nick
         msg = e.arguments[0].strip()
-        self.do_log(nick, msg)
         target = e.target if msgtype == 'pub' else nick
+        self.do_log(target, nick, msg)
         send = lambda msg: self.send(target, NICK, msg)
         if nick not in ADMINS and nick in self.ignored:
             return
@@ -105,23 +123,9 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                args = {}
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit):
                     return
-                if hasattr(mod, 'args'):
-                    for arg in mod.args:
-                        if arg == 'channel':
-                            args['channel'] = self.channel
-                        elif arg == 'connection':
-                            args['connection'] = self.connection
-                        elif arg == 'nick':
-                            args['nick'] = nick
-                        elif arg == 'modules':
-                            args['modules'] = self.modules
-                        elif arg == 'ignore':
-                            args['ignore'] = lambda nick: self.ignore(send, nick)
-                        else:
-                            raise Exception("Invalid Argument: " + arg)
+                args = self.handle_args(mod.args, send, nick) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
 
         #special commands

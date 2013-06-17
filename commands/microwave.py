@@ -4,7 +4,7 @@ import sys
 from config import CHANNEL, ADMINS
 
 limit = 5
-args = ['nick', 'channel', 'connection']
+args = ['nick', 'channels', 'connection']
 
 
 def do_nuke(args, target):
@@ -60,7 +60,8 @@ def cmd(send, msg, args):
                 if nick not in ADMINS:
                     send("I'm sorry. Nukes are a admin-only feature")
                     return
-                elif target not in args['channel'].users():
+                #FIXME: don't hardcode the primary channel
+                elif target not in args['channels'][CHANNEL].users():
                     send("I'm sorry. Anonymous Nuking is not allowed")
                     return
 
