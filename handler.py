@@ -209,7 +209,7 @@ class MyHandler():
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     pass
                 else:
-                    send('%s: %s' % (type(ex), str(ex)))
+                    send('%s: %s' % (type(ex).__name__, str(ex)))
             # page does not contain a title
             except AttributeError:
                 pass
