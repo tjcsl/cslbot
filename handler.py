@@ -1,4 +1,4 @@
-from config import ADMINS, CHANNEL, NICK, LOGFILE
+from config import ADMINS, CHANNEL, NICK, LOGDIR
 import re
 import os
 from glob import glob
@@ -15,16 +15,18 @@ import socket
 
 class MyHandler():
     def __init__(self):
-        self.log = []
         self.ignored = []
+        self.logs = {CHANNEL: [], 'private': []}
         self.channels = {}
         self.abuselist = {}
         self.modules = self.loadmodules()
         self.scorefile = os.path.dirname(__file__)+'/score'
-        self.logfile = open(LOGFILE, 'a')
+        self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
+                         'private': open("%s/private.log" % LOGDIR, "a")}
 
     def __del__(self):
-        self.logfile.close()
+        for log in self.logfiles.values():
+            log.close()
 
     def loadmodules(self):
         modulemap = {}
@@ -73,25 +75,24 @@ class MyHandler():
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         if target[0] == "#":
-            try:
-                if nick in self.channels[target].opers():
+            if target in self.channels and nick in self.channels[target].opers():
                     nick = '@' + nick
-            except:
-                pass
+        else:
+            target = 'private'
         currenttime = time.strftime('%H:%M:%S')
         day = int(time.strftime('%d'))
-        if len(self.log) > 0:
-            if day != self.log[-1][0]:
+        if len(self.logs[target]) > 0:
+            if day != self.logs[target][-1][0]:
                 log = time.strftime('New Day: %a, %b %d, %Y\n')
-                self.log.append([day, log])
-                self.logfile.write(log)
-                self.logfile.flush()
+                self.logs[target].append([day, log])
+                self.logfiles[target].write(log)
+                self.logfiles[target].flush()
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         log = '%s <%s> %s\n' % (currenttime, nick, msg)
-        self.log.append([day, log])
-        self.logfile.write(log)
-        self.logfile.flush()
+        self.logs[target].append([day, log])
+        self.logfiles[target].write(log)
+        self.logfiles[target].flush()
 
     def handle_args(self, modargs, send, nick):
             args = {}
@@ -152,6 +153,8 @@ class MyHandler():
                     if cmdargs[0] != '#':
                         cmdargs = '#' + cmdargs
                     c.join(cmdargs)
+                    self.logs[cmdargs] = []
+                    self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, CHANNEL), "a")
                     self.send(cmdargs, nick, "Joined at the request of " + nick)
                 elif cmd[1:] == 'part':
                     if not cmdargs:

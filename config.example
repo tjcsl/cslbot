@@ -5,4 +5,4 @@ CHANNEL = '#tjhsst'
 ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk', 'TechFilmer', 'csssuf']
 STEAMAPIKEY = ''
 STEAMENABLE = False
-LOGFILE = '/var/log/irc/bot.log'
+LOGDIR = '/var/log/irc/'
