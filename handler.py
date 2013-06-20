@@ -205,8 +205,11 @@ class MyHandler():
                     url = 'http://' + url
                 # Wikipedia doesn't like the default User-Agent
                 req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                t = parse(urlopen(req, timeout=3))
-                send('Website Title: ' + t.find(".//title").text.strip())
+                html = parse(urlopen(req, timeout=3))
+                title = html.find(".//title").text.strip()
+                # strip unicode
+                title = title.encode('ascii', 'ignore').decode()
+                send('Website Title: ' + title)
             except URLError as ex:
                 # website does not exist
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
