@@ -31,4 +31,4 @@ def cmd(send, msg, args):
             forecastdata['high']['fahrenheit'],
             forecastdata['low']['fahrenheit'])
         send(current)
-        send("Forecast:" + forecast)
+        send("Forecast: " + forecast)
