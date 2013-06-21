@@ -124,7 +124,6 @@ class MyHandler():
         # is this a command?
         cmd = msg.split()[0]
         cmdargs = msg[len(cmd)+1:]
-        #send(cmd)
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
