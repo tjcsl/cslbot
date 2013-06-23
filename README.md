@@ -27,6 +27,7 @@ Steam API key as STEAMAPIKEY in config.py.
 
 Credits
 -------
+Licensed under the GPL v2  
 Created by fwilson (Fox Wilson, Class of 2016).  
 Rewritten by pfoley (Peter Foley, Class of 2013).  
 Improved by sdamashek (Samuel Damashek, Class of 2017).  
