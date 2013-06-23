@@ -94,7 +94,8 @@ class MyHandler():
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
 
-    def handle_args(self, modargs, send, nick):
+    #FIXME: do some kind of mapping instead of a elif tree
+    def handle_args(self, modargs, send, nick, target):
             args = {}
             for arg in modargs:
                 if arg == 'channels':
@@ -107,6 +108,10 @@ class MyHandler():
                     args['modules'] = self.modules
                 elif arg == 'scorefile':
                     args['scorefile'] = self.scorefile
+                elif arg == 'logs':
+                    args['logs'] = self.logs
+                elif arg == 'target':
+                    args['target'] = target if target[0] == "#" else "private"
                 elif arg == 'ignore':
                     args['ignore'] = lambda nick: self.ignore(send, nick)
                 else:
@@ -123,13 +128,16 @@ class MyHandler():
             return
         # is this a command?
         cmd = msg.split()[0]
+        # handle !s/a/b/
+        if cmd[:2] == '!s':
+            cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd)+1:]
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit):
                     return
-                args = self.handle_args(mod.args, send, nick) if hasattr(mod, 'args') else {}
+                args = self.handle_args(mod.args, send, nick, target) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
 
         #special commands
@@ -215,7 +223,7 @@ class MyHandler():
                 if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                     pass
                 else:
-                    send('%s: %s' % (type(ex).__name__, str(ex)))
+                    send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
             # page does not contain a title
             except AttributeError:
                 pass
