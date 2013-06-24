@@ -1,8 +1,6 @@
 import re
 from urllib.request import urlopen
 
-limit = 5
-
 
 def gen_praise(msg):
     html = urlopen('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG', timeout=1).read().decode()
