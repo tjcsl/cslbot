@@ -24,10 +24,6 @@ class MyHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
 
-    def __del__(self):
-        for log in self.logfiles.values():
-            log.close()
-
     def loadmodules(self):
         modulemap = {}
         for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
@@ -160,6 +156,9 @@ class MyHandler():
                         return
                     if cmdargs[0] != '#':
                         cmdargs = '#' + cmdargs
+                    if cmdargs in self.channels:
+                        send("%s is already a member of %s" % (NICK, cmdargs))
+                        return
                     c.join(cmdargs)
                     self.logs[cmdargs] = []
                     self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, cmdargs), "a")
@@ -168,6 +167,7 @@ class MyHandler():
                     if not cmdargs:
                         # don't leave the primary channel
                         if target == CHANNEL:
+                            send("%s must have a home." % NICK)
                             return
                         else:
                             cmdargs = target
@@ -175,6 +175,7 @@ class MyHandler():
                         cmdargs = '#' + cmdargs
                     # don't leave the primary channel
                     if cmdargs == CHANNEL:
+                        send("%s must have a home." % NICK)
                         return
                     self.send(cmdargs, nick, "Leaving at the request of " + nick)
                     c.part(cmdargs)
