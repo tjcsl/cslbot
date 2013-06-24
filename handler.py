@@ -235,7 +235,7 @@ class MyHandler():
                     self.ignored = []
                     send("Ignore list cleared.")
                 elif cmd[1:] == 'cabuse':
-                    self.abuselist = []
+                    self.abuselist = {}
                     send("Abuse list cleared.")
                 elif cmd[1:] == 'ignore':
                     self.ignore(send, cmdargs)
