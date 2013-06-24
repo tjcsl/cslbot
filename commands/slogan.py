@@ -1,8 +1,6 @@
 import re
 from urllib.request import urlopen
 
-limit = 5
-
 
 def gen_slogan(msg):
         msg = msg.replace(' ', '%20')
