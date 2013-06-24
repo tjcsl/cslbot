@@ -162,7 +162,7 @@ class MyHandler():
                         cmdargs = '#' + cmdargs
                     c.join(cmdargs)
                     self.logs[cmdargs] = []
-                    self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, CHANNEL), "a")
+                    self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, cmdargs), "a")
                     self.send(cmdargs, nick, "Joined at the request of " + nick)
                 elif cmd[1:] == 'part':
                     if not cmdargs:
