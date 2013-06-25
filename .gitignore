@@ -4,4 +4,4 @@ __pycache__
 __init__.py
 *.sw?
 commands/__init__.py
-doc/output
+gh-pages
