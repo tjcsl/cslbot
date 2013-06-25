@@ -5,6 +5,6 @@ IrcBot
    :maxdepth: 4
 
    bot
+   commands
    config
    handler
-   commands
