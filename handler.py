@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from config import ADMINS, CHANNEL, NICK, LOGDIR
 import re
 import os
