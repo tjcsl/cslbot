@@ -155,13 +155,15 @@ class MyHandler():
             url = match.group(1)
             if not url.startswith('http'):
                 url = 'http://' + url
+            ret = lambda msg: msg
+            shorturl = self.modules['short'].cmd(ret, url, {})
             # Wikipedia doesn't like the default User-Agent
             req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             html = parse(urlopen(req, timeout=3))
             title = html.find(".//title").text.strip()
             # strip unicode
             title = title.encode('ascii', 'ignore').decode().replace('\n', ' ')
-            send('Website Title: ' + title)
+            send('** %s - %s' % (title, shorturl))
         except URLError as ex:
             # website does not exist
             if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
