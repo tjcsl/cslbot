@@ -4,6 +4,11 @@ ircbot
 The bot that inhabits the #tjhsst channel on freenode.
 
 
+
+Documentation
+-------------
+See http://fwilson42.github.io/ircbot for api docs.
+
 Setup
 -----
 Copy config.example to config.py and change values as needed.  
