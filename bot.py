@@ -39,6 +39,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
     def do_reload(self, c):
         """The reloading magic
+
         First, reload handler.py.
         Then make copies of all the handler data we want to keep.
         Create a new handler and restore all the data.
