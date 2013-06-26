@@ -18,34 +18,55 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler = handler.MyHandler()
 
     def on_welcome(self, c, e):
+        """Do setup when connected to server.
+
+        Pass the connection to handler.
+        Join the primary channel.
+        """
         logging.info("Connected to server " + HOST)
         self.handler.connection = c
         c.join(CHANNEL)
 
     def on_join(self, c, e):
+        """Add the joined channel to the channel list."""
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
 
     def on_part(self, c, e):
+        """Cleanup when leaving a channel."""
         del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
+    def do_reload(self, c):
+        """The reloading magic
+        First, reload handler.py.
+        Then make copies of all the handler data we want to keep.
+        Create a new handler and restore all the data.
+        """
+        imp.reload(handler)
+        # preserve logs, ignored list, and channel list
+        ignored = list(self.handler.ignored)
+        logs = dict(self.handler.logs)
+        logfiles = dict(self.handler.logfiles)
+        channels = dict(self.handler.channels)
+        self.handler = handler.MyHandler()
+        self.handler.ignored = ignored
+        self.handler.logs = logs
+        self.handler.logfiles = logfiles
+        self.handler.channels = channels
+        self.handler.connection = c
+
     def handle_msg(self, msgtype, c, e):
+        """Handles all messages.
+
+        If a exception is thrown, catch it and display a nice traceback instead of crashing.
+        If we receive a !reload command, do the reloading magic.
+        Call the appropriate handler method for processing.
+        """
         try:
             command = e.arguments[0].strip().split()[0]
             if command == '!reload':
-                imp.reload(handler)
-                # preserve logs, ignored list, and channel list
-                ignored = list(self.handler.ignored)
-                logs = dict(self.handler.logs)
-                logfiles = dict(self.handler.logfiles)
-                channels = dict(self.handler.channels)
-                self.handler = handler.MyHandler()
-                self.handler.ignored = ignored
-                self.handler.logs = logs
-                self.handler.logfiles = logfiles
-                self.handler.channels = channels
-                self.handler.connection = c
+                self.do_reload(c)
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
@@ -55,19 +76,29 @@ class MyBot(irc.bot.SingleServerIRCBot):
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
     def on_pubmsg(self, c, e):
+        """Pass public messages to the handler."""
         self.handle_msg('pubmsg', c, e)
 
     def on_privmsg(self, c, e):
+        """Pass private messages to the handler."""
         self.handle_msg('privmsg', c, e)
 
     def on_action(self, c, e):
+        """Pass actions to the handler."""
         self.handle_msg('action', c, e)
 
     def get_version(self):
+        """Get the version."""
         return "Ircbot -- 1.0"
 
 
 def main():
+    """The bot's main entry point.
+
+    Setup logging.
+    When troubleshooting, it may help to change the INFO to DEBUG.
+    Initialize the bot and start processing messages.
+    """
     logging.basicConfig(level=logging.INFO)
     bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
     bot.start()
