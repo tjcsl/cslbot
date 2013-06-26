@@ -8,6 +8,6 @@ def cmd(send, msg, args):
             try:
                 answer = subprocess.check_output(['wtf', match.group(1)],
                                                  stderr=subprocess.STDOUT)
-                send(answer.decode().rstrip().replace('\n', ' or '))
+                send(answer.decode().rstrip().replace('\n', ' or ').replace('fuck', 'fsck'))
             except subprocess.CalledProcessError as ex:
                 send(ex.output.decode().rstrip())

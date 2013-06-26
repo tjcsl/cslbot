@@ -11,4 +11,5 @@ def cmd(send, msg, args):
         for i in idfile.keys():
             match = i.lower().find(msg)
             if match != -1:
-                send(i)
+                i2 = i.encode('ascii', 'ignore').decode()
+                send(i2)
