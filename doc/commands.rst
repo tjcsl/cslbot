@@ -81,6 +81,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`choose` Module
+--------------------
+
+.. automodule:: commands.choose
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`coin` Module
 ------------------
 
@@ -293,6 +301,14 @@ commands Package
 -------------------
 
 .. automodule:: commands.short
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`slap` Module
+------------------
+
+.. automodule:: commands.slap
     :members:
     :undoc-members:
     :show-inheritance:
