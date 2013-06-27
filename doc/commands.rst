@@ -1,6 +1,14 @@
 commands Package
 ================
 
+:mod:`commands` Package
+-----------------------
+
+.. automodule:: commands
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`about` Module
 -------------------
 
