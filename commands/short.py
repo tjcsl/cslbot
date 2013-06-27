@@ -25,6 +25,6 @@ def cmd(send, msg, args):
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
     req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
-    rep = urlopen(req, timeout=1).read().decode()
+    rep = urlopen(req, timeout=5).read().decode()
     short = json.loads(rep)
     return send(short['id'])
