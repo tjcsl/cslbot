@@ -178,7 +178,7 @@ class MyHandler():
             html = parse(urlopen(req, timeout=3))
             title = html.find(".//title").text.strip()
             # strip unicode
-            title = title.encode('ascii', 'ignore').decode().replace('\n', ' ')
+            title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
             send('** %s - %s' % (title, shorturl))
         except URLError as ex:
             # website does not exist
