@@ -17,6 +17,8 @@
 import re
 from urllib.request import urlopen
 
+args = ['modules']
+
 
 def gen_slogan(msg):
         msg = msg.replace(' ', '%20')
@@ -27,7 +29,8 @@ def gen_slogan(msg):
 
 def cmd(send, msg, args):
     if not msg:
-        return
+        ret = lambda word: word
+        msg = args['modules']['word'].cmd(ret, '', {})
 
     slogan = gen_slogan(msg)
     while not slogan:
