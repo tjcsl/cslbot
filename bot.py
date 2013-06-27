@@ -81,8 +81,10 @@ class MyBot(irc.bot.SingleServerIRCBot):
         Call the appropriate handler method for processing.
         """
         try:
-            command = e.arguments[0].strip().split()[0]
-            if command == '!reload':
+            command = e.arguments[0].strip()
+            if not command:
+                return
+            if command.split()[0] == '!reload':
                 self.do_reload(c)
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
