@@ -50,7 +50,8 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
     def on_part(self, c, e):
         """Cleanup when leaving a channel."""
-        del self.handler.channels[e.target]
+        #FIXME: this breaks randomly
+        # del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
     def do_reload(self, c):
