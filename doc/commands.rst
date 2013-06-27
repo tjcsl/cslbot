@@ -9,6 +9,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`8ball` Module
+-------------------
+
+.. automodule:: commands.8ball
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`about` Module
 -------------------
 
