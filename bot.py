@@ -36,8 +36,8 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_welcome(self, c, e):
         """Do setup when connected to server.
 
-        Pass the connection to handler.
-        Join the primary channel.
+        |Pass the connection to handler.
+        |Join the primary channel.
         """
         logging.info("Connected to server " + HOST)
         self.handler.connection = c
@@ -57,9 +57,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def do_reload(self, c):
         """The reloading magic
 
-        First, reload handler.py.
-        Then make copies of all the handler data we want to keep.
-        Create a new handler and restore all the data.
+        |First, reload handler.py.
+        |Then make copies of all the handler data we want to keep.
+        |Create a new handler and restore all the data.
         """
         imp.reload(handler)
         # preserve logs, ignored list, and channel list
@@ -77,9 +77,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
 
-        If a exception is thrown, catch it and display a nice traceback instead of crashing.
-        If we receive a !reload command, do the reloading magic.
-        Call the appropriate handler method for processing.
+        |If a exception is thrown, catch it and display a nice traceback instead of crashing.
+        |If we receive a !reload command, do the reloading magic.
+        |Call the appropriate handler method for processing.
         """
         try:
             command = e.arguments[0].strip()
@@ -115,9 +115,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
 def main():
     """The bot's main entry point.
 
-    Setup logging.
-    When troubleshooting, it may help to change the INFO to DEBUG.
-    Initialize the bot and start processing messages.
+    |Setup logging.
+    |When troubleshooting, it may help to change the INFO to DEBUG.
+    |Initialize the bot and start processing messages.
     """
     logging.basicConfig(level=logging.INFO)
     bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
