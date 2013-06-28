@@ -270,9 +270,10 @@ class MyHandler():
             self.do_scores(matches, send, nick)
 
         # crazy regex to match urls
-        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
-        if match:
-            self.do_urls(match, send)
-        if target == "#msbob" and random() < 0.25:
-            msgtype = 'pubmsg'
-            self.modules['slogan'].cmd(send, 'MS BOB', {})
+        if not CHANNEL == '#wikia-avatar': #to allow it inot a diff chan
+            match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
+            if match:
+               self.do_urls(match, send)
+            if target == "#msbob" and random() < 0.25:
+                msgtype = 'pubmsg'
+                self.modules['slogan'].cmd(send, 'MS BOB', {})
