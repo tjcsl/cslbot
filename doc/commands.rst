@@ -281,6 +281,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`random` Module
+--------------------
+
+.. automodule:: commands.random
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`s` Module
 ---------------
 
