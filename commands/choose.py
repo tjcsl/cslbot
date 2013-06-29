@@ -19,6 +19,6 @@ args = ['nick']
 
 
 def cmd(send, msg, args):
-    choices = msg.split(' ')
-    action = ['draws a slip of paper from a hat and gets...', 'says enie, menie, miney, moe and chooses...']
+    choices = msg.split('/')
+    action = ['draws a slip of paper from a hat and gets...', 'says enie, menie, miney, moe and chooses...', 'picks a random number', 'rolls dice', 'asks a random person', 'plays rock paper scissors']
     send(args['nick'] + ' ' + choice(action) + ' ' + choice(choices))
