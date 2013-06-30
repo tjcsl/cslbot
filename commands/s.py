@@ -44,6 +44,9 @@ def cmd(send, msg, args):
         # ignore stuff said by other people unless /g was passed
         if user != args['nick'] and not modifiers:
             continue
+        # ignore previous !s commands
+        if text[:2] == "!s":
+            continue
         if re.search(string, text):
             output = re.sub(string, replacement, text)
             send("%s actually meant: %s" % (user, output))
