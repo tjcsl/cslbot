@@ -85,7 +85,7 @@ class MyHandler():
             # 60 seconds - arbitrary cuttoff
             if (time.time() - x) < 60:
                 count = count + 1
-        if count > limit:
+        if count > limit and nick not in ADMINS:
             self.send(CHANNEL, nick, "\x02%s\x02 is a Bot Abuser." % nick, msgtype)
             self.ignore(send, nick)
             return True
