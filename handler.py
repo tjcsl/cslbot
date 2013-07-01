@@ -74,7 +74,7 @@ class MyHandler():
         """ Rate-limits commands
 
         | if a nick uses commands with the limit attr set, record the time at which they were used
-        | if the command is used more than :limit: times in a minute, ignore the nick
+        | if the command is used more than *limit* times in a minute, ignore the nick
         """
         if nick not in self.abuselist:
             self.abuselist[nick] = [time.time()]
@@ -194,8 +194,8 @@ class MyHandler():
     def do_scores(self, matches, send, nick):
         """ Handles scores
 
-        If it's a ++ add one point unless the user is trying to promote themselves.
-        Else substract one point
+        | If it's a ++ add one point unless the user is trying to promote themselves.
+        | Else substract one point
         """
         for match in matches:
             name = match[0].lower()
