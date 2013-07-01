@@ -15,9 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from config import ADMINS
 
+args = ['nick']
 
 def cmd(send, msg, args):
+        if args['nick'] not in ADMINS:
+            return
         try:
             excuse = subprocess.call(['git', 'pull'])
             send("Git pull returned: " + str(excuse))
