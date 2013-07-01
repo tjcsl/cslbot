@@ -19,6 +19,7 @@ from config import ADMINS
 
 args = ['nick']
 
+
 def cmd(send, msg, args):
         if args['nick'] not in ADMINS:
             return
