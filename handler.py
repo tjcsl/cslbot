@@ -19,7 +19,6 @@ from config import ADMINS, CHANNEL, NICK, LOGDIR
 import re
 import os
 from glob import glob
-from random import random
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
@@ -32,6 +31,16 @@ import socket
 
 class MyHandler():
     def __init__(self):
+        """ Set everything up.
+
+        | ignored is a array of the nicks who are currently ignored for bot abuse.
+        | logs is a dict containing a in-memory log for the primary channel as well as one for private messages.
+        | channels is a dict containing the objects for each channel the bot is connected to.
+        | abuselist is a dict keeping track of how many times nicks have used rate-limited commands.
+        | modules is a dict containing the commands the bot supports.
+        | scorefile is the fullpath to the file which records the scores.
+        | logfiles is a dict containing the file objects to which the logs are written.
+        """
         self.ignored = []
         self.logs = {CHANNEL: [], 'private': []}
         self.channels = {}
@@ -42,6 +51,12 @@ class MyHandler():
                          'private': open("%s/private.log" % LOGDIR, "a")}
 
     def loadmodules(self):
+        """ Load all the commands
+
+        | globs over all the .py files in the commands dir.
+        | skips file without the executable bit set
+        | imports the modules into a dict
+        """
         modulemap = {}
         for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
             if os.access(f, os.X_OK):
@@ -50,11 +65,17 @@ class MyHandler():
         return modulemap
 
     def ignore(self, send, nick):
+        """ Ignores a nick """
         if nick not in self.ignored:
             self.ignored.append(nick)
             send("Now igoring %s." % nick)
 
     def abusecheck(self, send, nick, limit, msgtype):
+        """ Rate-limits commands
+
+        | if a nick uses commands with the limit attr set, record the time at which they were used
+        | if the command is used more than :limit: times in a minute, ignore the nick
+        """
         if nick not in self.abuselist:
             self.abuselist[nick] = [time.time()]
         else:
@@ -70,6 +91,10 @@ class MyHandler():
             return True
 
     def privmsg(self, c, e):
+        """ Handle private messages.
+
+        Prevents users from changing scores in private.
+        """
         nick = e.source.nick
         msg = e.arguments[0].strip()
         if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
@@ -78,16 +103,28 @@ class MyHandler():
         self.handle_msg('priv', c, e)
 
     def pubmsg(self, c, e):
+        """ Handle public messages. """
         self.handle_msg('pub', c, e)
 
     def action(self, c, e):
+        """ Handle actions. """
         self.handle_msg('action', c, e)
 
     def send(self, target, nick, msg, msgtype):
+        """ Send a message
+
+        Records the message in the log
+        """
         self.do_log(target, nick, msg, msgtype)
         self.connection.privmsg(target, msg)
 
     def do_log(self, target, nick, msg, msgtype):
+        """ Handles logging
+
+        | logs nick and time
+        | logs "New Day" when day turns over
+        | logs both to a file and a in-memory array
+        """
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         if target[0] == "#":
@@ -116,6 +153,10 @@ class MyHandler():
         self.logfiles[target].flush()
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
+        """ Leaves a channel
+
+        | prevents user from leaving the primary channel
+        """
         if not cmdargs:
             # don't leave the primary channel
             if target == CHANNEL:
@@ -133,6 +174,11 @@ class MyHandler():
         c.part(cmdargs)
 
     def do_join(self, cmdargs, nick, msgtype, send, c):
+        """ Join a channel
+
+        | checks if bot is already joined to channel
+        | opens logs for channel
+        """
         if not cmdargs:
             return
         if cmdargs[0] != '#':
@@ -146,27 +192,32 @@ class MyHandler():
         self.send(cmdargs, nick, "Joined at the request of " + nick, msgtype)
 
     def do_scores(self, matches, send, nick):
-            for match in matches:
-                name = match[0].lower()
-                if match[1] == "++":
-                    score = 1
-                    if name == nick.lower():
-                        send(nick + ": No self promotion! You lose 10 points.")
-                        score = -10
-                else:
-                    score = -1
-                if os.path.isfile(self.scorefile):
-                    scores = json.load(open(self.scorefile))
-                else:
-                    scores = {}
-                if name in scores:
-                    scores[name] += score
-                else:
-                    scores[name] = score
-                f = open(self.scorefile, "w")
-                json.dump(scores, f)
-                f.write("\n")
-                f.close()
+        """ Handles scores
+
+        If it's a ++ add one point unless the user is trying to promote themselves.
+        Else substract one point
+        """
+        for match in matches:
+            name = match[0].lower()
+            if match[1] == "++":
+                score = 1
+                if name == nick.lower():
+                    send(nick + ": No self promotion! You lose 10 points.")
+                    score = -10
+            else:
+                score = -1
+            if os.path.isfile(self.scorefile):
+                scores = json.load(open(self.scorefile))
+            else:
+                scores = {}
+            if name in scores:
+                scores[name] += score
+            else:
+                scores[name] = score
+            f = open(self.scorefile, "w")
+            json.dump(scores, f)
+            f.write("\n")
+            f.close()
 
     def do_urls(self, match, send):
         try:
