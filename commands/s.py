@@ -30,11 +30,8 @@ def cmd(send, msg, args):
     log = args['logs'][args['target']][:-1]
     string = msg[0]
     replacement = msg[1]
-    if msg[2] == "g":
+    if msg[2]:
         modifiers = msg[2]
-    elif msg[2]:
-        send("Unknown modifier " + msg[2])
-        return
     else:
         modifiers = None
     # search last 50 lines
@@ -47,7 +44,7 @@ def cmd(send, msg, args):
         # ignore previous !s commands
         if text[:2] == "!s":
             continue
-        if re.search(string, text):
+        if re.search(string, text) and (modifiers == "g" or user == modifiers):
             output = re.sub(string, replacement, text)
             send("%s actually meant: %s" % (user, output))
             return
