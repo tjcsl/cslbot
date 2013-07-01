@@ -24,7 +24,7 @@ def cmd(send, msg, args):
         if args['nick'] not in ADMINS:
             return
         try:
-            excuse = subprocess.call(['git', 'pull'])
-            send("Git pull returned: " + str(excuse))
+            output = subprocess.check_output(['git', 'pull']).decode().splitlines()[-1]
+            send(output)
         except subprocess.CalledProcessError:
             send("Something went wrong!")
