@@ -37,7 +37,10 @@ def cmd(send, msg, args):
     # search last 50 lines
     for line in reversed(log[-50:]):
         match = re.search("<@?(.*)> (.*)", line[1])
-        user, text = match.groups()
+        try:
+            user, text = match.groups()
+        except AttributeError:
+            continue
         # ignore stuff said by other people unless /g was passed
         if user != args['nick'] and not modifiers:
             continue
