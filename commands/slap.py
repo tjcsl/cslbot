@@ -16,14 +16,16 @@
 
 from config import CHANNEL
 from random import choice
-args = ['nick', 'channels']
+args = ['nick', 'channels', 'target']
 
 
 def cmd(send, msg, args):
-    #FIXME: work in non-primary channels
+    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson']
+    slap = '%s slaps %s around a bit with %s'
     if not msg:
-        users = args['channels'][CHANNEL].users()
-        send(args['nick'] + ' slaps ' + choice(users))
+        channel = args['target'] if args['target'] != 'private' else CHANNEL
+        users = args['channels'][channel].users()
+        send(slap % (args['nick'], choice(users), choice(implements)))
         return
     else:
-        send(args['nick'] + ' slaps ' + msg)
+        send(slap % (args['nick'], msg, choice(implements)))
