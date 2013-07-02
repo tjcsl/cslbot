@@ -17,12 +17,11 @@
 from random import choice
 from config import CHANNEL
 
-args = ['channels']
+args = ['channels', 'target']
 
 
 def cmd(send, msg, args):
-    #FIXME: blame people from the current channel
-    users = args['channels'][CHANNEL].users()
+    users = args['channels'][args['target']].users()
     user = choice(users)
     if msg:
         msg = " for " + msg
