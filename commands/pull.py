@@ -16,14 +16,17 @@
 
 import subprocess
 from config import ADMINS
+from os.path import dirname
 
 args = ['nick']
+
 
 def cmd(send, msg, args):
         if args['nick'] not in ADMINS:
             return
         try:
-            excuse = subprocess.call(['git', 'pull'])
-            send("Git pull returned: " + str(excuse))
+            gitdir = dirname(__file__) + '/..'
+            output = subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
+            send(output)
         except subprocess.CalledProcessError:
             send("Something went wrong!")

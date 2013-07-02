@@ -265,6 +265,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`pull` Module
+------------------
+
+.. automodule:: commands.pull
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`quit` Module
 ------------------
 
