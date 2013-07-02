@@ -21,7 +21,7 @@ args = ['channels', 'target']
 
 
 def cmd(send, msg, args):
-    users = args['channels'][args['target']].users()
+    users = (args['channels'][args['target']].users() if args['target'] != 'private' else ['you'])
     user = choice(users)
     if msg:
         msg = " for " + msg
