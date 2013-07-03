@@ -16,7 +16,7 @@
 
 import re
 from urllib.request import urlopen
-
+import HTMLParser
 args = ['modules']
 
 
@@ -35,4 +35,5 @@ def cmd(send, msg, args):
     slogan = gen_slogan(msg)
     while not slogan:
         slogan = gen_slogan(msg)
-    send(slogan)
+    parser = HTMLParser.HTMLParser()
+    send(parser.unescape(slogan))
