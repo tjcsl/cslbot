@@ -116,6 +116,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
 
     def on_kick(self, c, e):
         """Rejoin on kick"""
+        # we don't care about other people.
+        if e.arguments[0] != NICK:
+            return
         logging.info("Kicked from channel " + e.target)
         self.kick = [e.source.nick, e.arguments[1]]
         sleep(5)
