@@ -68,7 +68,7 @@ class MyHandler():
         """ Ignores a nick """
         if nick not in self.ignored:
             self.ignored.append(nick)
-            send("Now ignoring %s (not Igoring)." % nick)
+            send("Now ignoring %s." % nick)
 
     def abusecheck(self, send, nick, limit, msgtype):
         """ Rate-limits commands
