@@ -24,7 +24,8 @@ def gen_slogan(msg):
         msg = msg.replace(' ', '%20')
         html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
                        + msg, timeout=2).read().decode()
-        return re.search('>(.*)<', html).group(1).replace('\\', '').strip()
+        slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
+        return ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
 
 
 def cmd(send, msg, args):
