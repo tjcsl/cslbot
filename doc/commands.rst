@@ -169,6 +169,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fortune` Module
+---------------------
+
+.. automodule:: commands.fortune
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`fweather` Module
 ----------------------
 
