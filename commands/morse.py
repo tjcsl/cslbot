@@ -32,4 +32,7 @@ def cmd(send, msg, args):
             morse += morse_codes[i.lower()] + " "
         except Exception:
             morse += "? "
-    send(morse)
+    if len(morse) > 100:
+        send("Your morse is too long. Have you considered Western Union?")
+    else:
+        send(morse)
