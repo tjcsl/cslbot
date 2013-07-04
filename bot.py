@@ -21,6 +21,7 @@ import imp
 import irc.bot
 from config import CHANNEL, NICK, NICKPASS, HOST
 from os.path import basename
+from time import sleep
 import handler
 
 
@@ -47,6 +48,12 @@ class MyBot(irc.bot.SingleServerIRCBot):
         """Add the joined channel to the channel list."""
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
+        if hasattr(self, 'kick'):
+            c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
+            ret = lambda msg: msg
+            slogan = self.handler.modules['slogan'].cmd(ret, "power abuse", {})
+            c.privmsg(e.target, slogan)
+            del self.kick
 
     def on_part(self, c, e):
         """Cleanup when leaving a channel."""
@@ -106,6 +113,13 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_action(self, c, e):
         """Pass actions to the handler."""
         self.handle_msg('action', c, e)
+
+    def on_kick(self, c, e):
+        """Rejoin on kick"""
+        logging.info("Kicked from channel " + e.target)
+        self.kick = [e.source.nick, e.arguments[1]]
+        sleep(5)
+        c.join(e.target)
 
     def get_version(self):
         """Get the version."""

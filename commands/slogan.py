@@ -36,4 +36,4 @@ def cmd(send, msg, args):
     while not slogan:
         slogan = gen_slogan(msg)
     parser = HTMLParser()
-    send(parser.unescape(slogan))
+    return send(parser.unescape(slogan))
