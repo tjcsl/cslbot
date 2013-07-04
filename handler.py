@@ -142,8 +142,8 @@ class MyHandler():
                 self.logfiles[target].flush()
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
-        # strip unicode
-        msg = msg.encode('ascii', 'ignore').decode()
+        # strip non-printable chars
+        msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
         if msgtype == 'action':
             log = '%s <%s> * %s %s\n' % (currenttime, nick, nick.replace('@', ''), msg)
         else:
