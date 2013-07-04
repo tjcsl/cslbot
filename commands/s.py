@@ -47,7 +47,7 @@ def cmd(send, msg, args):
         # ignore previous !s commands
         if text[:2] == "!s" or text[:1] == '*':
             continue
-        if re.search(string, text) and (modifiers == "g" or user == modifiers):
+        if re.search(string, text) and (modifiers == "g" or user == modifiers or not modifiers):
             output = re.sub(string, replacement, text)
             send("%s actually meant: %s" % (user, output))
             return
