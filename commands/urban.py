@@ -26,6 +26,6 @@ def cmd(send, msg, args):
     data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(msg))).read().decode())
     try:
         definition = data['list'][0]['definition'].replace('\n', ' ')
-        send(definition)
+        send(definition.replace('shit', '$#!+').replace('fuck', 'fsck'))
     except KeyError:
         send("UrbanDictionary doesn't have a answer for you.")
