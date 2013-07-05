@@ -281,6 +281,19 @@ class MyHandler():
         send = lambda msg: self.send(target, NICK, msg, msgtype)
         if nick not in ADMINS and nick in self.ignored:
             return
+        # SHUT CAPS LOCK OFF, MORON
+        upper_count = 0
+        lower_count = 0
+        THRESHOLD = 0.65
+        for i in msg:
+            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                upper_count += 1
+            else:
+                lower_count += 1
+        upper_ratio = upper_count / len(msg)
+        if upper_ratio > THRESHOLD and len(msg) > 6:
+            c.send_raw("KICK %s %s :SHUT CAPS LOCK OFF, MORON" % (e.target, nick))
+            return
         # is this a command?
         cmd = msg.split()[0]
         # handle !s/a/b/
@@ -294,7 +307,6 @@ class MyHandler():
                     return
                 args = self.handle_args(mod.args, send, nick, target) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
-
         #special commands
         if cmd[0] == '!':
             if cmd[1:] == 'reload':
@@ -328,17 +340,4 @@ class MyHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
-
-        # SHUT CAPS LOCK OFF, MORON
-        upper_count = 0
-        lower_count = 0
-        THRESHOLD = 0.65
-        for i in msg:
-            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                upper_count += 1
-            else:
-                lower_count += 1
-        upper_ratio = upper_count / len(msg)
-        if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
-            pass
+  
