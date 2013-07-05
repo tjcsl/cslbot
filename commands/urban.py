@@ -20,12 +20,28 @@ import json
 
 
 def cmd(send, msg, args):
+    msgSplit = msg.split(' ')
+    definitionNum = None
+    if msgSplit[-1][0] == '#':
+        try:
+            definitionNum = int(msgSplit[-1][1:])
+        except:
+            pass
     if not msg:
         return
     # pfoley's private key -- do not abuse
-    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(msg))).read().decode())
+    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote((msgSplit[0] if len(msgSplit) == 1 else toStr(msgSplit[:(len(msgSplit) - 1)]))))).read().decode())
     try:
-        definition = data['list'][0]['definition'].replace('\n', ' ')
+        if definitionNum:
+            definition = data['list'][definitionNum - 1]['definition'].replace('\n', ' ')
+        else:
+            definition = data['list'][0]['definition'].replace('\n', ' ')
         send(definition.replace('shit', '$#!+').replace('fuck', 'fsck'))
-    except KeyError:
+    except IndexError:
         send("UrbanDictionary doesn't have a answer for you.")
+def toStr(arrToSplit):
+    endStr = arrToSplit[0]
+    for i in arrToSplit[1:]:
+        endStr += ' '
+        endStr += i
+    return endStr
