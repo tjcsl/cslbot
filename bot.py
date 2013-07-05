@@ -63,13 +63,17 @@ class MyBot(irc.bot.SingleServerIRCBot):
         # del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
-    def do_reload(self, c):
+    def do_reload(self, c, e, msgtype, cmdargs):
         """The reloading magic
 
         | First, reload handler.py.
         | Then make copies of all the handler data we want to keep.
         | Create a new handler and restore all the data.
         """
+        if cmdargs == 'pull':
+            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
+            send = lambda msg: c.privmsg(target, msg)
+            self.handler.modules['pull'].cmd(send, {}, {'nick': e.source.nick})
         imp.reload(handler)
         # preserve logs, ignored list, and channel list
         ignored = list(self.handler.ignored)
@@ -91,11 +95,12 @@ class MyBot(irc.bot.SingleServerIRCBot):
         | Call the appropriate handler method for processing.
         """
         try:
-            command = e.arguments[0].strip()
-            if not command:
+            cmd = e.arguments[0].strip()
+            if not cmd:
                 return
-            if command.split()[0] == '!reload':
-                self.do_reload(c)
+            if cmd.split()[0] == '!reload':
+                cmdargs = cmd[len('!reload')+1:]
+                self.do_reload(c, e, msgtype, cmdargs)
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]

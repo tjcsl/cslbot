@@ -314,8 +314,6 @@ class MyHandler():
         #special commands
         if cmd[0] == '!':
             if cmd[1:] == 'reload':
-                if cmdargs == 'pull':
-                    self.modules['pull'].cmd(send, {}, {'nick': nick})
                 send("Aye Aye Capt'n")
                 for x in self.modules.values():
                     imp.reload(x)
