@@ -243,6 +243,20 @@ class MyHandler():
         except AttributeError:
             pass
 
+    def do_caps(self, msg, c, e, nick):
+        # SHUT CAPS LOCK OFF, MORON
+        upper_count = 0
+        lower_count = 0
+        THRESHOLD = 0.65
+        for i in msg:
+            if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                lower_count += 1
+            else:
+                upper_count += 1
+        upper_ratio = upper_count / len(msg)
+        if upper_ratio > THRESHOLD and len(msg) > 6:
+            c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
+
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target):
             args = {}
@@ -281,19 +295,9 @@ class MyHandler():
         send = lambda msg: self.send(target, NICK, msg, msgtype)
         if nick not in ADMINS and nick in self.ignored:
             return
-        # SHUT CAPS LOCK OFF, MORON
-        upper_count = 0
-        lower_count = 0
-        THRESHOLD = 0.65
-        for i in msg:
-            if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                lower_count += 1
-            else:
-                upper_count += 1
-        upper_ratio = upper_count / len(msg)
-        if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.send_raw("KICK %s %s :SHUT CAPS LOCK OFF, MORON" % (e.target, nick))
-            return
+
+        self.do_caps(msg, c, e, nick)
+
         # is this a command?
         cmd = msg.split()[0]
         # handle !s/a/b/
@@ -340,4 +344,3 @@ class MyHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
-  
