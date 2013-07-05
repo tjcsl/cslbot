@@ -241,6 +241,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`meme` Module
+------------------
+
+.. automodule:: commands.meme
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`microwave` Module
 -----------------------
 
