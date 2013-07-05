@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     if not msg:
         return
     # pfoley's private key -- do not abuse
-    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote((msgSplit[0] if len(msgSplit) == 1 else toStr(msgSplit[:(len(msgSplit) - 1)]))))).read().decode())
+    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
     try:
         if definitionNum:
             definition = data['list'][definitionNum - 1]['definition'].replace('\n', ' ')
