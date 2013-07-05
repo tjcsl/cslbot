@@ -328,3 +328,17 @@ class MyHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
+
+        # SHUT CAPS LOCK OFF, MORON
+        upper_count = 0
+        lower_count = 0
+        THRESHOLD = 0.8
+        for i in msg:
+            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                upper_count += 1
+            else:
+                lower_count += 1
+        upper_ratio = upper_count / len(msg)
+        if upper_ratio > THRESHOLD and len(msg) > 6:
+            c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
+            pass
