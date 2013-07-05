@@ -28,4 +28,9 @@ def cmd(send, msg, args):
         send(slap % (args['nick'], choice(users), choice(implements)))
         return
     else:
-        send(slap % (args['nick'], msg, choice(implements)))
+        if "for" in msg:
+            msg = msg.split("for")
+            slap = slap % (args['nick'], msg[0].strip(), choice(implements) + " for" + msg[1])
+        else:
+            slap = slap % (args['nick'], msg, choice(implements))
+        send(slap)
