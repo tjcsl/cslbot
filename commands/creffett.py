@@ -14,16 +14,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from config import NICK
 args = ['nick', 'ignore']
 
 
+def gen_creffett(msg):
+    return '\x02\x038,4' + msg.upper() + "!!!"
+
+
 def cmd(send, msg, args):
-    if not args['nick'].startswith('creffett'):
+    if not args['nick'].startswith('creffett') and args['nick'] != NICK:
         send("You're not creffett!")
         args['ignore'](args['nick'])
         return
     if not msg:
         return
-    creffett = '\x02\x038,4' + msg.upper() + "!!!"
-    send(creffett)
+    send(gen_creffett(msg))
     send('</rage>')

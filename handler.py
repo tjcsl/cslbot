@@ -22,6 +22,7 @@ from glob import glob
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
+from random import choice
 import json
 import importlib
 import imp
@@ -243,19 +244,20 @@ class MyHandler():
         except AttributeError:
             pass
 
-    def do_caps(self, msg, c, e, nick):
+    def do_caps(self, msg, c, e, nick, send):
         # SHUT CAPS LOCK OFF, MORON
-        upper_count = 0
-        lower_count = 0
+        count = 0
         THRESHOLD = 0.65
         for i in msg:
-            if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                lower_count += 1
-            else:
-                upper_count += 1
-        upper_ratio = upper_count / len(msg)
+            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                count += 1
+        upper_ratio = count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.kick(e.target, nick, self.modules['slogan'].gen_slogan("shutting caps lock off").upper())
+            ops = self.channels[e.target].opers()
+            if NICK not in ops:
+                send(self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
+            else:
+                c.kick(e.target, nick, self.modules['slogan'].gen_slogan("shutting caps lock off").upper())
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target):
@@ -296,7 +298,7 @@ class MyHandler():
         if nick not in ADMINS and nick in self.ignored:
             return
 
-        self.do_caps(msg, c, e, nick)
+        self.do_caps(msg, c, e, nick, send)
 
         # is this a command?
         cmd = msg.split()[0]
