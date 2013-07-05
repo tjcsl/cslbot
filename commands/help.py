@@ -14,9 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['modules']
+args = ['modules', 'nick', 'connection']
 
 
 def cmd(send, msg, args):
     cmdlist = ' !'.join([x for x in sorted(args['modules'])])
-    send('Commands: !' + cmdlist)
+    c = args['connection']
+    c.privmsg(args['nick'], 'Commands: !' + cmdlist)
