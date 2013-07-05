@@ -340,5 +340,5 @@ class MyHandler():
                 lower_count += 1
         upper_ratio = upper_count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
+            c.send_raw("KICK %s %s :SHUT CAPS LOCK OFF, MORON" % (e.target, nick))
             pass
