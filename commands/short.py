@@ -21,6 +21,8 @@ from urllib.request import urlopen, Request
 def cmd(send, msg, args):
     if not msg:
         return
+    if "goo.gl" in msg:
+        return msg
     data = {'longUrl': msg}
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
