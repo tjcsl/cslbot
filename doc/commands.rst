@@ -393,6 +393,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`urban` Module
+-------------------
+
+.. automodule:: commands.urban
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`version` Module
 ---------------------
 
