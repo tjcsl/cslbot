@@ -49,6 +49,7 @@ class MyHandler():
         self.scorefile = os.path.dirname(__file__)+'/score'
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
+        self.capslist = {}
 
     def loadmodules(self):
         """ Load all the commands
@@ -255,7 +256,13 @@ class MyHandler():
                 upper_count += 1
         upper_ratio = upper_count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
+            if nick in self.capslist:
+                if self.capslist[nick] == 2:
+                    c.kick(e.target, nick, "SHUT CAPS LOCK OFF, MORON")
+                else:
+                    self.capslist[nick] += 1
+            else:
+                self.capslist[nick] = 1
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target):
@@ -295,9 +302,7 @@ class MyHandler():
         send = lambda msg: self.send(target, NICK, msg, msgtype)
         if nick not in ADMINS and nick in self.ignored:
             return
-
         self.do_caps(msg, c, e, nick)
-
         # is this a command?
         cmd = msg.split()[0]
         # handle !s/a/b/
