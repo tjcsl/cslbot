@@ -286,10 +286,10 @@ class MyHandler():
         lower_count = 0
         THRESHOLD = 0.65
         for i in msg:
-            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                upper_count += 1
-            else:
+            if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                 lower_count += 1
+            else:
+                upper_count += 1
         upper_ratio = upper_count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
             c.send_raw("KICK %s %s :SHUT CAPS LOCK OFF, MORON" % (e.target, nick))
