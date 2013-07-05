@@ -332,7 +332,7 @@ class MyHandler():
         # SHUT CAPS LOCK OFF, MORON
         upper_count = 0
         lower_count = 0
-        THRESHOLD = 0.8
+        THRESHOLD = 0.65
         for i in msg:
             if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                 upper_count += 1
