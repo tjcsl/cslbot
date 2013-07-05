@@ -25,7 +25,9 @@ def gen_slogan(msg):
         html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
                        + msg, timeout=2).read().decode()
         slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
-        return ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
+        slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
+        parser = HTMLParser()
+        return parser.unescape(slogan)
 
 
 def cmd(send, msg, args):
@@ -36,5 +38,4 @@ def cmd(send, msg, args):
     slogan = gen_slogan(msg)
     while not slogan:
         slogan = gen_slogan(msg)
-    parser = HTMLParser()
-    return send(parser.unescape(slogan))
+    return send(slogan)

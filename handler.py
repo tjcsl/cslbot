@@ -27,7 +27,6 @@ import importlib
 import imp
 import time
 import socket
-import random
 
 
 class MyHandler():
@@ -256,13 +255,7 @@ class MyHandler():
                 upper_count += 1
         upper_ratio = upper_count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            messages = [
-                    "%s, CREATED BY NATURE.",
-                    "%s, INSPRIRING PEOPLE.",
-                    "%s, EVERYONE ASKS YOU TO.",
-                    "%s, JUST DO IT."
-                    ]
-            c.kick(e.target, nick, random.choice(messages) % "SHUTTING CAPS LOCK OFF")
+            c.kick(e.target, nick, self.modules['slogan'].gen_slogan("shutting caps lock off").upper())
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target):

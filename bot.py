@@ -47,6 +47,8 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_join(self, c, e):
         """Add the joined channel to the channel list."""
         self.handler.channels[e.target] = self.channels[e.target]
+        if e.source.nick != NICK:
+            return
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
             c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
