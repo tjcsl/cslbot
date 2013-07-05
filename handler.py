@@ -256,7 +256,13 @@ class MyHandler():
                 upper_count += 1
         upper_ratio = upper_count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            c.kick(e.target, nick, commands.slogan.gen_slogan("SHUTTING CAPS LOCK OFF").upper())
+            messages = [
+                    "%s, CREATED BY NATURE.",
+                    "%s, INSPRIRING PEOPLE.",
+                    "%s, EVERYONE ASKS YOU TO.",
+                    "%s, JUST DO IT."
+                    ]
+            c.kick(e.target, nick, random.choice(messages) % "SHUTTING CAPS LOCK OFF")
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target):
