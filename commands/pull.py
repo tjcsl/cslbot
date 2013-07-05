@@ -21,12 +21,15 @@ from os.path import dirname
 args = ['nick']
 
 
+def do_pull():
+        try:
+            gitdir = dirname(__file__) + '/..'
+            return subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
+        except subprocess.CalledProcessError:
+            return "Something went wrong!"
+
+
 def cmd(send, msg, args):
         if args['nick'] not in ADMINS:
             return
-        try:
-            gitdir = dirname(__file__) + '/..'
-            output = subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
-            send(output)
-        except subprocess.CalledProcessError:
-            send("Something went wrong!")
+        send(do_pull())

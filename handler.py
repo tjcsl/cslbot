@@ -225,8 +225,7 @@ class MyHandler():
             url = match.group(1)
             if not url.startswith('http'):
                 url = 'http://' + url
-            ret = lambda msg: msg
-            shorturl = self.modules['short'].cmd(ret, url, {})
+            shorturl = self.modules['short'].get_short(url)
             # Wikipedia doesn't like the default User-Agent
             req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             html = parse(urlopen(req, timeout=5))

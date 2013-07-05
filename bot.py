@@ -19,7 +19,7 @@ import logging
 import traceback
 import imp
 import irc.bot
-from config import CHANNEL, NICK, NICKPASS, HOST
+from config import CHANNEL, NICK, NICKPASS, HOST, ADMINS
 from os.path import basename
 from time import sleep
 import handler
@@ -52,8 +52,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
             c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
-            ret = lambda msg: msg
-            slogan = self.handler.modules['slogan'].cmd(ret, "power abuse", {})
+            slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             c.privmsg(e.target, slogan)
             del self.kick
 
@@ -71,9 +70,11 @@ class MyBot(irc.bot.SingleServerIRCBot):
         | Create a new handler and restore all the data.
         """
         if cmdargs == 'pull':
+            if e.source.nick not in ADMINS:
+                return
             target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
-            send = lambda msg: c.privmsg(target, msg)
-            self.handler.modules['pull'].cmd(send, {}, {'nick': e.source.nick})
+            output = self.handler.modules['pull'].do_pull()
+            c.privmsg(target, output)
         imp.reload(handler)
         # preserve logs, ignored list, and channel list
         ignored = list(self.handler.ignored)

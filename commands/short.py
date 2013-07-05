@@ -18,7 +18,7 @@ import json
 from urllib.request import urlopen, Request
 
 
-def cmd(send, msg, args):
+def get_short(msg):
     if not msg:
         return
     if "goo.gl" in msg:
@@ -29,4 +29,8 @@ def cmd(send, msg, args):
     req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
     rep = urlopen(req, timeout=5).read().decode()
     short = json.loads(rep)
-    return send(short['id'])
+    return short['id']
+
+
+def cmd(send, msg, args):
+    send(get_short(msg))

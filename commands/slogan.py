@@ -27,15 +27,15 @@ def gen_slogan(msg):
         slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
         slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
         parser = HTMLParser()
-        return parser.unescape(slogan)
+        slogan = parser.unescape(slogan)
+        if not slogan:
+            return gen_slogan(msg)
+        return slogan
 
 
 def cmd(send, msg, args):
     if not msg:
-        ret = lambda word: word
-        msg = args['modules']['word'].cmd(ret, '', {})
+        msg = args['modules']['word'].gen_word()
 
     slogan = gen_slogan(msg)
-    while not slogan:
-        slogan = gen_slogan(msg)
-    return send(slogan)
+    send(slogan)

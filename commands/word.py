@@ -17,7 +17,11 @@
 from urllib.request import urlopen
 
 
-def cmd(send, msg, args):
+def gen_word():
         html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
         # strip BOM
-        return send(html.decode()[1:].rstrip())
+        return html.decode()[1:].rstrip()
+
+
+def cmd(send, msg, args):
+    send(gen_word())
