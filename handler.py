@@ -163,6 +163,14 @@ class MyHandler():
             log = '%s * %s %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'nick':
             log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
+        elif msgtype == 'join':
+            log = '%s %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
+        elif msgtype == 'part':
+            log = '%s %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
+        elif msgtype == 'quit':
+            log = '%s %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
+        elif msgtype == 'kick':
+            log = '%s %s has been kicked (%s)\n' % (currenttime, nick.replace('@', ''), msg)
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.logs[target].append([day, log])

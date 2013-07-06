@@ -34,34 +34,6 @@ class MyBot(irc.bot.SingleServerIRCBot):
         irc.bot.SingleServerIRCBot.__init__(self, [server], nick, nick)
         self.handler = handler.MyHandler()
 
-    def on_welcome(self, c, e):
-        """Do setup when connected to server.
-
-        | Pass the connection to handler.
-        | Join the primary channel.
-        """
-        logging.info("Connected to server " + HOST)
-        self.handler.connection = c
-        c.join(CHANNEL)
-
-    def on_join(self, c, e):
-        """Add the joined channel to the channel list."""
-        self.handler.channels[e.target] = self.channels[e.target]
-        if e.source.nick != NICK:
-            return
-        logging.info("Joined channel " + e.target)
-        if hasattr(self, 'kick'):
-            c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
-            slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
-            c.privmsg(e.target, slogan)
-            del self.kick
-
-    def on_part(self, c, e):
-        """Cleanup when leaving a channel."""
-        #FIXME: this breaks randomly
-        # del self.handler.channels[e.target]
-        logging.info("Parted channel " + e.target)
-
     def do_reload(self, c, e, msgtype, cmdargs):
         """The reloading magic
 
@@ -104,6 +76,16 @@ class MyBot(irc.bot.SingleServerIRCBot):
             target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
+    def on_welcome(self, c, e):
+        """Do setup when connected to server.
+
+        | Pass the connection to handler.
+        | Join the primary channel.
+        """
+        logging.info("Connected to server " + HOST)
+        self.handler.connection = c
+        c.join(CHANNEL)
+
     def on_pubmsg(self, c, e):
         """Pass public messages to the handler."""
         self.handle_msg('pubmsg', c, e)
@@ -119,8 +101,34 @@ class MyBot(irc.bot.SingleServerIRCBot):
     def on_nick(self, c, e):
         self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
 
+    def on_quit(self, c, e):
+        self.handler.do_log(CHANNEL, e.source.nick, e.arguments[0], 'quit')
+
+    def on_join(self, c, e):
+        """Add the joined channel to the channel list."""
+        if e.source.nick != NICK:
+            self.handler.do_log(e.target, e.source.nick, e.target, 'join')
+            return
+        self.handler.channels[e.target] = self.channels[e.target]
+        logging.info("Joined channel " + e.target)
+        if hasattr(self, 'kick'):
+            c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
+            slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
+            c.privmsg(e.target, slogan)
+            del self.kick
+
+    def on_part(self, c, e):
+        """Cleanup when leaving a channel."""
+        self.handler.do_log(e.target, e.source.nick, e.target, 'part')
+        if e.source.nick != NICK:
+            return
+        #FIXME: this breaks randomly
+        # del self.handler.channels[e.target]
+        logging.info("Parted channel " + e.target)
+
     def on_kick(self, c, e):
         """Rejoin on kick"""
+        self.handler.do_log(e.target, e.source.nick, e.arguments[1], 'kick')
         # we don't care about other people.
         if e.arguments[0] != NICK:
             return
