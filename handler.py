@@ -51,6 +51,20 @@ class MyHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
 
+    def get_data(self):
+        data = {}
+        data['ignored'] = list(self.ignored)
+        data['logs'] = dict(self.logs)
+        data['logfiles'] = dict(self.logfiles)
+        data['channels'] = dict(self.channels)
+        return data
+
+    def set_data(self, data):
+        self.ignored = data['ignored']
+        self.logs = data['logs']
+        self.logfiles = data['logfiles']
+        self.channels = data['channels']
+
     def loadmodules(self):
         """ Load all the commands
 

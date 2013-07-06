@@ -76,16 +76,10 @@ class MyBot(irc.bot.SingleServerIRCBot):
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
         imp.reload(handler)
-        # preserve logs, ignored list, and channel list
-        ignored = list(self.handler.ignored)
-        logs = dict(self.handler.logs)
-        logfiles = dict(self.handler.logfiles)
-        channels = dict(self.handler.channels)
+        # preserve data
+        data = self.handler.get_data()
         self.handler = handler.MyHandler()
-        self.handler.ignored = ignored
-        self.handler.logs = logs
-        self.handler.logfiles = logfiles
-        self.handler.channels = channels
+        self.handler.set_data(data)
         self.handler.connection = c
 
     def handle_msg(self, msgtype, c, e):
