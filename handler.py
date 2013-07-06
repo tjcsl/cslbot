@@ -46,6 +46,7 @@ class MyHandler():
         self.logs = {CHANNEL: [], 'private': []}
         self.channels = {}
         self.abuselist = {}
+        self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
         self.scorefile = os.path.dirname(__file__)+'/score'
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
@@ -58,6 +59,7 @@ class MyHandler():
         data['logfiles'] = dict(self.logfiles)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
+        data['admins'] = dict(self.admins)
         return data
 
     def set_data(self, data):
@@ -66,6 +68,7 @@ class MyHandler():
         self.logfiles = data['logfiles']
         self.channels = data['channels']
         self.abuselist = data['abuselist']
+        self.admins = data['admins']
 
     def loadmodules(self):
         """ Load all the commands
@@ -86,6 +89,27 @@ class MyHandler():
         if nick not in self.ignored:
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
+
+    def is_admin(self, c, nick):
+        if nick not in self.admins:
+            return False
+        c.privmsg('NickServ', 'ACC ' + nick)
+        if not self.admins[nick]:
+            c.privmsg(CHANNEL, "Unverified admin: " + nick)
+            return False
+        else:
+            return True
+
+    def set_admin(self, msg):
+        match = re.match("(.*) ACC ([0-3])", msg)
+        if not match:
+            return
+        if int(match.group(2)) == 3:
+            self.admins[match.group(1)] = True
+
+    def get_admins(self, c):
+        for admin in self.admins:
+            c.privmsg('NickServ', 'ACC ' + admin)
 
     def abusecheck(self, send, nick, limit, msgtype, name):
         """ Rate-limits commands
@@ -294,7 +318,7 @@ class MyHandler():
                 c.kick(e.target, nick, self.modules['slogan'].gen_slogan("shutting caps lock off").upper())
 
     #FIXME: do some kind of mapping instead of a elif tree
-    def handle_args(self, modargs, send, nick, target):
+    def handle_args(self, modargs, send, nick, target, c):
             args = {}
             for arg in modargs:
                 if arg == 'channels':
@@ -309,6 +333,10 @@ class MyHandler():
                     args['scorefile'] = self.scorefile
                 elif arg == 'logs':
                     args['logs'] = self.logs
+                elif arg == 'admins':
+                    args['admins'] = self.admins
+                elif arg == 'is_admin':
+                    args['is_admin'] = lambda nick: self.is_admin(c, nick)
                 elif arg == 'target':
                     args['target'] = target if target[0] == "#" else "private"
                 elif arg == 'ignore':
@@ -329,7 +357,7 @@ class MyHandler():
             target = nick
         self.do_log(target, nick, msg, msgtype)
         send = lambda msg: self.send(target, NICK, msg, msgtype)
-        if nick not in ADMINS and nick in self.ignored:
+        if not self.is_admin(c, nick) and nick in self.ignored:
             return
 
         self.do_caps(msg, c, e, nick, send)
@@ -345,7 +373,7 @@ class MyHandler():
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
-                args = self.handle_args(mod.args, send, nick, target) if hasattr(mod, 'args') else {}
+                args = self.handle_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
         #special commands
         if cmd[0] == '!':
@@ -354,7 +382,7 @@ class MyHandler():
                 for x in self.modules.values():
                     imp.reload(x)
             # everything below this point requires admin
-            if nick in ADMINS:
+            if self.is_admin(c, nick):
                 if cmd[1:] == 'cignore':
                     self.ignored = []
                     send("Ignore list cleared.")

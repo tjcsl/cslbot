@@ -15,13 +15,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import sys
-from config import ADMINS
 
-args = ['nick', 'connection']
+args = ['nick', 'connection', 'is_admin']
 
 
 def cmd(send, msg, args):
-    if args['nick'] not in ADMINS:
+    if not args['is_admin'](args['nick']):
         send("Nope.")
     else:
         args['connection'].quit('Goodbye, Cruel World.')

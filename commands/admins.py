@@ -14,8 +14,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import ADMINS
+args = ['admins']
 
 
 def cmd(send, msg, args):
-        send(', '.join(ADMINS))
+    admins = ""
+    for admin in args['admins']:
+        if args['admins'][admin]:
+            admins += admin + " (V), "
+        else:
+            admins += admin + " (U), "
+    send(admins[:-2])

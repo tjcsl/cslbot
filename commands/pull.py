@@ -15,21 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-from config import ADMINS
 from os.path import dirname
-
-args = ['nick']
 
 
 def do_pull():
-        try:
-            gitdir = dirname(__file__) + '/..'
-            return subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
-        except subprocess.CalledProcessError:
-            return "Something went wrong!"
+    try:
+        gitdir = dirname(__file__) + '/..'
+        return subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
+    except subprocess.CalledProcessError:
+        return "Something went wrong!"
 
 
 def cmd(send, msg, args):
-        if args['nick'] not in ADMINS:
-            return
         send(do_pull())

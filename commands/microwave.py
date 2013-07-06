@@ -17,10 +17,10 @@
 import re
 import time
 import sys
-from config import CHANNEL, ADMINS
+from config import CHANNEL
 
 limit = 5
-args = ['nick', 'channels', 'connection']
+args = ['nick', 'channels', 'connection', 'is_admin']
 
 
 def do_nuke(args, target):
@@ -73,7 +73,7 @@ def cmd(send, msg, args):
                 send('Anti-matter not yet implemented.')
                 return
             if level > 7:
-                if nick not in ADMINS:
+                if not args['is_admin'](nick):
                     send("I'm sorry. Nukes are a admin-only feature")
                     return
                 #FIXME: don't hardcode the primary channel

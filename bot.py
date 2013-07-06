@@ -84,6 +84,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         """
         logging.info("Connected to server " + HOST)
         self.handler.connection = c
+        self.handler.get_admins(c)
         c.join(CHANNEL)
 
     def on_pubmsg(self, c, e):
@@ -136,6 +137,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.kick = [e.source.nick, e.arguments[1]]
         sleep(5)
         c.join(e.target)
+
+    def on_privnotice(self, c, e):
+        self.handler.set_admin(e.arguments[0])
 
     def get_version(self):
         """Get the version."""
