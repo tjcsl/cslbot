@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.request import urlopen
+from urllib.parse import quote
 import json
 
 
@@ -24,6 +25,7 @@ def cmd(send, msg, args):
         if not msg:
             # default to TJHSST
             msg = '22312'
+        msg = quote(msg)
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
                        % (apikey, msg), timeout=1).read().decode()
         forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'

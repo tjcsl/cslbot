@@ -39,6 +39,8 @@ def cmd(send, msg, args):
         send(definition.replace('shit', '$#!+').replace('fuck', 'fsck'))
     except IndexError:
         send("UrbanDictionary doesn't have a answer for you.")
+
+
 def toStr(arrToSplit):
     endStr = arrToSplit[0]
     for i in arrToSplit[1:]:

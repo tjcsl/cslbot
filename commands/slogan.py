@@ -16,12 +16,13 @@
 
 import re
 from urllib.request import urlopen
+from urllib.parse import quote
 from html.parser import HTMLParser
 args = ['modules']
 
 
 def gen_slogan(msg):
-        msg = msg.replace(' ', '%20')
+        msg = quote(msg)
         html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
                        + msg, timeout=2).read().decode()
         slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()

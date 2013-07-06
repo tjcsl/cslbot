@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.request import urlopen
+from urllib.parse import quote
 
 args = ['nick']
 
@@ -23,7 +24,7 @@ def cmd(send, msg, args):
     if not msg:
         return
     nick = args['nick']
-    isup = urlopen("http://isup.me/%s" % msg.replace(' ', '%20')).read().decode('utf-8')
+    isup = urlopen("http://isup.me/%s" % quote(msg)).read().decode('utf-8')
     if "looks down from here" in isup:
         send("%s: %s is down" % (nick, msg))
     elif "like a site on the interwho" in isup:
