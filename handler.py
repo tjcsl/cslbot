@@ -57,6 +57,7 @@ class MyHandler():
         data['logs'] = dict(self.logs)
         data['logfiles'] = dict(self.logfiles)
         data['channels'] = dict(self.channels)
+        data['abuselist'] = dict(self.abuselist)
         return data
 
     def set_data(self, data):
@@ -64,6 +65,7 @@ class MyHandler():
         self.logs = data['logs']
         self.logfiles = data['logfiles']
         self.channels = data['channels']
+        self.abuselist = data['abuselist']
 
     def loadmodules(self):
         """ Load all the commands
@@ -85,23 +87,29 @@ class MyHandler():
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
-    def abusecheck(self, send, nick, limit, msgtype):
+    def abusecheck(self, send, nick, limit, msgtype, name):
         """ Rate-limits commands
 
         | if a nick uses commands with the limit attr set, record the time at which they were used
         | if the command is used more than *limit* times in a minute, ignore the nick
         """
         if nick not in self.abuselist:
-            self.abuselist[nick] = [time.time()]
+            self.abuselist[nick] = {}
+        if name not in self.abuselist[nick]:
+            self.abuselist[nick][name] = [time.time()]
         else:
-            self.abuselist[nick].append(time.time())
+            self.abuselist[nick][name].append(time.time())
         count = 0
-        for x in self.abuselist[nick]:
+        for x in self.abuselist[nick][name]:
             # 60 seconds - arbitrary cuttoff
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit and nick not in ADMINS:
-            self.send(CHANNEL, nick, "\x02%s\x02 is a Bot Abuser." % nick, msgtype)
+            if name == 'scores':
+                msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
+            else:
+                msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
+            self.send(CHANNEL, nick, msg, msgtype)
             self.ignore(send, nick)
             return True
 
@@ -216,7 +224,7 @@ class MyHandler():
         self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, cmdargs), "a")
         self.send(cmdargs, nick, "Joined at the request of " + nick, msgtype)
 
-    def do_scores(self, matches, send, nick):
+    def do_scores(self, matches, send, msgtype, nick):
         """ Handles scores
 
         | If it's a ++ add one point unless the user is trying to promote themselves.
@@ -224,6 +232,9 @@ class MyHandler():
         """
         for match in matches:
             name = match[0].lower()
+            # limit to 5 score changes per minute
+            if self.abusecheck(send, nick, 5, msgtype, 'scores'):
+                return
             if match[1] == "++":
                 score = 1
                 if name == nick.lower():
@@ -332,7 +343,7 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype):
+                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
                 args = self.handle_args(mod.args, send, nick, target) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
@@ -361,7 +372,7 @@ class MyHandler():
         # ++ and --
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if matches:
-            self.do_scores(matches, send, nick)
+            self.do_scores(matches, send, msgtype, nick)
 
         # crazy regex to match urls
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
