@@ -104,7 +104,7 @@ class MyHandler():
             # 60 seconds - arbitrary cuttoff
             if (time.time() - x) < 60:
                 count = count + 1
-        if count > limit and nick not in ADMINS:
+        if count > limit:
             if name == 'scores':
                 msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
             else:
