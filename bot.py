@@ -116,6 +116,9 @@ class MyBot(irc.bot.SingleServerIRCBot):
         """Pass actions to the handler."""
         self.handle_msg('action', c, e)
 
+    def on_nick(self, c, e):
+        self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
+
     def on_kick(self, c, e):
         """Rejoin on kick"""
         # we don't care about other people.

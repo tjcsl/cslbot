@@ -160,7 +160,9 @@ class MyHandler():
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
         if msgtype == 'action':
-            log = '%s <%s> * %s %s\n' % (currenttime, nick, nick.replace('@', ''), msg)
+            log = '%s * %s %s\n' % (currenttime, nick.replace('@', ''), msg)
+        elif msgtype == 'nick':
+            log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.logs[target].append([day, log])
