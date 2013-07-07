@@ -106,8 +106,9 @@ class MyHandler():
             return
         nick = e.source.nick
         if nick != 'NickServ':
-            c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
-            self.do_kick(c, e, send, nick, "imposter", 'private')
+            if nick in self.channels[CHANNEL].users():
+                c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
+                self.do_kick(c, e, send, nick, "imposter", 'private')
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
@@ -315,7 +316,7 @@ class MyHandler():
         target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
         if NICK not in ops:
-            send(self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
+            c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
             c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
