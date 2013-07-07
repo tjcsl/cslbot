@@ -407,6 +407,10 @@ class MyHandler():
                 elif cmd[1:] == 'cabuse':
                     self.abuselist = {}
                     send("Abuse list cleared.")
+                elif cmd[1:] == 'cadmin':
+                    self.admins = {nick: False for nick in ADMINS}
+                    self.get_admins(c)
+                    send("Verified admins reset.")
                 elif cmd[1:] == 'ignore':
                     self.ignore(send, cmdargs)
                 elif cmd[1:] == 'showignore':
