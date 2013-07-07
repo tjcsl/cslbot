@@ -91,8 +91,6 @@ class MyHandler():
             send("Now ignoring %s." % nick)
 
     def is_admin(self, c, nick):
-        if nick not in ADMINS:
-            return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
             c.privmsg(CHANNEL, "Unverified admin: " + nick)
@@ -103,6 +101,8 @@ class MyHandler():
     def set_admin(self, msg):
         match = re.match("(.*) ACC ([0-3])", msg)
         if not match:
+            return
+        if match.group(1) not in ADMINS:
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
