@@ -212,7 +212,8 @@ class MyHandler():
         elif msgtype == 'quit':
             log = '%s %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'kick':
-            log = '%s %s has been kicked (%s)\n' % (currenttime, nick.replace('@', ''), msg)
+            msg = msg.split(',')
+            log = '%s %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.logs[target].append([day, log])
