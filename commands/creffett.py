@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import NICK
-args = ['nick', 'ignore']
+from config import NICK, CHANNEL
+args = ['nick', 'ignore', 'connection']
 
 
 def gen_creffett(msg):
@@ -29,5 +29,8 @@ def cmd(send, msg, args):
         return
     if not msg:
         return
+    c = args['connection']
+    c.send_raw("MODE %s -c" % CHANNEL)
     send(gen_creffett(msg))
+    c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')
