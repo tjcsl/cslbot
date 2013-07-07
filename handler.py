@@ -98,11 +98,14 @@ class MyHandler():
         else:
             return True
 
-    def set_admin(self, msg):
-        match = re.match("(.*) ACC ([0-3])", msg)
+    def set_admin(self, e, c, send):
+        match = re.match("(.*) ACC ([0-3])", e.arguments[0])
         if not match:
             return
-        if match.group(1) not in ADMINS:
+        nick = e.source.nick
+        if nick != 'NickServ':
+            c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
+            self.do_kick(c, e, send, nick, "imposter", 'private')
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
@@ -152,6 +155,10 @@ class MyHandler():
     def pubmsg(self, c, e):
         """ Handle public messages. """
         self.handle_msg('pub', c, e)
+
+    def privnotice(self, c, e):
+        """ Handle private notices. """
+        self.handle_msg('privnotice', c, e)
 
     def action(self, c, e):
         """ Handle actions. """
@@ -302,6 +309,14 @@ class MyHandler():
         except AttributeError:
             pass
 
+    def do_kick(self, c, e, send, nick, msg, msgtype):
+        target = e.target if msgtype != 'private' else CHANNEL
+        ops = self.channels[target].opers()
+        if NICK not in ops:
+            send(self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
+        else:
+            c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
+
     def do_caps(self, msg, c, e, nick, send):
         # SHUT CAPS LOCK OFF, MORON
         count = 0
@@ -311,11 +326,7 @@ class MyHandler():
                 count += 1
         upper_ratio = count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            ops = self.channels[e.target].opers()
-            if NICK not in ops:
-                send(self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
-            else:
-                c.kick(e.target, nick, self.modules['slogan'].gen_slogan("shutting caps lock off").upper())
+            self.do_kick(c, e, send, nick, "shutting caps lock off", 'pubmsg')
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target, c):
@@ -357,6 +368,10 @@ class MyHandler():
             target = nick
         self.do_log(target, nick, msg, msgtype)
         send = lambda msg: self.send(target, NICK, msg, msgtype)
+        if msgtype == 'privnotice':
+            self.set_admin(e, c, send)
+            return
+
         if not self.is_admin(c, nick) and nick in self.ignored:
             return
 

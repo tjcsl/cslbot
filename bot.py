@@ -139,7 +139,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         c.join(e.target)
 
     def on_privnotice(self, c, e):
-        self.handler.set_admin(e.arguments[0])
+        self.handle_msg('privnotice', c, e)
 
     def get_version(self):
         """Get the version."""
