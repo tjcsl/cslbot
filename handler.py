@@ -370,11 +370,12 @@ class MyHandler():
             target = e.target
         else:
             target = nick
-        self.do_log(target, nick, msg, msgtype)
         send = lambda msg: self.send(target, NICK, msg, msgtype)
         if msgtype == 'privnotice':
             self.set_admin(e, c, send)
             return
+
+        self.do_log(target, nick, msg, msgtype)
 
         if not self.is_admin(c, nick) and nick in self.ignored:
             return
