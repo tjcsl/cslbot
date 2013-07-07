@@ -91,7 +91,7 @@ class MyHandler():
             send("Now ignoring %s." % nick)
 
     def is_admin(self, c, nick):
-        if nick not in self.admins:
+        if nick not in ADMINS:
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
