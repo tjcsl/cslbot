@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     if not msg:
         return
     c = args['connection']
-    c.send_raw("MODE %s -c" % CHANNEL)
+#    c.send_raw("MODE %s -c" % CHANNEL)
     send(gen_creffett(msg))
-    c.send_raw("MODE %s +c" % CHANNEL)
+#    c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')
