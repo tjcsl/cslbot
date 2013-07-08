@@ -52,6 +52,8 @@ class MyHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
         self.caps = []
+#       self.ctrlchan = "#fastbot-control"
+        self.ctrlchan = "#" + NICK + "-control"
 
     def get_data(self):
         data = {}
@@ -367,6 +369,9 @@ class MyHandler():
             return args
 
     def handle_msg(self, msgtype, c, e):
+        if e.target == self.ctrlchan:
+            handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
+                    lambda msg: self.send(self.ctrlchan, NICK, msg, msgtype))
         if msgtype == 'action':
             nick = e.source.split('!')[0]
         else:
@@ -436,3 +441,7 @@ class MyHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
+    
+    def handle_ctrlchan(nick, msg, send):
+        send("ctrlchan msg: %s" % msg)
+
