@@ -368,12 +368,12 @@ class MyHandler():
                     raise Exception("Invalid Argument: " + arg)
             return args
     
-    def handle_ctrlchan(nick, msg, send):
+    def handle_ctrlchan(self, nick, msg, send):
         send("ctrlchan msg: %s" % msg)
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == self.ctrlchan.lower():
-            handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
+            self.handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
                     lambda msg: self.send(self.ctrlchan, NICK, msg, msgtype))
         if msgtype == 'action':
             nick = e.source.split('!')[0]
