@@ -403,15 +403,15 @@ class MyHandler():
                 mod.cmd(send, cmdargs, args)
         #special commands
         if cmd[0] == '!':
-            if cmd[1:] == 'reload':
-                send("Aye Aye Capt'n")
-                for x in self.modules.values():
-                    imp.reload(x)
             # everything below this point requires admin
             if self.is_admin(c, nick):
                 if cmd[1:] == 'cignore':
                     self.ignored = []
                     send("Ignore list cleared.")
+                elif cmd[1:] == 'reload':
+                    send("Aye Aye Capt'n")
+                    for x in self.modules.values():
+                        imp.reload(x)
                 elif cmd[1:] == 'cabuse':
                     self.abuselist = {}
                     send("Abuse list cleared.")
