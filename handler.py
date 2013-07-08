@@ -369,7 +369,7 @@ class MyHandler():
             return args
 
     def handle_msg(self, msgtype, c, e):
-        if e.target == self.ctrlchan:
+        if e.target.lower() == self.ctrlchan.lower():
             handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
                     lambda msg: self.send(self.ctrlchan, NICK, msg, msgtype))
         if msgtype == 'action':
