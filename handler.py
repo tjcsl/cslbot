@@ -324,6 +324,7 @@ class MyHandler():
                 c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
                 self.caps = [i for i in self.caps if i != nick]
         else:
+            send("%s: warning, %s" % (nick, self.modules['slogan'].gen_slogan(msg)))
             self.caps.append(nick)
 
     def do_caps(self, msg, c, e, nick, send):
