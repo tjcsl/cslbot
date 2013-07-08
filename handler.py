@@ -316,7 +316,7 @@ class MyHandler():
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
         target = e.target if msgtype != 'private' else CHANNEL
-        ops = self.channels[target].opers()
+        ops = [i for i in self.channels[target].opers() if i != NICK]
         if nick in self.caps:
             if NICK not in ops:
                 c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
@@ -325,7 +325,7 @@ class MyHandler():
                 self.caps = [i for i in self.caps if i != nick]
         else:
             send("%s: warning, %s" % (nick, self.modules['slogan'].gen_slogan(msg).lower()))
-            send("%s: keep an eye on %s" % (nick, choice(ops)))
+            send("%s: keep an eye on %s" % (choice(ops), nick))
             self.caps.append(nick)
 
     def do_caps(self, msg, c, e, nick, send):
