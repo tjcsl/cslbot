@@ -369,7 +369,9 @@ class MyHandler():
             return args
     
     def handle_ctrlchan(self, nick, msg, send):
-        send("ctrlchan msg: %s" % msg)
+        cmd = msg.split()
+        if cmd[0] == "quote":
+            self.send_raw(" ".join(cmd[1:]))
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == self.ctrlchan.lower():
