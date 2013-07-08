@@ -51,6 +51,7 @@ class MyHandler():
         self.scorefile = os.path.dirname(__file__)+'/score'
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
+        self.caps = []
 
     def get_data(self):
         data = {}
@@ -316,10 +317,14 @@ class MyHandler():
     def do_kick(self, c, e, send, nick, msg, msgtype):
         target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
-        if NICK not in ops:
-            c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
+        if nick in self.caps:
+            if NICK not in ops:
+                c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
+            else:
+                c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
+                self.caps = [i for i in self.caps if i != nick]
         else:
-            c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
+            self.caps.append(nick)
 
     def do_caps(self, msg, c, e, nick, send):
         # SHUT CAPS LOCK OFF, MORON
