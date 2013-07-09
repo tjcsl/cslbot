@@ -2,6 +2,7 @@ HOST = 'irc.freenode.net'
 NICK = 'tjhsstBot'
 NICKPASS = ''
 CHANNEL = '#tjhsst'
+CTRLCHAN = '#tjhsstbot-control'
 ADMINS = ['pfoley', 'fwilson', 'ahamilto', 'srepetsk', 'TechFilmer', 'csssuf']
 STEAMAPIKEY = ''
 STEAMENABLE = False

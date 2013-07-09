@@ -19,11 +19,10 @@ import logging
 import traceback
 import imp
 import irc.bot
-from config import CHANNEL, NICK, NICKPASS, HOST, ADMINS
+from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS
 from os.path import basename
 from time import sleep
 import handler
-import server
 
 
 class MyBot(irc.bot.SingleServerIRCBot):
@@ -87,8 +86,8 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.connection = c
         self.handler.get_admins(c)
         c.join(CHANNEL)
-        c.join("#%s-control" % NICK)
-#        server.init_server(self.handler)
+        c.join(CTRLCHAN)
+        #server.init_server(self.handler)
 
     def on_pubmsg(self, c, e):
         """Pass public messages to the handler."""

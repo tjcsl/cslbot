@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import ADMINS, CHANNEL, NICK, LOGDIR
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
 import re
 import os
 from glob import glob
@@ -43,17 +43,16 @@ class MyHandler():
         | logfiles is a dict containing the file objects to which the logs are written.
         """
         self.ignored = []
-        self.logs = {CHANNEL: [], 'private': []}
+        self.logs = {CHANNEL: [], CTRLCHAN: [], 'private': []}
         self.channels = {}
         self.abuselist = {}
         self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
         self.scorefile = os.path.dirname(__file__)+'/score'
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
+                         CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
         self.caps = []
-#       self.ctrlchan = "#fastbot-control"
-        self.ctrlchan = "#" + NICK + "-control"
         self.kick_enabled = True
         self.disabled_mods = []
 
@@ -319,7 +318,7 @@ class MyHandler():
             pass
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
-        if not self.kick_enabled: 
+        if not self.kick_enabled:
             send("%s: you're lucky. kick is disabled." % nick)
             return
         target = e.target if msgtype != 'private' else CHANNEL
@@ -372,7 +371,7 @@ class MyHandler():
                 else:
                     raise Exception("Invalid Argument: " + arg)
             return args
-    
+
     def handle_ctrlchan(self, nick, msg, send, send_raw):
         cmd = msg.split()
         if cmd[0] == "quote":
@@ -401,11 +400,10 @@ class MyHandler():
                     send(str(i))
 
     def handle_msg(self, msgtype, c, e):
-        if e.target.lower() == self.ctrlchan.lower():
-            self.handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
-                    lambda msg: self.send(self.ctrlchan, NICK, msg, msgtype),
-                    c.send_raw
-                    )
+        if e.target.lower() == CTRLCHAN:
+            self.handle_ctrlchan(e.source.nick, e.arguments[0].strip(),
+                                 lambda msg: self.send(CTRLCHAN, NICK, msg, msgtype),
+                                 c.send_raw)
         if msgtype == 'action':
             nick = e.source.split('!')[0]
         else:
@@ -478,4 +476,3 @@ class MyHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
-
