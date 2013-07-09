@@ -55,6 +55,7 @@ class MyHandler():
 #       self.ctrlchan = "#fastbot-control"
         self.ctrlchan = "#" + NICK + "-control"
         self.kick_enabled = True
+        self.disabled_mods = []
 
     def get_data(self):
         data = {}
@@ -380,10 +381,16 @@ class MyHandler():
             if cmd[1] == "kick":
                 self.kick_enabled = False
                 send("Kick disabled.")
+            if cmd[1] == "module":
+                self.disabled_mods.append(cmd[2])
+                send("Module disabled.")
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
                 self.kick_enabled = True
                 send("Kick enabled.")
+            if cmd[1] == "module":
+                self.disabled_mods = [i for i in self.disabled_mods if i != cmd[2]]
+                send("Module enabled.")
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == self.ctrlchan.lower():
@@ -421,6 +428,9 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
+                if mod in self.disabled_mods:
+                    send("That module is disabled, sorry.")
+                    return
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
                 args = self.handle_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
