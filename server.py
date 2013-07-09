@@ -58,5 +58,3 @@ class BotnetServer:
             # End commands
             #
         conn.close()
-
-BotnetServer(object)

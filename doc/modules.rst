@@ -8,3 +8,4 @@ IrcBot
    commands
    config
    handler
+   server
