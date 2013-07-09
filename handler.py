@@ -395,7 +395,7 @@ class MyHandler():
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 send(str(self.disabled_mods))
             if cmd[1] == "enabled" and cmd[2] == "modules":
-                mods = ",".join([i for i in self.modules if i not in self.disabled_mods])
+                mods = ",".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
                 modsl = [mods[i:i+500] for i in range(0, len(mods), 500)]
                 for i in modsl:
                     send(str(i))
