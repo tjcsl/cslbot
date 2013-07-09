@@ -54,6 +54,7 @@ class MyHandler():
         self.caps = []
 #       self.ctrlchan = "#fastbot-control"
         self.ctrlchan = "#" + NICK + "-control"
+        self.kick_enabled = True
 
     def get_data(self):
         data = {}
@@ -317,6 +318,7 @@ class MyHandler():
             pass
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
+        if not self.kick_enabled: return
         target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
         if nick in self.caps:
@@ -372,6 +374,14 @@ class MyHandler():
         cmd = msg.split()
         if cmd[0] == "quote":
             send_raw(" ".join(cmd[1:]))
+        elif cmd[0] == "disable":
+            if cmd[1] == "kick":
+                self.kick_enabled = False
+                send("Kick disabled.")
+        elif cmd[0] == "enable":
+            if cmd[1] == "kick":
+                self.kick_enabled = True
+                send("Kick enabled.")
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == self.ctrlchan.lower():
