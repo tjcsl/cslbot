@@ -391,6 +391,9 @@ class MyHandler():
             if cmd[1] == "module":
                 self.disabled_mods = [i for i in self.disabled_mods if i != cmd[2]]
                 send("Module enabled.")
+        elif cmd[0] == "get":
+            if cmd[1] == "disabled" and cmd[2] == "modules":
+                send(str(self.disabled_mods))
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == self.ctrlchan.lower():
