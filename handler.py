@@ -318,7 +318,9 @@ class MyHandler():
             pass
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
-        if not self.kick_enabled: return
+        if not self.kick_enabled: 
+            send("%s: you're lucky. kick is disabled." % nick)
+            return
         target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
         if nick in self.caps:
