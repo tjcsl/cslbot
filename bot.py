@@ -88,7 +88,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(CHANNEL)
         c.join("#%s-control" % NICK)
-        server.init_server(self.handler)
+#        server.init_server(self.handler)
 
     def on_pubmsg(self, c, e):
         """Pass public messages to the handler."""
