@@ -421,6 +421,9 @@ class MyHandler():
 
         # is this a command?
         cmd = msg.split()[0]
+        if cmd in self.disabled_mods:
+            send("That module is disabled, sorry.")
+            return
         # handle !s/a/b/
         if cmd[:2] == '!s':
             cmd = cmd.split('/')[0]
@@ -428,9 +431,6 @@ class MyHandler():
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                if mod in self.disabled_mods:
-                    send("That module is disabled, sorry.")
-                    return
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
                 args = self.handle_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
