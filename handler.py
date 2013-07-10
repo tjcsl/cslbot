@@ -252,12 +252,11 @@ class MyHandler():
         | opens logs for channel
         """
         cmd = cmdargs.split()
-        if len(cmd) < 2: cmd[1] = "potato"
         if not cmdargs:
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
-        if cmdargs in self.channels and cmd[1] != "force":
+        if cmdargs in self.channels and len(cmd) > 0 and cmd[1] != "force":
             send("%s is already a member of %s" % (NICK, cmdargs))
             return
         c.join(cmd[0])
