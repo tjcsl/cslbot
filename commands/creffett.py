@@ -33,3 +33,5 @@ def cmd(send, msg, args):
     send(gen_creffett(msg))
 #    c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')
+    # Kick if possible
+    c.kick(target, nicddk, self.modules['slogan'].gen_slogan('creffett impersonation').upper())
