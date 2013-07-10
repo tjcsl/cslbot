@@ -252,7 +252,7 @@ class MyHandler():
         | opens logs for channel
         """
         cmd = cmdargs.split()
-        if len(cmd) < 2: cmd[1] = "potato"
+        if len(cmd) < 2: cmd.append("potato")
         if not cmdargs:
             return
         if cmdargs[0] != '#':
