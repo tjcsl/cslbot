@@ -400,10 +400,13 @@ class MyHandler():
                     send(str(i))
 
     def handle_msg(self, msgtype, c, e):
-        if e.target.lower() == CTRLCHAN:
-            self.handle_ctrlchan(e.source.nick, e.arguments[0].strip(),
-                                 lambda msg: self.send(CTRLCHAN, NICK, msg, msgtype),
-                                 c.send_raw)
+        try:
+            if e.target.lower() == CTRLCHAN:
+                self.handle_ctrlchan(e.source.nick, e.arguments[0].strip(), 
+                        lambda msg: self.send(self.ctrlchan, NICK, msg, msgtype),
+                        c.send_raw
+                        )
+        except: pass
         if msgtype == 'action':
             nick = e.source.split('!')[0]
         else:
