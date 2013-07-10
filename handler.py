@@ -251,17 +251,18 @@ class MyHandler():
         | checks if bot is already joined to channel
         | opens logs for channel
         """
+        cmd = cmdargs.split()
         if not cmdargs:
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
-        if cmdargs in self.channels:
+        if cmdargs in self.channels and cmd[1] != "force":
             send("%s is already a member of %s" % (NICK, cmdargs))
             return
-        c.join(cmdargs)
-        self.logs[cmdargs] = []
-        self.logfiles[cmdargs] = open("%s/%s.log" % (LOGDIR, cmdargs), "a")
-        self.send(cmdargs, nick, "Joined at the request of " + nick, msgtype)
+        c.join(cmd[0])
+        self.logs[cmd[0]] = []
+        self.logfiles[cmd[0]] = open("%s/%s.log" % (LOGDIR, cmd[0]), "a")
+        self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
     def do_scores(self, matches, send, msgtype, nick):
         """ Handles scores
