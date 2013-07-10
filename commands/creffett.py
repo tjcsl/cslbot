@@ -34,4 +34,4 @@ def cmd(send, msg, args):
 #    c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')
     # Kick if possible
-    c.kick(target, nicddk, self.modules['slogan'].gen_slogan('creffett impersonation').upper())
+#    c.kick(target, nicddk, self.modules['slogan'].gen_slogan('creffett impersonation').upper())
