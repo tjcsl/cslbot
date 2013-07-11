@@ -19,7 +19,7 @@ import logging
 import traceback
 import imp
 import irc.bot
-from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS
+from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
 from os.path import basename
 from time import sleep
 import handler
@@ -86,7 +86,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.connection = c
         self.handler.get_admins(c)
         c.join(CHANNEL)
-        c.join(CTRLCHAN)
+        c.join(CTRLCHAN, CTRLKEY)
         #server.init_server(self.handler)
 
     def on_pubmsg(self, c, e):
