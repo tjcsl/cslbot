@@ -16,6 +16,7 @@
 
 import json
 from urllib.request import urlopen, Request
+from urllib.parse import quote
 
 
 def get_short(msg):
@@ -23,7 +24,7 @@ def get_short(msg):
         return
     if "goo.gl" in msg:
         return msg
-    data = {'longUrl': msg}
+    data = {'longUrl': quote(msg)}
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
     req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
