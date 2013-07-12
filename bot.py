@@ -115,7 +115,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
-            c.privmsg(e.target, "%s: %s is not a kickable offense!" % (self.kick[0], self.kick[1]))
+            c.privmsg(e.target, "%s: %s to ya too, Sucka!" % (self.kick[0], self.kick[1]))
             slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             c.privmsg(e.target, slogan)
             del self.kick
