@@ -16,12 +16,13 @@
 
 from random import choice
 
-args = ['channels', 'target']
+args = ['channels', 'target', 'connection', 'nick']
 
 
 def cmd(send, msg, args):
     users = (args['channels'][args['target']].users() if args['target'] != 'private' else ['you'])
+    target = args['target'] if args['target'] != 'private' else args['nick']
     user = choice(users)
     if msg:
         msg = " for " + msg
-    send("I blame " + user + msg)
+    args['connection'].action(target, "blames " + user + msg)
