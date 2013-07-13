@@ -20,13 +20,13 @@ import sys
 from config import CHANNEL
 
 limit = 5
-args = ['nick', 'channels', 'connection', 'is_admin']
+args = ['nick', 'channels', 'connection', 'is_admin', 'target']
 
 
-def do_nuke(args, target):
+def do_nuke(args, target, channel):
     c = args['connection']
     nick = args['nick']
-    c.privmsg(CHANNEL, "Please Stand By, Nuking " + target)
+    c.privmsg(channel, "Please Stand By, Nuking " + target)
     c.privmsg_many([nick, target], "        ____________________          ")
     c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:       ")
     c.privmsg_many([nick, target], "    /    (          /   /      \\      ")
@@ -47,6 +47,7 @@ def do_nuke(args, target):
 
 def cmd(send, msg, args):
         nick = args['nick']
+        channel = args['target'] if args['target'] != 'private' else CHANNEL
         levels = {1: 'Whirr...',
                   2: 'Vrrm...',
                   3: 'Zzzzhhhh...',
@@ -76,8 +77,7 @@ def cmd(send, msg, args):
                 if not args['is_admin'](nick):
                     send("I'm sorry. Nukes are a admin-only feature")
                     return
-                #FIXME: don't hardcode the primary channel
-                elif target not in args['channels'][CHANNEL].users():
+                elif target not in args['channels'][channel].users():
                     send("I'm sorry. Anonymous Nuking is not allowed")
                     return
 
@@ -87,7 +87,7 @@ def cmd(send, msg, args):
                     msg += ' ' + levels[i]
             send(msg)
             if level >= 8:
-                do_nuke(args, target)
+                do_nuke(args, target, channel)
             if level >= 9:
                 send(levels[9])
             if level == 10:
