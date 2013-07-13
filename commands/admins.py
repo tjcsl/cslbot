@@ -19,7 +19,7 @@ args = ['admins']
 
 def cmd(send, msg, args):
     admins = ""
-    for admin in args['admins']:
+    for admin in sorted(args['admins']):
         if args['admins'][admin]:
             admins += admin + " (V), "
         else:

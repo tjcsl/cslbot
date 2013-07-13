@@ -99,12 +99,13 @@ class MyHandler():
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
-    def is_admin(self, c, nick):
+    def is_admin(self, c, nick, complain=True):
         if nick not in ADMINS:
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
-            c.privmsg(CHANNEL, "Unverified admin: " + nick)
+            if complain:
+                c.privmsg(CHANNEL, "Unverified admin: " + nick)
             return False
         else:
             return True
@@ -436,7 +437,7 @@ class MyHandler():
 
         self.do_log(target, nick, msg, msgtype)
 
-        if not self.is_admin(c, nick) and nick in self.ignored:
+        if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
         self.do_caps(msg, c, e, nick, send)
@@ -450,6 +451,7 @@ class MyHandler():
         if cmd[:2] == '!s':
             cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd)+1:]
+        found = False
         if cmd[0] == '!':
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
@@ -457,17 +459,19 @@ class MyHandler():
                     return
                 args = self.handle_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
+                found = True
         #special commands
         if cmd[0] == '!':
+            if cmd[1:] == 'reload' and nick in ADMINS:
+                send("Aye Aye Capt'n")
+                found = True
+                for x in self.modules.values():
+                    imp.reload(x)
             # everything below this point requires admin
-            if self.is_admin(c, nick):
+            if not found and self.is_admin(c, nick):
                 if cmd[1:] == 'cignore':
                     self.ignored = []
                     send("Ignore list cleared.")
-                elif cmd[1:] == 'reload':
-                    send("Aye Aye Capt'n")
-                    for x in self.modules.values():
-                        imp.reload(x)
                 elif cmd[1:] == 'cabuse':
                     self.abuselist = {}
                     send("Abuse list cleared.")

@@ -42,8 +42,6 @@ class MyBot(irc.bot.SingleServerIRCBot):
         | Create a new handler and restore all the data.
         """
         if cmdargs == 'pull':
-            if e.source.nick not in ADMINS:
-                return
             target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
@@ -65,7 +63,7 @@ class MyBot(irc.bot.SingleServerIRCBot):
             cmd = e.arguments[0].strip()
             if not cmd:
                 return
-            if cmd.split()[0] == '!reload':
+            if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
                 cmdargs = cmd[len('!reload')+1:]
                 self.do_reload(c, e, msgtype, cmdargs)
             getattr(self.handler, msgtype)(c, e)
