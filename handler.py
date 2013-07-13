@@ -16,15 +16,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
-import re
-import os
 from glob import glob
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 from random import choice
+import re
+import os
 import json
 import importlib
+import logging
 import imp
 import time
 import socket
@@ -387,26 +388,30 @@ class MyHandler():
             if cmd[1] == "kick":
                 self.kick_enabled = False
                 send("Kick disabled.")
-            if cmd[1] == "module":
+            elif cmd[1] == "module":
                 self.disabled_mods.append(cmd[2])
                 send("Module disabled.")
+            elif cmd[1] == "logging":
+                logging.getLogger().setLevel(logging.INFO)
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
                 self.kick_enabled = True
                 send("Kick enabled.")
-            if cmd[1] == "module":
+            elif cmd[1] == "module":
                 self.disabled_mods.remove(cmd[2])
                 send("Module enabled.")
-            if cmd[1] == "all" and cmd[2] == "modules":
+            elif cmd[1] == "all" and cmd[2] == "modules":
                 self.disabled_mods = []
                 send("Enabled all modules.")
+            elif cmd[1] == "logging":
+                logging.getLogger().setLevel(logging.DEBUG)
         elif cmd[0] == "get":
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
                 if not mods:
                     send("No disabled modules.")
                 send(mods)
-            if cmd[1] == "enabled" and cmd[2] == "modules":
+            elif cmd[1] == "enabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
                 send(mods)
 
