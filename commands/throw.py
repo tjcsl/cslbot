@@ -15,9 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+from random import choice
+
+args = ['channels', 'target', 'connection', 'nick']
 
 
 def cmd(send, msg, args):
+    users = (args['channels'][args['target']].users() if args['target'] != 'private' else ['you'])
+    target = args['target'] if args['target'] != 'private' else args['nick']
+    if "at" in msg:
         match = re.match('(.*) at (.*)', msg)
         if match:
-            send('%s has been thrown at %s' % (match.group(1), match.group(2)))
+            args['connection'].action(target, 'throws %s at %s' % (match.group(1), match.group(2)))
+    elif msg:
+        args['connection'].action(target, 'throws %s at %s' % (msg, choice(users)))
