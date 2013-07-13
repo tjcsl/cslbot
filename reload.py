@@ -18,7 +18,7 @@
 import logging
 import sys
 from irc.client import SimpleIRCClient
-from config import CTRLCHAN, CTRLPASS, NICK, HOST, CTRLKEY
+from config import CHANNEL, CTRLPASS, NICK, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
@@ -27,11 +27,14 @@ class IrcClient(SimpleIRCClient):
         SimpleIRCClient.__init__(self)
 
     def on_welcome(self, c, e):
-        c.join(CTRLCHAN, CTRLKEY)
+        c.join(CHANNEL, CTRLKEY)
 
     def on_mode(self, c, e):
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            c.privmsg(CTRLCHAN, '!reload')
+            c.privmsg(CHANNEL, '!reload')
+
+    def on_join(self, c, e):
+        c.privmsg(CHANNEL, '!reload')
 
     def on_pubmsg(self, c, e):
         if e.source.nick == NICK:
