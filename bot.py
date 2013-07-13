@@ -44,22 +44,22 @@ class IrcBot(SingleServerIRCBot):
         | If we receive a !reload command, do the reloading magic.
         | Call the appropriate handler method for processing.
         """
+        target = e.target if e.target[0] == '#' else e.source.nick
         try:
             cmd = e.arguments[0].strip()
             if not cmd:
                 return
             if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
                 cmdargs = cmd[len('!reload')+1:]
-                self.do_reload(c, e, msgtype, cmdargs)
+                self.do_reload(c, e, msgtype, cmdargs, target)
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
-            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
-    def do_reload(self, c, e, msgtype, cmdargs):
+    def do_reload(self, c, e, msgtype, cmdargs, target):
         """The reloading magic.
 
         | First, reload handler.py.
@@ -67,7 +67,6 @@ class IrcBot(SingleServerIRCBot):
         | Create a new handler and restore all the data.
         """
         if cmdargs == 'pull':
-            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
         imp.reload(handler)

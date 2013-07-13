@@ -518,10 +518,10 @@ class BotHandler():
         #special commands
         if cmd[0] == '!':
             if cmd[1:] == 'reload' and nick in ADMINS:
-                send("Aye Aye Capt'n")
                 found = True
                 for x in self.modules.values():
                     imp.reload(x)
+                send("Aye Aye Capt'n")
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
                 self.do_admin(c, cmd[1:], cmdargs, send, nick, msgtype, target)
