@@ -24,6 +24,9 @@ def get_short(msg):
         return
     if "goo.gl" in msg:
         return msg
+    # prevent escaping of http://
+    if '//' in msg:
+        msg = msg.split('//')[1]
     data = {'longUrl': quote(msg)}
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
