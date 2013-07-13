@@ -18,31 +18,40 @@
 import logging
 import sys
 from irc.client import SimpleIRCClient
-from config import CHANNEL, CTRLPASS, NICK, HOST, CTRLKEY
+from config import CTRLCHAN, CTRLPASS, NICK, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
     def __init__(self, nick):
         self.nick = nick
+        self.reloading = False
         SimpleIRCClient.__init__(self)
 
     def on_welcome(self, c, e):
-        c.join(CHANNEL, CTRLKEY)
+        c.join(CTRLCHAN, CTRLKEY)
 
     def on_mode(self, c, e):
+        if self.reloading:
+            return
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            c.privmsg(CHANNEL, '!reload')
+            c.privmsg(CTRLCHAN, '!reload')
+            self.reloading = True
 
     def on_join(self, c, e):
-        c.privmsg(CHANNEL, '!reload')
+        if self.reloading:
+            return
+        c.privmsg(CTRLCHAN, '!reload')
+        self.reloading = True
 
     def on_pubmsg(self, c, e):
         if e.source.nick == NICK:
             if e.arguments[0] == "Aye Aye Capt'n":
                 print("Reload successful.")
+                c.quit()
                 sys.exit(0)
             else:
                 print("Reload failed.")
+                c.quit()
                 sys.exit(1)
 
 
