@@ -42,7 +42,9 @@ class MyHandler():
         | scorefile is the fullpath to the file which records the scores.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
+        self.caps = []
         self.ignored = []
+        self.disabled_mods = []
         self.logs = {CHANNEL: [], CTRLCHAN: [], 'private': []}
         self.channels = {}
         self.abuselist = {}
@@ -52,22 +54,24 @@ class MyHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
-        self.caps = []
         self.kick_enabled = True
-        self.disabled_mods = []
 
     def get_data(self):
         data = {}
+        data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
+        data['disabled_mods'] = list(self.disabled_mods)
         data['logs'] = dict(self.logs)
-        data['logfiles'] = dict(self.logfiles)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
         data['admins'] = dict(self.admins)
+        data['logfiles'] = dict(self.logfiles)
         return data
 
     def set_data(self, data):
+        self.caps = data['caps']
         self.ignored = data['ignored']
+        self.disabled_mods = data['disabled_mods']
         self.logs = data['logs']
         self.logfiles = data['logfiles']
         self.channels = data['channels']
@@ -329,7 +333,7 @@ class MyHandler():
                 c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
             else:
                 c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
-                self.caps = [i for i in self.caps if i != nick]
+                self.caps.remove(nick)
         else:
             send("%s: warning, %s would be a *really* good idea :)" % (nick, msg))
             self.caps.append(nick)
@@ -344,6 +348,8 @@ class MyHandler():
         upper_ratio = count / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
             self.do_kick(c, e, send, nick, "shutting caps lock off", 'pubmsg')
+        elif nick in self.caps:
+            self.caps.remove(nick)
 
     #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target, c):
@@ -389,16 +395,20 @@ class MyHandler():
                 self.kick_enabled = True
                 send("Kick enabled.")
             if cmd[1] == "module":
-                self.disabled_mods = [i for i in self.disabled_mods if i != cmd[2]]
+                self.disabled_mods.remove(cmd[2])
                 send("Module enabled.")
+            if cmd[1] == "all" and cmd[2] == "modules":
+                self.disabled_mods = []
+                send("Enabled all modules.")
         elif cmd[0] == "get":
             if cmd[1] == "disabled" and cmd[2] == "modules":
-                send(str(self.disabled_mods))
+                mods = ", ".join(sorted(self.disabled_mods))
+                if not mods:
+                    send("No disabled modules.")
+                send(mods)
             if cmd[1] == "enabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
-                modsl = [mods[i:i+500] for i in range(0, len(mods), 500)]
-                for i in modsl:
-                    send(str(i))
+                send(mods)
 
     def handle_msg(self, msgtype, c, e):
         if e.target.lower() == CTRLCHAN:
