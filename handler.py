@@ -15,12 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
-from glob import glob
-from lxml.html import parse
-from urllib.request import urlopen, Request
-from urllib.error import URLError
-from random import choice
 import re
 import os
 import json
@@ -29,20 +23,32 @@ import logging
 import imp
 import time
 import socket
+import string
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
+from os.path import basename
+from glob import glob
+from lxml.html import parse
+from urllib.request import urlopen, Request
+from urllib.error import URLError
+from random import choice
 
 
 class BotHandler():
     def __init__(self):
         """ Set everything up.
 
+        | kick_enabled controls whether the bot will kick people or not..
+        | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for bot abuse.
-        | logs is a dict containing a in-memory log for the primary channel as well as one for private messages.
+        | disabled_mods is a array of the currently disabled modules.
+        | logs is a dict containing a in-memory log for the primary channel, control channel, and private messages.
         | channels is a dict containing the objects for each channel the bot is connected to.
         | abuselist is a dict keeping track of how many times nicks have used rate-limited commands.
         | modules is a dict containing the commands the bot supports.
         | scorefile is the fullpath to the file which records the scores.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
+        self.kick_enabled = True
         self.caps = []
         self.ignored = []
         self.disabled_mods = []
@@ -55,9 +61,9 @@ class BotHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
-        self.kick_enabled = True
 
     def get_data(self):
+        """Saves the handler's data for :func:`bot.do_reload`"""
         data = {}
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
@@ -70,6 +76,7 @@ class BotHandler():
         return data
 
     def set_data(self, data):
+        """Called from :func:`bot.do_reload` to restore the handler's data."""
         self.caps = data['caps']
         self.ignored = data['ignored']
         self.disabled_mods = data['disabled_mods']
@@ -80,26 +87,31 @@ class BotHandler():
         self.admins = data['admins']
 
     def loadmodules(self):
-        """ Load all the commands
+        """Load all the commands.
 
-        | globs over all the .py files in the commands dir.
-        | skips file without the executable bit set
-        | imports the modules into a dict
+        | Globs over all the .py files in the commands dir.
+        | Skips file without the executable bit set
+        | Imports the modules into a dict
         """
         modulemap = {}
         for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
             if os.access(f, os.X_OK):
-                cmd = os.path.basename(f).split('.')[0]
+                cmd = basename(f).split('.')[0]
                 modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
     def ignore(self, send, nick):
-        """ Ignores a nick """
+        """Ignores a nick."""
         if nick not in self.ignored:
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
     def is_admin(self, c, nick, complain=True):
+        """Checks if a nick is a admin.
+
+        | If the nick is not in :const:`ADMINS` then it's not a admin.
+        | If NickServ hasn't responded yet, then the admin is unverified, so assume they aren't a admin.
+        """
         if nick not in ADMINS:
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
@@ -111,6 +123,11 @@ class BotHandler():
             return True
 
     def set_admin(self, e, c, send):
+        """Handle admin verification responses from NickServ.
+
+        | If someone other than NickServ is trying to become a admin, kick them.
+        | If NickServ tells us that the nick is authed, mark it as verified.
+        """
         match = re.match("(.*) ACC ([0-3])", e.arguments[0])
         if not match:
             return
@@ -124,28 +141,29 @@ class BotHandler():
             self.admins[match.group(1)] = True
 
     def get_admins(self, c):
+        """Check verification for all admins."""
         for admin in self.admins:
             c.privmsg('NickServ', 'ACC ' + admin)
 
-    def abusecheck(self, send, nick, limit, msgtype, name):
-        """ Rate-limits commands
+    def abusecheck(self, send, nick, limit, msgtype, cmd):
+        """ Rate-limits commands.
 
-        | if a nick uses commands with the limit attr set, record the time at which they were used
-        | if the command is used more than *limit* times in a minute, ignore the nick
+        | If a nick uses commands with the limit attr set, record the time at which they were used.
+        | If the command is used more than :data:`limit` times in a minute, ignore the nick.
         """
         if nick not in self.abuselist:
             self.abuselist[nick] = {}
-        if name not in self.abuselist[nick]:
-            self.abuselist[nick][name] = [time.time()]
+        if cmd not in self.abuselist[nick]:
+            self.abuselist[nick][cmd] = [time.time()]
         else:
-            self.abuselist[nick][name].append(time.time())
+            self.abuselist[nick][cmd].append(time.time())
         count = 0
-        for x in self.abuselist[nick][name]:
+        for x in self.abuselist[nick][cmd]:
             # 60 seconds - arbitrary cuttoff
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            if name == 'scores':
+            if cmd == 'scores':
                 msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
             else:
                 msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
@@ -156,7 +174,8 @@ class BotHandler():
     def privmsg(self, c, e):
         """ Handle private messages.
 
-        Prevents users from changing scores in private.
+        | Prevent users from changing scores in private.
+        | Forward messages to :func:`handle_msg`.
         """
         nick = e.source.nick
         msg = e.arguments[0].strip()
@@ -166,31 +185,40 @@ class BotHandler():
         self.handle_msg('priv', c, e)
 
     def pubmsg(self, c, e):
-        """ Handle public messages. """
+        """ Handle public messages.
+
+        Forward messages to :func:`handle_msg`.
+        """
         self.handle_msg('pub', c, e)
 
     def privnotice(self, c, e):
-        """ Handle private notices. """
+        """ Handle private notices.
+
+        Forward notices to :func:`handle_msg`.
+        """
         self.handle_msg('privnotice', c, e)
 
     def action(self, c, e):
-        """ Handle actions. """
+        """ Handle actions.
+
+        Forward notices to :func:`handle_msg`.
+        """
         self.handle_msg('action', c, e)
 
     def send(self, target, nick, msg, msgtype):
-        """ Send a message
+        """ Send a message.
 
-        Records the message in the log
+        Records the message in the log.
         """
         self.do_log(target, nick, msg, msgtype)
         self.connection.privmsg(target, msg)
 
     def do_log(self, target, nick, msg, msgtype):
-        """ Handles logging
+        """ Handles logging.
 
-        | logs nick and time
-        | logs "New Day" when day turns over
-        | logs both to a file and a in-memory array
+        | Logs nick and time.
+        | Logs "New Day" when day turns over.
+        | Logs both to a file and a in-memory array.
         """
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
@@ -231,9 +259,9 @@ class BotHandler():
         self.logfiles[target].flush()
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
-        """ Leaves a channel
+        """ Leaves a channel.
 
-        | prevents user from leaving the primary channel
+        Prevent user from leaving the primary channel.
         """
         if not cmdargs:
             # don't leave the primary channel
@@ -252,10 +280,10 @@ class BotHandler():
         c.part(cmdargs)
 
     def do_join(self, cmdargs, nick, msgtype, send, c):
-        """ Join a channel
+        """ Join a channel.
 
-        | checks if bot is already joined to channel
-        | opens logs for channel
+        | Checks if bot is already joined to channel.
+        | Opens logs for channel.
         """
         cmd = cmdargs.split()
         if not cmdargs:
@@ -274,7 +302,7 @@ class BotHandler():
         """ Handles scores
 
         | If it's a ++ add one point unless the user is trying to promote themselves.
-        | Else substract one point
+        | Otherwise substract one point.
         """
         for match in matches:
             name = match[0].lower()
@@ -302,6 +330,11 @@ class BotHandler():
             f.close()
 
     def do_urls(self, match, send):
+        """ Get titles for urls.
+
+        | Generate a short url.
+        | Get the page title.
+        """
         try:
             url = match.group(1)
             if not url.startswith('http'):
@@ -325,61 +358,63 @@ class BotHandler():
             pass
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
+        """ Kick users.
+
+        | If kick is disabled, don't do anything.
+        | If the bot is not a op, rage at a op.
+        | Kick the user.
+        """
         if not self.kick_enabled:
             send("%s: you're lucky. kick is disabled." % nick)
             return
         target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
-        if nick in self.caps:
-            if NICK not in ops:
-                c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
-            else:
-                c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
-                self.caps.remove(nick)
+        if NICK not in ops:
+            c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
-            send("%s: warning, %s would be a *really* good idea :)" % (nick, msg))
-            self.caps.append(nick)
+            c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
     def do_caps(self, msg, c, e, nick, send):
+        """ Check for capslock abuse.
+
+        | Check if a line is more than :const:`THRESHOLD` percent uppercase.
+        | If this is the first line, warn the user.
+        | If this is the second line in a row, kick the user.
+        """
         # SHUT CAPS LOCK OFF, MORON
-        count = 0
         THRESHOLD = 0.65
-        for i in msg:
-            if i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                count += 1
-        upper_ratio = count / len(msg)
+        text = "shutting caps lock off"
+        upper = [i for i in msg if i in string.ascii_uppercase]
+        upper_ratio = len(upper) / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
-            self.do_kick(c, e, send, nick, "shutting caps lock off", 'pubmsg')
+            if nick in self.caps:
+                self.do_kick(c, e, send, nick, text, 'pubmsg')
+                self.caps.remove(nick)
+            else:
+                send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
+                self.caps.append(nick)
         elif nick in self.caps:
             self.caps.remove(nick)
 
-    #FIXME: do some kind of mapping instead of a elif tree
     def handle_args(self, modargs, send, nick, target, c):
-            args = {}
-            for arg in modargs:
-                if arg == 'channels':
-                    args['channels'] = self.channels
-                elif arg == 'connection':
-                    args['connection'] = self.connection
-                elif arg == 'nick':
-                    args['nick'] = nick
-                elif arg == 'modules':
-                    args['modules'] = self.modules
-                elif arg == 'scorefile':
-                    args['scorefile'] = self.scorefile
-                elif arg == 'logs':
-                    args['logs'] = self.logs
-                elif arg == 'admins':
-                    args['admins'] = self.admins
-                elif arg == 'is_admin':
-                    args['is_admin'] = lambda nick: self.is_admin(c, nick)
-                elif arg == 'target':
-                    args['target'] = target if target[0] == "#" else "private"
-                elif arg == 'ignore':
-                    args['ignore'] = lambda nick: self.ignore(send, nick)
-                else:
-                    raise Exception("Invalid Argument: " + arg)
-            return args
+        """ Handle the various args that modules need."""
+        realargs = {}
+        args = {'nick': nick,
+                'channels': self.channels,
+                'connection': self.connection,
+                'modules': self.modules,
+                'scorefile': self.scorefile,
+                'logs': self.logs,
+                'admins': self.admins,
+                'target': target if target[0] == "#" else "private",
+                'is_admin': lambda nick: self.is_admin(c, nick),
+                'ignore': lambda nick: self.ignore(send, nick)}
+        for arg in modargs:
+            if arg in args:
+                realargs[arg] = args[arg]
+            else:
+                raise Exception("Invalid Argument: " + arg)
+        return realargs
 
     def handle_ctrlchan(self, msg, send, send_raw):
         cmd = msg.split()
