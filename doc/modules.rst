@@ -8,4 +8,5 @@ IrcBot
    commands
    config
    handler
+   reload
    server
