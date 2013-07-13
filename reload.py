@@ -18,15 +18,20 @@
 import logging
 import sys
 from irc.client import SimpleIRCClient
-from config import CTRLCHAN, NICK, CTRLPASS, HOST, CTRLKEY
+from config import CTRLCHAN, CTRLPASS, NICK, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
+    def __init__(self, nick):
+        self.nick = nick
+        SimpleIRCClient.__init__(self)
+
     def on_welcome(self, c, e):
         c.join(CTRLCHAN, CTRLKEY)
 
-    def on_join(self, c, e):
-        c.privmsg(CTRLCHAN, '!reload')
+    def on_mode(self, c, e):
+        if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
+            c.privmsg(CTRLCHAN, '!reload')
 
     def on_pubmsg(self, c, e):
         if e.source.nick == NICK:
@@ -40,10 +45,10 @@ class IrcClient(SimpleIRCClient):
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    client = IrcClient()
     PORT = 6667
-    NICK = "bot-controller"
-    client.connect(HOST, PORT, NICK, CTRLPASS)
+    CTRLNICK = "bot-controller"
+    client = IrcClient(CTRLNICK)
+    client.connect(HOST, PORT, CTRLNICK, CTRLPASS)
     client.start()
 
 if __name__ == '__main__':
