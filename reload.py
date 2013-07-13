@@ -18,7 +18,7 @@
 import logging
 import sys
 from irc.client import SimpleIRCClient
-from config import CTRLCHAN, NICK, NICKPASS, HOST, CTRLKEY
+from config import CTRLCHAN, NICK, CTRLPASS, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
@@ -43,7 +43,7 @@ def main():
     client = IrcClient()
     PORT = 6667
     NICK = "bot-controller"
-    client.connect(HOST, PORT, NICK, NICKPASS)
+    client.connect(HOST, PORT, NICK, CTRLPASS)
     client.start()
 
 if __name__ == '__main__':

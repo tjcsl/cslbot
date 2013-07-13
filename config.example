@@ -1,6 +1,7 @@
 HOST = 'irc.freenode.net'
 NICK = 'tjhsstBot'
 NICKPASS = ''
+CTRLPASS = ''
 CTRLKEY = ''
 CHANNEL = '#tjhsst'
 CTRLCHAN = '#tjhsstbot-control'
