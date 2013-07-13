@@ -34,7 +34,7 @@ class IrcBot(SingleServerIRCBot):
         | Setup the handler.
         """
         server = ServerSpec(host, port, nickpass)
-        super().__init__(self, [server], nick, nick)
+        SingleServerIRCBot.__init__(self, [server], nick, nick)
         self.handler = handler.BotHandler()
 
     def handle_msg(self, msgtype, c, e):
