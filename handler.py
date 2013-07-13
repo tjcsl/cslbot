@@ -396,7 +396,27 @@ class BotHandler():
         elif nick in self.caps:
             self.caps.remove(nick)
 
-    def handle_args(self, modargs, send, nick, target, c):
+    def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
+        if cmd == 'cignore':
+            self.ignored = []
+            send("Ignore list cleared.")
+        elif cmd == 'cabuse':
+            self.abuselist = {}
+            send("Abuse list cleared.")
+        elif cmd == 'cadmin':
+            self.admins = {nick: False for nick in ADMINS}
+            self.get_admins(c)
+            send("Verified admins reset.")
+        elif cmd == 'ignore':
+            self.ignore(send, cmdargs)
+        elif cmd == 'showignore':
+            send(str(self.ignored))
+        elif cmd == 'join':
+            self.do_join(cmdargs, nick, msgtype, send, c)
+        elif cmd == 'part':
+            self.do_part(cmdargs, nick, target, msgtype, send, c)
+
+    def do_args(self, modargs, send, nick, target, c):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -416,10 +436,11 @@ class BotHandler():
                 raise Exception("Invalid Argument: " + arg)
         return realargs
 
-    def handle_ctrlchan(self, msg, send, send_raw):
+    def handle_ctrlchan(self, msg, c, send):
+        """ Handle the control channel."""
         cmd = msg.split()
         if cmd[0] == "quote":
-            send_raw(" ".join(cmd[1:]))
+            c.send_raw(" ".join(cmd[1:]))
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
                 self.kick_enabled = False
@@ -452,10 +473,7 @@ class BotHandler():
                 send(mods)
 
     def handle_msg(self, msgtype, c, e):
-        if e.target.lower() == CTRLCHAN:
-            self.handle_ctrlchan(e.arguments[0].strip(),
-                                 lambda msg: self.send(CTRLCHAN, NICK, msg, msgtype),
-                                 c.send_raw)
+        """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
             nick = e.source.split('!')[0]
         else:
@@ -466,6 +484,8 @@ class BotHandler():
         else:
             target = nick
         send = lambda msg: self.send(target, NICK, msg, msgtype)
+        if e.target == CTRLCHAN:
+            self.handle_ctrlchan(msg, c, send)
         if msgtype == 'privnotice':
             self.set_admin(e, c, send)
             return
@@ -492,7 +512,7 @@ class BotHandler():
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
-                args = self.handle_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
+                args = self.do_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
         #special commands
@@ -504,24 +524,7 @@ class BotHandler():
                     imp.reload(x)
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
-                if cmd[1:] == 'cignore':
-                    self.ignored = []
-                    send("Ignore list cleared.")
-                elif cmd[1:] == 'cabuse':
-                    self.abuselist = {}
-                    send("Abuse list cleared.")
-                elif cmd[1:] == 'cadmin':
-                    self.admins = {nick: False for nick in ADMINS}
-                    self.get_admins(c)
-                    send("Verified admins reset.")
-                elif cmd[1:] == 'ignore':
-                    self.ignore(send, cmdargs)
-                elif cmd[1:] == 'showignore':
-                    send(str(self.ignored))
-                elif cmd[1:] == 'join':
-                    self.do_join(cmdargs, nick, msgtype, send, c)
-                elif cmd[1:] == 'part':
-                    self.do_part(cmdargs, nick, target, msgtype, send, c)
+                self.do_admin(c, cmd[1:], cmdargs, send, nick, msgtype, target)
         # ++ and --
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if matches:
