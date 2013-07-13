@@ -31,7 +31,7 @@ import time
 import socket
 
 
-class MyHandler():
+class BotHandler():
     def __init__(self):
         """ Set everything up.
 

@@ -18,39 +18,24 @@
 import logging
 import traceback
 import imp
-import irc.bot
+import handler
+from irc.bot import ServerSpec, SingleServerIRCBot
 from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
 from os.path import basename
 from time import sleep
-import handler
 
 
-class MyBot(irc.bot.SingleServerIRCBot):
+class IrcBot(SingleServerIRCBot):
     def __init__(self, channel, nick, nickpass, host, port=6667):
-        if nickpass != '':
-            server = irc.bot.ServerSpec(host, port, nickpass)
-        else:
-            server = irc.bot.ServerSpec(host, port)
-        irc.bot.SingleServerIRCBot.__init__(self, [server], nick, nick)
-        self.handler = handler.MyHandler()
+        """Setup everything.
 
-    def do_reload(self, c, e, msgtype, cmdargs):
-        """The reloading magic
-
-        | First, reload handler.py.
-        | Then make copies of all the handler data we want to keep.
-        | Create a new handler and restore all the data.
+        | Setup the server.
+        | Connect to the server.
+        | Setup the handler.
         """
-        if cmdargs == 'pull':
-            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
-            output = self.handler.modules['pull'].do_pull()
-            c.privmsg(target, output)
-        imp.reload(handler)
-        # preserve data
-        data = self.handler.get_data()
-        self.handler = handler.MyHandler()
-        self.handler.set_data(data)
-        self.handler.connection = c
+        server = ServerSpec(host, port, nickpass)
+        super().__init__(self, [server], nick, nick)
+        self.handler = handler.BotHandler()
 
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
@@ -74,11 +59,34 @@ class MyBot(irc.bot.SingleServerIRCBot):
             target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
+    def do_reload(self, c, e, msgtype, cmdargs):
+        """The reloading magic.
+
+        | First, reload handler.py.
+        | Then make copies of all the handler data we want to keep.
+        | Create a new handler and restore all the data.
+        """
+        if cmdargs == 'pull':
+            target = CHANNEL if msgtype == 'pubmsg' else e.source.nick
+            output = self.handler.modules['pull'].do_pull()
+            c.privmsg(target, output)
+        imp.reload(handler)
+        # preserve data
+        data = self.handler.get_data()
+        self.handler = handler.BotHandler()
+        self.handler.set_data(data)
+        self.handler.connection = c
+
+    def get_version(self):
+        """Get the version."""
+        return "IrcBot -- 1.0"
+
     def on_welcome(self, c, e):
         """Do setup when connected to server.
 
         | Pass the connection to handler.
         | Join the primary channel.
+        | Join the control channel.
         """
         logging.info("Connected to server " + HOST)
         self.handler.connection = c
@@ -88,27 +96,38 @@ class MyBot(irc.bot.SingleServerIRCBot):
         #server.init_server(self.handler)
 
     def on_pubmsg(self, c, e):
-        """Pass public messages to the handler."""
+        """Pass public messages to :func:`handle_msg`."""
         self.handle_msg('pubmsg', c, e)
 
     def on_privmsg(self, c, e):
-        """Pass private messages to the handler."""
+        """Pass private messages to :func:`handle_msg`."""
         self.handle_msg('privmsg', c, e)
 
     def on_action(self, c, e):
-        """Pass actions to the handler."""
+        """Pass actions to :func:`handle_msg`."""
         self.handle_msg('action', c, e)
 
+    def on_privnotice(self, c, e):
+        """Pass privnotices to :func:`handle_msg`."""
+        self.handle_msg('privnotice', c, e)
+
     def on_nick(self, c, e):
+        """Log nick changes."""
         self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
 
     def on_quit(self, c, e):
+        """Log quits."""
         self.handler.do_log(CHANNEL, e.source.nick, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
-        """Add the joined channel to the channel list."""
+        """Handle joins.
+
+        | If another user has joined, just log it.
+        | Add the joined channel to the channel list.
+        | If we've been kicked, yell at the kicker.
+        """
+        self.handler.do_log(e.target, e.source.nick, e.target, 'join')
         if e.source.nick != NICK:
-            self.handler.do_log(e.target, e.source.nick, e.target, 'join')
             return
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
@@ -119,16 +138,24 @@ class MyBot(irc.bot.SingleServerIRCBot):
             del self.kick
 
     def on_part(self, c, e):
-        """Cleanup when leaving a channel."""
+        """Handle parts.
+
+        | If another user is parting, just log it.
+        | Remove the channel from the list of channels.
+        """
         self.handler.do_log(e.target, e.source.nick, e.target, 'part')
         if e.source.nick != NICK:
             return
-        #FIXME: this breaks randomly
-        # del self.handler.channels[e.target]
+        del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
     def on_kick(self, c, e):
-        """Rejoin on kick"""
+        """Handle kicks.
+
+        | If somebody else was kicked, just log it.
+        | Record who kicked us and what for to use in :func:`on_join`.
+        | Wait 5 seconds and then rejoin.
+        """
         self.handler.do_log(e.target, e.source.nick, ','.join(e.arguments), 'kick')
         # we don't care about other people.
         if e.arguments[0] != NICK:
@@ -138,23 +165,16 @@ class MyBot(irc.bot.SingleServerIRCBot):
         sleep(5)
         c.join(e.target)
 
-    def on_privnotice(self, c, e):
-        self.handle_msg('privnotice', c, e)
-
-    def get_version(self):
-        """Get the version."""
-        return "Ircbot -- 1.0"
-
 
 def main():
     """The bot's main entry point.
 
     | Setup logging.
-    | When troubleshooting, it may help to change the INFO to DEBUG.
+    | When troubleshooting startup, it may help to change the INFO to DEBUG.
     | Initialize the bot and start processing messages.
     """
     logging.basicConfig(level=logging.INFO)
-    bot = MyBot(CHANNEL, NICK, NICKPASS, HOST)
+    bot = IrcBot(CHANNEL, NICK, NICKPASS, HOST)
     bot.start()
 
 if __name__ == '__main__':
