@@ -58,6 +58,7 @@ class BotHandler():
         self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
+        self.log_to_ctrlchan = False
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
@@ -256,6 +257,8 @@ class BotHandler():
             log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
+        if self.log_to_ctrlchan:
+            c.send_raw("PRIVMSG %s :(%s) <%s> %s" % (CTRLCHAN, target, nick, log))
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
@@ -480,6 +483,12 @@ class BotHandler():
                 else:
                     logging.getLogger().setLevel(logging.INFO)
                     send("Logging disabled.")
+            elif cmd[1] == "loghere":
+                if self.log_to_ctrlchan:
+                    self.log_to_ctrlchan = False
+                    send("Control channel logging disabled.")
+                else:
+                    send("Control channel logging is already disabled.")
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
                 if self.kick_enabled:
@@ -499,6 +508,12 @@ class BotHandler():
             elif cmd[1] == "logging":
                 logging.getLogger().setLevel(logging.DEBUG)
                 send("Logging enabled.")
+            elif cmd[1] == "loghere":
+                if not self.log_to_ctrlchan:
+                    self.log_to_ctrlchan = True
+                    send("Control channel logging enabled.")
+                else:
+                    send("Control channel logging is already enabled.")
         elif cmd[0] == "get":
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
