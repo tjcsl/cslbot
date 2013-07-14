@@ -18,12 +18,13 @@ import re
 from random import choice
 import json
 
-args = ['scorefile']
+args = ['srcdir']
 
 
 def cmd(send, msg, args):
     try:
-        data = json.load(open(args['scorefile']))
+        scorefile = args['srcdir'] + '/score'
+        data = json.load(open(scorefile))
         match = re.match('([a-zA-Z0-9]+)', msg)
         if match:
             name = match.group(1).lower()

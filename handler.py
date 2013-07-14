@@ -25,7 +25,7 @@ import time
 import socket
 import string
 from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
-from os.path import basename
+from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
 from urllib.request import urlopen, Request
@@ -45,7 +45,7 @@ class BotHandler():
         | channels is a dict containing the objects for each channel the bot is connected to.
         | abuselist is a dict keeping track of how many times nicks have used rate-limited commands.
         | modules is a dict containing the commands the bot supports.
-        | scorefile is the fullpath to the file which records the scores.
+        | srcdir is the path to the directory where the bot is stored.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
         self.kick_enabled = True
@@ -57,7 +57,7 @@ class BotHandler():
         self.abuselist = {}
         self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
-        self.scorefile = os.path.dirname(__file__)+'/score'
+        self.srcdir = dirname(__file__)
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
@@ -306,6 +306,7 @@ class BotHandler():
         | If it's a ++ add one point unless the user is trying to promote themselves.
         | Otherwise substract one point.
         """
+        scorefile = self.srcdir + '/score'
         for match in matches:
             name = match[0].lower()
             # limit to 5 score changes per minute
@@ -318,15 +319,15 @@ class BotHandler():
                     score = -10
             else:
                 score = -1
-            if os.path.isfile(self.scorefile):
-                scores = json.load(open(self.scorefile))
+            if os.path.isfile(scorefile):
+                scores = json.load(open(scorefile))
             else:
                 scores = {}
             if name in scores:
                 scores[name] += score
             else:
                 scores[name] = score
-            f = open(self.scorefile, "w")
+            f = open(scorefile, "w")
             json.dump(scores, f)
             f.write("\n")
             f.close()
@@ -425,7 +426,7 @@ class BotHandler():
                 'channels': self.channels,
                 'connection': self.connection,
                 'modules': self.modules,
-                'scorefile': self.scorefile,
+                'srcdir': self.srcdir,
                 'logs': self.logs,
                 'admins': self.admins,
                 'target': target if target[0] == "#" else "private",
