@@ -30,7 +30,7 @@ from glob import glob
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
-from random import choice
+from random import choice, random
 
 
 class BotHandler():
@@ -419,6 +419,12 @@ class BotHandler():
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
 
+    def do_band(self, msg, send):
+        if ':' in msg:
+            msg = msg.split(':')[1]
+        if len(msg.split()) == 3 and random() < 0.25:
+            send('"%s" would be a good name for a band...' % msg)
+
     def do_args(self, modargs, send, nick, target, c):
         """ Handle the various args that modules need."""
         realargs = {}
@@ -517,6 +523,7 @@ class BotHandler():
             return
 
         self.do_caps(msg, c, e, nick, send)
+        self.do_band(msg, send)
 
         # is this a command?
         cmd = msg.split()[0]
