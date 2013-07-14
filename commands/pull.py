@@ -21,7 +21,7 @@ from os.path import dirname
 def do_pull(branch="master"):
     try:
         gitdir = dirname(__file__) + '/..'
-        print subprocess.check_output(['git','reset','--hard','origin/'+branch])
+        print(subprocess.check_output(['git','reset','--hard','origin/'+branch]))
         return subprocess.check_output(['git', 'pull','origin',branch], cwd=gitdir).decode().splitlines()[-1]
     except subprocess.CalledProcessError:
         return "Something went wrong!"
