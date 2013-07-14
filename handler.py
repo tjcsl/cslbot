@@ -58,6 +58,7 @@ class BotHandler():
         self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
+        self.log_to_ctrlchan = False
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
@@ -256,6 +257,11 @@ class BotHandler():
             log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
+        if self.log_to_ctrlchan:
+            # somewhat hacky fix
+            if target != CTRLCHAN:
+                self.connection.send_raw(("PRIVMSG %s :(%s) <%s> %s" % (CTRLCHAN, target, nick, msg))\
+                        .replace("\n", "").replace("\r", ""))
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
@@ -451,6 +457,16 @@ class BotHandler():
         cmd = msg.split()
         if cmd[0] == "quote":
             c.send_raw(" ".join(cmd[1:]))
+        elif cmd[0] == "cs" or cmd[0] == "chanserv":
+            if cmd[1] == "op" or cmd[1] == "o":
+                target = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "deop" or cmd[1] == "do":
+                target = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "voice" or cmd[1] == "v":
+                target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "devoice" or cmd[1] == "dv":
+                target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            c.send_raw("PRIVMSG ChanServ :%s" % target) 
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
                 if not self.kick_enabled:
@@ -470,6 +486,12 @@ class BotHandler():
                 else:
                     logging.getLogger().setLevel(logging.INFO)
                     send("Logging disabled.")
+            elif cmd[1] == "loghere":
+                if self.log_to_ctrlchan:
+                    self.log_to_ctrlchan = False
+                    send("Control channel logging disabled.")
+                else:
+                    send("Control channel logging is already disabled.")
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
                 if self.kick_enabled:
@@ -489,6 +511,12 @@ class BotHandler():
             elif cmd[1] == "logging":
                 logging.getLogger().setLevel(logging.DEBUG)
                 send("Logging enabled.")
+            elif cmd[1] == "loghere":
+                if not self.log_to_ctrlchan:
+                    self.log_to_ctrlchan = True
+                    send("Control channel logging enabled.")
+                else:
+                    send("Control channel logging is already enabled.")
         elif cmd[0] == "get":
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
