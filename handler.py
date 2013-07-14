@@ -451,6 +451,17 @@ class BotHandler():
         cmd = msg.split()
         if cmd[0] == "quote":
             c.send_raw(" ".join(cmd[1:]))
+        elif cmd[0] == "cs" or cmd[0] == "chanserv":
+            if cmd[1] == "op" or cmd[1] == "o":
+                target = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "deop" or cmd[1] == "do":
+                target = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "voice" or cmd[1] == "v":
+                target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            elif cmd[1] == "devoice" or cmd[1] == "dv":
+                target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            send("Sending to ChanServ: %s" % target)
+            c.send_raw("PRIVMSG ChanServ :%s" % target) 
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
                 if not self.kick_enabled:
