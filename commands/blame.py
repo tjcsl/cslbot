@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+from config import NICK
 
-args = ['channels', 'target', 'connection', 'nick']
+args = ['channels', 'target', 'connection', 'nick', 'do_log']
 
 
 def cmd(send, msg, args):
@@ -25,4 +26,6 @@ def cmd(send, msg, args):
     user = choice(users)
     if msg:
         msg = " for " + msg
-    args['connection'].action(target, "blames " + user + msg)
+    msg = "blames " + user + msg
+    args['connection'].action(target, msg)
+    args['do_log'](NICK, msg, 'action')

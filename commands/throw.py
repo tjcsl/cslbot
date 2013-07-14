@@ -16,8 +16,9 @@
 
 import re
 from random import choice
+from config import NICK
 
-args = ['channels', 'target', 'connection', 'nick']
+args = ['channels', 'target', 'connection', 'nick', 'do_log']
 
 
 def cmd(send, msg, args):
@@ -26,6 +27,13 @@ def cmd(send, msg, args):
     if "at" in msg:
         match = re.match('(.*) at (.*)', msg)
         if match:
-            args['connection'].action(target, 'throws %s at %s' % (match.group(1), match.group(2)))
+            msg = 'throws %s at %s' % (match.group(1), match.group(2))
+            args['connection'].action(target, msg)
+        else:
+            return
     elif msg:
-        args['connection'].action(target, 'throws %s at %s' % (msg, choice(users)))
+        msg = 'throws %s at %s' % (msg, choice(users))
+        args['connection'].action(target, msg)
+    else:
+        return
+    args['do_log'](NICK, msg, 'action')

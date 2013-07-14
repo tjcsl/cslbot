@@ -427,6 +427,7 @@ class BotHandler():
                 'logs': self.logs,
                 'admins': self.admins,
                 'target': target if target[0] == "#" else "private",
+                'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick)}
         for arg in modargs:
