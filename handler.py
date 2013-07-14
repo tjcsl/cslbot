@@ -258,7 +258,9 @@ class BotHandler():
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
-            self.connection.send_raw("PRIVMSG %s :(%s) <%s> %s" % (CTRLCHAN, target, nick, log))
+            # somewhat hacky fix
+            self.connection.send_raw("PRIVMSG %s :(%s) <%s> %s" % (CTRLCHAN, target, nick, log)\
+                    .replace("\n", "").replace("\r", ""))
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
