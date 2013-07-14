@@ -244,14 +244,16 @@ class BotHandler():
         elif msgtype == 'nick':
             log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'join':
-            log = '%s %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s <-- %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'part':
-            log = '%s %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s <-- %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'quit':
-            log = '%s %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s <-- %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'kick':
             msg = msg.split(',')
-            log = '%s %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
+            log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
+        elif msgtype == 'mode':
+            log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         self.logs[target].append([day, log])
@@ -451,6 +453,7 @@ class BotHandler():
                 send("Module disabled.")
             elif cmd[1] == "logging":
                 logging.getLogger().setLevel(logging.INFO)
+                send("Logging disabled.")
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
                 self.kick_enabled = True
@@ -463,6 +466,7 @@ class BotHandler():
                 send("Enabled all modules.")
             elif cmd[1] == "logging":
                 logging.getLogger().setLevel(logging.DEBUG)
+                send("Logging enabled.")
         elif cmd[0] == "get":
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))

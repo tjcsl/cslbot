@@ -114,6 +114,10 @@ class IrcBot(SingleServerIRCBot):
         """Log nick changes."""
         self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
 
+    def on_mode(self, c, e):
+        """Log nick changes."""
+        self.handler.do_log(CHANNEL, e.source.nick, " ".join(e.arguments), 'mode')
+
     def on_quit(self, c, e):
         """Log quits."""
         self.handler.do_log(CHANNEL, e.source.nick, e.arguments[0], 'quit')
