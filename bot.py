@@ -19,6 +19,7 @@ import logging
 import traceback
 import imp
 import handler
+import server
 from irc.bot import ServerSpec, SingleServerIRCBot
 from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
 from os.path import basename
@@ -29,13 +30,13 @@ class IrcBot(SingleServerIRCBot):
     def __init__(self, channel, nick, nickpass, host, port=6667):
         """Setup everything.
 
+        | Setup the handler.
         | Setup the server.
         | Connect to the server.
-        | Setup the handler.
         """
-        server = ServerSpec(host, port, nickpass)
-        SingleServerIRCBot.__init__(self, [server], nick, nick)
         self.handler = handler.BotHandler()
+        serverinfo = ServerSpec(host, port, nickpass)
+        SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
 
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
@@ -92,7 +93,6 @@ class IrcBot(SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(CHANNEL)
         c.join(CTRLCHAN, CTRLKEY)
-        #server.init_server(self.handler)
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -178,6 +178,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     bot = IrcBot(CHANNEL, NICK, NICKPASS, HOST)
+    server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':

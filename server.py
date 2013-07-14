@@ -1,7 +1,7 @@
-import socket
 import threading
-PORT = 2688
-AUTH = "rightbracket@lexandria"
+import socketserver
+from config import SERVERPORT, CTRLPASS
+
 WELCOME = """
 Welcome to the IRCbot console.
 Copyright (c) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
@@ -12,49 +12,47 @@ Type "help" for a list of commands.
 HELP = """
 == IRCbot console commands list ==
 help: show this help
+admins: show the list of admins
 quit: quit the console session
 """
 
 
 def init_server(bot):
-    BotnetServer(bot)
+    server = BotNetServer(('', SERVERPORT), BotNetHandler)
+    server.bot = bot
+    threading.Thread(target=server.serve_forever, daemon=True).start()
 
 
-class BotnetServer:
-    def __init__(self, bot_instance):
-        self.bot = bot_instance
-        self.s = socket.socket()
-        self.s.bind(('', PORT))
-        self.s.listen(5)
-        threading.Thread(target=self.accept_loop).start()
+class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    allow_reuse_address = True
 
-    def accept_loop(self):
-        while True:
-            conn, addr = self.s.accept()
-            threading.Thread(target=self.handle_client,
-                             args=[conn]).start()
 
-    def handle_client(self, conn):
-        conn.send("Password: ")
-        pwd = conn.recv(1024).replace("\r\n", "")
-        if pwd == AUTH:
-            conn.send(WELCOME)
+class BotNetHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        send = lambda msg: self.request.send(msg.encode())
+        recv = lambda: self.request.recv(1024).decode().strip()
+        send("Password: ")
+        if recv() == CTRLPASS:
+            send(WELCOME)
         else:
-            conn.send("Incorrect password.\n")
-            conn.close()
-        done = False
-        while not done:
-            conn.send("ircbot> ")
-            command = conn.recv(1024).replace("\r\n", "")
-            #
-            # Commands
-            #
-            if command == "quit":
-                done = True
-                conn.send("Goodbye.\n")
-            elif command == "help":
-                conn.send(HELP)
-            #
-            # End commands
-            #
-        conn.close()
+            send("Incorrect password.\n")
+            self.request.close()
+            return
+        while True:
+            try:
+                send("ircbot> ")
+            except OSError:
+                # connection has been closed
+                return
+            cmd = recv()
+            if cmd == "help":
+                send(HELP)
+            elif cmd == "admins":
+                admins = ", ".join(self.server.bot.handler.admins.keys())
+                send(admins+'\n')
+            elif cmd == "quit":
+                send("Goodbye.\n")
+                self.request.close()
+                break
+            else:
+                send("Unknown command. Type help for more info.\n")

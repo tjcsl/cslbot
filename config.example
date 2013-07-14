@@ -1,4 +1,5 @@
 HOST = 'irc.freenode.net'
+SERVERPORT = 2688
 NICK = 'tjhsstBot'
 NICKPASS = ''
 CTRLPASS = ''
