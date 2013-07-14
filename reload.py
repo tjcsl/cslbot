@@ -51,10 +51,12 @@ class IrcClient(SimpleIRCClient):
         if e.source.nick == NICK:
             if e.arguments[0] == "Aye Aye Capt'n":
                 print("Reload successful.")
+                c.part(CTRLCHAN)
                 c.quit()
                 sys.exit(0)
             else:
                 print("Reload failed.")
+                c.part(CTRLCHAN)
                 c.quit()
                 sys.exit(1)
 
