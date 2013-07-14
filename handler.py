@@ -460,7 +460,6 @@ class BotHandler():
                 target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "devoice" or cmd[1] == "dv":
                 target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            send("Sending to ChanServ: %s" % target)
             c.send_raw("PRIVMSG ChanServ :%s" % target) 
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
