@@ -244,7 +244,7 @@ class BotHandler():
         elif msgtype == 'nick':
             log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'join':
-            log = '%s <-- %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s --> %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'part':
             log = '%s <-- %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'quit':
