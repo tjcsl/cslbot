@@ -89,6 +89,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`channels` Module
+----------------------
+
+.. automodule:: commands.channels
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`choose` Module
 --------------------
 
