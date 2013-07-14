@@ -446,21 +446,36 @@ class BotHandler():
             c.send_raw(" ".join(cmd[1:]))
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
-                self.kick_enabled = False
-                send("Kick disabled.")
+                if not self.kick_enabled:
+                    send("Kick already disabled.")
+                else:
+                    self.kick_enabled = False
+                    send("Kick disabled.")
             elif cmd[1] == "module":
-                self.disabled_mods.append(cmd[2])
-                send("Module disabled.")
+                if cmd[2] in self.disabled_mods:
+                    send("Module already disabled.")
+                else:
+                    self.disabled_mods.append(cmd[2])
+                    send("Module disabled.")
             elif cmd[1] == "logging":
-                logging.getLogger().setLevel(logging.INFO)
-                send("Logging disabled.")
+                if logging.getLogger.getEffectiveLevel() == logging.INFO:
+                    send("logging already disabled.")
+                else:
+                    logging.getLogger().setLevel(logging.INFO)
+                    send("Logging disabled.")
         elif cmd[0] == "enable":
             if cmd[1] == "kick":
-                self.kick_enabled = True
-                send("Kick enabled.")
+                if self.kick_enabled:
+                    send("Kick already enabled.")
+                else:
+                    self.kick_enabled = True
+                    send("Kick enabled.")
             elif cmd[1] == "module":
-                self.disabled_mods.remove(cmd[2])
-                send("Module enabled.")
+                if cmd[2] not in self.disabled_mods:
+                    send("Module already enabled.")
+                else:
+                    self.disabled_mods.remove(cmd[2])
+                    send("Module enabled.")
             elif cmd[1] == "all" and cmd[2] == "modules":
                 self.disabled_mods = []
                 send("Enabled all modules.")
