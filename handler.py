@@ -233,6 +233,7 @@ class BotHandler():
         """
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
+        target = target.lower()
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
                     nick = '@' + nick
