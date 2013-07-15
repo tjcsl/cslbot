@@ -379,7 +379,7 @@ class BotHandler():
         for i in self.guarded:
             guardedregex += i+"|"
         guardedregex += "something)"
-        match = re.search(r"(.*(-v|-o|+q)[^ ]*) "+guardedregex, msg)
+        match = re.search(r"(.*(-v|-o|\+q)[^ ]*) "+guardedregex, msg)
         self.connection.privmsg(CTRLCHAN, "Mode called, guardedregex: "+str(guardedregex))
         if match:
             self.connection.send_raw("MODE "+target+" +vo-q "+nick+" "+nick+" "+nick)
