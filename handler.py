@@ -428,7 +428,7 @@ class BotHandler():
         if ':' in msg:
             msg = msg.split(':')[1]
         if len(msg.split()) == 3 and random() < 0.05:
-            send('"%s" would be a good name for a band...' % msg)
+            send('"%s" would be a good name for a band...' % msg.strip())
 
     def do_args(self, modargs, send, nick, target, c):
         """ Handle the various args that modules need."""
