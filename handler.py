@@ -371,6 +371,7 @@ class BotHandler():
 
     def do_mode(self, target, msg, nick):
         """ reop"""
+        # reop
         match = re.search(r".*-o.*tjhsstBot", msg)
         if match:
             self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
@@ -381,9 +382,10 @@ class BotHandler():
         for i in self.guarded:
             guardedregex += i+"|"
         guardedregex += "something)"
-        match = re.search(r"(.*(-v|-o|\+q)[^ ]*) "+guardedregex, msg)
+        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) "+guardedregex, msg)
         if match:
-            self.connection.send_raw("MODE "+target+" +vo-q "+match.group(3)+" "+match.group(3)+" "+match.group(3))
+            self.connection.privmsg("ChanServ","UNBAN "+target+" "+match.group(3))
+            self.connection.send_raw("MODE "+target+" +vo-q-b "+match.group(3)+" "+match.group(3)+" "+match.group(3)+" "+match.group(3))
     def do_kick(self, c, e, send, nick, msg, msgtype):
         """ Kick users.
 
