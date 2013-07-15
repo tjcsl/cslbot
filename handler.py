@@ -255,6 +255,7 @@ class BotHandler():
             log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
         elif msgtype == 'mode':
             log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
+            self.do_mode(target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
@@ -264,6 +265,9 @@ class BotHandler():
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
+
+    def do_mode(self, target, msg, nick):
+        pass
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.
@@ -597,8 +601,3 @@ class BotHandler():
         if match:
             self.do_urls(match, send)
             
-        # handle deop
-        match = re.search(r"Mode (#[^ ]+?) \[-o.*tjhsstBot\] by (.*)",msg)
-        if match:
-            send("WAI U DO THIS "+match.group(2)+"?!??!")
-            c.privmsg("ChanServ","OP "+match.group(1))
