@@ -485,7 +485,7 @@ class BotHandler():
                 else:
                     logging.getLogger().setLevel(logging.INFO)
                     send("Logging disabled.")
-            elif cmd[1] == "loghere":
+            elif cmd[1] == "chanlog":
                 if self.log_to_ctrlchan:
                     self.log_to_ctrlchan = False
                     send("Control channel logging disabled.")
@@ -510,7 +510,7 @@ class BotHandler():
             elif cmd[1] == "logging":
                 logging.getLogger().setLevel(logging.DEBUG)
                 send("Logging enabled.")
-            elif cmd[1] == "loghere":
+            elif cmd[1] == "chanlog":
                 if not self.log_to_ctrlchan:
                     self.log_to_ctrlchan = True
                     send("Control channel logging enabled.")
