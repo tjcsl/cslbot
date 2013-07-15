@@ -258,7 +258,6 @@ class BotHandler():
             log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
         elif msgtype == 'mode':
             log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
-            self.do_mode(target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
@@ -369,7 +368,7 @@ class BotHandler():
         except AttributeError:
             pass
 
-    def do_mode(self, target, msg, nick):
+    def do_mode(self, target, msg, nick, send):
         """ reop"""
         # reop
         match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
@@ -383,6 +382,7 @@ class BotHandler():
         for i in self.guarded:
             guardedregex += i + "|"
         guardedregex += "something) "
+        send(guardedregex)
         match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) " + guardedregex, msg)
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
@@ -579,6 +579,10 @@ class BotHandler():
             return
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
+
+        if msgtype == 'mode':
+            self.do_mode(target, msg, nick, send)
+            return
 
         if e.target == CTRLCHAN:
             self.handle_ctrlchan(msg, c, send)
