@@ -209,6 +209,13 @@ class BotHandler():
         """
         self.handle_msg('action', c, e)
 
+    def mode(self, c, e):
+        """ Handle actions.
+
+        Forward notices to :func:`handle_msg`.
+        """
+        self.handle_msg('mode', c, e)
+
     def send(self, target, nick, msg, msgtype):
         """ Send a message.
 
