@@ -48,6 +48,7 @@ class BotHandler():
         | srcdir is the path to the directory where the bot is stored.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
+        self.guarded = []
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
@@ -546,11 +547,13 @@ class BotHandler():
             send("cs|chanserv <chanserv command>")
             send("disable|enable <kick|module <module>|logging|chanlog>")
             send("get <disabled|enabled> modules")
+            send("guard|unguard <nick>")
         elif cmd[0] == "guard":
             self.guarded.append(cmd[1])
+            send("guarding "+cmd[1])
         elif cmd[0] == "unguard":
             self.guarded.remove(cmd[1])
-
+            send("no longer guarding "+cmd[1])
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
