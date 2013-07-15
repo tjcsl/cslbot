@@ -543,13 +543,14 @@ class BotHandler():
         else:
             target = nick
         send = lambda msg: self.send(target, NICK, msg, msgtype)
+
+        self.do_log(target, nick, msg, msgtype)
+
         if e.target == CTRLCHAN:
             self.handle_ctrlchan(msg, c, send)
         if msgtype == 'privnotice':
             self.set_admin(e, c, send)
             return
-
-        self.do_log(target, nick, msg, msgtype)
 
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
