@@ -380,6 +380,7 @@ class BotHandler():
             guardedregex += i+"|"
         guardedregex += "something)"
         match = re.search(r"(.*(-v|-o|+q)[^ ]*) "+guardedregex)
+        self.connection.privmsg(CTRLCHAN, "Mode called, guardedregex: "+str(guardedregex))
         if match:
             self.connection.send_raw("MODE "+target+" +vo-q "+nick+" "+nick+" "+nick)
     def do_kick(self, c, e, send, nick, msg, msgtype):
