@@ -526,7 +526,7 @@ class BotHandler():
                 mods = ", ".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
                 send(mods)
         elif cmd[0] == "help":
-            send("quote <raw command>\ncs|chanserv <chanserv command>\ndisable|enable <kick|module <module>|logging|chanlog>\nget <disabled|enabled> modules")
+            send("quote <raw command>  cs|chanserv <chanserv command>  disable|enable <kick|module <module>|logging|chanlog>  get <disabled|enabled> modules")
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
