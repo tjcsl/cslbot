@@ -377,15 +377,16 @@ class BotHandler():
             self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
             self.connection.privmsg("ChanServ", "OP "+target)
             self.connection.privmsg("ChanServ", "UNBAN "+target)
-        
+
         # if user is guarded and quieted, devoiced, or deopped, fix that
-        guardedregex="("
+        guardedregex = "("
         for i in self.guarded:
-            guardedregex += i+"|"
-        guardedregex += "something)"
-        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) "+guardedregex, msg)
+            guardedregex += i + "|"
+        guardedregex += "something) "
+        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) " + guardedregex, msg)
         if match:
-            self.connection.send_raw("MODE "+target+" +voe-qb "+match.group(3)+" "+match.group(3)+" "+match.group(3)+" "+match.group(3)+" "+match.group(3))
+            self.connection.mode(target, " +voe-qb %s %s %s %s %s" % (match.group(3) * 5))
+
     def do_kick(self, c, e, send, nick, msg, msgtype):
         """ Kick users.
 
@@ -559,6 +560,7 @@ class BotHandler():
         elif cmd[0] == "unguard":
             self.guarded.remove(cmd[1])
             send("no longer guarding "+cmd[1])
+
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
@@ -624,4 +626,3 @@ class BotHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
-            
