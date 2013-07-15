@@ -370,8 +370,8 @@ class BotHandler():
         """ reop"""
         match = re.search(r".*-o.*tjhsstBot", msg)
         if match:
-            send("WAI U DO THIS "+nick+"?!??!")
-            c.privmsg("ChanServ","OP "+target)
+            self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
+            self.connection.privmsg("ChanServ", "OP "+target)
 
     def do_kick(self, c, e, send, nick, msg, msgtype):
         """ Kick users.
