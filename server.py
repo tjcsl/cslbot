@@ -66,6 +66,14 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             elif cmd == "admins":
                 admins = ", ".join(self.server.bot.handler.admins.keys())
                 send(admins+'\n')
+            elif cmd == "raw":
+                while cmd != "endraw":
+                    send("ircbot-raw> ")
+                    cmd = recv()
+                    if cmd == "endraw":
+                        break
+                    self.server.bot.handler.send_raw(cmd)
+                continue
             elif cmd == "quit":
                 send("Goodbye.\n")
                 self.request.close()
