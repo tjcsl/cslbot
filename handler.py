@@ -75,6 +75,7 @@ class BotHandler():
         data['abuselist'] = dict(self.abuselist)
         data['admins'] = dict(self.admins)
         data['logfiles'] = dict(self.logfiles)
+        data['guarded'] = dict(self.guarded)
         return data
 
     def set_data(self, data):
@@ -87,6 +88,7 @@ class BotHandler():
         self.channels = data['channels']
         self.abuselist = data['abuselist']
         self.admins = data['admins']
+        self.guarded = data['guarded']
 
     def loadmodules(self):
         """Load all the commands.
@@ -380,7 +382,6 @@ class BotHandler():
             guardedregex += i+"|"
         guardedregex += "something)"
         match = re.search(r"(.*(-v|-o|\+q)[^ ]*) "+guardedregex, msg)
-        self.connection.privmsg(CTRLCHAN, "Mode called, guardedregex: "+str(guardedregex))
         if match:
             self.connection.send_raw("MODE "+target+" +vo-q "+match.group(3)+" "+match.group(3)+" "+match.group(3))
     def do_kick(self, c, e, send, nick, msg, msgtype):
@@ -461,7 +462,8 @@ class BotHandler():
                 'target': target if target[0] == "#" else "private",
                 'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
                 'is_admin': lambda nick: self.is_admin(c, nick),
-                'ignore': lambda nick: self.ignore(send, nick)}
+                'ignore': lambda nick: self.ignore(send, nick),
+                'guarded': self.guarded}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
