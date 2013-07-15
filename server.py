@@ -36,7 +36,7 @@ quit: quit the console session
 def init_server(bot):
     server = BotNetServer(('', SERVERPORT), BotNetHandler)
     server.bot = bot
-    threading.Thread(target=server.serve_forever, kwargs={'daemon':True}).start()
+    threading.Thread(target=server.serve_forever).start()
 
 
 class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
