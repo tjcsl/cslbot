@@ -258,10 +258,9 @@ class BotHandler():
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
-            # somewhat hacky fix
             if target != CTRLCHAN:
-                self.connection.send_raw(("PRIVMSG %s :(%s) %s" % (CTRLCHAN, target, log))\
-                        .replace("\n", "").replace("\r", ""))
+                ctrlmsg = "(%s) %s" % (target, log)
+                self.connection.privmsg(CTRLCHAN, ctrlmsg.strip())
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
@@ -466,7 +465,7 @@ class BotHandler():
                 target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "devoice" or cmd[1] == "dv":
                 target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            c.send_raw("PRIVMSG ChanServ :%s" % target) 
+            c.privmsg("ChanServ", target)
         elif cmd[0] == "disable":
             if cmd[1] == "kick":
                 if not self.kick_enabled:
