@@ -372,7 +372,15 @@ class BotHandler():
         if match:
             self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
             self.connection.privmsg("ChanServ", "OP "+target)
-
+        
+        # if user is guarded and quieted, devoiced, or deopped, fix that
+        guardedregex="("
+        for i in self.guarded:
+            guardedregex += i+"|"
+        guardedregex += "something)"
+        match = re.search(r"(.*(-v|-o|+q)[^ ]*) "+guardedregex)
+        if match:
+            self.connection.send_raw("MODE "+target+" +vo-q "+nick+" "+nick+" "+nick)
     def do_kick(self, c, e, send, nick, msg, msgtype):
         """ Kick users.
 
@@ -538,6 +546,10 @@ class BotHandler():
             send("cs|chanserv <chanserv command>")
             send("disable|enable <kick|module <module>|logging|chanlog>")
             send("get <disabled|enabled> modules")
+        elif cmd[0] == "guard":
+            self.guarded.append(cmd[1])
+        elif cmd[0] == "unguard":
+            self.guarded.remove(cmd[1])
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
