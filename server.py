@@ -47,7 +47,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
     def handle(self):
         send = lambda msg: self.request.send(msg.encode())
         recv = lambda: self.request.recv(1024).decode().strip()
-        send("Password: ")
+        send("Password: " + '\xff\xfb\x01')
         if recv() == CTRLPASS:
             send(WELCOME)
         else:
@@ -56,7 +56,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             return
         while True:
             try:
-                send("ircbot> ")
+                send('\xff\xfe\x01' + "ircbot> ")
             except OSError:
                 # connection has been closed
                 return
