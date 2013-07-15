@@ -17,7 +17,4 @@
 args = ['guarded']
 
 def cmd(send, msg, args):
-    guarded = ""
-    for guard in sorted(args['guarded']):
-        guarded += guard
-    send(guarded)
+    send(", ".join(args['guarded']))
