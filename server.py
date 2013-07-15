@@ -72,7 +72,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     cmd = recv()
                     if cmd == "endraw":
                         break
-                    self.server.bot.handler.send_raw(cmd)
+                    self.server.bot.handler.connection.send_raw(cmd)
                 continue
             elif cmd == "quit":
                 send("Goodbye.\n")
