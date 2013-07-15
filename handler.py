@@ -598,7 +598,7 @@ class BotHandler():
             self.do_urls(match, send)
             
         # handle deop
-        match = re.search(r"Mode (#[^ ]+?) [-o.*tjhsstBot] by (.*)",msg)
+        match = re.search(r"Mode (#[^ ]+?) \[-o.*tjhsstBot\] by (.*)",msg)
         if match:
             send("WAI U DO THIS "+match.group(2)+"?!??!")
             c.privmsg("ChanServ","OP "+match.group(1))
