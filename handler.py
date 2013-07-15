@@ -543,15 +543,15 @@ class BotHandler():
         else:
             target = nick
         send = lambda msg: self.send(target, NICK, msg, msgtype)
-        
-        if "ACC" not in msg: #nasty hack to keep <nick> ACC 3 messages from nickserv out of the ctrl channel
-            self.do_log(target, nick, msg, msgtype)
 
-        if e.target == CTRLCHAN:
-            self.handle_ctrlchan(msg, c, send)
         if msgtype == 'privnotice':
             self.set_admin(e, c, send)
             return
+        # must come after set_admin to prevent spam
+        self.do_log(target, nick, msg, msgtype)
+
+        if e.target == CTRLCHAN:
+            self.handle_ctrlchan(msg, c, send)
 
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
