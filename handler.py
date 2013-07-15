@@ -266,9 +266,6 @@ class BotHandler():
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
 
-    def do_mode(self, target, msg, nick):
-        pass
-
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.
 
