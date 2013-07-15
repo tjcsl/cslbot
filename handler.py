@@ -596,3 +596,9 @@ class BotHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
+            
+        # handle deop
+        match = re.search(r"Mode (#[^ ]+?) [-o.*tjhsstBot] by (.*)")
+        if match:
+            send("WAI U DO THIS "+match.group(2)+"?!??!")
+            c.privmsg("ChanServ","OP "+match.group(1))
