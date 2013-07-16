@@ -24,7 +24,7 @@ import imp
 import time
 import socket
 import string
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -379,6 +379,7 @@ class BotHandler():
     def do_mode(self, target, msg, nick, send):
         """ reop"""
         # reop
+        # un-hard-code this
         match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
         if match:
             self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
@@ -572,7 +573,7 @@ class BotHandler():
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
-            nick = e.source.split('!')[0]
+            nick = e.source.split(CMDCHAR)[0]
         else:
             nick = e.source.nick
         msg = e.arguments[0].strip()
@@ -607,11 +608,11 @@ class BotHandler():
             send("That module is disabled, sorry.")
             return
         # handle !s/a/b/
-        if cmd[:2] == '!s':
+        if cmd[:2] == CMDCHAR + 's':
             cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd)+1:]
         found = False
-        if cmd[0] == '!':
+        if cmd[0] == CMDCHAR:
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
@@ -620,7 +621,7 @@ class BotHandler():
                 mod.cmd(send, cmdargs, args)
                 found = True
         #special commands
-        if cmd[0] == '!':
+        if cmd[0] == CMDCHAR:
             if cmd[1:] == 'reload' and nick in ADMINS:
                 found = True
                 for x in self.modules.values():
