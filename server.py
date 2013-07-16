@@ -26,10 +26,11 @@ Licensed under the GNU GPL version 2.
 Type "help" for a list of commands.
 """
 HELP = """
-== IRCbot console commands list ==
-help: show this help
-admins: show the list of admins
-quit: quit the console session
+help\t\t\tshow this help
+admins\t\t\tshow the list of admins
+raw\t\t\tenter raw mode
+endraw\t\t\texit raw mode
+quit\t\t\tquit the console session
 """
 
 
