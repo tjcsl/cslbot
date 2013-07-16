@@ -71,6 +71,10 @@ class IrcBot(SingleServerIRCBot):
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
         imp.reload(handler)
+        imp.reload(server)
+        self.server.shutdown()
+        self.server.socket.close()
+        self.server = server.init_server(self)
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler()
@@ -178,7 +182,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     bot = IrcBot(CHANNEL, NICK, NICKPASS, HOST)
-    server.init_server(bot)
+    bot.server = server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':

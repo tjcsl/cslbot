@@ -39,6 +39,7 @@ def init_server(bot):
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
+    return server
 
 
 class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
