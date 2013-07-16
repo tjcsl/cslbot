@@ -1,4 +1,3 @@
-import threading
 # Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek and James Forcier
 #
 # This program is free software; you can redistribute it and/or
@@ -16,6 +15,8 @@ import threading
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
+import threading
+import imp
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
 
 WELCOME = """
@@ -60,6 +61,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         send = lambda msg: self.request.send(msg.encode())
+        bot = self.server.bot
         send("Password: ")
         msg = self.get_data().splitlines()
         if msg and msg[0].strip() == CTRLPASS:
@@ -89,13 +91,19 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             if cmd[0] == "help":
                 send(HELP)
             elif cmd[0] == "admins":
-                admins = ", ".join(self.server.bot.handler.admins.keys())
+                admins = ", ".join(bot.handler.admins.keys())
                 send(admins + '\n')
             elif cmd[0] == "reload":
                 cmdargs = cmd[1] if len(cmd) > 1 else ''
-                output = self.server.bot.do_reload(self.server.bot.connection, CTRLCHAN, cmdargs, 'server')
+                output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
+                for x in bot.handler.modules.values():
+                    imp.reload(x)
                 if output:
                     send(output+'\n')
+                send("Aye Aye Capt'n\n")
+                bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
+                self.request.close()
+                break
             elif cmd[0] == "raw":
                 while cmd[0] != "endraw":
                     send("ircbot-raw> ")

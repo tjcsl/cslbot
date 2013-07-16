@@ -610,7 +610,7 @@ class BotHandler():
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
-            nick = e.source.split(CMDCHAR)[0]
+            nick = e.source.split('!')[0]
         else:
             nick = e.source.nick
         msg = e.arguments[0].strip()
