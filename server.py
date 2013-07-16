@@ -31,6 +31,7 @@ Type "help" for a list of commands.
 HELP = """
 help\t\t\tshow this help
 admins\t\t\tshow the list of admins
+reload\t\t\treload the bot
 raw\t\t\tenter raw mode
 endraw\t\t\texit raw mode
 quit\t\t\tquit the console session
@@ -67,16 +68,16 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
-            if msg and msg[0].strip() == CTRLPASS:
-                send(WELCOME)
-            else:
+            if not msg or msg[0].strip() != CTRLPASS:
                 send("Incorrect password.\n")
                 self.request.close()
                 return
             if len(msg) > 1:
                 msg = list(reversed(msg[1:]))
                 end = len(msg)
+                send("\n")
             else:
+                send(WELCOME)
                 end = 0
             while True:
                 if end:
