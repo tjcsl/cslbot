@@ -489,16 +489,22 @@ class BotHandler():
         if cmd[0] == "quote":
             c.send_raw(" ".join(cmd[1:]))
         elif cmd[0] == "cs" or cmd[0] == "chanserv":
+            if len(cmd) < 3:
+                send("Missing arguments.")
+                return
             if cmd[1] == "op" or cmd[1] == "o":
-                target = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "deop" or cmd[1] == "do":
-                target = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "voice" or cmd[1] == "v":
-                target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "devoice" or cmd[1] == "dv":
-                target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            c.privmsg("ChanServ", target)
+                action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            c.privmsg("ChanServ", action)
         elif cmd[0] == "disable":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
             if cmd[1] == "kick":
                 if not self.kick_enabled:
                     send("Kick already disabled.")
@@ -506,13 +512,18 @@ class BotHandler():
                     self.kick_enabled = False
                     send("Kick disabled.")
             elif cmd[1] == "module":
+                if len(cmd) < 3:
+                    send("Missing argument.")
+                    return
                 if cmd[2] in self.disabled_mods:
                     send("Module already disabled.")
-                else:
+                elif cmd[2] in self.modules:
                     self.disabled_mods.append(cmd[2])
                     send("Module disabled.")
+                else:
+                    send("Module does not exist.")
             elif cmd[1] == "logging":
-                if logging.getLogger.getEffectiveLevel() == logging.INFO:
+                if logging.getLogger().getEffectiveLevel() == logging.INFO:
                     send("logging already disabled.")
                 else:
                     logging.getLogger().setLevel(logging.INFO)
@@ -524,6 +535,9 @@ class BotHandler():
                 else:
                     send("Control channel logging is already disabled.")
         elif cmd[0] == "enable":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
             if cmd[1] == "kick":
                 if self.kick_enabled:
                     send("Kick already enabled.")
@@ -531,17 +545,25 @@ class BotHandler():
                     self.kick_enabled = True
                     send("Kick enabled.")
             elif cmd[1] == "module":
+                if len(cmd) < 3:
+                    send("Missing argument.")
+                    return
                 if cmd[2] not in self.disabled_mods:
                     send("Module already enabled.")
-                else:
+                elif cmd[2] in self.modules:
                     self.disabled_mods.remove(cmd[2])
                     send("Module enabled.")
-            elif cmd[1] == "all" and cmd[2] == "modules":
+                else:
+                    send("Module does not exist.")
+            elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
                 self.disabled_mods = []
                 send("Enabled all modules.")
             elif cmd[1] == "logging":
-                logging.getLogger().setLevel(logging.DEBUG)
-                send("Logging enabled.")
+                if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                    send("logging already enabled.")
+                else:
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    send("Logging enabled.")
             elif cmd[1] == "chanlog":
                 if not self.log_to_ctrlchan:
                     self.log_to_ctrlchan = True
@@ -549,6 +571,9 @@ class BotHandler():
                 else:
                     send("Control channel logging is already enabled.")
         elif cmd[0] == "get":
+            if len(cmd) < 3:
+                send("Missing argument.")
+                return
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
                 if not mods:
@@ -564,11 +589,23 @@ class BotHandler():
             send("get <disabled|enabled> modules")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":
-            self.guarded.append(cmd[1])
-            send("guarding "+cmd[1])
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if cmd[1] in self.guarded:
+                send("already guarding "+cmd[1])
+            else:
+                self.guarded.append(cmd[1])
+                send("guarding "+cmd[1])
         elif cmd[0] == "unguard":
-            self.guarded.remove(cmd[1])
-            send("no longer guarding "+cmd[1])
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if cmd[1] not in self.guarded:
+                send("%s is not being guarded" % cmd[1])
+            else:
+                self.guarded.remove(cmd[1])
+                send("no longer guarding "+cmd[1])
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
