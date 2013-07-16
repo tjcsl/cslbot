@@ -52,7 +52,7 @@ class IrcBot(SingleServerIRCBot):
                 return
             if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
                 cmdargs = cmd[len('!reload')+1:]
-                self.do_reload(c, e, msgtype, cmdargs, target)
+                self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
@@ -60,7 +60,7 @@ class IrcBot(SingleServerIRCBot):
             name = type(ex).__name__
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
-    def do_reload(self, c, e, msgtype, cmdargs, target):
+    def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
 
         | First, reload handler.py.

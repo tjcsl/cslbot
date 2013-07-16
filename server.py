@@ -16,7 +16,7 @@ import threading
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-from config import SERVERPORT, CTRLPASS
+from config import SERVERPORT, CTRLPASS, CTRLCHAN
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -61,7 +61,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         send = lambda msg: self.request.send(msg.encode())
         send("Password: ")
         msg = self.get_data().splitlines()
-        if msg[0].strip() == CTRLPASS:
+        if msg and msg[0].strip() == CTRLPASS:
             send(WELCOME)
         else:
             send("Incorrect password.\n")
@@ -74,29 +74,34 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             end = 0
         while True:
             if end:
-                cmd = msg[end-1].strip()
+                cmd = msg[end-1].strip().split()
                 end -= 1
             else:
                 try:
                     send("ircbot> ")
-                    cmd = self.get_data().strip()
+                    cmd = self.get_data().strip().split()
                 except OSError:
                     # connection has been closed
                     return
-            if cmd == "help":
+            if not cmd:
+                continue
+            if cmd[0] == "help":
                 send(HELP)
-            elif cmd == "admins":
+            elif cmd[0] == "admins":
                 admins = ", ".join(self.server.bot.handler.admins.keys())
                 send(admins + '\n')
-            elif cmd == "raw":
-                while cmd != "endraw":
+            elif cmd[0] == "reload":
+                cmdargs = cmd[1] if len(cmd) > 1 else ''
+                self.server.bot.do_reload(self.server.bot.connection, CTRLCHAN, cmdargs, 'server')
+            elif cmd[0] == "raw":
+                while cmd[0] != "endraw":
                     send("ircbot-raw> ")
                     cmd = self.get_data().strip()
                     if cmd == "endraw":
                         break
                     self.server.bot.handler.connection.send_raw(cmd)
                 continue
-            elif cmd == "quit":
+            elif cmd[0] == "quit":
                 send("Goodbye.\n")
                 self.request.close()
                 break
