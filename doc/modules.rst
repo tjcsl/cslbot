@@ -5,8 +5,8 @@ IrcBot
    :maxdepth: 4
 
    bot
+   client
    commands
    config
    handler
-   reload
    server
