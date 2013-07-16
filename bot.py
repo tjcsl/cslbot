@@ -67,6 +67,7 @@ class IrcBot(SingleServerIRCBot):
         | Then make copies of all the handler data we want to keep.
         | Create a new handler and restore all the data.
         """
+        output = None
         if cmdargs == 'pull':
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
@@ -80,6 +81,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler = handler.BotHandler()
         self.handler.set_data(data)
         self.handler.connection = c
+        if output:
+            return output
 
     def get_version(self):
         """Get the version."""

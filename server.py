@@ -93,7 +93,9 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 send(admins + '\n')
             elif cmd[0] == "reload":
                 cmdargs = cmd[1] if len(cmd) > 1 else ''
-                self.server.bot.do_reload(self.server.bot.connection, CTRLCHAN, cmdargs, 'server')
+                output = self.server.bot.do_reload(self.server.bot.connection, CTRLCHAN, cmdargs, 'server')
+                if output:
+                    send(output+'\n')
             elif cmd[0] == "raw":
                 while cmd[0] != "endraw":
                     send("ircbot-raw> ")
