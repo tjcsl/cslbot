@@ -70,6 +70,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         if len(msg) > 1:
             msg = list(reversed(msg[1:]))
             end = len(msg)
+        else:
+            end = 0
         while True:
             if end:
                 cmd = msg[end-1].strip()
