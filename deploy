@@ -29,5 +29,5 @@ sudo -u ircbot git pull
 if [ "$1" == "restart" ]; then
 	sudo /etc/init.d/ircbot restart
 else
-	sudo -u ircbot ./reload.py
+	sudo -u ircbot ./reload
 fi

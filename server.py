@@ -16,7 +16,9 @@
 
 import socketserver
 import threading
+import traceback
 import imp
+from os.path import basename
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
 
 WELCOME = """
@@ -60,61 +62,69 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         return msg
 
     def handle(self):
-        send = lambda msg: self.request.send(msg.encode())
-        bot = self.server.bot
-        send("Password: ")
-        msg = self.get_data().splitlines()
-        if msg and msg[0].strip() == CTRLPASS:
-            send(WELCOME)
-        else:
-            send("Incorrect password.\n")
-            self.request.close()
-            return
-        if len(msg) > 1:
-            msg = list(reversed(msg[1:]))
-            end = len(msg)
-        else:
-            end = 0
-        while True:
-            if end:
-                cmd = msg[end-1].strip().split()
-                end -= 1
+        try:
+            send = lambda msg: self.request.send(msg.encode())
+            bot = self.server.bot
+            send("Password: ")
+            msg = self.get_data().splitlines()
+            if msg and msg[0].strip() == CTRLPASS:
+                send(WELCOME)
             else:
-                try:
-                    send("ircbot> ")
-                    cmd = self.get_data().strip().split()
-                except Exception:
-                    # connection has been closed
-                    return
-            if not cmd:
-                continue
-            if cmd[0] == "help":
-                send(HELP)
-            elif cmd[0] == "admins":
-                admins = ", ".join(bot.handler.admins.keys())
-                send(admins + '\n')
-            elif cmd[0] == "reload":
-                cmdargs = cmd[1] if len(cmd) > 1 else ''
-                output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
-                for x in bot.handler.modules.values():
-                    imp.reload(x)
-                if output:
-                    send(output+'\n')
-                send("Aye Aye Capt'n\n")
-                bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
+                send("Incorrect password.\n")
                 self.request.close()
-                break
-            elif cmd[0] == "raw":
-                while cmd[0] != "endraw":
-                    send("ircbot-raw> ")
-                    cmd = self.get_data().strip()
-                    if cmd == "endraw":
-                        break
-                    self.server.bot.handler.connection.send_raw(cmd)
-                continue
-            elif cmd[0] == "quit":
-                send("Goodbye.\n")
-                self.request.close()
-                break
+                return
+            if len(msg) > 1:
+                msg = list(reversed(msg[1:]))
+                end = len(msg)
             else:
-                send("Unknown command. Type help for more info.\n")
+                end = 0
+            while True:
+                if end:
+                    cmd = msg[end-1].strip().split()
+                    end -= 1
+                else:
+                    try:
+                        send("ircbot> ")
+                        cmd = self.get_data().strip().split()
+                    except Exception:
+                        # connection has been closed
+                        return
+                if not cmd:
+                    continue
+                if cmd[0] == "help":
+                    send(HELP)
+                elif cmd[0] == "admins":
+                    admins = ", ".join(bot.handler.admins.keys())
+                    send(admins + '\n')
+                elif cmd[0] == "reload":
+                    cmdargs = cmd[1] if len(cmd) > 1 else ''
+                    output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
+                    for x in bot.handler.modules.values():
+                        imp.reload(x)
+                    if output:
+                        send(output+'\n')
+                    send("Aye Aye Capt'n\n")
+                    bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
+                    self.request.close()
+                    break
+                elif cmd[0] == "raw":
+                    while cmd[0] != "endraw":
+                        send("ircbot-raw> ")
+                        cmd = self.get_data().strip()
+                        if cmd == "endraw":
+                            break
+                        bot.handler.connection.send_raw(cmd)
+                    continue
+                elif cmd[0] == "quit":
+                    send("Goodbye.\n")
+                    self.request.close()
+                    break
+                else:
+                    send("Unknown command. Type help for more info.\n")
+        except Exception as ex:
+            trace = traceback.extract_tb(ex.__traceback__)[-1]
+            trace = [basename(trace[0]), trace[1]]
+            name = type(ex).__name__
+            msg = '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex))
+            send(msg+'\n')
+            bot.connection.privmsg(CTRLCHAN, msg)
