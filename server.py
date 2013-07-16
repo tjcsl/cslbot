@@ -81,7 +81,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 try:
                     send("ircbot> ")
                     cmd = self.get_data().strip().split()
-                except OSError:
+                except Exception:
                     # connection has been closed
                     return
             if not cmd:
