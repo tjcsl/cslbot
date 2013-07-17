@@ -22,8 +22,8 @@ def cmd(send, msg, args):
     if not msg:
         send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[0].replace("\n","")[::-1])    
         return
-    if "\\" in msg:
-        user = msg[1:]
+    if re.search("^--", msg):
+        user = msg[2:]
         for line in reversed(log[-50:]):
             if re.search(r"<@?\+?" + user + ">", line[1]):
                 send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].replace("\n","")[::-1])
