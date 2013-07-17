@@ -126,20 +126,19 @@ class BotHandler():
         else:
             return True
 
-    def set_admin(self, e, c, send):
+    def set_admin(self, c, msg, send, nick, target):
         """Handle admin verification responses from NickServ.
 
         | If someone other than NickServ is trying to become a admin, kick them.
         | If NickServ tells us that the nick is authed, mark it as verified.
         """
-        match = re.match("(.*) ACC ([0-3])", e.arguments[0])
+        match = re.match("(.*) ACC ([0-3])", msg)
         if not match:
             return
-        nick = e.source.nick
         if nick != 'NickServ':
             if nick in self.channels[CHANNEL].users():
                 c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
-                self.do_kick(c, e, send, nick, "imposter", 'private')
+                self.do_kick(c, send, target, nick, "imposter", 'private')
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
@@ -396,7 +395,7 @@ class BotHandler():
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
 
-    def do_kick(self, c, e, send, nick, msg, msgtype):
+    def do_kick(self, c, send, target, nick, msg):
         """ Kick users.
 
         | If kick is disabled, don't do anything.
@@ -406,14 +405,13 @@ class BotHandler():
         if not self.kick_enabled:
             send("%s: you're lucky. kick is disabled." % nick)
             return
-        target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
         if NICK not in ops:
             c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
             c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
-    def do_caps(self, msg, c, e, nick, send):
+    def do_caps(self, msg, c, target, nick, send):
         """ Check for capslock abuse.
 
         | Check if a line is more than :const:`THRESHOLD` percent uppercase.
@@ -427,7 +425,7 @@ class BotHandler():
         upper_ratio = len(upper) / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
             if nick in self.caps:
-                self.do_kick(c, e, send, nick, text, 'pubmsg')
+                self.do_kick(c, send, target, nick, text)
                 self.caps.remove(nick)
             else:
                 send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
@@ -471,8 +469,10 @@ class BotHandler():
                 'srcdir': self.srcdir,
                 'logs': self.logs,
                 'admins': self.admins,
+                'kick_enabled': self.kick_enabled,
                 'target': target if target[0] == "#" else "private",
                 'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
+                'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
                 'guarded': self.guarded}
@@ -621,7 +621,7 @@ class BotHandler():
         send = lambda msg: self.send(target, NICK, msg, msgtype)
 
         if msgtype == 'privnotice':
-            self.set_admin(e, c, send)
+            self.set_admin(c, msg, send, nick, target)
             return
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
@@ -636,7 +636,7 @@ class BotHandler():
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
-        self.do_caps(msg, c, e, nick, send)
+        self.do_caps(msg, c, target, nick, send)
         self.do_band(msg, send)
 
         # is this a command?
