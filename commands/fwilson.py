@@ -15,4 +15,4 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 def cmd(send, msg, args):
-    send("WHEEEEE")
+    send(gen_creffett("wheeeee " + msg))
