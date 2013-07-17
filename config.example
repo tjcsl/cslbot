@@ -11,3 +11,4 @@ STEAMAPIKEY = ''
 STEAMENABLE = False
 LOGDIR = '/var/log/irc/'
 CMDCHAR = '!'
+QUOTES = []

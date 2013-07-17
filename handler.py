@@ -24,7 +24,7 @@ import imp
 import time
 import socket
 import string
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR, QUOTES
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -63,6 +63,7 @@ class BotHandler():
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
                          'private': open("%s/private.log" % LOGDIR, "a")}
+        self.quotes = QUOTES
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
@@ -76,6 +77,7 @@ class BotHandler():
         data['admins'] = dict(self.admins)
         data['logfiles'] = dict(self.logfiles)
         data['guarded'] = list(self.guarded)
+        data['quotes'] = list(self.quotes)        
         return data
 
     def set_data(self, data):
@@ -89,6 +91,7 @@ class BotHandler():
         self.abuselist = data['abuselist']
         self.admins = data['admins']
         self.guarded = data['guarded']
+        self.quotes = data['quotes']
 
     def loadmodules(self):
         """Load all the commands.
