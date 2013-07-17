@@ -29,4 +29,6 @@ def cmd(send, msg, args):
             if re.search(r"<@?\+?" + user + ">", line[1]):
                 send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].strip()[::-1])
                 return
+        send("Couldn't find a message from " + user + ":(")
+        return
     send(msg[::-1].strip())
