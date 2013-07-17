@@ -193,6 +193,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fwilson` Module
+---------------------
+
+.. automodule:: commands.fwilson
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`g` Module
 ---------------
 
@@ -329,6 +337,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`reverse` Module
+---------------------
+
+.. automodule:: commands.reverse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`s` Module
 ---------------
 
@@ -349,6 +365,14 @@ commands Package
 -------------------
 
 .. automodule:: commands.score
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`sdamashek` Module
+-----------------------
+
+.. automodule:: commands.sdamashek
     :members:
     :undoc-members:
     :show-inheritance:

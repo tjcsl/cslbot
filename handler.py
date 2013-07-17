@@ -386,12 +386,7 @@ class BotHandler():
             self.connection.privmsg("ChanServ", "UNBAN "+target)
 
         # if user is guarded and quieted, devoiced, or deopped, fix that
-        guardedregex = "("
-        for i in self.guarded:
-            guardedregex += i + "|"
-        guardedregex += "something) "
-        send(guardedregex)
-        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) " + guardedregex, msg)
+        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded), msg)
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
 
@@ -587,6 +582,7 @@ class BotHandler():
             send("cs|chanserv <chanserv command>")
             send("disable|enable <kick|module <module>|logging|chanlog>")
             send("get <disabled|enabled> modules")
+            send("show guarded")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":
             if len(cmd) < 2:
@@ -606,6 +602,15 @@ class BotHandler():
             else:
                 self.guarded.remove(cmd[1])
                 send("no longer guarding "+cmd[1])
+        elif cmd[0] == "show":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if cmd[1] == "guarded":
+                if self.guarded:
+                    send(", ".join(self.guarded))
+                else:
+                    send("Nobody is guarded.")
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
