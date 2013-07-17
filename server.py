@@ -22,8 +22,8 @@ from os.path import basename
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
 from subprocess import check_output
 
-NO_ECHO  = unicode(check_output(["stty", "-echo"]))
-YES_ECHO = unicode(check_output(["stty",  "echo"]))
+NO_ECHO  = str(check_output(["stty", "-echo"]))
+YES_ECHO = str(check_output(["stty",  "echo"]))
 WELCOME = """
 Welcome to the IRCbot console.
 Copyright (c) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
