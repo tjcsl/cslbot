@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from creffett import gen_creffett
 
 def cmd(send, msg, args):
-    send(gen_creffett("wheeeee " + msg))
+    send(("wheeeee " + msg).upper())
