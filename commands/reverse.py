@@ -25,7 +25,7 @@ def cmd(send, msg, args):
         return
     if re.search("^--", msg):
         user = msg[2:]
-        for line in reversed(log):
+        for line in reversed(log[-50:]):
             if re.search(r"<@?\+?" + user + ">", line[1]):
                 send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].strip()[::-1])
                 return
