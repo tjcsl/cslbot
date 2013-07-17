@@ -20,6 +20,7 @@ import traceback
 import imp
 from os.path import basename
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
+from subprocess import check_output
 
 WELCOME = """
 Welcome to the IRCbot console.
