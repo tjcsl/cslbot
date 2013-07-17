@@ -20,12 +20,12 @@ args = ['logs', 'target']
 def cmd(send, msg, args):
     log = args['logs'][args['target']][:-1]
     if not msg:
-        send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[::-1].replace("\n",""))    
+        send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[0].replace("\n","")[::-1])    
         return
     if "\\" in msg:
         user = msg[1:]
         for line in reversed(log[-50:]):
             if re.search(r"<@?\+?" + user + ">", line[1]):
-                send(re.search(r"<.*> (.*)", line[1]).groups(1)[::-1].replace("\n",""))
+                send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].replace("\n","")[::-1])
                 return
     send(msg[::-1].replace("\n",""))
