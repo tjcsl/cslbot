@@ -18,7 +18,7 @@
 args = ['logs', 'target']
 
 def cmd(send, msg, args):
-    log = args['log'][args['target']][:-1]
+    log = args['logs'][args['target']][:-1]
     if not msg:
         send(log[-1][::-1])        
         return
