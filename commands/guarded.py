@@ -16,5 +16,6 @@
 
 args = ['guarded']
 
+
 def cmd(send, msg, args):
     send(", ".join(args['guarded']))

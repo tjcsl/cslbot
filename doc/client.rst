@@ -1,7 +1,7 @@
-reload Module
+client Module
 =============
 
-.. automodule:: reload
+.. automodule:: client
     :members:
     :undoc-members:
     :show-inheritance:

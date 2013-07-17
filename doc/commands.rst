@@ -209,6 +209,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`guarded` Module
+---------------------
+
+.. automodule:: commands.guarded
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`help` Module
 ------------------
 
@@ -301,6 +309,14 @@ commands Package
 ------------------
 
 .. automodule:: commands.quit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`rage` Module
+------------------
+
+.. automodule:: commands.rage
     :members:
     :undoc-members:
     :show-inheritance:

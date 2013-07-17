@@ -24,7 +24,7 @@ import imp
 import time
 import socket
 import string
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -126,20 +126,19 @@ class BotHandler():
         else:
             return True
 
-    def set_admin(self, e, c, send):
+    def set_admin(self, c, msg, send, nick, target):
         """Handle admin verification responses from NickServ.
 
         | If someone other than NickServ is trying to become a admin, kick them.
         | If NickServ tells us that the nick is authed, mark it as verified.
         """
-        match = re.match("(.*) ACC ([0-3])", e.arguments[0])
+        match = re.match("(.*) ACC ([0-3])", msg)
         if not match:
             return
-        nick = e.source.nick
         if nick != 'NickServ':
             if nick in self.channels[CHANNEL].users():
                 c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
-                self.do_kick(c, e, send, nick, "imposter", 'private')
+                self.do_kick(c, send, target, nick, "imposter", 'private')
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
@@ -209,6 +208,13 @@ class BotHandler():
         """
         self.handle_msg('action', c, e)
 
+    def mode(self, c, e):
+        """ Handle actions.
+
+        Forward notices to :func:`handle_msg`.
+        """
+        self.handle_msg('mode', c, e)
+
     def send(self, target, nick, msg, msgtype):
         """ Send a message.
 
@@ -226,6 +232,7 @@ class BotHandler():
         """
         if type(msg) != str:
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
+        target = target.lower()
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
                     nick = '@' + nick
@@ -258,7 +265,6 @@ class BotHandler():
             log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
         elif msgtype == 'mode':
             log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
-            self.do_mode(target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
@@ -369,24 +375,27 @@ class BotHandler():
         except AttributeError:
             pass
 
-    def do_mode(self, target, msg, nick):
+    def do_mode(self, target, msg, nick, send):
         """ reop"""
         # reop
+        # un-hard-code this
         match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
         if match:
             self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
             self.connection.privmsg("ChanServ", "OP "+target)
             self.connection.privmsg("ChanServ", "UNBAN "+target)
-        
+
         # if user is guarded and quieted, devoiced, or deopped, fix that
-        guardedregex="("
+        guardedregex = "("
         for i in self.guarded:
-            guardedregex += i+"|"
-        guardedregex += "something)"
-        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) "+guardedregex, msg)
+            guardedregex += i + "|"
+        guardedregex += "something) "
+        send(guardedregex)
+        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) " + guardedregex, msg)
         if match:
-            self.connection.send_raw("MODE "+target+" +voe-qb "+match.group(3)+" "+match.group(3)+" "+match.group(3)+" "+match.group(3)+" "+match.group(3))
-    def do_kick(self, c, e, send, nick, msg, msgtype):
+            self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
+
+    def do_kick(self, c, send, target, nick, msg):
         """ Kick users.
 
         | If kick is disabled, don't do anything.
@@ -396,14 +405,13 @@ class BotHandler():
         if not self.kick_enabled:
             send("%s: you're lucky. kick is disabled." % nick)
             return
-        target = e.target if msgtype != 'private' else CHANNEL
         ops = self.channels[target].opers()
         if NICK not in ops:
             c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
             c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
-    def do_caps(self, msg, c, e, nick, send):
+    def do_caps(self, msg, c, target, nick, send):
         """ Check for capslock abuse.
 
         | Check if a line is more than :const:`THRESHOLD` percent uppercase.
@@ -417,7 +425,7 @@ class BotHandler():
         upper_ratio = len(upper) / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
             if nick in self.caps:
-                self.do_kick(c, e, send, nick, text, 'pubmsg')
+                self.do_kick(c, send, target, nick, text)
                 self.caps.remove(nick)
             else:
                 send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
@@ -448,7 +456,7 @@ class BotHandler():
     def do_band(self, msg, send):
         if ':' in msg:
             msg = msg.split(':')[1]
-        if len(msg.split()) == 3 and random() < 0.05:
+        if len(msg.split()) == 3 and random() < 0.005:
             send('"%s" would be a good name for a band...' % msg.strip())
 
     def do_args(self, modargs, send, nick, target, c):
@@ -461,8 +469,10 @@ class BotHandler():
                 'srcdir': self.srcdir,
                 'logs': self.logs,
                 'admins': self.admins,
+                'kick_enabled': self.kick_enabled,
                 'target': target if target[0] == "#" else "private",
                 'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
+                'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
                 'guarded': self.guarded}
@@ -479,16 +489,22 @@ class BotHandler():
         if cmd[0] == "quote":
             c.send_raw(" ".join(cmd[1:]))
         elif cmd[0] == "cs" or cmd[0] == "chanserv":
+            if len(cmd) < 3:
+                send("Missing arguments.")
+                return
             if cmd[1] == "op" or cmd[1] == "o":
-                target = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "deop" or cmd[1] == "do":
-                target = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "voice" or cmd[1] == "v":
-                target = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "devoice" or cmd[1] == "dv":
-                target = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            c.privmsg("ChanServ", target)
+                action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+            c.privmsg("ChanServ", action)
         elif cmd[0] == "disable":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
             if cmd[1] == "kick":
                 if not self.kick_enabled:
                     send("Kick already disabled.")
@@ -496,13 +512,18 @@ class BotHandler():
                     self.kick_enabled = False
                     send("Kick disabled.")
             elif cmd[1] == "module":
+                if len(cmd) < 3:
+                    send("Missing argument.")
+                    return
                 if cmd[2] in self.disabled_mods:
                     send("Module already disabled.")
-                else:
+                elif cmd[2] in self.modules:
                     self.disabled_mods.append(cmd[2])
                     send("Module disabled.")
+                else:
+                    send("Module does not exist.")
             elif cmd[1] == "logging":
-                if logging.getLogger.getEffectiveLevel() == logging.INFO:
+                if logging.getLogger().getEffectiveLevel() == logging.INFO:
                     send("logging already disabled.")
                 else:
                     logging.getLogger().setLevel(logging.INFO)
@@ -514,6 +535,9 @@ class BotHandler():
                 else:
                     send("Control channel logging is already disabled.")
         elif cmd[0] == "enable":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
             if cmd[1] == "kick":
                 if self.kick_enabled:
                     send("Kick already enabled.")
@@ -521,17 +545,25 @@ class BotHandler():
                     self.kick_enabled = True
                     send("Kick enabled.")
             elif cmd[1] == "module":
+                if len(cmd) < 3:
+                    send("Missing argument.")
+                    return
                 if cmd[2] not in self.disabled_mods:
                     send("Module already enabled.")
-                else:
+                elif cmd[2] in self.modules:
                     self.disabled_mods.remove(cmd[2])
                     send("Module enabled.")
-            elif cmd[1] == "all" and cmd[2] == "modules":
+                else:
+                    send("Module does not exist.")
+            elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
                 self.disabled_mods = []
                 send("Enabled all modules.")
             elif cmd[1] == "logging":
-                logging.getLogger().setLevel(logging.DEBUG)
-                send("Logging enabled.")
+                if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                    send("logging already enabled.")
+                else:
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    send("Logging enabled.")
             elif cmd[1] == "chanlog":
                 if not self.log_to_ctrlchan:
                     self.log_to_ctrlchan = True
@@ -539,6 +571,9 @@ class BotHandler():
                 else:
                     send("Control channel logging is already enabled.")
         elif cmd[0] == "get":
+            if len(cmd) < 3:
+                send("Missing argument.")
+                return
             if cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
                 if not mods:
@@ -554,11 +589,24 @@ class BotHandler():
             send("get <disabled|enabled> modules")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":
-            self.guarded.append(cmd[1])
-            send("guarding "+cmd[1])
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if cmd[1] in self.guarded:
+                send("already guarding "+cmd[1])
+            else:
+                self.guarded.append(cmd[1])
+                send("guarding "+cmd[1])
         elif cmd[0] == "unguard":
-            self.guarded.remove(cmd[1])
-            send("no longer guarding "+cmd[1])
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if cmd[1] not in self.guarded:
+                send("%s is not being guarded" % cmd[1])
+            else:
+                self.guarded.remove(cmd[1])
+                send("no longer guarding "+cmd[1])
+
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
@@ -573,10 +621,14 @@ class BotHandler():
         send = lambda msg: self.send(target, NICK, msg, msgtype)
 
         if msgtype == 'privnotice':
-            self.set_admin(e, c, send)
+            self.set_admin(c, msg, send, nick, target)
             return
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
+
+        if msgtype == 'mode':
+            self.do_mode(target, msg, nick, send)
+            return
 
         if e.target == CTRLCHAN:
             self.handle_ctrlchan(msg, c, send)
@@ -584,7 +636,7 @@ class BotHandler():
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
-        self.do_caps(msg, c, e, nick, send)
+        self.do_caps(msg, c, target, nick, send)
         self.do_band(msg, send)
 
         # is this a command?
@@ -593,11 +645,11 @@ class BotHandler():
             send("That module is disabled, sorry.")
             return
         # handle !s/a/b/
-        if cmd[:2] == '!s':
+        if cmd[:2] == CMDCHAR + 's':
             cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd)+1:]
         found = False
-        if cmd[0] == '!':
+        if cmd[0] == CMDCHAR:
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
@@ -606,7 +658,7 @@ class BotHandler():
                 mod.cmd(send, cmdargs, args)
                 found = True
         #special commands
-        if cmd[0] == '!':
+        if cmd[0] == CMDCHAR:
             if cmd[1:] == 'reload' and nick in ADMINS:
                 found = True
                 for x in self.modules.values():
@@ -624,4 +676,3 @@ class BotHandler():
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)
-            

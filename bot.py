@@ -52,7 +52,7 @@ class IrcBot(SingleServerIRCBot):
                 return
             if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
                 cmdargs = cmd[len('!reload')+1:]
-                self.do_reload(c, e, msgtype, cmdargs, target)
+                self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
@@ -60,22 +60,29 @@ class IrcBot(SingleServerIRCBot):
             name = type(ex).__name__
             c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
-    def do_reload(self, c, e, msgtype, cmdargs, target):
+    def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
 
         | First, reload handler.py.
         | Then make copies of all the handler data we want to keep.
         | Create a new handler and restore all the data.
         """
+        output = None
         if cmdargs == 'pull':
             output = self.handler.modules['pull'].do_pull()
             c.privmsg(target, output)
         imp.reload(handler)
+        imp.reload(server)
+        self.server.shutdown()
+        self.server.socket.close()
+        self.server = server.init_server(self)
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler()
         self.handler.set_data(data)
         self.handler.connection = c
+        if output:
+            return output
 
     def get_version(self):
         """Get the version."""
@@ -115,8 +122,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
 
     def on_mode(self, c, e):
-        """Log nick changes."""
-        self.handler.do_log(e.target, e.source.nick, " ".join(e.arguments), 'mode')
+        """Pass mode changes to :func:`handle_msg`."""
+        self.handle_msg('mode', c, e)
 
     def on_quit(self, c, e):
         """Log quits."""
@@ -178,7 +185,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     bot = IrcBot(CHANNEL, NICK, NICKPASS, HOST)
-    server.init_server(bot)
+    bot.server = server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':

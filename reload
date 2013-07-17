@@ -1,0 +1,3 @@
+#!/bin/bash
+PASSWORD=`sed -n "s#CTRLPASS = '\([^']*\)'#\1#gp" config.py`
+echo -e "$PASSWORD\nreload" | nc localhost 2689
