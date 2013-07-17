@@ -22,8 +22,6 @@ from os.path import basename
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
 from subprocess import check_output
 
-NO_ECHO  = str(check_output(["stty", "-echo"]))
-YES_ECHO = str(check_output(["stty",  "echo"]))
 WELCOME = """
 Welcome to the IRCbot console.
 Copyright (c) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
@@ -69,9 +67,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         try:
             send = lambda msg: self.request.send(msg.encode())
             bot = self.server.bot
-            send("Password: " + NO_ECHO)
+            send("Password: ")
             msg = self.get_data().splitlines()
-            send(YES_ECHO)
             if not msg or msg[0].strip() != CTRLPASS:
                 send("Incorrect password.\n")
                 self.request.close()
