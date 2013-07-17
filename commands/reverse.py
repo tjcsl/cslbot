@@ -20,7 +20,7 @@ args = ['logs', 'target']
 def cmd(send, msg, args):
     log = args['logs'][args['target']][:-1]
     if not msg:
-        send(log[-1][1][::-1].replace("\n",""))        
+        send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[::-1].replace("\n",""))    
         return
     if "\\" in msg:
         user = msg[1:]
