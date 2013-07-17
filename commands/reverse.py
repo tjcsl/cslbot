@@ -15,7 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+args = ['logs', 'target']
+
 def cmd(send, msg, args):
+    log = args['log'][args['target']][:-1]
     if not msg:
+        send(log[-1][::-1])        
         return
+    if "\\" in msg:
+        user = msg[1:]
+        for line in reversed(log[-50:]):
+            if re.search(r"<@?\+?" + user + ">", line):
+                send(re.search(r"<.*> (.*)", msg).groups(1)[::-1])
+                return
     send(msg[::-1])
