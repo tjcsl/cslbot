@@ -20,6 +20,7 @@ args = ['logs', 'target']
 def cmd(send, msg, args):
     log = args['logs'][args['target']][:-1]
     if not msg:
+        send(str(log[-1]))
         send(log[-1][::-1])        
         return
     if "\\" in msg:
