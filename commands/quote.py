@@ -16,10 +16,15 @@
 
 import random
 
-args = ['quotes']
+args = ['srcdir']
 
 def getquote(args):
-    return args['quotes'][random.randint(0,len(args['quotes'])-1)]
+    quotefile = args['dir'] + "/quotes"
+    quotes = json.load(open(quotefile))
+    return quotes[random.randint(0,len(quotes)-1)]
 
 def cmd(send, msg, args):
-    send(getquote(args))
+    try:
+        send(getquote(args))
+    except OSError:
+        send("Nobody has taste in this channel.")

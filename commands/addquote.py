@@ -14,11 +14,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['quotes']
+import os
+args = ['srcdir']
 
 def addquote(quote, args):
-    args['quotes'] += [quote]
-    send("Quote added successfully.")
+    quotefile = args['srcdir'] + "/quotes"
+    if os.path.isfile(quotefile):
+        quotes = json.load(open(quotefile))
+    else:
+        quotes = []
+    quotes += [quote]
+    f = open(quotefile, "w")
+    json.dump(quotes, f)
+    f.write("\n")
+    f.close()
 
 def cmd(send, msg, args):
     addquote(msg, args)
+    send("Quote added successfully.")

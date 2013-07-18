@@ -14,7 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['quotes']
+args = ['srcdir']
 
 def cmd(send, msg, args):
-    send(", ".join([i[0] + ": \"" + i[1] + "\"" for i in enumerate(args['quotes'])))
+    quotefile = args['dir'] + "/quotes"
+    quotes = json.load(open(quotefile))
+    send(", ".join([i[0] + ": \"" + i[1] + "\"" for i in enumerate(quotes)))
