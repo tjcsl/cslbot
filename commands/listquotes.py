@@ -19,4 +19,4 @@ args = ['srcdir']
 def cmd(send, msg, args):
     quotefile = args['dir'] + "/quotes"
     quotes = json.load(open(quotefile))
-    send(", ".join([i[0] + ": \"" + i[1] + "\"" for i in enumerate(quotes)))
+    send(", ".join([i[0] + ": \"" + i[1] + "\"" for i in enumerate(quotes)]))
