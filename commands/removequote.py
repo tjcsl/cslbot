@@ -22,6 +22,8 @@ args = ['srcdir', 'nick', 'is_admin']
 def deletequote(key, srcdir):
     quotefile = srcdir + "/quotes"
     quotes = json.load(open(quotefile))
+    if not quotes:
+        return False
     quotes.remove(quotes[key])
     f = open(quotefile, "w")
     json.dump(quotes, f)
@@ -30,13 +32,17 @@ def deletequote(key, srcdir):
 
 
 def cmd(send, msg, args):
-    if not args['is_admin'](args['nick']):
+    if not msg:
+        send("Which quote?")
+    elif not args['is_admin'](args['nick']):
         send("Nope.")
     else:
         try:
             if msg.isdigit():
-                deletequote(int(msg), args['srcdir'])
-                send("Deleted quote successfully")
+                if deletequote(int(msg), args['srcdir']):
+                    send("Deleted quote successfully")
+                else:
+                    send("Nobody has taste in this channel")
             else:
                 send("Not a valid quote id")
         except IndexError:

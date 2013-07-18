@@ -29,5 +29,5 @@ def getquote(args):
 def cmd(send, msg, args):
     try:
         send(getquote(args))
-    except OSError:
+    except (OSError, IndexError):
         send("Nobody has taste in this channel.")

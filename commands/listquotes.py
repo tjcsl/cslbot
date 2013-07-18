@@ -24,6 +24,9 @@ def cmd(send, msg, args):
         quotefile = args['srcdir'] + "/quotes"
         quotes = json.load(open(quotefile))
         output = ", ".join(["%d: %s" % i for i in enumerate(quotes)])
-        send(output)
+        if output:
+            send(output)
+        else:
+            send("Nobody has taste in this channel.")
     except OSError:
         send("Nobody has taste in this channel.")
