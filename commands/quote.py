@@ -14,14 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import random
+import json
+from random import choice
 
 args = ['srcdir']
 
+
 def getquote(args):
-    quotefile = args['dir'] + "/quotes"
+    quotefile = args['srcdir'] + "/quotes"
     quotes = json.load(open(quotefile))
-    return quotes[random.randint(0,len(quotes)-1)]
+    return choice(quotes)
+
 
 def cmd(send, msg, args):
     try:

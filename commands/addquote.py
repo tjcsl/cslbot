@@ -15,7 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import os
+import json
+
 args = ['srcdir']
+
 
 def addquote(quote, args):
     quotefile = args['srcdir'] + "/quotes"
@@ -28,6 +31,7 @@ def addquote(quote, args):
     json.dump(quotes, f)
     f.write("\n")
     f.close()
+
 
 def cmd(send, msg, args):
     addquote(msg, args)

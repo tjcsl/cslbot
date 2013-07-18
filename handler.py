@@ -75,7 +75,7 @@ class BotHandler():
         data['abuselist'] = dict(self.abuselist)
         data['admins'] = dict(self.admins)
         data['logfiles'] = dict(self.logfiles)
-        data['guarded'] = list(self.guarded)      
+        data['guarded'] = list(self.guarded)
         return data
 
     def set_data(self, data):

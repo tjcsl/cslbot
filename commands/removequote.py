@@ -14,10 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['srcdir', 'nick', 'admins']
+import json
 
-def deletequote(key, args):
-    quotefile = args['dir'] + "/quotes"
+args = ['srcdir', 'nick', 'is_admin']
+
+
+def deletequote(key, srcdir):
+    quotefile = srcdir + "/quotes"
     quotes = json.load(open(quotefile))
     quotes.remove(quotes[key])
     f = open(quotefile, "w")
@@ -25,14 +28,18 @@ def deletequote(key, args):
     f.write("\n")
     f.close()
 
+
 def cmd(send, msg, args):
-    if args['nick'] in args['admins']:
+    if not args['is_admin'](args['nick']):
+        send("Nope.")
+    else:
         try:
-            deletequote(msg, args)
-            send("Deleted quote successfully")
-        except ValueError:
+            if msg.isdigit():
+                deletequote(int(msg), args['srcdir'])
+                send("Deleted quote successfully")
+            else:
+                send("Not a valid quote id")
+        except IndexError:
             send("Not a valid quote id")
         except OSError:
             send("Nobody has taste in this channel")
-    else:
-        send("No.")

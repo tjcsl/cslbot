@@ -14,9 +14,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import json
+
 args = ['srcdir']
 
+
 def cmd(send, msg, args):
-    quotefile = args['srcdir'] + "/quotes"
-    quotes = json.load(open(quotefile))
-    send(", ".join([str(i[0]) + ": \"" + i[1] + "\"" for i in enumerate(quotes)]))
+    try:
+        quotefile = args['srcdir'] + "/quotes"
+        quotes = json.load(open(quotefile))
+        output = ", ".join(["%d: %s" % i for i in enumerate(quotes)])
+        send(output)
+    except OSError:
+        send("Nobody has taste in this channel.")
