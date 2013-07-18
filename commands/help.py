@@ -18,6 +18,9 @@ args = ['modules', 'nick', 'connection']
 
 
 def cmd(send, msg, args):
-    cmdlist = ' !'.join([x for x in sorted(args['modules'])])
-    c = args['connection']
-    c.privmsg(args['nick'], 'Commands: !' + cmdlist)
+    modules = sorted(args['modules'])
+    num = int(len(modules) / 2)
+    cmdlist1 = ' !'.join([x for x in modules[:num]])
+    cmdlist2 = ' !'.join([x for x in modules[num:]])
+    args['connection'].privmsg(args['nick'], 'Commands: !' + cmdlist1)
+    args['connection'].privmsg(args['nick'], '!' + cmdlist2)
