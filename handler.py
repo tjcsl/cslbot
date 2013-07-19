@@ -234,7 +234,8 @@ class BotHandler():
     def getSplitPos(self, message):
         """ Gets the proper split position at or around position 400 of a message."""
         for i in range(385, 415):
-            if message[i] == ' ': return i
+            if message[i] == ' ':
+                return i
 
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
@@ -436,7 +437,7 @@ class BotHandler():
                 self.do_kick(c, send, target, nick, text)
                 self.caps.remove(nick)
             else:
-                send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
+                # send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
                 self.caps.append(nick)
         elif nick in self.caps:
             self.caps.remove(nick)
