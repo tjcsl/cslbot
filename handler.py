@@ -428,7 +428,6 @@ class BotHandler():
         """
         # SHUT CAPS LOCK OFF, MORON
         THRESHOLD = 0.65
-        text = "shutting caps lock off"
         upper = [i for i in msg if i in string.ascii_uppercase]
         upper_ratio = len(upper) / len(msg)
         if upper_ratio > THRESHOLD and len(msg) > 6:
@@ -436,7 +435,6 @@ class BotHandler():
                 self.do_kick(c, send, target, nick, text)
                 self.caps.remove(nick)
             else:
-                send("%s: warning, %s would be a *really* good idea :)" % (nick, text))
                 self.caps.append(nick)
         elif nick in self.caps:
             self.caps.remove(nick)
