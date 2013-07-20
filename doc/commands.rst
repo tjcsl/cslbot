@@ -137,6 +137,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`define` Module
+--------------------
+
+.. automodule:: commands.define
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`demorse` Module
 ---------------------
 
@@ -309,6 +317,14 @@ commands Package
 --------------------
 
 .. automodule:: commands.pester
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`pfoley` Module
+--------------------
+
+.. automodule:: commands.pfoley
     :members:
     :undoc-members:
     :show-inheritance:
