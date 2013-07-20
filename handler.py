@@ -24,7 +24,7 @@ import imp
 import time
 import socket
 import string
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
+from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR, DICTIONARYAPIKEY
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -484,7 +484,8 @@ class BotHandler():
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
-                'guarded': self.guarded}
+                'guarded': self.guarded,
+                'dictionaryapikey': DICTIONARYAPIKEY}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
