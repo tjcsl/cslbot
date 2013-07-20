@@ -12,14 +12,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import time
 
 
 def cmd(send, msg, args):
         bold = '\x02'
-        timeformat = bold + "Date: " + bold + \
-            "%m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
+        timeformat = bold + "Date: " + bold + "%m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
         send(time.strftime(timeformat))

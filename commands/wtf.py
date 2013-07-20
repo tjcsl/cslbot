@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
 import subprocess
@@ -25,7 +24,6 @@ def cmd(send, msg, args):
             try:
                 answer = subprocess.check_output(['wtf', match.group(1)],
                                                  stderr=subprocess.STDOUT)
-                send(answer.decode().rstrip().replace(
-                     '\n', ' or ').replace('fuck', 'fsck'))
+                send(answer.decode().rstrip().replace('\n', ' or ').replace('fuck', 'fsck'))
             except subprocess.CalledProcessError as ex:
                 send(ex.output.decode().rstrip())

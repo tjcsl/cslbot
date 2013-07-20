@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
 import json
@@ -23,12 +22,11 @@ from os.path import dirname
 def cmd(send, msg, args):
         if not msg:
             return
-        data = json.load(open(dirname(__file__) + "/../score"))
+        data = json.load(open(dirname(__file__)+"/../score"))
         for u in data:
             msg = msg.replace(u, str(data[u]))
         msg += '\n'
-        proc = subprocess.Popen(
-            ['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output = proc.communicate(msg.encode())[0]
         output = output.decode().strip().replace('\n', ' ')
         send(output)

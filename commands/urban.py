@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.parse import quote
 from urllib.request import urlopen
@@ -31,13 +30,10 @@ def cmd(send, msg, args):
     if not msg:
         return
     # pfoley's private key -- do not abuse
-    data = json.loads(
-        urlopen('http://api.urbandictionary.com/v0/define?term=%s' %
-                     (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
+    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
     try:
         if definitionNum:
-            definition = data['list'][definitionNum - 1][
-                'definition'].replace('\n', ' ')
+            definition = data['list'][definitionNum - 1]['definition'].replace('\n', ' ')
         else:
             definition = data['list'][0]['definition'].replace('\n', ' ')
         send(definition.replace('shit', '$#!+').replace('fuck', 'fsck'))

@@ -12,15 +12,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.request import urlopen
 
 
 def gen_word():
-        html = urlopen(
-            'http://randomword.setgetgo.com/get.php', timeout=1).read()
+        html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
         # strip BOM
         return html.decode()[1:].rstrip()
 

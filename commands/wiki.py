@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
 from urllib.request import urlopen
@@ -21,14 +20,12 @@ from urllib.parse import quote
 
 
 def cmd(send, msg, args):
-        html = urlopen(
-            'http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch=' + quote(msg))
+        html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch='+quote(msg))
         data = json.loads(html.read().decode())
         try:
             url = data['query']['search'][0]['title']
         except Exception:
-            send("%s isn't important enough to have a wikipedia article." %
-                 msg)
+            send("%s isn't important enough to have a wikipedia article." % msg)
             return
         url = url.replace(' ', '_')
-        send('http://en.wikipedia.org/wiki/' + url)
+        send('http://en.wikipedia.org/wiki/'+url)

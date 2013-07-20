@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
 import threading
@@ -53,7 +52,6 @@ class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class BotNetHandler(socketserver.BaseRequestHandler):
-
     def get_data(self):
         SIZE = 4096
         msg = ""
@@ -83,7 +81,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 end = 0
             while True:
                 if end:
-                    cmd = msg[end - 1].strip().split()
+                    cmd = msg[end-1].strip().split()
                     end -= 1
                 else:
                     try:
@@ -101,12 +99,11 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     send(admins + '\n')
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
-                    output = bot.do_reload(
-                        bot.connection, CTRLCHAN, cmdargs, 'server')
+                    output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
                     for x in bot.handler.modules.values():
                         imp.reload(x)
                     if output:
-                        send(output + '\n')
+                        send(output+'\n')
                     send("Aye Aye Capt'n\n")
                     bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
                     self.request.close()
@@ -129,7 +126,6 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
-            msg = '%s in %s on line %s: %s' % (
-                name, trace[0], trace[1], str(ex))
-            send(msg + '\n')
+            msg = '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex))
+            send(msg+'\n')
             bot.connection.privmsg(CTRLCHAN, msg)

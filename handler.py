@@ -13,8 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
 import os
@@ -35,7 +34,6 @@ from random import choice, random
 
 
 class BotHandler():
-
     def __init__(self):
         """ Set everything up.
 
@@ -100,10 +98,10 @@ class BotHandler():
         | Imports the modules into a dict
         """
         modulemap = {}
-        for f in glob(os.path.dirname(__file__) + '/commands/*.py'):
+        for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
             if os.access(f, os.X_OK):
                 cmd = basename(f).split('.')[0]
-                modulemap[cmd] = importlib.import_module("commands." + cmd)
+                modulemap[cmd] = importlib.import_module("commands."+cmd)
         return modulemap
 
     def ignore(self, send, nick):
@@ -169,11 +167,9 @@ class BotHandler():
                 count = count + 1
         if count > limit:
             if cmd == 'scores':
-                msg = self.modules['creffett'].gen_creffett(
-                    "%s: don't abuse scores" % nick)
+                msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
             else:
-                msg = self.modules['creffett'].gen_creffett(
-                    "%s: stop abusing the bot" % nick)
+                msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
             self.send(CHANNEL, nick, msg, msgtype)
             self.ignore(send, nick)
             return True
@@ -187,8 +183,7 @@ class BotHandler():
         nick = e.source.nick
         msg = e.arguments[0].strip()
         if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
-            self.send(
-                nick, nick, 'Hey, no points in private messages!', e.type)
+            self.send(nick, nick, 'Hey, no points in private messages!', e.type)
             return
         self.handle_msg('priv', c, e)
 
@@ -228,7 +223,7 @@ class BotHandler():
         msgs = []
         if len(msg) > 400:
             splitPos = self.getSplitPos(msg)
-            for i in range(0, (int(len(msg) / splitPos)) + 1):
+            for i in range(0, (int(len(msg)/splitPos)) + 1):
                 msgs.append(msg[i * splitPos:(i + 1) * splitPos].strip())
         else:
             msgs.append(msg)
@@ -249,9 +244,8 @@ class BotHandler():
         | Logs "New Day" when day turns over.
         | Logs both to a file and a in-memory array.
         """
-        if not isinstance(msg, str):
-            raise Exception(
-                "IRC doesn't like it when you send it a " + type(msg).__name__)
+        if type(msg) != str:
+            raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         target = target.lower()
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
@@ -273,24 +267,18 @@ class BotHandler():
         if msgtype == 'action':
             log = '%s * %s %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'nick':
-            log = '%s -- %s is now known as %s\n' % (
-                currenttime, nick.replace('@', ''), msg)
+            log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'join':
-            log = '%s --> %s has joined %s\n' % (
-                currenttime, nick.replace('@', ''), msg)
+            log = '%s --> %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'part':
-            log = '%s <-- %s has left %s\n' % (
-                currenttime, nick.replace('@', ''), msg)
+            log = '%s <-- %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'quit':
-            log = '%s <-- %s has quit (%s)\n' % (
-                currenttime, nick.replace('@', ''), msg)
+            log = '%s <-- %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
         elif msgtype == 'kick':
             msg = msg.split(',')
-            log = '%s <-- %s has kicked %s (%s)\n' % (
-                currenttime, nick.replace('@', ''), msg[0], msg[1])
+            log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
         elif msgtype == 'mode':
-            log = '%s -- Mode %s [%s] by %s\n' % (
-                currenttime, target, msg, nick.replace('@', ''))
+            log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
         else:
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
@@ -396,8 +384,7 @@ class BotHandler():
             if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
                 pass
             else:
-                send('%s: %s' %
-                     (type(ex).__name__, str(ex).replace('\n', ' ')))
+                send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
         # page does not contain a title
         except AttributeError:
             pass
@@ -408,13 +395,12 @@ class BotHandler():
         # un-hard-code this
         match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
         if match:
-            self.connection.privmsg(target, "WAI U DO THIS " + nick + "?!??!")
-            self.connection.privmsg("ChanServ", "OP " + target)
-            self.connection.privmsg("ChanServ", "UNBAN " + target)
+            self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
+            self.connection.privmsg("ChanServ", "OP "+target)
+            self.connection.privmsg("ChanServ", "UNBAN "+target)
 
         # if user is guarded and quieted, devoiced, or deopped, fix that
-        match = re.search(
-            r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded), msg)
+        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded), msg)
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
 
@@ -430,11 +416,9 @@ class BotHandler():
             return
         ops = self.channels[target].opers()
         if NICK not in ops:
-            c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett(
-                "%s: /op the bot" % choice(ops)))
+            c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
-            c.kick(target, nick, self.modules[
-                   'slogan'].gen_slogan(msg).upper())
+            c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
     def do_caps(self, msg, c, target, nick, send):
         """ Check for capslock abuse.
@@ -496,10 +480,8 @@ class BotHandler():
                 'admins': self.admins,
                 'kick_enabled': self.kick_enabled,
                 'target': target if target[0] == "#" else "private",
-                'do_log': lambda nick, msg, msgtype:
-                self.do_log(target, nick, msg, msgtype),
-                'do_kick': lambda target, nick, msg:
-                self.do_kick(c, send, target, nick, msg),
+                'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
+                'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
                 'guarded': self.guarded}
@@ -522,14 +504,11 @@ class BotHandler():
             if cmd[1] == "op" or cmd[1] == "o":
                 action = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "deop" or cmd[1] == "do":
-                action = "DEOP %s %s" % (
-                    cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "voice" or cmd[1] == "v":
-                action = "VOICE %s %s" % (
-                    cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             elif cmd[1] == "devoice" or cmd[1] == "dv":
-                action = "DEVOICE %s %s" % (
-                    cmd[2], cmd[3] if len(cmd) > 3 else "")
+                action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
             c.privmsg("ChanServ", action)
         elif cmd[0] == "disable":
             if len(cmd) < 2:
@@ -610,8 +589,7 @@ class BotHandler():
                     send("No disabled modules.")
                 send(mods)
             elif cmd[1] == "enabled" and cmd[2] == "modules":
-                mods = ", ".join(
-                    sorted([i for i in self.modules if i not in self.disabled_mods]))
+                mods = ", ".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
                 send(mods)
         elif cmd[0] == "help":
             send("quote <raw command>")
@@ -625,10 +603,10 @@ class BotHandler():
                 send("Missing argument.")
                 return
             if cmd[1] in self.guarded:
-                send("already guarding " + cmd[1])
+                send("already guarding "+cmd[1])
             else:
                 self.guarded.append(cmd[1])
-                send("guarding " + cmd[1])
+                send("guarding "+cmd[1])
         elif cmd[0] == "unguard":
             if len(cmd) < 2:
                 send("Missing argument.")
@@ -637,7 +615,7 @@ class BotHandler():
                 send("%s is not being guarded" % cmd[1])
             else:
                 self.guarded.remove(cmd[1])
-                send("no longer guarding " + cmd[1])
+                send("no longer guarding "+cmd[1])
         elif cmd[0] == "show":
             if len(cmd) < 2:
                 send("Missing argument.")
@@ -688,18 +666,17 @@ class BotHandler():
         # handle !s/a/b/
         if cmd[:2] == CMDCHAR + 's':
             cmd = cmd.split('/')[0]
-        cmdargs = msg[len(cmd) + 1:]
+        cmdargs = msg[len(cmd)+1:]
         found = False
         if cmd[0] == CMDCHAR:
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
-                args = self.do_args(
-                    mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
+                args = self.do_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
-        # special commands
+        #special commands
         if cmd[0] == CMDCHAR:
             if cmd[1:] == 'reload' and nick in ADMINS:
                 found = True
@@ -715,7 +692,6 @@ class BotHandler():
             self.do_scores(matches, send, msgtype, nick)
 
         # crazy regex to match urls
-        match = re.search(
-            r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
+        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
         if match:
             self.do_urls(match, send)

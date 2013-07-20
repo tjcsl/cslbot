@@ -13,8 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
 import traceback
@@ -28,7 +27,6 @@ from time import sleep
 
 
 class IrcBot(SingleServerIRCBot):
-
     def __init__(self, channel, nick, nickpass, host, port=6667):
         """Setup everything.
 
@@ -53,15 +51,14 @@ class IrcBot(SingleServerIRCBot):
             if not cmd:
                 return
             if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
-                cmdargs = cmd[len('!reload') + 1:]
+                cmdargs = cmd[len('!reload')+1:]
                 self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
-            c.privmsg(target, '%s in %s on line %s: %s' %
-                      (name, trace[0], trace[1], str(ex)))
+            c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -145,8 +142,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
-            c.privmsg(e.target, "%s: %s to ya too, Sucka!" %
-                      (self.kick[0], self.kick[1]))
+            c.privmsg(e.target, "%s: %s to ya too, Sucka!" % (self.kick[0], self.kick[1]))
             slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             c.privmsg(e.target, slogan)
             del self.kick
@@ -170,8 +166,7 @@ class IrcBot(SingleServerIRCBot):
         | Record who kicked us and what for to use in :func:`on_join`.
         | Wait 5 seconds and then rejoin.
         """
-        self.handler.do_log(
-            e.target, e.source.nick, ','.join(e.arguments), 'kick')
+        self.handler.do_log(e.target, e.source.nick, ','.join(e.arguments), 'kick')
         # we don't care about other people.
         if e.arguments[0] != NICK:
             return

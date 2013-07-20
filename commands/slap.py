@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from config import CHANNEL
 from random import choice
@@ -21,8 +20,7 @@ args = ['nick', 'channels', 'target']
 
 
 def cmd(send, msg, args):
-    implements = ['a large trout', 'a clue-by-four',
-                  'a fresh haddock', 'moon', 'an Itanium', 'fwilson']
+    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson']
     slap = '%s slaps %s around a bit with %s'
     if not msg:
         channel = args['target'] if args['target'] != 'private' else CHANNEL
@@ -32,8 +30,7 @@ def cmd(send, msg, args):
     else:
         if "for" in msg:
             msg = msg.split("for")
-            slap = slap % (
-                args['nick'], msg[0].strip(), choice(implements) + " for" + msg[1])
+            slap = slap % (args['nick'], msg[0].strip(), choice(implements) + " for" + msg[1])
         else:
             slap = slap % (args['nick'], msg, choice(implements))
         send(slap)

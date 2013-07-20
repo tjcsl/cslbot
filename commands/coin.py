@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice, randint
 
@@ -25,5 +24,4 @@ def cmd(send, msg, args):
     else:
         headFlips = randint(0, int(msg))
         tailFlips = int(msg) - headFlips
-        send('The coins land on heads ' + str(headFlips) +
-             ' times and on tails ' + str(tailFlips) + ' times.')
+        send('The coins land on heads ' + str(headFlips) + ' times and on tails ' + str(tailFlips) + ' times.')
