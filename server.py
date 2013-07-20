@@ -106,7 +106,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     if output:
                         send(output + '\n')
                     send("Aye Aye Capt'n\n")
-                    bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
+                    bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n (triggered from server)")
                     self.request.close()
                     break
                 elif cmd[0] == "raw":
