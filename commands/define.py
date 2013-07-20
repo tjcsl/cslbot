@@ -23,7 +23,14 @@ def cmd(send, msg, args):
         key = args['dictionaryapikey']
         apiresult = urlopen("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s" % (urlencode(msg), key)).read()
         result = BeautifulSoup(apiresult, "xml")
-        for item in enumerate([i.contents.strip().strip(':') for i in result.find_all("dt")]):
+        entries = result.find_all("entry")
+        if not entries:
+            send("No matches.")
+        m = None
+        exactmatches = result.find_all("entry", id=re.compile(msg+"\[?\d?\]?"))
+        if not exactmatches:
+            m = result.find("entry")
+        for item in enumerate([i.contents.strip().strip(':') for i in [x.find_all("dt").contents for x in m]]):
             send("%s. %s" % (item[0], item[1]))
     except Exception as e:
         send(str(e))
