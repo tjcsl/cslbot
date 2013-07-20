@@ -12,11 +12,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from os.path import basename
 from config import NICK
-args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'modules']
+args = ['nick', 'target', 'ignore', 'connection',
+        'do_kick', 'kick_enabled', 'modules']
 
 
 def gen_creffett(msg):
@@ -27,8 +29,9 @@ def cmd(send, msg, args):
     if 'creffett' in basename(__file__):
         if not args['nick'].startswith('creffett') and args['nick'] != NICK:
             send("You're not creffett!")
-            #args['ignore'](args['nick'])
-            args['do_kick'](args['target'], args['nick'], args['modules']['slogan'].gen_slogan('creffett impersonation').upper())
+            # args['ignore'](args['nick'])
+            args['do_kick'](args['target'], args['nick'], args['modules'][
+                            'slogan'].gen_slogan('creffett impersonation').upper())
             return
     if not msg:
         return

@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from urllib.request import urlopen
 from urllib.parse import quote
@@ -36,7 +37,8 @@ def cmd(send, msg, args):
         else:
             send("Invalid or Ambiguous Location")
             return
-        forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
+        forecastdata = json.loads(
+            forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
         send("Current weather for %s:" % data['display_location']['full'])
         current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
             data['weather'],

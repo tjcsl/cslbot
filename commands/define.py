@@ -12,22 +12,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from urllib2 import urlopen, urlencode
 from bs4 import BeautifulSoup
 args = ['dictionaryapikey']
 
+
 def cmd(send, msg, args):
     try:
         key = args['dictionaryapikey']
-        apiresult = urlopen("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s" % (urlencode(msg), key)).read()
+        apiresult = urlopen(
+            "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s" %
+            (urlencode(msg), key)).read()
         result = BeautifulSoup(apiresult, "xml")
         entries = result.find_all("entry")
         if not entries:
             send("No matches.")
         m = None
-        exactmatches = result.find_all("entry", id=re.compile(msg+"\[?\d?\]?"))
+        exactmatches = result.find_all(
+            "entry", id=re.compile(msg + "\[?\d?\]?"))
         if not exactmatches:
             m = result.find("entry")
         for item in enumerate([i.contents.strip().strip(':') for i in [x.find_all("dt").contents for x in m]]):

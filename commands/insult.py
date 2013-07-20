@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from urllib.request import urlopen
 from config import NICK
@@ -20,6 +21,9 @@ from config import NICK
 
 def cmd(send, msg, args):
     if (msg.startwith(NICK)):  # unimplemented
-        response = urlopen("http://www.wdyl.com/profanity?q="+msg).read().decode('utf-8')  # returns a JSON response which contains 'True' if there is a swear word.
+        # returns a JSON response which contains 'True' if there is a swear
+        # word.
+        response = urlopen(
+            "http://www.wdyl.com/profanity?q=" + msg).read().decode('utf-8')
         if "True" in response:
             send("UW0TM8")

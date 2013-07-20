@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 import re
 args = ['logs', 'target']
@@ -27,7 +28,8 @@ def cmd(send, msg, args):
         user = msg[2:]
         for line in reversed(log[-50:]):
             if re.search(r"<@?\+?" + user + ">", line[1]):
-                send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].strip()[::-1])
+                send(
+                    re.search(r"<.*> (.*)", line[1]).groups(1)[0].strip()[::-1])
                 return
         send("Couldn't find a message from " + user + " :(")
         return

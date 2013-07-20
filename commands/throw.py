@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 import re
 from random import choice
@@ -22,7 +23,8 @@ args = ['channels', 'target', 'connection', 'nick', 'do_log']
 
 
 def cmd(send, msg, args):
-    users = (args['channels'][args['target']].users() if args['target'] != 'private' else ['you'])
+    users = (args['channels'][args['target']].users()
+             if args['target'] != 'private' else ['you'])
     target = args['target'] if args['target'] != 'private' else args['nick']
     if "at" in msg:
         match = re.match('(.*) at (.*)', msg)

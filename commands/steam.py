@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from config import STEAMENABLE, STEAMAPIKEY
 from urllib.request import urlopen
@@ -29,7 +30,8 @@ def cmd(send, msg, args):
         if STEAMENABLE:
             idlist = get_ids()
             try:
-                output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
+                output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' +
+                                 STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
             except KeyError:
                 send("I don't have that player in my database.")
                 return
@@ -42,7 +44,8 @@ def cmd(send, msg, args):
             except KeyError:
                 send('Invalid Steam ID in database?')
                 return
-            send('Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
+            send(
+                'Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
 
 
 def getStatus(vals):

@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 import subprocess
 from urllib.request import urlopen
@@ -21,10 +22,12 @@ import os
 
 
 def cmd(send, msg, args):
-        apiOutput = json.loads(urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
-        gitdir = os.path.dirname(__file__)+"/../.git"
+        apiOutput = json.loads(
+            urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
+        gitdir = os.path.dirname(__file__) + "/../.git"
         try:
-            version = subprocess.check_output(['git', '--git-dir='+gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
+            version = subprocess.check_output(
+                ['git', '--git-dir=' + gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
         except subprocess.CalledProcessError:
             send("Couldn't get the version.")
         if not msg:
@@ -33,7 +36,8 @@ def cmd(send, msg, args):
             if msg == 'master':
                 send(apiOutput['commit']['sha'])
             elif msg == 'check':
-                check = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
+                check = 'Same' if apiOutput['commit'][
+                        'sha'] == version else 'Different'
                 send(check)
             else:
                 send('Invalid argument')

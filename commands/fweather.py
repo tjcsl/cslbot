@@ -12,7 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -21,10 +22,12 @@ import socket
 
 def cmd(send, msg, args):
         try:
-            html = urlopen('http://thefuckingweather.com/?where=' + msg.replace(' ', '%20'), timeout=5).read()
+            html = urlopen(
+                'http://thefuckingweather.com/?where=' + msg.replace(' ', '%20'), timeout=5).read()
             soup = BeautifulSoup(html)
             temp, remark, flavor = soup.findAll('p')
-            send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
+            send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace(
+                 "FUCK", "FSCK"))
         except ValueError:
             send('NO FSCKING RESULTS.')
         except socket.timeout:
