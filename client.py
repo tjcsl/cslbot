@@ -22,6 +22,7 @@ from config import CTRLCHAN, CTRLPASS, NICK, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
+
     def __init__(self, nick):
         self.nick = nick
         self.loading = False

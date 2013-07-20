@@ -34,6 +34,7 @@ from random import choice, random
 
 
 class BotHandler():
+
     def __init__(self):
         """ Set everything up.
 
@@ -98,10 +99,10 @@ class BotHandler():
         | Imports the modules into a dict
         """
         modulemap = {}
-        for f in glob(os.path.dirname(__file__)+'/commands/*.py'):
+        for f in glob(os.path.dirname(__file__) + '/commands/*.py'):
             if os.access(f, os.X_OK):
                 cmd = basename(f).split('.')[0]
-                modulemap[cmd] = importlib.import_module("commands."+cmd)
+                modulemap[cmd] = importlib.import_module("commands." + cmd)
         return modulemap
 
     def ignore(self, send, nick):
@@ -223,7 +224,7 @@ class BotHandler():
         msgs = []
         if len(msg) > 400:
             splitPos = self.getSplitPos(msg)
-            for i in range(0, (int(len(msg)/splitPos)) + 1):
+            for i in range(0, (int(len(msg) / splitPos)) + 1):
                 msgs.append(msg[i * splitPos:(i + 1) * splitPos].strip())
         else:
             msgs.append(msg)
@@ -244,7 +245,7 @@ class BotHandler():
         | Logs "New Day" when day turns over.
         | Logs both to a file and a in-memory array.
         """
-        if type(msg) != str:
+        if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         target = target.lower()
         if target[0] == "#":
@@ -395,9 +396,9 @@ class BotHandler():
         # un-hard-code this
         match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
         if match:
-            self.connection.privmsg(target, "WAI U DO THIS "+nick+"?!??!")
-            self.connection.privmsg("ChanServ", "OP "+target)
-            self.connection.privmsg("ChanServ", "UNBAN "+target)
+            self.connection.privmsg(target, "WAI U DO THIS " + nick + "?!??!")
+            self.connection.privmsg("ChanServ", "OP " + target)
+            self.connection.privmsg("ChanServ", "UNBAN " + target)
 
         # if user is guarded and quieted, devoiced, or deopped, fix that
         match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded), msg)
@@ -603,10 +604,10 @@ class BotHandler():
                 send("Missing argument.")
                 return
             if cmd[1] in self.guarded:
-                send("already guarding "+cmd[1])
+                send("already guarding " + cmd[1])
             else:
                 self.guarded.append(cmd[1])
-                send("guarding "+cmd[1])
+                send("guarding " + cmd[1])
         elif cmd[0] == "unguard":
             if len(cmd) < 2:
                 send("Missing argument.")
@@ -615,7 +616,7 @@ class BotHandler():
                 send("%s is not being guarded" % cmd[1])
             else:
                 self.guarded.remove(cmd[1])
-                send("no longer guarding "+cmd[1])
+                send("no longer guarding " + cmd[1])
         elif cmd[0] == "show":
             if len(cmd) < 2:
                 send("Missing argument.")
@@ -666,7 +667,7 @@ class BotHandler():
         # handle !s/a/b/
         if cmd[:2] == CMDCHAR + 's':
             cmd = cmd.split('/')[0]
-        cmdargs = msg[len(cmd)+1:]
+        cmdargs = msg[len(cmd) + 1:]
         found = False
         if cmd[0] == CMDCHAR:
             if cmd[1:] in self.modules:
@@ -676,7 +677,7 @@ class BotHandler():
                 args = self.do_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
-        #special commands
+        # special commands
         if cmd[0] == CMDCHAR:
             if cmd[1:] == 'reload' and nick in ADMINS:
                 found = True

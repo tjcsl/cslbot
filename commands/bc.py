@@ -22,7 +22,7 @@ from os.path import dirname
 def cmd(send, msg, args):
         if not msg:
             return
-        data = json.load(open(dirname(__file__)+"/../score"))
+        data = json.load(open(dirname(__file__) + "/../score"))
         for u in data:
             msg = msg.replace(u, str(data[u]))
         msg += '\n'

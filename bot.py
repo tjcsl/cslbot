@@ -27,6 +27,7 @@ from time import sleep
 
 
 class IrcBot(SingleServerIRCBot):
+
     def __init__(self, channel, nick, nickpass, host, port=6667):
         """Setup everything.
 
@@ -51,7 +52,7 @@ class IrcBot(SingleServerIRCBot):
             if not cmd:
                 return
             if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
-                cmdargs = cmd[len('!reload')+1:]
+                cmdargs = cmd[len('!reload') + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:

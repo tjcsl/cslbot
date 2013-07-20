@@ -27,7 +27,7 @@ def cmd(send, msg, args):
     if 'creffett' in basename(__file__):
         if not args['nick'].startswith('creffett') and args['nick'] != NICK:
             send("You're not creffett!")
-            #args['ignore'](args['nick'])
+            # args['ignore'](args['nick'])
             args['do_kick'](args['target'], args['nick'], args['modules']['slogan'].gen_slogan('creffett impersonation').upper())
             return
     if not msg:

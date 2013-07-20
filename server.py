@@ -52,6 +52,7 @@ class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class BotNetHandler(socketserver.BaseRequestHandler):
+
     def get_data(self):
         SIZE = 4096
         msg = ""
@@ -81,7 +82,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 end = 0
             while True:
                 if end:
-                    cmd = msg[end-1].strip().split()
+                    cmd = msg[end - 1].strip().split()
                     end -= 1
                 else:
                     try:
@@ -103,7 +104,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     for x in bot.handler.modules.values():
                         imp.reload(x)
                     if output:
-                        send(output+'\n')
+                        send(output + '\n')
                     send("Aye Aye Capt'n\n")
                     bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n")
                     self.request.close()
@@ -127,5 +128,5 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
             msg = '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex))
-            send(msg+'\n')
+            send(msg + '\n')
             bot.connection.privmsg(CTRLCHAN, msg)

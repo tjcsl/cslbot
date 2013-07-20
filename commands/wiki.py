@@ -20,7 +20,7 @@ from urllib.parse import quote
 
 
 def cmd(send, msg, args):
-        html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch='+quote(msg))
+        html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch=' + quote(msg))
         data = json.loads(html.read().decode())
         try:
             url = data['query']['search'][0]['title']
@@ -28,4 +28,4 @@ def cmd(send, msg, args):
             send("%s isn't important enough to have a wikipedia article." % msg)
             return
         url = url.replace(' ', '_')
-        send('http://en.wikipedia.org/wiki/'+url)
+        send('http://en.wikipedia.org/wiki/' + url)

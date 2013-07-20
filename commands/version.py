@@ -22,9 +22,9 @@ import os
 
 def cmd(send, msg, args):
         apiOutput = json.loads(urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
-        gitdir = os.path.dirname(__file__)+"/../.git"
+        gitdir = os.path.dirname(__file__) + "/../.git"
         try:
-            version = subprocess.check_output(['git', '--git-dir='+gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
+            version = subprocess.check_output(['git', '--git-dir=' + gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
         except subprocess.CalledProcessError:
             send("Couldn't get the version.")
         if not msg:
