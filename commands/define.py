@@ -12,30 +12,25 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib2 import urlopen, urlencode
-from bs4 import BeautifulSoup
-args = ['dictionaryapikey']
+from urllib.request import urlopen
+from urllib.parse import quote
+from xml.etree import ElementTree
+from config import DICTIONARYAPIKEY
 
 
 def cmd(send, msg, args):
-    try:
-        key = args['dictionaryapikey']
-        apiresult = urlopen(
-            "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s" %
-            (urlencode(msg), key)).read()
-        result = BeautifulSoup(apiresult, "xml")
-        entries = result.find_all("entry")
-        if not entries:
-            send("No matches.")
-        m = None
-        exactmatches = result.find_all(
-            "entry", id=re.compile(msg + "\[?\d?\]?"))
-        if not exactmatches:
-            m = result.find("entry")
-        for item in enumerate([i.contents.strip().strip(':') for i in [x.find_all("dt").contents for x in m]]):
-            send("%s. %s" % (item[0], item[1]))
-    except Exception as e:
-        send(str(e))
+    if not msg:
+        send("Define what?")
+        return
+    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), DICTIONARYAPIKEY))
+    xml = ElementTree.parse(xml)
+    word = xml.find('./entry/def/dt')
+    if not hasattr(word, 'text'):
+        send("Definition not found")
+        return
+    word = word.text.replace(' :', ', ')[1:]
+    if word[-1] == ',':
+        word = word[:-2]
+    send(word)
