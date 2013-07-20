@@ -16,11 +16,11 @@
 
 import json
 
-args = ['srcdir', 'nick', 'is_admin']
+args = ['datadir', 'nick', 'is_admin']
 
 
-def deletequote(key, srcdir):
-    quotefile = srcdir + "/quotes"
+def deletequote(key, datadir):
+    quotefile = datadir + "quotes"
     quotes = json.load(open(quotefile))
     if not quotes:
         return False
@@ -39,7 +39,7 @@ def cmd(send, msg, args):
     else:
         try:
             if msg.isdigit():
-                if deletequote(int(msg), args['srcdir']):
+                if deletequote(int(msg), args['datadir']):
                     send("Deleted quote successfully")
                 else:
                     send("Nobody has taste in this channel")

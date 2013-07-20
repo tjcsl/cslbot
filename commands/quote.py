@@ -17,11 +17,11 @@
 import json
 from random import choice
 
-args = ['srcdir']
+args = ['datadir']
 
 
 def getquote(args):
-    quotefile = args['srcdir'] + "/quotes"
+    quotefile = args['datadir'] + "quotes"
     quotes = json.load(open(quotefile))
     return choice(quotes)
 
