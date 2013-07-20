@@ -128,7 +128,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_quit(self, c, e):
         """Log quits."""
-        self.handler.do_log(CHANNEL, e.source.nick, e.arguments[0], 'quit')
+        self.handler.do_log(CHANNEL, e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
         """Handle joins.
@@ -137,7 +137,7 @@ class IrcBot(SingleServerIRCBot):
         | Add the joined channel to the channel list.
         | If we've been kicked, yell at the kicker.
         """
-        self.handler.do_log(e.target, e.source.nick, e.target, 'join')
+        self.handler.do_log(e.target, e.source, e.target, 'join')
         if e.source.nick != NICK:
             return
         self.handler.channels[e.target] = self.channels[e.target]
@@ -154,7 +154,7 @@ class IrcBot(SingleServerIRCBot):
         | If another user is parting, just log it.
         | Remove the channel from the list of channels.
         """
-        self.handler.do_log(e.target, e.source.nick, e.target, 'part')
+        self.handler.do_log(e.target, e.source, e.target, 'part')
         if e.source.nick != NICK:
             return
         del self.handler.channels[e.target]

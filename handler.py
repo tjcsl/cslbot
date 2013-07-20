@@ -248,9 +248,10 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a " + type(msg).__name__)
         target = target.lower()
+        isop = False
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
-                    nick = '@' + nick
+                    isop = True
         else:
             target = 'private'
         currenttime = time.strftime('%H:%M:%S')
@@ -266,21 +267,29 @@ class BotHandler():
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
         if msgtype == 'action':
-            log = '%s * %s %s\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s * %s %s\n' % (currenttime, nick, msg)
         elif msgtype == 'nick':
-            log = '%s -- %s is now known as %s\n' % (currenttime, nick.replace('@', ''), msg)
+            log = '%s -- %s is now known as %s\n' % (currenttime, nick, msg)
         elif msgtype == 'join':
-            log = '%s --> %s has joined %s\n' % (currenttime, nick.replace('@', ''), msg)
+            fullname = nick
+            nick = nick.nick
+            log = '%s --> %s (%s) has joined %s\n' % (currenttime, nick, fullname, msg)
         elif msgtype == 'part':
-            log = '%s <-- %s has left %s\n' % (currenttime, nick.replace('@', ''), msg)
+            fullname = nick
+            nick = nick.nick
+            log = '%s <-- %s (%s) has left %s\n' % (currenttime, nick, fullname, msg)
         elif msgtype == 'quit':
-            log = '%s <-- %s has quit (%s)\n' % (currenttime, nick.replace('@', ''), msg)
+            fullname = nick
+            nick = nick.nick
+            log = '%s <-- %s (%s) has quit (%s)\n' % (currenttime, nick, fullname, msg)
         elif msgtype == 'kick':
             msg = msg.split(',')
-            log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick.replace('@', ''), msg[0], msg[1])
+            log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick, msg[0], msg[1])
         elif msgtype == 'mode':
-            log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick.replace('@', ''))
+            log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target, msg, nick)
         else:
+            if isop:
+                nick = '@' + nick
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
             if target != CTRLCHAN:
