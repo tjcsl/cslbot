@@ -15,11 +15,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+import re
 
 
 def cmd(send, msg, args):
         try:
-            excuse = subprocess.check_output('fortune')
-            send(excuse.decode().replace('\n', ' '))
+            if msg.strip() == 'list':
+                output = subprocess.check_output(['fortune','-f'], stderr=subprocess.STDOUT).decode()
+                output = re.sub('[0-9]\.[0-9]{2}%','',output)
+                output = "".join(output.splitlines()[1:])
+                output = output.replace('\n', ' ')
+                while '  ' in output:
+                    output = output.replace('  ',' ')
+            else:
+                output = subprocess.check_output('fortune').decode().replace('\n', ' ')
+            send(output.strip())
         except subprocess.CalledProcessError:
             send("fortune-mod is not installed!")
