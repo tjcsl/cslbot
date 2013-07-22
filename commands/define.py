@@ -30,7 +30,9 @@ def cmd(send, msg, args):
     if not hasattr(word, 'text'):
         send("Definition not found")
         return
-    word = word.text.replace(' :', ', ')[1:]
+    word = word.text.replace(' :', ', ')
     if word[-1] == ',':
         word = word[:-2]
+    if word[0] == ':':
+        word = word[1:]
     send(word)
