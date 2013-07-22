@@ -35,4 +35,6 @@ def cmd(send, msg, args):
         word = word[:-2]
     if word[0] == ':':
         word = word[1:]
+    if not word:
+        send("Definition not found")
     send(word)
