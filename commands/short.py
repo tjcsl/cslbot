@@ -27,7 +27,7 @@ def get_short(msg):
     # prevent escaping of http://
     if '//' in msg:
         msg = msg.split('//')[1]
-    data = {'longUrl': quote(msg)}
+    data = {'longUrl': msg}
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
     req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
