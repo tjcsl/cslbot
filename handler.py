@@ -331,6 +331,7 @@ class BotHandler():
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
+        if len(cmd) < 2: cmd.append("noforce")
         if cmdargs in self.channels or len(cmd) > 0 and cmd[1] != "force":
             send("%s is already a member of %s" % (NICK, cmdargs))
             return
