@@ -30,6 +30,9 @@ def cmd(send, msg, args):
                      '---...': ':', '-..-.': '/', '..--.-': '_', '.-...': '&',
                      '..--..': '?', '--.': 'g', '--..': 'z', '--.-': 'q', '---': 'o'}
     demorse = ""
+    if not msg:
+        send("demorse what?")
+        return
     for word in msg.lower().split("   "):
         for c in word.split():
             if c in demorse_codes:

@@ -27,6 +27,9 @@ def cmd(send, msg, args):
                    ")": "-.--.-", "&": ".-...", ":": "---...", ";": "-.-.-.", "=": "-...-",
                    "+": ".-.-.", "-": "-....-", "_": "..--.-", '"': ".-..-.", "$": "...-..-", "@": ".--.-."}
     morse = ""
+    if not msg:
+        send("morse what?")
+        return
     for i in msg:
         try:
             morse += morse_codes[i.lower()] + " "
