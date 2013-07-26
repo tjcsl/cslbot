@@ -45,7 +45,7 @@ def cmd(send, msg, args):
         if user != args['nick'] and not modifiers:
             continue
         # ignore previous !s commands
-        if text[:2] == "!s" or text[:1] == '*':
+        if text[:2] == "!s":
             continue
         if re.search(string, text) and (modifiers == "g" or user == modifiers or not modifiers):
             output = re.sub(string, replacement, text)
