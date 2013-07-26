@@ -21,6 +21,7 @@ from lxml.html import parse
 
 def cmd(send, msg, args):
         if not msg:
+            send("A message, Yoda did not receive, hmmmmmm.")
             return
         data = urlencode({'YodaMe': msg}).encode('UTF-8')
         html = urlopen("http://www.yodaspeak.co.uk/index.php", data, timeout=1)
