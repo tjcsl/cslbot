@@ -29,7 +29,6 @@ def cmd(send, msg, args):
             pass
     if not msg:
         return
-    # pfoley's private key -- do not abuse
     data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
     try:
         if definitionNum:
