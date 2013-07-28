@@ -37,6 +37,8 @@ def cmd(send, msg, args):
     # search last 50 lines
     for line in reversed(log[-50:]):
         match = re.search("<@?(.*)> (.*)", line[1])
+        if not match:
+            match = re.search(r" \* (.*?)\b (.*)",line[1])
         try:
             user, text = match.groups()
         except AttributeError:
