@@ -37,8 +37,10 @@ def cmd(send, msg, args):
     # search last 50 lines
     for line in reversed(log[-50:]):
         match = re.search("<@?(.*)> (.*)", line[1])
+        action = False
         if not match:
             match = re.search(r" \* (.*?)\b (.*)",line[1])
+            action = True
         try:
             user, text = match.groups()
         except AttributeError:
@@ -51,5 +53,8 @@ def cmd(send, msg, args):
             continue
         if re.search(string, text) and (modifiers == "g" or user == modifiers or not modifiers):
             output = re.sub(string, replacement, text)
-            send("%s actually meant: %s" % (user, output))
+            if action:
+                send("correction: * %s %s" % (user,output))
+            else:
+                send("%s actually meant: %s" % (user, output))
             return
