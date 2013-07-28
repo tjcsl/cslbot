@@ -14,20 +14,25 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 from random import choice
+from itertools import groupby
 
 args = ['srcdir']
 
 
-def getquote(args):
-    quotefile = args['srcdir'] + "/data/quotes"
-    quotes = json.load(open(quotefile))
-    return choice(quotes)
-
+def get_list(srcdir):
+    # wordlist (massaged COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
+    listfile = srcdir + '/static/words'
+    rawlist = open(listfile).read()
+    rawlist = sorted(rawlist.splitlines())
+    words = {}
+    for key, group in groupby(rawlist, key=lambda word: word[0].lower()):
+        words[key] = list(group)
+    return words
 
 def cmd(send, msg, args):
-    try:
-        send(getquote(args))
-    except (OSError, IndexError):
-        send("Nobody has taste in this channel.")
+    if not msg:
+        return
+    words = get_list(args['srcdir'])
+    output = " ".join([choice(words[c]) for c in msg])
+    send(msg + ': '+ output.title())

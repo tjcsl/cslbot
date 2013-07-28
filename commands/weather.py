@@ -20,7 +20,7 @@ from config import WEATHERAPIKEY
 from urllib.request import urlopen
 from urllib.parse import quote
 
-args = ['nick', 'datadir']
+args = ['nick', 'srcdir']
 
 def get_default(nick, prefsfile, send):
     try:
@@ -74,12 +74,12 @@ def get_weather(msg, send):
     return True
 
 def cmd(send, msg, args):
-    prefsfile = args['datadir'] + "weather"
+    prefsfile = args['srcdir'] + "/data/weather"
     match = re.match("set (.*)", msg)
     if match:
         set_default(args['nick'], match.group(1), prefsfile, send)
         return
     if not msg:
-        defaults = args['datadir'] + 'weather'
+        defaults = args['srcdir'] + '/data/weather'
         msg = get_default(args['nick'], prefsfile, send)
     get_weather(msg, send)

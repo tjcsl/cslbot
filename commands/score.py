@@ -18,12 +18,12 @@ import re
 from random import choice
 import json
 
-args = ['datadir']
+args = ['srcdir']
 
 
 def cmd(send, msg, args):
     try:
-        scorefile = args['datadir'] + 'score'
+        scorefile = args['srcdir'] + '/data/score'
         data = json.load(open(scorefile))
         match = re.match('([a-zA-Z0-9]+)', msg)
         if match:

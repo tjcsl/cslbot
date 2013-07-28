@@ -17,6 +17,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`acronym` Module
+---------------------
+
+.. automodule:: commands.acronym
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`addquote` Module
 ----------------------
 
@@ -245,14 +253,6 @@ commands Package
 ------------------
 
 .. automodule:: commands.help
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`insult` Module
---------------------
-
-.. automodule:: commands.insult
     :members:
     :undoc-members:
     :show-inheritance:

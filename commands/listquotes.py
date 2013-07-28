@@ -16,12 +16,12 @@
 
 import json
 
-args = ['datadir']
+args = ['srcdir']
 
 
 def cmd(send, msg, args):
     try:
-        quotefile = args['datadir'] + "quotes"
+        quotefile = args['srcdir'] + "/data/quotes"
         quotes = json.load(open(quotefile))
         output = ", ".join(["%d: %s" % i for i in enumerate(quotes)])
         if output:

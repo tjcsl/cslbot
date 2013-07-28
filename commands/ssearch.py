@@ -16,12 +16,12 @@
 
 import pickle
 
-args = ['datadir']
+args = ['srcdir']
 
 
 def cmd(send, msg, args):
         try:
-            picklefile = open(args['datadir'] + 'steamids.pickle', 'rb')
+            picklefile = open(args['srcdir'] + '/static/steamids.pickle', 'rb')
             idfile = pickle.load(picklefile)
         except:
             send('Error opening id file!')

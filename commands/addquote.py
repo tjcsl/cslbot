@@ -17,11 +17,11 @@
 import os
 import json
 
-args = ['datadir']
+args = ['srcdir']
 
 
 def addquote(quote, args):
-    quotefile = args['datadir'] + "quotes"
+    quotefile = args['srcdir'] + "/data/quotes"
     if os.path.isfile(quotefile):
         quotes = json.load(open(quotefile))
     else:

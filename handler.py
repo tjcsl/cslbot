@@ -46,7 +46,7 @@ class BotHandler():
         | channels is a dict containing the objects for each channel the bot is connected to.
         | abuselist is a dict keeping track of how many times nicks have used rate-limited commands.
         | modules is a dict containing the commands the bot supports.
-        | datadir is the path to the directory where the bot's data is stored.
+        | srcdir is the path to the directory where the bot is stored.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
         self.guarded = []
@@ -59,7 +59,7 @@ class BotHandler():
         self.abuselist = {}
         self.admins = {nick: False for nick in ADMINS}
         self.modules = self.loadmodules()
-        self.datadir = dirname(__file__) + '/data/'
+        self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
         self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
                          CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
@@ -346,7 +346,7 @@ class BotHandler():
         | If it's a ++ add one point unless the user is trying to promote themselves.
         | Otherwise substract one point.
         """
-        scorefile = self.datadir + 'score'
+        scorefile = self.srcdir + '/data/score'
         for match in matches:
             name = match[0].lower()
             # limit to 5 score changes per minute
@@ -486,7 +486,7 @@ class BotHandler():
                 'channels': self.channels,
                 'connection': self.connection,
                 'modules': self.modules,
-                'datadir': self.datadir,
+                'srcdir': self.srcdir,
                 'logs': self.logs,
                 'admins': self.admins,
                 'kick_enabled': self.kick_enabled,
