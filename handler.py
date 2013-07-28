@@ -671,7 +671,7 @@ class BotHandler():
 
         # is this a command?
         cmd = msg.split()[0]
-        if cmd in self.disabled_mods or cmd[1:] in self.disabled_mods:
+        if cmd[1:] in self.disabled_mods:
             send("That module is disabled, sorry.")
             return
         # handle !s/a/b/
