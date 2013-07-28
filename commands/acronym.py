@@ -17,12 +17,10 @@
 from random import choice
 from itertools import groupby
 
-args = ['srcdir']
 
-
-def get_list(srcdir):
+def get_list():
     # wordlist (massaged COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
-    listfile = srcdir + '/static/words'
+    listfile = '/usr/share/dict/words'
     rawlist = open(listfile).read()
     rawlist = sorted(rawlist.splitlines())
     words = {}
@@ -33,6 +31,6 @@ def get_list(srcdir):
 def cmd(send, msg, args):
     if not msg:
         return
-    words = get_list(args['srcdir'])
+    words = get_list()
     output = " ".join([choice(words[c]) for c in msg])
     send(msg + ': '+ output.title())
