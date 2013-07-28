@@ -28,10 +28,13 @@ def gen_path(msg):
     url = 'http://beta.degreesofwikipedia.com/?a1=%s&linktype=1&a2=%s&allowsideboxes=1&submit=%s' % (msg[0], msg[1], epoch)
     html = parse(urlopen(url))
     path = html.find('body/pre')
-    if not path:
+    if path is None:
         return False
-    path = [x.split('=>')[1].strip() for x in path.text.splitlines() if '=>' in x]
-    return " -> ".join(path)
+    output = []
+    for x in path.text.splitlines():
+        if '=>' in x:
+            output.append(x.split('=>')[1].strip())
+    return " -> ".join(output)
 
 
 def cmd(send, msg, args):

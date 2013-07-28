@@ -521,6 +521,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`wikipath` Module
+----------------------
+
+.. automodule:: commands.wikipath
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`word` Module
 ------------------
 
