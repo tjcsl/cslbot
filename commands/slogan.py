@@ -22,16 +22,16 @@ args = ['modules']
 
 
 def gen_slogan(msg):
-        msg = quote(msg)
-        html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
-                       + msg, timeout=2).read().decode()
-        slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
-        slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
-        parser = HTMLParser()
-        slogan = parser.unescape(slogan)
-        if not slogan:
-            return gen_slogan(msg)
-        return slogan
+    msg = quote(msg)
+    html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
+                   + msg, timeout=2).read().decode()
+    slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
+    slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
+    parser = HTMLParser()
+    slogan = parser.unescape(slogan)
+    if not slogan:
+        return gen_slogan(msg)
+    return slogan
 
 
 def cmd(send, msg, args):
