@@ -44,6 +44,6 @@ def cmd(send, msg, args):
         return
     path = gen_path(msg)
     if path:
-        send(path)
+        send(path.replace('_', ' ')
     else:
         send("No path found. Do you need to add more links?")
