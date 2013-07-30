@@ -17,7 +17,6 @@
 import re
 from urllib.request import urlopen
 from urllib.parse import quote
-from html.parser import HTMLParser
 args = ['modules']
 
 
@@ -27,8 +26,7 @@ def gen_slogan(msg):
                    + msg, timeout=2).read().decode()
     slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
     slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
-    parser = HTMLParser()
-    slogan = parser.unescape(slogan)
+    slogan = slogan.replace('%20', ' ')
     if not slogan:
         return gen_slogan(msg)
     return slogan
