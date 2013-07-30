@@ -22,7 +22,7 @@ from random import choice
 def cmd(send, msg, args):
         errno = subprocess.check_output(['gcc', '-include', 'errno.h', '-fdirectives-only', '-E', '-xc', '/dev/null'])
         errors = re.findall('^#define (E[A-Z]*) ([0-9]+)', errno.decode(), re.MULTILINE)
-        errdict = dict((y,x) for x,y in errors)
+        errdict = dict((y, x) for x, y in errors)
         if not msg:
             msg = choice(list(errdict.keys()))
         if msg not in errdict:

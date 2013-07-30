@@ -39,7 +39,7 @@ def cmd(send, msg, args):
         match = re.search("<@?(.*)> (.*)", line[1])
         action = False
         if not match:
-            match = re.search(r" \* (.*?)\b (.*)",line[1])
+            match = re.search(r" \* (.*?)\b (.*)", line[1])
             action = True
         try:
             user, text = match.groups()
@@ -54,7 +54,7 @@ def cmd(send, msg, args):
         if re.search(string, text) and (modifiers == "g" or user == modifiers or not modifiers):
             output = re.sub(string, replacement, text)
             if action:
-                send("correction: * %s %s" % (user,output))
+                send("correction: * %s %s" % (user, output))
             else:
                 send("%s actually meant: %s" % (user, output))
             return

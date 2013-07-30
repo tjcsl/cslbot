@@ -22,7 +22,7 @@ def cmd(send, msg, args):
         send("Ping what?")
         return
     try:
-        answer = subprocess.check_output(['ping','-q','-W','1','-c','1',msg])
+        answer = subprocess.check_output(['ping', '-q', '-W', '1', '-c', '1', msg])
         send(answer.decode().splitlines()[-2])
     except subprocess.CalledProcessError as e:
         if e.returncode == 2:

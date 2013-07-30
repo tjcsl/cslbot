@@ -28,9 +28,10 @@ def get_list():
         words[key] = list(group)
     return words
 
+
 def cmd(send, msg, args):
     if not msg:
         return
     words = get_list()
     output = " ".join([choice(words[c]) for c in msg])
-    send(msg + ': '+ output.title())
+    send('%s: %s' % (msg, output.title()))

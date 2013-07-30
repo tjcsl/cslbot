@@ -22,6 +22,7 @@ from urllib.parse import quote
 
 args = ['nick', 'srcdir']
 
+
 def get_default(nick, prefsfile, send):
     try:
         defaults = json.load(open(prefsfile))
@@ -31,6 +32,7 @@ def get_default(nick, prefsfile, send):
         # default to TJHSST
         location = '22312'
     return location
+
 
 def set_default(nick, location, prefsfile, send):
     try:
@@ -44,6 +46,7 @@ def set_default(nick, location, prefsfile, send):
     json.dump(defaults, f)
     f.write("\n")
     f.close()
+
 
 def get_weather(msg, send):
     msg = quote(msg)
@@ -73,6 +76,7 @@ def get_weather(msg, send):
     send("Forecast: " + forecast)
     return True
 
+
 def cmd(send, msg, args):
     prefsfile = args['srcdir'] + "/data/weather"
     match = re.match("set (.*)", msg)
@@ -80,6 +84,5 @@ def cmd(send, msg, args):
         set_default(args['nick'], match.group(1), prefsfile, send)
         return
     if not msg:
-        defaults = args['srcdir'] + '/data/weather'
         msg = get_default(args['nick'], prefsfile, send)
     get_weather(msg, send)

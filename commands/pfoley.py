@@ -18,6 +18,7 @@ from random import random
 
 args = ['modules']
 
+
 def cmd(send, msg, args):
     if not msg:
         msg = args['modules']['word'].gen_word()

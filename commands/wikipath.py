@@ -14,12 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 from datetime import datetime
 from lxml.html import parse
 from urllib.request import urlopen
-from urllib.parse import quote
-from html.parser import HTMLParser
 args = ['modules']
 
 
