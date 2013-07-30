@@ -329,6 +329,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ping` Module
+------------------
+
+.. automodule:: commands.ping
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`praise` Module
 --------------------
 

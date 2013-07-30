@@ -17,13 +17,12 @@
 import json
 from urllib.request import urlopen, Request
 from urllib.parse import quote
+from urllib.error import HTTPError
 
 
 def get_short(msg):
     if not msg:
         return
-    if "goo.gl" in msg:
-        return msg
     # prevent escaping of http://
     if '//' in msg:
         msg = msg.split('//')[1]
@@ -31,9 +30,15 @@ def get_short(msg):
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
     req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
-    rep = urlopen(req, timeout=5).read().decode()
-    short = json.loads(rep)
-    return short['id']
+    try:
+        rep = urlopen(req, timeout=5).read().decode()
+        short = json.loads(rep)
+        return short['id']
+    except HTTPError as e:
+        if e.getcode() == 400:
+            return 'http://'+msg
+        else:
+            raise e
 
 
 def cmd(send, msg, args):
