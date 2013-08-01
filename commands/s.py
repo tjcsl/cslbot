@@ -34,6 +34,7 @@ def cmd(send, msg, args):
         modifiers = msg[2]
     else:
         modifiers = None
+    regex = re.compile(string, re.IGNORECASE) if "i" in modifiers or "I" in modifiers else re.compile(string)
     # search last 50 lines
     for line in reversed(log[-50:]):
         match = re.search("<@?(.*)> (.*)", line[1])
@@ -46,13 +47,13 @@ def cmd(send, msg, args):
         except AttributeError:
             continue
         # ignore stuff said by other people unless /g was passed
-        if user != args['nick'] and not modifiers:
+        if user != args['nick'] and not "g" in modifiers:
             continue
         # ignore previous !s commands
         if text[:2] == "!s":
             continue
-        if re.search(string, text) and (modifiers == "g" or user == modifiers or not modifiers):
-            output = re.sub(string, replacement, text)
+        if regex.search(text) and ("g" in modifiers or not modifiers):
+            output = regex.sub(replacement, text)
             if action:
                 send("correction: * %s %s" % (user, output))
             else:
