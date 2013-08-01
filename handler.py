@@ -425,6 +425,8 @@ class BotHandler():
             send("%s: you're lucky. kick is disabled." % nick)
             return
         ops = self.channels[target].opers()
+        if not ops:
+            ops = ['someone']
         if NICK not in ops:
             c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
         else:
