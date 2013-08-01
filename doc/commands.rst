@@ -177,6 +177,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ebay` Module
+------------------
+
+.. automodule:: commands.ebay
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`eix` Module
 -----------------
 
