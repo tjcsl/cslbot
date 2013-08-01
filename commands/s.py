@@ -52,7 +52,7 @@ def cmd(send, msg, args):
         # ignore previous !s commands
         if text[:2] == "!s":
             continue
-        if regex.search(text) and ("g" in modifiers or not modifiers):
+        if regex.search(text):
             output = regex.sub(replacement, text)
             if action:
                 send("correction: * %s %s" % (user, output))
