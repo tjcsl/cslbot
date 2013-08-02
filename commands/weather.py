@@ -51,6 +51,12 @@ def set_default(nick, location, prefsfile, send):
 def get_weather(msg, send):
     msg = quote(msg)
     if msg[0] == "-":
+        html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
+                   % (WEATHERAPIKEY, msg[1:]), timeout=1).read().decode()
+        data = json.loads(html)
+        if 'current_observation' not in data:
+            send("Invalid or Ambiguous Location")
+            return False
         data = {
             'display_location':{
                 'full': msg[1:]              
