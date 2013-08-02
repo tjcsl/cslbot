@@ -58,7 +58,7 @@ def get_weather(msg, send):
             'weather': 'Sunny',
             'temp_f': '94.8',
             'relative_humidity': '60%',
-            'pressure_in': '29.98"',
+            'pressure_in': '29.98',
             'wind_string': 'Calm'
             }
         forecastdata = {
