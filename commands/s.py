@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     if msg[2]:
         modifiers = msg[2].lower()
     else:
-        modifiers = None
+        modifiers = ""
     regex = re.compile(string, re.IGNORECASE) if "i" in modifiers else re.compile(string)
     # search last 50 lines
     for line in reversed(log[-50:]):
