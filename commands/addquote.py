@@ -34,5 +34,8 @@ def addquote(quote, args):
 
 
 def cmd(send, msg, args):
+    if not msg:
+        send("No quote given.")
+        return
     addquote(msg, args)
     send("Quote added successfully.")
