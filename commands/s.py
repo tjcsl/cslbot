@@ -31,10 +31,10 @@ def cmd(send, msg, args):
     string = msg[0]
     replacement = msg[1]
     if msg[2]:
-        modifiers = msg[2]
+        modifiers = msg[2].lower()
     else:
         modifiers = None
-    regex = re.compile(string, re.IGNORECASE) if "i" in modifiers or "I" in modifiers else re.compile(string)
+    regex = re.compile(string, re.IGNORECASE) if "i" in modifiers else re.compile(string)
     # search last 50 lines
     for line in reversed(log[-50:]):
         match = re.search("<@?(.*)> (.*)", line[1])
@@ -47,7 +47,7 @@ def cmd(send, msg, args):
         except AttributeError:
             continue
         # ignore stuff said by other people unless /g was passed
-        if user != args['nick'] and not "g" in modifiers:
+        if user != args['nick'] and "g" not in modifiers:
             continue
         # ignore previous !s commands
         if text[:2] == "!s":
