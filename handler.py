@@ -670,14 +670,17 @@ class BotHandler():
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
-        self.do_caps(msg, c, target, nick, send)
-        self.do_band(msg, send)
-
-        # is this a command?
         cmd = msg.split()[0]
+
+        self.do_caps(msg, c, target, nick, send)
+
+        if cmd[0] != CMDCHAR:
+            self.do_band(msg, send)
+
         if cmd[1:] in self.disabled_mods:
             send("That module is disabled, sorry.")
             return
+
         # handle !s/a/b/
         if cmd[:2] == CMDCHAR + 's':
             cmd = cmd.split('/')[0]
