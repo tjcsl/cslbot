@@ -19,14 +19,16 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from random import randrange
 
+
 def get_num():
     data = json.loads(urlopen('http://xkcd.com/info.0.json').read().decode())
     return data['num']
 
+
 def cmd(send, msg, args):
     latest = get_num()
     if not msg:
-        msg = randrange(1,latest)
+        msg = randrange(1, latest)
     elif msg != 'latest' and not msg.isdigit():
         send("Not A Number")
         return
@@ -38,4 +40,3 @@ def cmd(send, msg, args):
     data = json.loads(urlopen(url).read().decode())
     output = "%d -- %s" % (data['num'], data['safe_title'])
     send(output)
-

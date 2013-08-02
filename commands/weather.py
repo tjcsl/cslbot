@@ -52,35 +52,35 @@ def get_weather(msg, send):
     msg = quote(msg)
     if msg[0] == "-":
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                   % (WEATHERAPIKEY, msg[1:]), timeout=1).read().decode()
+                       % (WEATHERAPIKEY, msg[1:]), timeout=1).read().decode()
         data = json.loads(html)
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
             return False
         data = {
-            'display_location':{
-                'full': msg[1:]              
-                },
+            'display_location': {
+                'full': msg[1:]
+            },
             'weather': 'Sunny',
             'temp_f': '94.8',
             'relative_humidity': '60%',
             'pressure_in': '29.98',
             'wind_string': 'Calm'
-            }
+        }
         forecastdata = {
             'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
             'high': {
                 'fahrenheit': '-3841'
-                },
+            },
             'low': {
                 'fahrenheit': '-6666'
-                }
+            }
         }
     else:
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                   % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+                       % (WEATHERAPIKEY, msg), timeout=1).read().decode()
         forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
-                           % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+                               % (WEATHERAPIKEY, msg), timeout=1).read().decode()
         data = json.loads(html)
         if 'current_observation' in data:
             data = data['current_observation']

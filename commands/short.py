@@ -35,7 +35,7 @@ def get_short(msg):
         return short['id']
     except HTTPError as e:
         if e.getcode() == 400:
-            return 'http://'+msg
+            return 'http://' + msg
         else:
             raise e
 
