@@ -61,7 +61,7 @@ def get_weather(msg, send):
             'pressure_in': '29.98"',
             'wind_string': 'Calm'
             }
-        forecast = {
+        forecastdata = {
             'conditions': 'Thunderstorms, extreme thunderstorms, plague of insects, The Rapture, anti-Christ',
             'high': {
                 'fahrenheit': '-3841'
