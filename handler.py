@@ -103,6 +103,8 @@ class BotHandler():
             #FIXME: screws w/ extended acls.
             #if os.access(f, os.X_OK):
             cmd = basename(f).split('.')[0]
+            if cmd == '__init__':
+                continue
             modulemap[cmd] = importlib.import_module("commands." + cmd)
         return modulemap
 
