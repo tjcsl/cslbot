@@ -16,11 +16,11 @@
 
 import re
 
-limit = 1
+limit = 5
 
 
 def cmd(send, msg, args):
-        match = re.match('([a-zA-Z0-9]+) (.*)', msg)
+        match = re.match('([a-zA-Z0-9`]+) (.*)', msg)
         if match:
             message = match.group(2) + " "
             send('%s: %s' % (match.group(1), message * 3))
