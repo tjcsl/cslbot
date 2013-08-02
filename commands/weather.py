@@ -54,7 +54,7 @@ def get_weather(msg, send):
         data = {
             'display_location':{
                 'full': msg[1:]              
-                }
+                },
             'weather': 'Sunny',
             'temp_f': '94.8',
             'relative_humidity': '60%',
@@ -65,7 +65,7 @@ def get_weather(msg, send):
             'conditions': 'Thunderstorms, extreme thunderstorms, plague of insects, The Rapture, anti-Christ',
             'high': {
                 'fahrenheit': '-3841'
-                }
+                },
             'low': {
                 'fahrenheit': '-6666'
                 }
