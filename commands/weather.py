@@ -50,17 +50,38 @@ def set_default(nick, location, prefsfile, send):
 
 def get_weather(msg, send):
     msg = quote(msg)
-    html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                   % (WEATHERAPIKEY, msg), timeout=1).read().decode()
-    forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
-                           % (WEATHERAPIKEY, msg), timeout=1).read().decode()
-    data = json.loads(html)
-    if 'current_observation' in data:
-        data = data['current_observation']
+    if msg[0] == "-":
+        data = {
+            'display_location':{
+                'full': msg[1:]              
+                }
+            'weather': 'Sunny',
+            'temp_f': '94.8',
+            'relative_humidity': '60%',
+            'pressure_in': '29.98"',
+            'wind_string': 'Calm'
+            }
+        forecast = {
+            'conditions': 'Thunderstorms, extreme thunderstorms, plague of insects, The Rapture, anti-Christ',
+            'high': {
+                'fahrenheit': '-3841'
+                }
+            'low': {
+                'fahrenheit': '-6666'
+                }
+        }
     else:
-        send("Invalid or Ambiguous Location")
-        return False
-    forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
+        html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
+                   % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+        forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
+                           % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+        data = json.loads(html)
+        if 'current_observation' in data:
+            data = data['current_observation']
+        else:
+            send("Invalid or Ambiguous Location")
+            return False
+        forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
     send("Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],
