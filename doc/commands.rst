@@ -561,6 +561,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`xkcd` Module
+------------------
+
+.. automodule:: commands.xkcd
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`yoda` Module
 ------------------
 
