@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import GOOGLEAPIKEY
 from urllib.parse import quote
 from urllib.request import urlopen
 import json
@@ -24,10 +23,9 @@ def cmd(send, msg, args):
     if not msg:
         send("Google what?")
         return
-    searchid = '011314769761209412182:6apbsde5g8e'
-    data = json.loads(urlopen('https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q=%s' % (GOOGLEAPIKEY, searchid, quote(msg))).read().decode())
+    data = json.loads(urlopen('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%s' % quote(msg)).read().decode())
     try:
-        url = data['items'][0]['link']
+        url = data['responseData']['results'][0]['url']
         send("Google says " + url)
-    except KeyError:
+    except IndexError:
         send("Google didn't say much")
