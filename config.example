@@ -8,7 +8,6 @@ CHANNEL = '#tjhsst'
 CTRLCHAN = '#tjhsstbot-control'
 ADMINS = ['pfoley', 'ahamilto', 'csssuf', 'fwilson', 'wyang', 'srepetsk', 'sdamashek', 'skasturi']
 STEAMAPIKEY = ''
-STEAMENABLE = False
 LOGDIR = '/var/log/irc/'
 CMDCHAR = '!'
 DICTIONARYAPIKEY = ''

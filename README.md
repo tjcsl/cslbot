@@ -25,10 +25,10 @@ Steam
 -----
 *PLEASE NOTE!*  
 The !steam command will not work without a valid Steam API key  
-and a file steamids.py which contains a dictionary mapping username  
-to STEAMID64. For this reason the !steam command is disabled by default;  
-to re-enable it change STEAMENABLE to True in config.py and add your  
-Steam API key as STEAMAPIKEY in config.py.
+and a file steamids.pickle which contains a dictionary mapping username  
+to STEAMID64. An example steamid mapping file is provided in the static folder.  
+For this reason the !steam command is disabled by default;  
+to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
 
 Credits
 -------

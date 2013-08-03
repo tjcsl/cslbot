@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import STEAMENABLE, STEAMAPIKEY
+from config import STEAMAPIKEY
 from urllib.request import urlopen
 import json
 import pickle
@@ -26,26 +26,25 @@ def get_ids():
 
 
 def cmd(send, msg, args):
-        if STEAMENABLE:
-            idlist = get_ids()
-            try:
-                output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + STEAMAPIKEY + '&steamids=' + idlist[msg]).read().decode()
-            except KeyError:
-                send("I don't have that player in my database.")
-                return
-            except:
-                send('Error retrieving API data.')
-                return
-            jsonOut = json.loads(output)
-            try:
-                finalarr = jsonOut['response']['players'][0]
-            except KeyError:
-                send('Invalid Steam ID in database?')
-                return
-            send('Name: ' + finalarr['personaname'] + '; Status: ' + getStatus(finalarr))
+    if not STEAMAPIKEY:
+        send("API Key not specified.")
+        return
+    idlist = get_ids()
+    try:
+        output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s' % (STEAMAPIKEY, idlist[msg])).read().decode()
+    except KeyError:
+        send("I don't have that player in my database.")
+        return
+    output = json.loads(output)
+    try:
+        output = output['response']['players'][0]
+    except KeyError:
+        send('Invalid Steam ID in database?')
+        return
+    send('Name: %s; Status: %s' % (output['personaname'], get_status(output)))
 
 
-def getStatus(vals):
+def get_status(vals):
         state = vals['personastate']
         if state == 0:
             return 'Offline'
