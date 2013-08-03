@@ -160,6 +160,10 @@ class IrcBot(SingleServerIRCBot):
         del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
 
+    def on_bannedfromchan(self, c, e):
+        sleep(5)
+        c.join(e.arguments[0])
+
     def on_kick(self, c, e):
         """Handle kicks.
 
