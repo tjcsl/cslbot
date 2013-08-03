@@ -17,6 +17,7 @@
 import re
 from urllib.request import urlopen
 from urllib.parse import quote
+from xml.sax.saxutils import unescape
 args = ['modules']
 
 
@@ -29,7 +30,7 @@ def gen_slogan(msg):
     slogan = slogan.replace('%20', ' ')
     if not slogan:
         return gen_slogan(msg)
-    return slogan
+    return unescape(unescape(slogan))
 
 
 def cmd(send, msg, args):
