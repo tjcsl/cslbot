@@ -667,6 +667,11 @@ class BotHandler():
         if e.target == CTRLCHAN:
             self.handle_ctrlchan(msg, c, send)
 
+        # crazy regex to match urls
+        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
+        if match:
+            self.do_urls(match, send)
+
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
@@ -708,8 +713,3 @@ class BotHandler():
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if matches:
             self.do_scores(matches, send, msgtype, nick)
-
-        # crazy regex to match urls
-        match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
-        if match:
-            self.do_urls(match, send)
