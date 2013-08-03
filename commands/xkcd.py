@@ -37,5 +37,5 @@ def cmd(send, msg, args):
         return
     url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
     data = json.loads(urlopen(url).read().decode())
-    output = "%s (%d) -- %s" % (data['safe_title'], data['num'], data['img'])
+    output = "%s -- http://xkcd.com/%d" % (data['safe_title'], data['num'])
     send(output)
