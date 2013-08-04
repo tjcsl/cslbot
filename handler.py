@@ -573,11 +573,12 @@ class BotHandler():
                 if len(cmd) < 3:
                     send("Missing argument.")
                     return
-                if cmd[2] not in self.disabled_mods:
-                    send("Module already enabled.")
-                elif cmd[2] in self.modules:
-                    self.disabled_mods.remove(cmd[2])
-                    send("Module enabled.")
+                if cmd[2] in self.modules:
+                    if cmd[2] in self.disabled_mods:
+                        self.disabled_mods.remove(cmd[2])
+                        send("Module enabled.")
+                    else:
+                        send("Module already enabled.")
                 else:
                     send("Module does not exist.")
             elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
