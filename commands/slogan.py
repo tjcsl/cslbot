@@ -17,7 +17,7 @@
 import re
 from urllib.request import urlopen
 from urllib.parse import quote
-from xml.sax.saxutils import unescape
+from html.entities import entitydefs
 args = ['modules']
 
 
@@ -30,7 +30,9 @@ def gen_slogan(msg):
     slogan = slogan.replace('%20', ' ')
     if not slogan:
         return gen_slogan(msg)
-    return unescape(unescape(slogan))
+    for c in entitydefs:
+        slogan = slogan.replace('&%s;' % c, entitydefs[c])
+    return slogan.replace('&amp;', '&')
 
 
 def cmd(send, msg, args):
