@@ -226,20 +226,21 @@ class BotHandler():
         """
         msgs = []
         if len(msg) > 400:
-            splitPos = self.getSplitPos(msg)
-            for i in range(0, (int(len(msg) / splitPos)) + 1):
-                msgs.append(msg[i * splitPos:(i + 1) * splitPos].strip())
+            split_pos = self.get_split_pos(msg)
+            for i in range(0, (int(len(msg) / split_pos)) + 1):
+                msgs.append(msg[i * split_pos:(i + 1) * split_pos].strip())
         else:
             msgs.append(msg)
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             self.connection.privmsg(target, i)
 
-    def getSplitPos(self, message):
+    def get_split_pos(self, message):
         """ Gets the proper split position at or around position 400 of a message."""
         for i in range(385, 415):
             if message[i] == ' ':
                 return i
+        return 400
 
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
