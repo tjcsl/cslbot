@@ -186,6 +186,10 @@ class BotHandler():
         """
         nick = e.source.nick
         msg = e.arguments[0].strip()
+        if msg.startswith('%sissue' % CMDCHAR):
+            self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
+            return
+
         if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
             self.send(nick, nick, 'Hey, no points in private messages!', e.type)
             return
