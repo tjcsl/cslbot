@@ -21,7 +21,16 @@ def cmd(send, msg, args):
     coin = ['heads', 'tails']
     if not msg:
         send('The coin lands on... ' + choice(coin) + '.')
+    elif not msg.isdigit():
+        send("Not A Number.")
     else:
-        headFlips = randint(0, int(msg))
-        tailFlips = int(msg) - headFlips
-        send('The coins land on heads ' + str(headFlips) + ' times and on tails ' + str(tailFlips) + ' times.')
+        msg = int(msg)
+        if msg < 0:
+            send("Negative Flipping requires the (optional) quantum coprocessor.")
+            return
+        headFlips = randint(0, msg)
+        tailFlips = msg - headFlips
+        if len(str(headFlips)) > 5:
+            headFlips = "%e" % float(headFlips)
+            tailFlips = "%e" % float(tailFlips)
+        send('The coins land on heads %s times and on tails %s times.' % (headFlips, tailFlips))
