@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import string
 from random import choice
 from itertools import groupby
 
@@ -33,5 +34,6 @@ def cmd(send, msg, args):
     if not msg:
         return
     words = get_list()
-    output = " ".join([choice(words[c]) for c in msg])
+    letters = [c for c in msg.lower() if c in string.ascii_lowercase]
+    output = " ".join([choice(words[c]) for c in letters])
     send('%s: %s' % (msg, output.title()))
