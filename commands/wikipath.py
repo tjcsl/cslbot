@@ -45,9 +45,8 @@ def cmd(send, msg, args):
     msg = msg.split()
     if len(msg) != 2:
         msg = get_articles()
-        send(" -> ".join(msg))
     path = gen_path(msg)
     if path:
         send(path.replace('_', ' '))
     else:
-        send("No path found. Do you need to add more links?")
+        send("No path found between %s and %s. Do you need to add more links?" % (msg[0], msg[1]))
