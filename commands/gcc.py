@@ -20,13 +20,11 @@ args = ['modules']
 
 
 def cmd(send, msg, args):
-    try:
-        process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        output = process.communicate(msg.encode())[0]
-        for line in output.decode().splitlines():
-            send(line)
-        send(args['modules']['slogan'].gen_slogan("victory"))
-    except subprocess.CalledProcessError as e:
+    process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = process.communicate(msg.encode())[0]
+    for line in output.decode().splitlines():
+        send(line)
+    if process.returncode == 0:
+        send(args['modules']['slogan'].gen_slogan("gcc victory"))
+    else:
         send(args['modules']['slogan'].gen_slogan("gcc failed"))
-        for line in e.output.decode().splitlines():
-            send(line)
