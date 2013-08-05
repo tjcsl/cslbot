@@ -241,6 +241,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`gcc` Module
+-----------------
+
+.. automodule:: commands.gcc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`google` Module
 --------------------
 

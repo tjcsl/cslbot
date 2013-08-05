@@ -189,8 +189,10 @@ class BotHandler():
         if msg.startswith('%sissue' % CMDCHAR):
             self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
             return
-
-        if re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
+        elif msg.startswith('%sgcc' % CMDCHAR):
+            self.send(nick, nick, 'GCC is a group excercise!', e.type)
+            return
+        elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
             self.send(nick, nick, 'Hey, no points in private messages!', e.type)
             return
         self.handle_msg('priv', c, e)
