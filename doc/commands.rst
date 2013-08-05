@@ -265,6 +265,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`issue` Module
+-------------------
+
+.. automodule:: commands.issue
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`isup` Module
 ------------------
 
