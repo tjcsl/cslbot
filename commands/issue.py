@@ -18,16 +18,18 @@ import json
 from config import GITHUBAPIKEY
 from urllib.request import urlopen, Request
 
+args = ['nick']
 
-def create_issue(msg):
+
+def create_issue(msg, nick):
     url = 'https://api.github.com/repos/fwilson42/ircbot/issues'
     req = Request(url)
-    req.data = json.dumps({"title": msg}).encode()
+    req.data = json.dumps({"title": msg, "body": "Issue created by %s" % nick}).encode()
     req.add_header('Authorization', 'token %s' % GITHUBAPIKEY)
     data = json.loads(urlopen(req).read().decode())
     return data['html_url']
 
 
 def cmd(send, msg, args):
-    issue = create_issue(msg)
+    issue = create_issue(msg, args['nick'])
     send("Issue Created -- %s" % issue)
