@@ -29,6 +29,7 @@ def deletequote(key, srcdir):
     json.dump(quotes, f, indent=True, sort_keys=True)
     f.write("\n")
     f.close()
+    return True
 
 
 def cmd(send, msg, args):
