@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import json
 from datetime import datetime
 from lxml.html import parse
 from urllib.request import urlopen
@@ -34,11 +35,17 @@ def gen_path(msg):
     return " -> ".join(output)
 
 
+def get_articles():
+    data = json.loads(urlopen('http://en.wikipedia.org/w/api.php?action=query&list=random&rnlimit=2&rnnamespace=0&format=json').read().decode('ascii', 'ignore'))
+    data = data['query']['random']
+    return [data[0]['title'].replace(' ', '_'), data[1]['title'].replace(' ', '_')]
+
+
 def cmd(send, msg, args):
     msg = msg.split()
     if len(msg) != 2:
-        send("Need two articles.")
-        return
+        msg = get_articles()
+        send(" -> ".join(msg))
     path = gen_path(msg)
     if path:
         send(path.replace('_', ' '))
