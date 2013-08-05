@@ -26,7 +26,7 @@ def deletequote(key, srcdir):
         return False
     quotes.remove(quotes[key])
     f = open(quotefile, "w")
-    json.dump(quotes, f)
+    json.dump(quotes, f, indent=True, sort_keys=True)
     f.write("\n")
     f.close()
 

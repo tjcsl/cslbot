@@ -43,7 +43,7 @@ def set_default(nick, location, prefsfile, send):
         send("Setting default location")
         defaults[nick] = location
     f = open(prefsfile, "w")
-    json.dump(defaults, f)
+    json.dump(defaults, f, indent=True, sort_keys=True)
     f.write("\n")
     f.close()
 

@@ -377,7 +377,7 @@ class BotHandler():
             else:
                 scores[name] = score
             f = open(scorefile, "w")
-            json.dump(scores, f)
+            json.dump(scores, f, indent=True, sort_keys=True)
             f.write("\n")
             f.close()
 
