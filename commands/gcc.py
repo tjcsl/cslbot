@@ -15,16 +15,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+import tempfile
+import time
 
 args = ['modules']
 
 
 def cmd(send, msg, args):
-    process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for i in msg.split("\\n"):
-        process.stdin.write(i + "\n")
-    output = process.stdout.read(1000000)
+    tmpfile = tempfile.NamedTemporaryFile()
+    msg = msg.replace('\\n', '\n')
+    for line in msg.splitlines():
+        tmpfile.write(msg.encode())
+    tmpfile.flush()
+    process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    tmpfile.close()
     for line in output.decode().splitlines():
+        time.sleep(1)
         send(line)
     if process.returncode == 0:
         send(args['modules']['slogan'].gen_slogan("gcc victory"))
