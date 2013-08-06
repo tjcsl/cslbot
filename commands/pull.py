@@ -15,16 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-from os.path import dirname
+
+args = ['srcdir']
 
 
-def do_pull(branch="master"):
-    try:
-        gitdir = dirname(__file__) + '/..'
-        return subprocess.check_output(['git', 'pull'], cwd=gitdir).decode().splitlines()[-1]
-    except subprocess.CalledProcessError:
-        return "Something went wrong!"
+def do_pull(srcdir, branch):
+    return subprocess.check_output(['git', 'pull'], cwd=srcdir).decode().splitlines()[-1]
 
 
 def cmd(send, msg, args):
-        send(do_pull(msg or "master"))
+    try:
+        send(do_pull(args['srcdir'], msg or "master"))
+    except subprocess.CalledProcessError as e:
+        for line in e.output.splitlines():
+            send(line)
