@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# push to github
-git push
-
 # do docs
 cd gh-pages
 ../gendocs.sh
