@@ -21,7 +21,9 @@ args = ['modules']
 
 def cmd(send, msg, args):
     process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = process.communicate(msg.encode())[0]
+    for i in msg.split("\\n"):
+        process.stdin.write(i + "\n")
+    output = process.stdout.read(1000000)
     for line in output.decode().splitlines():
         send(line)
     if process.returncode == 0:
