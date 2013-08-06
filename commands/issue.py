@@ -15,14 +15,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
-from config import GITHUBAPIKEY
+from config import GITHUBAPIKEY, GITHUBREPO
 from urllib.request import urlopen, Request
 
 args = ['nick']
 
 
 def create_issue(msg, nick):
-    url = 'https://api.github.com/repos/fwilson42/ircbot/issues'
+    url = 'https://api.github.com/repos/%s/issues' % GITHUBREPO
     req = Request(url)
     req.data = json.dumps({"title": msg, "body": "Issue created by %s" % nick}).encode()
     req.add_header('Authorization', 'token %s' % GITHUBAPIKEY)
