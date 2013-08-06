@@ -31,7 +31,6 @@ from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 from random import choice, random
-from threading import Thread
 
 
 class BotHandler():
@@ -706,8 +705,7 @@ class BotHandler():
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
                 args = self.do_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
-                thr = Thread(target=mod.cmd, args=(send, cmdargs, args))
-                thr.start()
+                mod.cmd(send, cmdargs, args)
                 found = True
         # special commands
         if cmd[0] == CMDCHAR:
