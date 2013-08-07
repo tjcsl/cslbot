@@ -490,7 +490,7 @@ class BotHandler():
         if len(msg.split()) == 3 and random() < 0.005:
             send('"%s" would be a good name for a band...' % msg.strip())
 
-    def do_args(self, modargs, send, nick, target, c):
+    def do_args(self, modargs, send, nick, target, msgsrc, c):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -506,7 +506,9 @@ class BotHandler():
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
-                'guarded': self.guarded}
+                'guarded': self.guarded,
+                'fullnick': msgsrc}
+        print(target)
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
@@ -704,7 +706,7 @@ class BotHandler():
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
-                args = self.do_args(mod.args, send, nick, target, c) if hasattr(mod, 'args') else {}
+                args = self.do_args(mod.args, send, nick, target, e.source, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
         # special commands
