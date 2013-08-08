@@ -491,7 +491,7 @@ class BotHandler():
         if len(msg.split()) == 3 and random() < 0.005:
             send('"%s" would be a good name for a band...' % msg.strip())
 
-    def do_args(self, modargs, send, nick, target, msgsrc, c):
+    def do_args(self, modargs, send, nick, target, source, c):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -502,14 +502,13 @@ class BotHandler():
                 'logs': self.logs,
                 'admins': self.admins,
                 'kick_enabled': self.kick_enabled,
+                'guarded': self.guarded,
+                'source': source,
                 'target': target if target[0] == "#" else "private",
                 'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
-                'ignore': lambda nick: self.ignore(send, nick),
-                'guarded': self.guarded,
-                'fullnick': msgsrc}
-        print(target)
+                'ignore': lambda nick: self.ignore(send, nick)}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
@@ -726,4 +725,4 @@ class BotHandler():
             self.do_scores(matches, send, msgtype, nick)
 
     def handle_msg(self, msgtype, c, e):
-        Thread(name=handlemsg, args=(msgtype, c, e)).start()
+        Thread(name=self.handlemsg, args=(msgtype, c, e)).start()

@@ -18,7 +18,7 @@ import json
 from config import GITHUBAPIKEY, GITHUBREPO
 from urllib.request import urlopen, Request
 
-args = ['fullnick']
+args = ['source']
 
 
 def create_issue(msg, nick):
@@ -31,5 +31,5 @@ def create_issue(msg, nick):
 
 
 def cmd(send, msg, args):
-    issue = create_issue(msg, args['fullnick'])
+    issue = create_issue(msg, args['source'])
     send("Issue Created -- %s" % issue)
