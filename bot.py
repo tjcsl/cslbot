@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -OO
+#!/usr/bin/python3 -O
 # Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek and James Forcier
 #
 # This program is free software; you can redistribute it and/or

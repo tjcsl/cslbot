@@ -14,13 +14,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from inspect import getdoc
+
 args = ['modules', 'nick', 'connection']
 
 
 def cmd(send, msg, args):
-    modules = sorted(args['modules'])
-    num = int(len(modules) / 2)
-    cmdlist1 = ' !'.join([x for x in modules[:num]])
-    cmdlist2 = ' !'.join([x for x in modules[num:]])
-    args['connection'].privmsg(args['nick'], 'Commands: !' + cmdlist1)
-    args['connection'].privmsg(args['nick'], '!' + cmdlist2)
+    if msg:
+        if len(msg.split()) > 1:
+            send("One argument only")
+            return
+        if msg not in args['modules']:
+            send("Not a module.")
+            return
+        else:
+            doc = getdoc(args['modules'][msg].cmd)
+            if doc is None:
+                send("No documentation found.")
+            else:
+                send(doc)
+    else:
+        modules = sorted(args['modules'])
+        num = int(len(modules) / 2)
+        cmdlist1 = ' !'.join([x for x in modules[:num]])
+        cmdlist2 = ' !'.join([x for x in modules[num:]])
+        args['connection'].privmsg(args['nick'], 'Commands: !' + cmdlist1)
+        args['connection'].privmsg(args['nick'], '!' + cmdlist2)
