@@ -20,6 +20,9 @@ import json
 
 
 def cmd(send, msg, args):
+    if not msg:
+        send("Lookup what?")
+        return
     msgSplit = msg.split(' ')
     definitionNum = None
     if msgSplit[-1][0] == '#':
