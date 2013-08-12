@@ -31,7 +31,6 @@ from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 from random import choice, random
-from threading import Thread
 
 
 class BotHandler():
@@ -651,7 +650,7 @@ class BotHandler():
                 else:
                     send("Nobody is guarded.")
 
-    def handlemsg(self, msgtype, c, e):
+    def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
             nick = e.source.split('!')[0]
@@ -723,6 +722,3 @@ class BotHandler():
         matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
         if matches:
             self.do_scores(matches, send, msgtype, nick)
-
-    def handle_msg(self, msgtype, c, e):
-        Thread(name=self.handlemsg, args=(msgtype, c, e)).start()
