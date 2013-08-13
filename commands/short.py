@@ -20,8 +20,6 @@ from urllib.error import HTTPError
 
 
 def get_short(msg):
-    if not msg:
-        return
     # prevent escaping of http://
     if '//' in msg:
         msg = msg.split('//')[1]
@@ -41,4 +39,8 @@ def get_short(msg):
 
 
 def cmd(send, msg, args):
+    """Shortens the given url."""
+    if not msg:
+        send("Shorten what?")
+        return
     send(get_short(msg))
