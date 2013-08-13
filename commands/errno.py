@@ -20,12 +20,16 @@ from random import choice
 
 
 def cmd(send, msg, args):
-        errno = subprocess.check_output(['gcc', '-include', 'errno.h', '-fdirectives-only', '-E', '-xc', '/dev/null'])
-        errors = re.findall('^#define (E[A-Z]*) ([0-9]+)', errno.decode(), re.MULTILINE)
-        errdict = dict((y, x) for x, y in errors)
-        if not msg:
-            msg = choice(list(errdict.keys()))
-        if msg not in errdict:
-            send("%s not found in errno.h" % msg)
-        else:
-            send('#define %s %s' % (errdict[msg], msg))
+    """Return either a random value or the specified one from errno.h."""
+    errno = subprocess.check_output(['gcc', '-include', 'errno.h', '-fdirectives-only', '-E', '-xc', '/dev/null'])
+    errors = re.findall('^#define (E[A-Z]*) ([0-9]+)', errno.decode(), re.MULTILINE)
+    errtoval = dict((x, y) for x, y in errors)
+    valtoerr = dict((y, x) for x, y in errors)
+    if not msg:
+        msg = choice(list(valtoerr.keys()))
+    if msg in errtoval:
+        send('#define %s %s' % (msg, errtoval[msg]))
+    elif msg in valtoerr:
+        send('#define %s %s' % (valtoerr[msg], msg))
+    else:
+        send("%s not found in errno.h" % msg)
