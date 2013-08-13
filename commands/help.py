@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from config import CMDCHAR
 from inspect import getdoc
 
 args = ['modules', 'nick', 'connection']
@@ -21,6 +22,8 @@ args = ['modules', 'nick', 'connection']
 
 def cmd(send, msg, args):
     if msg:
+        if msg[0] == CMDCHAR:
+            msg = msg[1:]
         if len(msg.split()) > 1:
             send("One argument only")
             return
