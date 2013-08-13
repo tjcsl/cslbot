@@ -34,6 +34,9 @@ def addquote(quote, args):
 
 
 def cmd(send, msg, args):
+    """Adds a quote to the quote db.
+    Syntax: !addquote <quote>
+    """
     if not msg:
         send("No quote given.")
         return

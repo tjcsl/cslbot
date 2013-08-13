@@ -14,21 +14,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from os.path import basename
 import subprocess
 import re
 
 
 def cmd(send, msg, args):
+    """Returns a fortune.
+    Syntax: !fortune <list|module>
+    """
     try:
-        if msg.strip() == 'list':
+        if msg == 'list':
             output = subprocess.check_output(['fortune', '-f'], stderr=subprocess.STDOUT).decode()
             output = re.sub('[0-9]\.[0-9]{2}%', '', output)
             output = "".join(output.splitlines()[1:])
         else:
-            output = subprocess.check_output('fortune').decode()
-        output = output.replace('\n', ' ')
-        while '  ' in output:
-            output = output.replace('  ', ' ')
-        send(output.strip())
+            if 'bofh' in basename(__file__) or 'excuse' in basename(__file__):
+                mod = 'bofh-excuses'
+            else:
+                mod = msg
+            output = subprocess.check_output(['fortune', mod]).decode()
+            for line in output.splitlines():
+                send(line)
     except subprocess.CalledProcessError:
         send("fortune-mod is not installed!")

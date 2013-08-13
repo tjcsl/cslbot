@@ -31,7 +31,11 @@ def get_list():
 
 
 def cmd(send, msg, args):
+    """Generates a meaning for the specified acronym.
+    Syntax: !acronym <acronym>
+    """
     if not msg:
+        send("What acronym?")
         return
     words = get_list()
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]

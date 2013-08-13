@@ -21,6 +21,9 @@ args = ['channels', 'target', 'connection', 'nick', 'do_log']
 
 
 def cmd(send, msg, args):
+    """Blames a random user for something.
+    Syntax: !blame <reason>
+    """
     users = (args['channels'][args['target']].users() if args['target'] != 'private' else ['you'])
     target = args['target'] if args['target'] != 'private' else args['nick']
     user = choice(users)

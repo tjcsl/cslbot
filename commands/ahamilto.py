@@ -18,5 +18,8 @@ from random import choice
 
 
 def cmd(send, msg, args):
+    """Emulates ahamilto.
+    Syntax: !ahamilto
+    """
     sayings = ['ic', '...', 'ic...']
     send(choice(sayings))
