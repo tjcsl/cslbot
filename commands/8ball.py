@@ -21,16 +21,6 @@ args = ['connection', 'do_log', 'target', 'nick']
 
 
 def cmd(send, msg, args):
-<<<<<<< HEAD
-    '''Returns an answer to a question. Syntax: !8ball <question>'''
-        if not msg:
-            send("What is your question?")
-            return
-        answers = ['It is certain', 'It is decidedly so', 'Without a doubt', 'Yes, definitely', 'You may rely on it', 'As I see it, yes', 'Most likely', 'Outlook good', 'Yes', 'Signs point to yes',
-                   'Reply hazy, try again', 'Ask again later', 'Better not tell you now', 'Cannot predict now', 'Concentrate and ask again',
-                   'Don\'t count on it', 'My reply is no', 'My sources say no', 'Outlook not so good', 'Very doubtful']
-        send('%s says... %s' % (NICK, choice(answers)))
-=======
     """Asks the Magic 8-Ball a question.
     Syntax: !8ball <question>
     """
@@ -44,4 +34,3 @@ def cmd(send, msg, args):
     msg = 'says... %s' % choice(answers)
     args['connection'].action(target, msg)
     args['do_log'](NICK, msg, 'action')
->>>>>>> 8df0c8c66ae16e7fc890b1d970609a3993690ad4

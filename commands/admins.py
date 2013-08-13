@@ -18,14 +18,10 @@ args = ['admins']
 
 
 def cmd(send, msg, args):
-<<<<<<< HEAD
-    '''Returns list of admins.'''
-=======
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
     Syntax: !admins
     """
->>>>>>> 8df0c8c66ae16e7fc890b1d970609a3993690ad4
     admins = ""
     for admin in sorted(args['admins']):
         if args['admins'][admin]:

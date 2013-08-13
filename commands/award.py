@@ -18,13 +18,6 @@ from random import choice
 
 
 def cmd(send, msg, args):
-<<<<<<< HEAD
-    '''Gives a medal to user of choice. Syntax: !award <user>'''
-        if not msg:
-            return
-        atype = choice(['gold', 'silver', 'bronze', 'platinum'])
-        send(msg + ': I hereby award you this ' + atype + ' medal.')
-=======
     """Award a medal.
     Syntax: !award <recipient>
     """
@@ -33,4 +26,3 @@ def cmd(send, msg, args):
         return
     atype = choice(['gold', 'silver', 'bronze', 'platinum', 'plutonium'])
     send('%s: I hereby award you this %s medal.' % (msg, atype))
->>>>>>> 8df0c8c66ae16e7fc890b1d970609a3993690ad4
