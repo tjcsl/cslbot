@@ -561,6 +561,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`wikipedia` Module
+-----------------------
+
+.. automodule:: commands.wikipedia
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`word` Module
 ------------------
 
