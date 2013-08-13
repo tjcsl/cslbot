@@ -16,5 +16,7 @@
 
 
 def cmd(send, msg, args):
-    """Returns info about the bot."""
+    """Returns info about the bot.
+    Syntax: !about
+    """
     send("See https://github.com/fwilson42/ircbot Developed by fwilson, pfoley, csssuf, sdamashek, and skasturi. Type !help for a list of commands.")

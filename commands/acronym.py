@@ -31,8 +31,15 @@ def get_list():
 
 
 def cmd(send, msg, args):
+<<<<<<< HEAD
     '''Returns a backronym for a set of words. Syntax: !acronym <word>'''
+=======
+    """Generates a meaning for the specified acronym.
+    Syntax: !acronym <acronym>
+    """
+>>>>>>> 8df0c8c66ae16e7fc890b1d970609a3993690ad4
     if not msg:
+        send("What acronym?")
         return
     words = get_list()
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]

@@ -1,1 +1,1 @@
-excuse.py
+fortune.py

@@ -21,6 +21,7 @@ args = ['srcdir']
 
 
 def cmd(send, msg, args):
+<<<<<<< HEAD
     '''Computes mat equations. Syntax: !bc <equation>'''
         if not msg:
             return
@@ -35,3 +36,22 @@ def cmd(send, msg, args):
         output = proc.communicate(msg.encode())[0]
         output = output.decode().strip().replace('\n', ' ')
         send(output)
+=======
+    """Evaluates mathmatical expressions.
+    Syntax: !bc <expression>
+    """
+    if not msg:
+        send("Calculate what?")
+        return
+    try:
+        data = json.load(open(args['srcdir'] + "/data/score"))
+        for u in data:
+            msg = msg.replace(u, str(data[u]))
+    except OSError:
+        pass
+    msg += '\n'
+    proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = proc.communicate(msg.encode())[0]
+    output = output.decode().strip().replace('\n', ' ')
+    send(output)
+>>>>>>> 8df0c8c66ae16e7fc890b1d970609a3993690ad4

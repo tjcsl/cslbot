@@ -16,5 +16,8 @@
 
 
 def cmd(send, msg, args):
-        send(' _f_,_')
-        send('(_)`(_)')
+    """Displays a bike.
+    Syntax: !bike
+    """
+    send(' _f_,_')
+    send('(_)`(_)')
