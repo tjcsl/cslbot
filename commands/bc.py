@@ -21,6 +21,7 @@ args = ['srcdir']
 
 
 def cmd(send, msg, args):
+    '''Computes mat equations. Syntax: !bc <equation>'''
         if not msg:
             return
         try:

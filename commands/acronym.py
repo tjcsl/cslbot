@@ -31,6 +31,7 @@ def get_list():
 
 
 def cmd(send, msg, args):
+    '''Returns a backronym for a set of words. Syntax: !acronym <word>'''
     if not msg:
         return
     words = get_list()

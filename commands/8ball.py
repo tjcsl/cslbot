@@ -19,6 +19,7 @@ from config import NICK
 
 
 def cmd(send, msg, args):
+    '''Returns an answer to a question. Syntax: !8ball <question>'''
         if not msg:
             send("What is your question?")
             return

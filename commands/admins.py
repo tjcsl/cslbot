@@ -18,6 +18,7 @@ args = ['admins']
 
 
 def cmd(send, msg, args):
+    '''Returns list of admins.'''
     admins = ""
     for admin in sorted(args['admins']):
         if args['admins'][admin]:

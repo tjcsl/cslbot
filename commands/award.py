@@ -18,6 +18,7 @@ from random import choice
 
 
 def cmd(send, msg, args):
+    '''Gives a medal to user of choice. Syntax: !award <user>'''
         if not msg:
             return
         atype = choice(['gold', 'silver', 'bronze', 'platinum'])

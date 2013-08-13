@@ -18,5 +18,6 @@ from random import choice
 
 
 def cmd(send, msg, args):
+    '''Returns a saying of ahamilto.'''
     sayings = ['ic', '...', 'ic...']
     send(choice(sayings))
