@@ -39,7 +39,9 @@ def get_short(msg):
 
 
 def cmd(send, msg, args):
-    """Shortens the given url."""
+    """Shortens the given url.
+    Syntax: !short <url>
+    """
     if not msg:
         send("Shorten what?")
         return
