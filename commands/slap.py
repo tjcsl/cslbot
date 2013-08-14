@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     slap = '%s slaps %s around a bit with %s'
     if not msg:
         channel = args['target'] if args['target'] != 'private' else CHANNEL
-        users = args['channels'][channel].users()
+        users = list(args['channels'][channel].users())
         send(slap % (args['nick'], choice(users), choice(implements)))
         return
     else:
