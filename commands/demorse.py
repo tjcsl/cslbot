@@ -16,6 +16,9 @@
 
 
 def cmd(send, msg, args):
+    """Converts morse to ascii.
+    Syntax: !demorse <text>
+    """
     demorse_codes = {'.----': '1', '-.--': 'y', '..-': 'u', '...': 's',
                      '-.-.': 'c', '.-.-.': '+', '--..--': ',', '-.-': 'k',
                      '.--.': 'p', '----.': '9', '-----': '0', '  ': ' ',

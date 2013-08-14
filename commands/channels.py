@@ -18,5 +18,8 @@ args = ['channels']
 
 
 def cmd(send, msg, args):
+    """Returns a listing of the current channels.
+    Syntax: !channels
+    """
     channels = ", ".join(sorted(args['channels']))
     send(channels)

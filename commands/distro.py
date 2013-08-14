@@ -19,6 +19,9 @@ from urllib.request import urlopen
 
 
 def cmd(send, msg, args):
-        url = urlopen('http://distrowatch.com/random.php', timeout=1).geturl()
-        match = re.search('=(.*)', url)
-        send(match.group(1))
+    """Gets a random distro.
+    Syntax: !distro
+    """
+    url = urlopen('http://distrowatch.com/random.php', timeout=1).geturl()
+    match = re.search('=(.*)', url)
+    send(match.group(1))

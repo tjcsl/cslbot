@@ -20,7 +20,9 @@ from random import choice
 
 
 def cmd(send, msg, args):
-    """Return either a random value or the specified one from errno.h."""
+    """Return either a random value or the specified one from errno.h.
+    Syntax: !errno <errorcode>
+    """
     errno = subprocess.check_output(['gcc', '-include', 'errno.h', '-fdirectives-only', '-E', '-xc', '/dev/null'])
     errors = re.findall('^#define (E[A-Z]*) ([0-9]+)', errno.decode(), re.MULTILINE)
     errtoval = dict((x, y) for x, y in errors)

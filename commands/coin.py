@@ -18,9 +18,12 @@ from random import choice, randint
 
 
 def cmd(send, msg, args):
+    """Flips a coin a number of times.
+    Syntax: !coin <number>
+    """
     coin = ['heads', 'tails']
     if not msg:
-        send('The coin lands on... ' + choice(coin) + '.')
+        send('The coin lands on... %s' % choice(coin))
     elif not msg.isdigit():
         send("Not A Number.")
     else:

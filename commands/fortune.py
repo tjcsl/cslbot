@@ -19,20 +19,29 @@ import subprocess
 import re
 
 
+def get_list():
+    output = subprocess.check_output(['fortune', '-f'], stderr=subprocess.STDOUT).decode()
+    output = re.sub('[0-9]\.[0-9]{2}%', '', output)
+    fortunes = [x.strip() for x in output.splitlines()[1:]]
+    return sorted(fortunes)
+
+
 def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|module>
     """
+    fortunes = get_list()
     try:
         if msg == 'list':
-            output = subprocess.check_output(['fortune', '-f'], stderr=subprocess.STDOUT).decode()
-            output = re.sub('[0-9]\.[0-9]{2}%', '', output)
-            output = "".join(output.splitlines()[1:])
+            send(" ".join(fortunes))
         else:
             if 'bofh' in basename(__file__) or 'excuse' in basename(__file__):
                 mod = 'bofh-excuses'
-            else:
+            elif msg in fortunes:
                 mod = msg
+            else:
+                send("%s is not a valid fortune module" % msg)
+                return
             output = subprocess.check_output(['fortune', mod]).decode()
             for line in output.splitlines():
                 send(line)

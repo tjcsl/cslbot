@@ -16,6 +16,7 @@
 
 from os.path import basename
 from config import NICK
+
 args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'modules']
 
 
@@ -24,15 +25,20 @@ def gen_creffett(msg):
 
 
 def cmd(send, msg, args):
+    """RAGE!!!
+    Syntax: !rage <text>
+    """
     if 'creffett' in basename(__file__):
         if not args['nick'].startswith('creffett') and args['nick'] != NICK:
             send("You're not creffett!")
-            # args['ignore'](args['nick'])
-            args['do_kick'](args['target'], args['nick'], args['modules']['slogan'].gen_slogan('creffett impersonation').upper())
+            args['ignore'](args['nick'])
+            if args['target'] != 'private':
+                args['do_kick'](args['target'], args['nick'], args['modules']['slogan'].gen_slogan('creffett impersonation').upper())
             return
     if not msg:
+        send("Rage about what?")
         return
-#    c.send_raw("MODE %s -c" % CHANNEL)
+    # c.send_raw("MODE %s -c" % CHANNEL)
     send(gen_creffett(msg))
-#    c.send_raw("MODE %s +c" % CHANNEL)
+    # c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')

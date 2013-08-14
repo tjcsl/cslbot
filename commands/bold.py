@@ -16,6 +16,10 @@
 
 
 def cmd(send, msg, args):
+    """Bolds text.
+    Syntax: !bold <message>
+    """
     if not msg:
+        send("Bold what?")
         return
     send('\x02' + msg)

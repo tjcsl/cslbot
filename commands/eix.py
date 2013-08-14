@@ -19,7 +19,9 @@ import subprocess
 
 
 def cmd(send, msg, args):
-    """Runs eix with the given arguments."""
+    """Runs eix with the given arguments.
+    Syntax: !eix <package>
+    """
     if not msg:
         send("eix what?")
         return

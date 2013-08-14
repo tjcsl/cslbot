@@ -57,6 +57,9 @@ def get_item(category):
 
 
 def cmd(send, msg, args):
+    """Implements xkcd 576.
+    Syntax: !ebay
+    """
     categories = get_categories()
     item = None
     while not item:

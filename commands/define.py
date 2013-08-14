@@ -21,6 +21,9 @@ from config import DICTIONARYAPIKEY
 
 
 def cmd(send, msg, args):
+    """Gets the definition of a word.
+    Syntax: !define <word>
+    """
     if not msg:
         send("Define what?")
         return

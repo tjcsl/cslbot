@@ -16,4 +16,7 @@
 
 
 def cmd(send, msg, args):
-        send('creffett: %s' % ("get dialup " * 15))
+    """Pesters creffett to get dialup.
+    Syntax: !dialup
+    """
+    send('creffett: %s' % ("get dialup " * 15))
