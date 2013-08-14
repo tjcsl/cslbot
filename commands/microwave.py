@@ -46,54 +46,57 @@ def do_nuke(args, target, channel):
 
 
 def cmd(send, msg, args):
-        nick = args['nick']
-        channel = args['target'] if args['target'] != 'private' else CHANNEL
-        levels = {1: 'Whirr...',
-                  2: 'Vrrm...',
-                  3: 'Zzzzhhhh...',
-                  4: 'SHFRRRRM...',
-                  5: 'GEEEEZZSH...',
-                  6: 'PLAAAAIIID...',
-                  7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
-                  8: 'Nuke',
-                  9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
-                  10: 'ssh root@remote.tjhsst.edu rm -rf ~' + nick}
-        if not msg:
-            send('What to microwave?')
+    """Microwaves something.
+    Syntax: !microvave <level> <target>
+    """
+    nick = args['nick']
+    channel = args['target'] if args['target'] != 'private' else CHANNEL
+    levels = {1: 'Whirr...',
+              2: 'Vrrm...',
+              3: 'Zzzzhhhh...',
+              4: 'SHFRRRRM...',
+              5: 'GEEEEZZSH...',
+              6: 'PLAAAAIIID...',
+              7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
+              8: 'Nuke',
+              9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
+              10: 'ssh root@remote.tjhsst.edu rm -rf ~' + nick}
+    if not msg:
+        send('What to microwave?')
+        return
+    match = re.match('(-?[0-9]*) (.*)', msg)
+    if not match:
+        send('Power level?')
+    else:
+        level = int(match.group(1))
+        target = match.group(2)
+        if level > 10:
+            send('Aborting to prevent extinction of human race.')
             return
-        match = re.match('(-?[0-9]*) (.*)', msg)
-        if not match:
-            send('Power level?')
-        else:
-            level = int(match.group(1))
-            target = match.group(2)
-            if level > 10:
-                send('Aborting to prevent extinction of human race.')
+        if level < 1:
+            send('Anti-matter not yet implemented.')
+            return
+        if level > 7:
+            if not args['is_admin'](nick):
+                send("I'm sorry. Nukes are a admin-only feature")
                 return
-            if level < 1:
-                send('Anti-matter not yet implemented.')
+            elif target not in args['channels'][channel].users():
+                send("I'm sorry. Anonymous Nuking is not allowed")
                 return
-            if level > 7:
-                if not args['is_admin'](nick):
-                    send("I'm sorry. Nukes are a admin-only feature")
-                    return
-                elif target not in args['channels'][channel].users():
-                    send("I'm sorry. Anonymous Nuking is not allowed")
-                    return
 
-            msg = levels[1]
-            for i in range(2, level + 1):
-                if i < 8:
-                    msg += ' ' + levels[i]
-            send(msg)
-            if level >= 8:
-                do_nuke(args, target, channel)
-            if level >= 9:
-                send(levels[9])
-            if level == 10:
-                send(levels[10])
-            send('Ding, your %s is ready.' % target)
-            if level == 10:
-                time.sleep(7)
-                args['connection'].quit("Caught in backwash.")
-                sys.exit(0)
+        msg = levels[1]
+        for i in range(2, level + 1):
+            if i < 8:
+                msg += ' ' + levels[i]
+        send(msg)
+        if level >= 8:
+            do_nuke(args, target, channel)
+        if level >= 9:
+            send(levels[9])
+        if level == 10:
+            send(levels[10])
+        send('Ding, your %s is ready.' % target)
+        if level == 10:
+            time.sleep(7)
+            args['connection'].quit("Caught in backwash.")
+            sys.exit(0)

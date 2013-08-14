@@ -20,6 +20,9 @@ args = ['modules']
 
 
 def cmd(send, msg, args):
+    """Imitates pfoley.
+    Syntax: !pfoley <message>
+    """
     if not msg:
         msg = args['modules']['word'].gen_word()
     if random() < 0.5:

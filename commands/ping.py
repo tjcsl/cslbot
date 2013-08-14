@@ -18,6 +18,9 @@ import subprocess
 
 
 def cmd(send, msg, args):
+    """Ping something.
+    Syntax: !ping <target>
+    """
     if not msg:
         send("Ping what?")
         return

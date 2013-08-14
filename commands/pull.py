@@ -24,6 +24,9 @@ def do_pull(srcdir, branch):
 
 
 def cmd(send, msg, args):
+    """Pull changes.
+    Syntax: !pull <branch>
+    """
     try:
         send(do_pull(args['srcdir'], msg or "master"))
     except subprocess.CalledProcessError as e:

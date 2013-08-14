@@ -20,8 +20,10 @@ limit = 5
 
 
 def cmd(send, msg, args):
-    """Pesters the first argument with the second argument."""
-    if not msg or len(msg) < 2:
+    """Pesters somebody.
+    Syntax: !pester <nick> <message>
+    """
+    if not msg or len(msg.split()) < 2:
         send("Pester needs at least two arguments.")
         return
     match = re.match('([a-zA-Z0-9`]+) (.*)', msg)

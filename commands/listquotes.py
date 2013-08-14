@@ -20,13 +20,16 @@ args = ['srcdir']
 
 
 def cmd(send, msg, args):
+    """List the quotes.
+    Syntax: !listquotes
+    """
     try:
         quotefile = args['srcdir'] + "/data/quotes"
         quotes = json.load(open(quotefile))
-        output = ", ".join(["%d: %s" % i for i in enumerate(quotes)])
-        if output:
-            send(output)
-        else:
+        if len(quotes) == 0:
             send("Nobody has taste in this channel.")
+        else:
+            for i in enumerate(quotes):
+                send("%d: %s" % i)
     except OSError:
         send("Nobody has taste in this channel.")

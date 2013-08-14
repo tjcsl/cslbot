@@ -19,6 +19,9 @@ from lxml.html import parse
 
 
 def cmd(send, msg, args):
+    """Gets a random meme.
+    Syntax: !meme
+    """
     html = parse(urlopen('http://knowyourmeme.com/random', timeout=1))
     title = html.find(".//title").text.split('|')[0]
     send(title)

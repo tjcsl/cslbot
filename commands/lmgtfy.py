@@ -14,9 +14,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from urllib.parse import quote
+
 
 def cmd(send, msg, args):
+    """LMGTFY.
+    Syntax: !lmgtfy <text>
+    """
     if not msg:
+        send("What?")
         return
-    msg = msg.replace(' ', '+')
-    send('http://lmgtfy.com/?q=' + msg)
+    send('http://lmgtfy.com/?q=%s' % quote(msg))

@@ -24,7 +24,11 @@ def gen_praise(msg):
 
 
 def cmd(send, msg, args):
+    """Praises something.
+    Syntax: !praise <something>
+    """
     if not msg:
+        send("Praise what?")
         return
     praise = gen_praise(msg)
     while not praise:
