@@ -18,6 +18,9 @@ from config import NICK
 
 
 def cmd(send, msg, args):
+    """Kills somebody.
+    Syntax: !kill <victim>
+    """
     if not msg:
         send("kill who?")
         return

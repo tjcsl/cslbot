@@ -21,6 +21,9 @@ args = ['modules', 'nick', 'connection']
 
 
 def cmd(send, msg, args):
+    """Gives help.
+    Syntax: !help <command>
+    """
     if msg:
         if msg[0] == CMDCHAR:
             msg = msg[1:]

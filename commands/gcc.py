@@ -22,6 +22,9 @@ args = ['modules']
 
 
 def cmd(send, msg, args):
+    """Compiles stuff.
+    Syntax: !gcc <code>
+    """
     tmpfile = tempfile.NamedTemporaryFile()
     msg = msg.replace('\\n', '\n')
     for line in msg.splitlines():

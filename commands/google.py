@@ -14,12 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import json
 from urllib.parse import quote
 from urllib.request import urlopen
-import json
 
 
 def cmd(send, msg, args):
+    """Googles something.
+    Syntax: !google <term>
+    """
     if not msg:
         send("Google what?")
         return

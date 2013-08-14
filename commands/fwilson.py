@@ -16,4 +16,8 @@
 
 
 def cmd(send, msg, args):
-    send(("wheeeee " + msg).upper())
+    """Imitates fwilson.
+    Syntax: !fwilson <message>
+    """
+    output = "wheeeee %s" % msg
+    send(output.upper())

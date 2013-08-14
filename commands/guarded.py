@@ -18,4 +18,10 @@ args = ['guarded']
 
 
 def cmd(send, msg, args):
-    send(", ".join(args['guarded']))
+    """Shows the currently guarded nicks.
+    Syntax: !guarded
+    """
+    if not args['guarded']:
+        send("Nobody is guarded.")
+    else:
+        send(", ".join(args['guarded']))

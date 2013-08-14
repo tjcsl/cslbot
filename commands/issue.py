@@ -31,5 +31,8 @@ def create_issue(msg, nick):
 
 
 def cmd(send, msg, args):
+    """Files a github issue.
+    Syntax: !issue <description>
+    """
     issue = create_issue(msg, args['source'])
     send("Issue Created -- %s" % issue)

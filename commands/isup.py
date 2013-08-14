@@ -21,7 +21,11 @@ args = ['nick']
 
 
 def cmd(send, msg, args):
+    """Checks if a website is up.
+    Syntax: !isup <website>
+    """
     if not msg:
+        send("What are you trying to get to?")
         return
     nick = args['nick']
     isup = urlopen("http://isup.me/%s" % quote(msg)).read().decode('utf-8')
