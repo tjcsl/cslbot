@@ -657,7 +657,7 @@ class BotHandler():
         else:
             nick = e.source.nick
         msg = e.arguments[0].strip()
-        if msgtype == 'pub' or msgtype == 'action':
+        if msgtype == 'pub' or msgtype == 'action' or msgtype == 'mode':
             target = e.target
         else:
             target = nick
