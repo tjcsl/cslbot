@@ -63,6 +63,8 @@ def cmd(send, msg, args):
                             send("%s: %s" % (name, data[name]))
                         except IndexError:
                             pass
+            elif msg:
+                send("Invalid nick")
             else:
                 name = choice(list(data.keys()))
                 send("%s has %i points!" % (name, data[name]))
