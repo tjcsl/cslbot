@@ -16,7 +16,7 @@
 
 import json
 
-args = ['srcdir']
+args = ['srcdir', 'nick', 'connection']
 
 
 def cmd(send, msg, args):
@@ -30,6 +30,6 @@ def cmd(send, msg, args):
             send("Nobody has taste in this channel.")
         else:
             for i in enumerate(quotes):
-                send("%d: %s" % i)
+                args['connection'].privmsg(args['nick'], "%d: %s" % i)
     except OSError:
         send("Nobody has taste in this channel.")
