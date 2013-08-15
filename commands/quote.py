@@ -20,14 +20,28 @@ from random import choice
 args = ['srcdir']
 
 
-def getquote(args):
-    quotefile = args['srcdir'] + "/data/quotes"
+def getquote(send, srcdir, msg):
+    quotefile = srcdir + "/data/quotes"
     quotes = json.load(open(quotefile))
-    return choice(quotes)
+    if not msg:
+        return choice(quotes)
+    elif not msg.isdigit():
+        send("Not a Number")
+        return None
+    elif int(msg) >= len(quotes):
+        send("Invalid quote number.")
+        return None
+    else:
+        return quotes[int(msg)]
 
 
 def cmd(send, msg, args):
+    """Returns a random quote.
+    Syntax: !quote <number>
+    """
     try:
-        send(getquote(args))
+        quote = getquote(send, args['srcdir'], msg)
+        if quote:
+            send(quote)
     except (OSError, IndexError):
         send("Nobody has taste in this channel.")

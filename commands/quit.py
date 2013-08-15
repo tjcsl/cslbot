@@ -20,6 +20,9 @@ args = ['nick', 'connection', 'is_admin']
 
 
 def cmd(send, msg, args):
+    """Quit irc.
+    Syntax: !quit
+    """
     if not args['is_admin'](args['nick']):
         send("Nope, not gonna do it.")
     else:
