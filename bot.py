@@ -38,6 +38,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler = handler.BotHandler()
         serverinfo = ServerSpec(host, port, nickpass)
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
+        #fix unicode problems
+        self.connection.buffer_class.errors = 'replace'
 
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
