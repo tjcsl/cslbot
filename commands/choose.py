@@ -27,7 +27,7 @@ def cmd(send, msg, args):
         send("Choose what?")
         return
     choices = msg.split(' or ')
-    action = ['draws a slip of paper from a hat and gets...', 'says enie, menie, miney, moe and chooses...',
+    action = ['draws a slip of paper from a hat and gets...', 'says eenie, menie, miney, moe and chooses...',
               'picks a random number and gets...', 'rolls dice and gets...', 'asks a random person and gets...',
               'plays rock, paper, scissors, lizard, spock and gets...']
     send("%s %s %s" % (args['nick'], choice(action), choice(choices)))
