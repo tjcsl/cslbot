@@ -37,7 +37,7 @@ def cmd(send, msg, args):
         else:
             if 'bofh' in basename(__file__) or 'excuse' in basename(__file__):
                 mod = 'bofh-excuses'
-            elif msg in fortunes:
+            elif msg in fortunes or not msg:
                 mod = msg
             else:
                 send("%s is not a valid fortune module" % msg)
