@@ -23,6 +23,10 @@ def get_short(msg):
     # prevent escaping of http://
     if '//' in msg:
         msg = msg.split('//')[1]
+
+    if len(msg) <= 13:
+        return 'http://' + msg
+
     data = {'longUrl': msg}
     data = json.dumps(data).encode('utf-8')
     headers = {'Content-Type': 'application/json'}
