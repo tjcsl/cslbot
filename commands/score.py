@@ -15,10 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-from random import choice
 import json
+from random import choice
+from config import NICK
 
-args = ['srcdir']
+args = ['srcdir', 'do_log', 'connection', 'target', 'nick']
 
 
 def cmd(send, msg, args):
@@ -30,7 +31,13 @@ def cmd(send, msg, args):
             name = match.group(1).lower()
             try:
                 score = data[name]
-                send("%s has %i points!" % (name, score))
+                if name == NICK.lower():
+                    target = args['target'] if args['target'] != 'private' else args['nick']
+                    output = 'has %s points! :)' % score
+                    args['connection'].action(target, output)
+                    args['do_log'](NICK, output, 'action')
+                else:
+                    send("%s has %i points!" % (name, score))
             except:
                 send("Nobody cares about " + name)
         else:

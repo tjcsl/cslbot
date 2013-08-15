@@ -21,7 +21,7 @@ args = ['nick', 'connection', 'is_admin']
 
 def cmd(send, msg, args):
     if not args['is_admin'](args['nick']):
-        send("Nope.")
+        send("Nope, not gonna do it.")
     else:
         args['connection'].quit('Goodbye, Cruel World.')
         sys.exit(0)
