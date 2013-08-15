@@ -65,6 +65,9 @@ def cmd(send, msg, args):
                             pass
             else:
                 name = choice(list(data.keys()))
-                send("%s has %i points!" % (name, data[name]))
+                if name == NICK:
+                    send("I have %i points! :3" % (data[name]))
+                else:
+                    send("%s has %i points!" % (name, data[name])) 
     except OSError:
         send("Nobody cares about anything.")
