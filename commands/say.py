@@ -16,4 +16,7 @@
 
 
 def cmd(send, msg, args):
-        send(msg)
+    """Say something.
+    Syntax: !say <msg>
+    """
+    send(msg)

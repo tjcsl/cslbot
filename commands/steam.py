@@ -26,6 +26,9 @@ def get_ids():
 
 
 def cmd(send, msg, args):
+    """Gets steam status.
+    Syntax: !steam <user>
+    """
     if not STEAMAPIKEY:
         send("API Key not specified.")
         return
@@ -45,11 +48,11 @@ def cmd(send, msg, args):
 
 
 def get_status(vals):
-        state = vals['personastate']
-        if state == 0:
-            return 'Offline'
-        else:
-            try:
-                return 'In-game: ' + vals['gameextrainfo']
-            except KeyError:
-                return 'Online'
+    state = vals['personastate']
+    if state == 0:
+        return 'Offline'
+    else:
+        try:
+            return 'In-game: ' + vals['gameextrainfo']
+        except KeyError:
+            return 'Online'

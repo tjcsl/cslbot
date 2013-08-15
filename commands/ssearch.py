@@ -20,10 +20,13 @@ args = ['srcdir']
 
 
 def cmd(send, msg, args):
-        picklefile = open(args['srcdir'] + '/static/steamids.pickle', 'rb')
-        idlist = pickle.load(picklefile)
-        for i in idlist.keys():
-            if i.lower().find(msg) != -1:
-                output = i.encode('ascii', 'ignore').decode()
-                send(output)
-                return
+    """Searches steam.
+    Syntax: !ssearch <text>
+    """
+    picklefile = open(args['srcdir'] + '/static/steamids.pickle', 'rb')
+    idlist = pickle.load(picklefile)
+    for i in idlist.keys():
+        if i.lower().find(msg) != -1:
+            output = i.encode('ascii', 'ignore').decode()
+            send(output)
+            return

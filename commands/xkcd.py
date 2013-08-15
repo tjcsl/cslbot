@@ -25,6 +25,9 @@ def get_num():
 
 
 def cmd(send, msg, args):
+    """Gets a xkcd comic.
+    Syntax: !xkcd <num|latest>
+    """
     latest = get_num()
     if not msg:
         msg = randrange(1, latest)

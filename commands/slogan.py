@@ -36,8 +36,10 @@ def gen_slogan(msg):
 
 
 def cmd(send, msg, args):
+    """Gets a slogan.
+    Syntax: !slogan <text>
+    """
     if not msg:
         msg = args['modules']['word'].gen_word()
-
     slogan = gen_slogan(msg)
     send(slogan)

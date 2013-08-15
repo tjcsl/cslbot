@@ -24,4 +24,7 @@ def gen_word():
 
 
 def cmd(send, msg, args):
+    """Gets a random word.
+    Syntax: !word
+    """
     send(gen_word())

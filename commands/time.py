@@ -18,6 +18,9 @@ import time
 
 
 def cmd(send, msg, args):
-        bold = '\x02'
-        timeformat = bold + "Date: " + bold + "%m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
-        send(time.strftime(timeformat))
+    """Tells the time.
+    Syntax: !time
+    """
+    bold = '\x02'
+    timeformat = bold + "Date: " + bold + "%m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
+    send(time.strftime(timeformat))

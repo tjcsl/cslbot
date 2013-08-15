@@ -20,6 +20,9 @@ args = ['logs', 'target', 'nick']
 
 
 def cmd(send, msg, args):
+    """Corrects a previous message.
+    Syntax: !s/<msg>/<replacement>/ig
+    """
     msg = msg.split('/')
     # not a valid sed statement.
     if not msg or len(msg) < 3:

@@ -19,6 +19,9 @@ args = ['logs', 'target']
 
 
 def cmd(send, msg, args):
+    """Reverses a message.
+    Syntax: !reverse --<nick>
+    """
     log = args['logs'][args['target']][:-1]
     if not msg:
         send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[0].strip()[::-1])

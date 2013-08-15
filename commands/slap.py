@@ -20,7 +20,10 @@ args = ['nick', 'channels', 'target']
 
 
 def cmd(send, msg, args):
-    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson']
+    """Slap somebody.
+    Syntax: !slap <nick> for <reason>
+    """
+    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     slap = '%s slaps %s around a bit with %s'
     if not msg:
         channel = args['target'] if args['target'] != 'private' else CHANNEL

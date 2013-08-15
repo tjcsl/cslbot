@@ -18,5 +18,8 @@ import hashlib
 
 
 def cmd(send, msg, args):
-        msg = msg.encode('utf-8')
-        send(hashlib.sha512(msg).hexdigest())
+    """SHA512 hashes something.
+    Syntax: !sha512 <msg>
+    """
+    msg = msg.encode('utf-8')
+    send(hashlib.sha512(msg).hexdigest())

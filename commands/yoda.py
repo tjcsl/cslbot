@@ -20,10 +20,13 @@ from lxml.html import parse
 
 
 def cmd(send, msg, args):
-        if not msg:
-            send("A message, Yoda did not receive, hmmmmmm.")
-            return
-        data = urlencode({'YodaMe': msg}).encode('UTF-8')
-        html = urlopen("http://www.yodaspeak.co.uk/index.php", data, timeout=1)
-        text = parse(html).find('//*[@id="result"]/div[1]/span/textarea').text
-        send(text)
+    """Convert a message to Yoda-speak.
+    Syntax: !yoda <msg>
+    """
+    if not msg:
+        send("A message, Yoda did not receive, hmmmmmm.")
+        return
+    data = urlencode({'YodaMe': msg}).encode('UTF-8')
+    html = urlopen("http://www.yodaspeak.co.uk/index.php", data, timeout=1)
+    text = parse(html).find('//*[@id="result"]/div[1]/span/textarea').text
+    send(text)

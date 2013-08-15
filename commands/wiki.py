@@ -20,7 +20,9 @@ from urllib.parse import quote
 
 
 def cmd(send, msg, args):
-    """Returns the first wikipedia result for the argument."""
+    """Returns the first wikipedia result for the argument.
+    Syntax: !wiki <term>
+    """
     if not msg:
         send("Need a article.")
         return

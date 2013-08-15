@@ -105,6 +105,9 @@ def get_weather(msg, send):
 
 
 def cmd(send, msg, args):
+    """Gets the weather.
+    Syntax: !weather <location|set default>
+    """
     prefsfile = args['srcdir'] + "/data/weather"
     match = re.match("set (.*)", msg)
     if match:

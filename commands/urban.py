@@ -20,6 +20,9 @@ import json
 
 
 def cmd(send, msg, args):
+    """Gets a definition from urban dictionary.
+    Syntax: !urban <term>
+    """
     if not msg:
         send("Lookup what?")
         return

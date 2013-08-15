@@ -23,6 +23,9 @@ args = ['srcdir', 'do_log', 'connection', 'target', 'nick']
 
 
 def cmd(send, msg, args):
+    """Gets scores.
+    Syntax: !score <--high|--low|nick>
+    """
     try:
         scorefile = args['srcdir'] + '/data/score'
         data = json.load(open(scorefile))

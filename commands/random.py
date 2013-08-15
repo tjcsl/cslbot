@@ -18,4 +18,7 @@ from random import getrandbits
 
 
 def cmd(send, msg, args):
+    """For when you don't have enough randomness in your life.
+    Syntax: !random
+    """
     send(hex(getrandbits(50)))

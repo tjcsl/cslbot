@@ -22,6 +22,9 @@ args = ['channels', 'target', 'connection', 'nick', 'do_log']
 
 
 def cmd(send, msg, args):
+    """Throw something.
+    Syntax: !throw <object> at <target>
+    """
     users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
     target = args['target'] if args['target'] != 'private' else args['nick']
     if "at" in msg:
@@ -35,5 +38,6 @@ def cmd(send, msg, args):
         msg = 'throws %s at %s' % (msg, choice(users))
         args['connection'].action(target, msg)
     else:
+        send("Throw what?")
         return
     args['do_log'](NICK, msg, 'action')

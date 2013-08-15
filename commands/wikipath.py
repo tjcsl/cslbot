@@ -18,6 +18,7 @@ import json
 from datetime import datetime
 from lxml.html import parse
 from urllib.request import urlopen
+
 args = ['modules']
 
 
@@ -42,6 +43,9 @@ def get_articles():
 
 
 def cmd(send, msg, args):
+    """Find a path between two wikipedia articles.
+    Syntax: !wikipath <article> <article>
+    """
     msg = msg.split()
     if len(msg) != 2:
         msg = get_articles()
