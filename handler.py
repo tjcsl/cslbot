@@ -434,7 +434,7 @@ class BotHandler():
         if not self.kick_enabled:
             send("%s: you're lucky. kick is disabled." % nick)
             return
-        ops = self.channels[target].opers()
+        ops = list(self.channels[target].opers())
         if not ops:
             ops = ['someone']
         if NICK not in ops:
