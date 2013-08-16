@@ -26,5 +26,5 @@ def cmd(send, msg, args):
     if not args['is_admin'](args['nick']):
         send("Nope, not gonna do it.")
     else:
-        args['connection'].quit('Goodbye, Cruel World.')
+        args['connection'].disconnect('Goodbye, Cruel World.')
         sys.exit(0)

@@ -98,5 +98,5 @@ def cmd(send, msg, args):
         send('Ding, your %s is ready.' % target)
         if level == 10:
             time.sleep(7)
-            args['connection'].quit("Caught in backwash.")
+            args['connection'].disconnect("Caught in backwash.")
             sys.exit(0)
