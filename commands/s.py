@@ -21,7 +21,7 @@ args = ['logs', 'target', 'nick']
 
 def cmd(send, msg, args):
     """Corrects a previous message.
-    Syntax: !s/<msg>/<replacement>/ig
+    Syntax: !s/<msg>/<replacement>/<ig|nick>
     """
     msg = msg.split('/')
     # not a valid sed statement.
@@ -50,7 +50,7 @@ def cmd(send, msg, args):
         except AttributeError:
             continue
         # ignore stuff said by other people unless /g was passed
-        if user != args['nick'] and "g" not in modifiers:
+        if user != args['nick'] and "g" not in modifiers and user != modifiers:
             continue
         # ignore previous !s commands
         if text[:2] == "!s":
