@@ -19,7 +19,7 @@ import subprocess
 args = ['srcdir']
 
 
-def do_pull(srcdir, branch):
+def do_pull(srcdir):
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     Syntax: !pull <branch>
     """
     try:
-        send(do_pull(args['srcdir'], msg or "master"))
+        send(do_pull(args['srcdir']))
     except subprocess.CalledProcessError as e:
         for line in e.output.decode().splitlines():
             send(line)

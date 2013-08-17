@@ -22,7 +22,7 @@ import handler
 import server
 from irc.bot import ServerSpec, SingleServerIRCBot
 from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
-from os.path import basename
+from os.path import basename, dirname
 from time import sleep
 
 
@@ -72,7 +72,7 @@ class IrcBot(SingleServerIRCBot):
         """
         output = None
         if cmdargs == 'pull':
-            output = self.handler.modules['pull'].do_pull()
+            output = self.handler.modules['pull'].do_pull(dirname(__file__))
             c.privmsg(target, output)
         imp.reload(handler)
         imp.reload(server)

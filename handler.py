@@ -24,6 +24,7 @@ import imp
 import time
 import socket
 import string
+import errno
 from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
 from os.path import basename, dirname
 from glob import glob
@@ -398,8 +399,11 @@ class BotHandler():
             send('** %s - %s' % (title, shorturl))
         except URLError as ex:
             # website does not exist
-            if hasattr(ex.reason, 'errno') and ex.reason.errno == socket.EAI_NONAME:
-                pass
+            if hasattr(ex.reason, 'errno'):
+                if ex.reason.errno == socket.EAI_NONAME:
+                    pass
+                if ex.reason.errno == errno.ENETUNREACH:
+                    pass
             else:
                 send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
         # page does not contain a title
