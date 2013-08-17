@@ -400,9 +400,7 @@ class BotHandler():
         except URLError as ex:
             # website does not exist
             if hasattr(ex.reason, 'errno'):
-                if ex.reason.errno == socket.EAI_NONAME:
-                    pass
-                if ex.reason.errno == errno.ENETUNREACH:
+                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
                     pass
             else:
                 send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))

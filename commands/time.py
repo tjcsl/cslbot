@@ -22,5 +22,6 @@ def cmd(send, msg, args):
     Syntax: !time
     """
     bold = '\x02'
-    timeformat = bold + "Date: " + bold + "%m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
-    send(time.strftime(timeformat))
+    if not msg:
+        msg = bold + "Date: " + bold + "%A, %m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
+    send(time.strftime(msg))
