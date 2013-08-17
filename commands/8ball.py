@@ -19,6 +19,8 @@ from config import NICK
 
 args = ['connection', 'do_log', 'target', 'nick']
 
+limit = 3
+
 
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
