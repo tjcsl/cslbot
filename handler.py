@@ -439,7 +439,7 @@ class BotHandler():
             ops = ['someone']
         if NICK not in ops:
             c.privmsg(CHANNEL, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
-        else if random() > 0.01:
+        elif random() > 0.01:
             c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
         else:
             c.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
