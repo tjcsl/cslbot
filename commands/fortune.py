@@ -42,7 +42,7 @@ def cmd(send, msg, args):
             else:
                 send("%s is not a valid fortune module" % msg)
                 return
-            output = subprocess.check_output(['fortune', mod]).decode()
+            output = subprocess.check_output(['fortune', '-s', mod]).decode()
             for line in output.splitlines():
                 send(line)
     except subprocess.CalledProcessError:
