@@ -137,6 +137,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`date` Module
+------------------
+
+.. automodule:: commands.date
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`ddate` Module
 -------------------
 

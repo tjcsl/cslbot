@@ -100,12 +100,9 @@ class BotHandler():
         """
         modulemap = {}
         for f in glob(os.path.dirname(__file__) + '/commands/*.py'):
-            #FIXME: screws w/ extended acls.
-            #if os.access(f, os.X_OK):
-            cmd = basename(f).split('.')[0]
-            if cmd == '__init__':
-                continue
-            modulemap[cmd] = importlib.import_module("commands." + cmd)
+            if os.access(f, os.X_OK):
+                cmd = basename(f).split('.')[0]
+                modulemap[cmd] = importlib.import_module("commands." + cmd)
         return modulemap
 
     def ignore(self, send, nick):
