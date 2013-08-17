@@ -439,10 +439,10 @@ class BotHandler():
         if nick not in ops:
             if NICK not in ops:
                 c.privmsg(target, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
-            elif random() > 0.01:
-                c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
-            else:
+            elif random() < 0.01 and msg == "shutting caps lock off":
                 c.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
+            else:
+                c.kick(target, nick, self.modules['slogan'].gen_slogan(msg).upper())
 
     def do_caps(self, msg, c, target, nick, send):
         """ Check for capslock abuse.

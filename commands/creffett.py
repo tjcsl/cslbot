@@ -17,7 +17,7 @@
 from os.path import basename
 from config import NICK
 
-args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'modules']
+args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled']
 
 
 def gen_creffett(msg):
@@ -33,7 +33,7 @@ def cmd(send, msg, args):
             send("You're not creffett!")
             args['ignore'](args['nick'])
             if args['target'] != 'private':
-                args['do_kick'](args['target'], args['nick'], args['modules']['slogan'].gen_slogan('creffett impersonation').upper())
+                args['do_kick'](args['target'], args['nick'], 'creffett impersonation')
             return
     if not msg:
         send("Rage about what?")
