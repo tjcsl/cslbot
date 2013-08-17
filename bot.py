@@ -145,8 +145,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
-            slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
-            c.privmsg(e.target, slogan)
+            #slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
+            #c.privmsg(e.target, slogan)
             del self.kick
 
     def on_part(self, c, e):
