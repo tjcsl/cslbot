@@ -34,7 +34,7 @@ def deletequote(key, srcdir):
 
 def cmd(send, msg, args):
     """Deletes a quote.
-    Syntax: !deletequote <quoteid>
+    Syntax: !removequote <quoteid>
     """
     if not msg:
         send("Which quote?")
