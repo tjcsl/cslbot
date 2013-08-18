@@ -38,10 +38,7 @@ def addquote(quotes, quotefile, quote):
     if not quote:
         return "No quote given."
     quotes += [quote]
-    f = open(quotefile, "w")
-    json.dump(quotes, f, indent=True, sort_keys=True)
-    f.write("\n")
-    f.close()
+    save_quotes(quotefile, quotes)
     return "Quote added successfully."
 
 
@@ -62,10 +59,7 @@ def removequote(msg, quotes, quotefile):
     if key >= len(quotes):
         return "Not a valid quote id."
     quotes.remove(quotes[key])
-    f = open(quotefile, "w")
-    json.dump(quotes, f, indent=True, sort_keys=True)
-    f.write("\n")
-    f.close()
+    save_quotes(quotefile, quotes)
     return "Deleted quote successfully."
 
 
@@ -79,11 +73,15 @@ def editquote(msg, quotes, quotefile):
     if key >= len(quotes):
         return "Not a valid quote id."
     quotes[key] = " ".join(cmd[1:])
+    save_quotes(quotefile, quotes)
+    return "Edited quote successfully."
+
+
+def save_quotes(quotefile, quotes):
     f = open(quotefile, "w")
     json.dump(quotes, f, indent=True, sort_keys=True)
     f.write("\n")
     f.close()
-    return "Edited quote successfully."
 
 
 def cmd(send, msg, args):
