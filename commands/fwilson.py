@@ -14,18 +14,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import randrange
+from random import random
+
+
 def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson <message>
     """
-    if randrange(1,3) == 1:
+    if random() < 0.5:
         output = "wheeeee %s" % msg
         send(output.upper())
     else:
-        i = 0
-        output = msg.split(' ')
-        for i in msg:
-            output[i] = 'fwil' + output[i]
-            i++
+        output = ['fwil' + x for x in msg.split()]
         send(output.lower())

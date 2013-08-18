@@ -15,11 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from config import NICK
 
 args = ['srcdir']
 
 
 def do_pull(srcdir):
+    #FIXME: Permissions hack.
+    if NICK == "msbobBot":
+        subprocess.check_output(["sudo", "/home/peter/ircbot/fixperms.sh"], stderr=subprocess.STDOUT)
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
