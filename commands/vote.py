@@ -56,7 +56,7 @@ def tally_poll(polls, poll, send):
         return
     question = polls[poll]['question']
     status = "Active" if polls[poll]['active'] else "Ended"
-    votes = sorted(polls[poll]['votes'])
+    votes = polls[poll]['votes']
     send("%s poll: %s, %d votes" % (status, question, len(votes)))
     votemap = {}
     for key, group in groupby(votes, key=lambda x: votes[x]):
