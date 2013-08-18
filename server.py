@@ -18,6 +18,7 @@ import socketserver
 import threading
 import traceback
 import imp
+import control
 from os.path import basename
 from config import SERVERPORT, CTRLPASS, CTRLCHAN
 
@@ -101,6 +102,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
                     output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
+                    imp.reload(control)
                     for x in bot.handler.modules.values():
                         imp.reload(x)
                     if output:
