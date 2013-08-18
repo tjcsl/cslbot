@@ -628,7 +628,7 @@ class BotHandler():
             send("disable|enable <kick|module <module>|logging|chanlog>")
             send("get <disabled|enabled> modules")
             send("show <guarded|issues>")
-            send("approve|reject <issuenum>")
+            send("accept|reject <issuenum>")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":
             if len(cmd) < 2:
@@ -664,7 +664,7 @@ class BotHandler():
                         send(msg)
                 else:
                     send("No outstanding issues.")
-        elif cmd[0] == "approve":
+        elif cmd[0] == "accept":
             if len(cmd) < 2:
                 send("Missing argument.")
                 return
