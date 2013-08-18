@@ -59,7 +59,7 @@ def tally_poll(polls, poll, send):
     votes = polls[poll]['votes']
     send("%s poll: %s, %d votes" % (status, question, len(votes)))
     votemap = {}
-    for key, group in groupby(sorted(votes), key=lambda x: votes[x]):
+    for key, group in groupby(sorted(votes), key=lambda x: votes[x].lower()):
         votemap[key] = list(group)
     for x in votemap:
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
