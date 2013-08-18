@@ -670,7 +670,7 @@ class BotHandler():
                 return
             if not cmd[1].isdigit():
                 send("Not A Number")
-            elif len(self.issues) < int(cmd[1]):
+            elif not self.issues or len(self.issues) < int(cmd[1]):
                 send("Not a valid issue")
             else:
                 num = int(cmd[1])
@@ -686,7 +686,7 @@ class BotHandler():
                 return
             if not cmd[1].isdigit():
                 send("Not A Number")
-            elif len(self.issues) < int(cmd[1]):
+            elif not self.issues or len(self.issues) < int(cmd[1]):
                 send("Not a valid issue")
             else:
                 self.issues.pop(int(cmd[1]))
