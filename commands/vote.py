@@ -17,7 +17,7 @@
 import json
 import os
 
-args = ['nick', 'srcdir']
+args = ['nick', 'srcdir', 'is_admin']
 
 
 def start_poll(pollfile, polls, poll):
@@ -70,7 +70,7 @@ def tally_poll(polls, poll, send):
 
 def vote(pollfile, polls, nick, vote, poll):
     if not poll:
-        return "Which poll?"
+        return "Syntax: <vote> <pollnum>"
     if not poll.isdigit():
         return "Not A Number."
     poll = int(poll)
@@ -135,7 +135,10 @@ def cmd(send, msg, args):
     elif cmd[0] == 'start':
         send(start_poll(pollfile, polls, msg))
     elif cmd[0] == 'end':
-        send(end_poll(pollfile, polls, msg))
+        if args['is_admin'](args['nick']):
+            send(end_poll(pollfile, polls, msg))
+        else:
+            send("Nope, not gonna do it.")
     elif cmd[0] == 'tally':
         tally_poll(polls, msg, send)
     elif cmd[0] in positive:
