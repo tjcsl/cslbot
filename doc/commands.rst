@@ -25,14 +25,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`addquote` Module
-----------------------
-
-.. automodule:: commands.addquote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`admins` Module
 --------------------
 
@@ -305,14 +297,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`listquotes` Module
-------------------------
-
-.. automodule:: commands.listquotes
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`lmgtfy` Module
 --------------------
 
@@ -413,14 +397,6 @@ commands Package
 --------------------
 
 .. automodule:: commands.random
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`removequote` Module
--------------------------
-
-.. automodule:: commands.removequote
     :members:
     :undoc-members:
     :show-inheritance:
