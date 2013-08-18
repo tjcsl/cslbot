@@ -31,7 +31,7 @@ def start_poll(pollfile, polls, poll):
 
 def end_poll(pollfile, polls, poll):
     if not poll:
-        return "Missing argument."
+        return "Syntax: !vote end <pollnum>"
     if not poll.isdigit():
         return "Not A Number."
     poll = int(poll)
@@ -44,7 +44,7 @@ def end_poll(pollfile, polls, poll):
 
 def tally_poll(polls, poll, send):
     if not poll:
-        send("Missing argument.")
+        send("Syntax: !vote tally <pollnum>")
         return
     if not poll.isdigit():
         send("Not A Number.")
@@ -70,7 +70,7 @@ def tally_poll(polls, poll, send):
 
 def vote(pollfile, polls, nick, vote, poll):
     if not poll:
-        return "Syntax: <vote> <pollnum>"
+        return "Syntax: !vote <yes|no> <pollnum>"
     if not poll.isdigit():
         return "Not A Number."
     poll = int(poll)
