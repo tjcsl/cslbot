@@ -33,7 +33,4 @@ def cmd(send, msg, args):
             return
         headFlips = randint(0, msg)
         tailFlips = msg - headFlips
-        if len(str(headFlips)) > 5:
-            headFlips = "%e" % float(headFlips)
-            tailFlips = "%e" % float(tailFlips)
-        send('The coins land on heads %s times and on tails %s times.' % (headFlips, tailFlips))
+        send('The coins land on heads %g times and on tails %g times.' % (headFlips, tailFlips))
