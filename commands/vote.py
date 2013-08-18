@@ -110,7 +110,7 @@ def save_polls(pollfile, polls):
 
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: !vote <start|end|list|tally|yes|no>
+    Syntax: !vote <start|end|list|tally|vote>
     """
     pollfile = args['srcdir'] + "/data/polls"
     if os.path.isfile(pollfile):
