@@ -19,7 +19,7 @@ def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson <message>
     """
-    if randrange(1,2) == 1:
+    if randrange(1,3) == 1:
         output = "wheeeee %s" % msg
         send(output.upper())
     else:
