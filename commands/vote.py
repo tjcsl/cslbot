@@ -59,11 +59,11 @@ def tally_poll(polls, poll, send):
     no = polls[poll]['against']
     send("%s poll: %s" % (status, question))
     if yes:
-        send("For: %d -- %s" % (len(yes), ",".join(yes)))
+        send("For: %d -- %s" % (len(yes), " , ".join(yes)))
     else:
         send("For: 0")
     if no:
-        send("Against: %d -- %s" % (len(no), ",".join(no)))
+        send("Against: %d -- %s" % (len(no), " , ".join(no)))
     else:
         send("Against: 0")
 
