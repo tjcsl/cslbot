@@ -677,7 +677,6 @@ class BotHandler():
                 msg = self.issues[num][0]
                 source = self.issues[num][1]
                 issue = self.modules['issue'].create_issue(msg, source)
-                send(str(self.issues))
                 self.issues.pop(num)
                 send("Issue Created -- %s" % issue)
         elif cmd[0] == "reject":
