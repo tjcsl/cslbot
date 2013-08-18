@@ -53,9 +53,12 @@ class IrcBot(SingleServerIRCBot):
             cmd = e.arguments[0].strip()
             if not cmd:
                 return
-            if cmd.split()[0] == '!reload' and e.source.nick in ADMINS:
-                cmdargs = cmd[len('!reload') + 1:]
-                self.do_reload(c, target, cmdargs, 'irc')
+            if cmd.split()[0] == '!reload':
+                if e.source.nick not in ADMINS:
+                    c.privmsg(target, "Nope, not gonna do it.")
+                else:
+                    cmdargs = cmd[len('!reload') + 1:]
+                    self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]

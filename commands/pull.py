@@ -17,7 +17,7 @@
 import subprocess
 from config import NICK
 
-args = ['srcdir']
+args = ['srcdir', 'is_admin', 'nick']
 
 
 def do_pull(srcdir):
@@ -31,8 +31,11 @@ def cmd(send, msg, args):
     """Pull changes.
     Syntax: !pull <branch>
     """
-    try:
-        send(do_pull(args['srcdir']))
-    except subprocess.CalledProcessError as e:
-        for line in e.output.decode().splitlines():
-            send(line)
+    if not args['is_admin'](args['nick']):
+        send("Nope, not gonna do it.")
+    else:
+        try:
+            send(do_pull(args['srcdir']))
+        except subprocess.CalledProcessError as e:
+            for line in e.output.decode().splitlines():
+                send(line)
