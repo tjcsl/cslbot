@@ -23,7 +23,9 @@ def cmd(send, msg, args):
         output = "wheeeee %s" % msg
         send(output.upper())
     else:
+        i = 0
         output = msg.split(' ')
         for i in msg:
             output[i] = 'fwil' + output[i]
+            i++
         send(output.lower())
