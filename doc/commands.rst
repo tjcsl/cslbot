@@ -521,6 +521,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`vote` Module
+------------------
+
+.. automodule:: commands.vote
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`weather` Module
 ---------------------
 
