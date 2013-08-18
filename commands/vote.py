@@ -30,6 +30,33 @@ def start_poll(pollfile, polls, poll):
     return "Poll created."
 
 
+def delete_poll(pollfile, polls, poll):
+    if not poll:
+        return "Syntax: !vote delete <pollnum>"
+    if not poll.isdigit():
+        return "Not A Number."
+    poll = int(poll)
+    if len(polls) <= poll:
+        return "Invalid poll index."
+    polls.pop(poll)
+    save_polls(pollfile, polls)
+    return "Poll deleted."
+
+
+def edit_poll(pollfile, polls, poll):
+    cmd = poll.split()
+    if len(cmd) < 2:
+        return "Syntax: !vote edit <pollnum> <question>"
+    if not cmd[0].isdigit():
+        return "Not A Number."
+    poll = int(cmd[0])
+    if len(polls) <= poll:
+        return "Invalid poll index."
+    polls[poll]['question'] = " ".join(cmd[1:])
+    save_polls(pollfile, polls)
+    return "Poll updated."
+
+
 def end_poll(pollfile, polls, poll):
     if not poll:
         return "Syntax: !vote end <pollnum>"
@@ -110,7 +137,7 @@ def save_polls(pollfile, polls):
 
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: !vote <start|end|list|tally|vote>
+    Syntax: !vote <start|end|list|tally|edit|delete|vote>
     """
     pollfile = args['srcdir'] + "/data/polls"
     if os.path.isfile(pollfile):
@@ -126,6 +153,16 @@ def cmd(send, msg, args):
     elif cmd[0] == 'end':
         if args['is_admin'](args['nick']):
             send(end_poll(pollfile, polls, msg))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd[0] == 'delete':
+        if args['is_admin'](args['nick']):
+            send(delete_poll(pollfile, polls, msg))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd[0] == 'edit':
+        if args['is_admin'](args['nick']):
+            send(edit_poll(pollfile, polls, msg))
         else:
             send("Nope, not gonna do it.")
     elif cmd[0] == 'tally':

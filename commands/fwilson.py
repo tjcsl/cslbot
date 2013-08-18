@@ -16,11 +16,15 @@
 
 from random import random
 
+args = ['modules']
+
 
 def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson <message>
     """
+    if not msg:
+        msg = args['modules']['word'].gen_word()
     if random() < 0.5:
         output = "wheeeee %s" % msg
         send(output.upper())
