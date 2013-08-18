@@ -8,5 +8,6 @@ IrcBot
    client
    commands
    config
+   control
    handler
    server

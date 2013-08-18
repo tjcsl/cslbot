@@ -19,12 +19,12 @@ import re
 import os
 import json
 import importlib
-import logging
 import imp
 import time
 import socket
 import string
 import errno
+import control
 from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
 from os.path import basename, dirname
 from glob import glob
@@ -522,175 +522,6 @@ class BotHandler():
                 raise Exception("Invalid Argument: " + arg)
         return realargs
 
-    def handle_ctrlchan(self, msg, c, send):
-        """ Handle the control channel."""
-        cmd = msg.split()
-        if cmd[0] == "quote":
-            c.send_raw(" ".join(cmd[1:]))
-        elif cmd[0] == "cs" or cmd[0] == "chanserv":
-            if len(cmd) < 3:
-                send("Missing arguments.")
-                return
-            if cmd[1] == "op" or cmd[1] == "o":
-                action = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            elif cmd[1] == "deop" or cmd[1] == "do":
-                action = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            elif cmd[1] == "voice" or cmd[1] == "v":
-                action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            elif cmd[1] == "devoice" or cmd[1] == "dv":
-                action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-            c.privmsg("ChanServ", action)
-        elif cmd[0] == "disable":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if cmd[1] == "kick":
-                if not self.kick_enabled:
-                    send("Kick already disabled.")
-                else:
-                    self.kick_enabled = False
-                    send("Kick disabled.")
-            elif cmd[1] == "module":
-                if len(cmd) < 3:
-                    send("Missing argument.")
-                    return
-                if cmd[2] in self.disabled_mods:
-                    send("Module already disabled.")
-                elif cmd[2] in self.modules:
-                    self.disabled_mods.append(cmd[2])
-                    send("Module disabled.")
-                else:
-                    send("Module does not exist.")
-            elif cmd[1] == "logging":
-                if logging.getLogger().getEffectiveLevel() == logging.INFO:
-                    send("logging already disabled.")
-                else:
-                    logging.getLogger().setLevel(logging.INFO)
-                    send("Logging disabled.")
-            elif cmd[1] == "chanlog":
-                if self.log_to_ctrlchan:
-                    self.log_to_ctrlchan = False
-                    send("Control channel logging disabled.")
-                else:
-                    send("Control channel logging is already disabled.")
-        elif cmd[0] == "enable":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if cmd[1] == "kick":
-                if self.kick_enabled:
-                    send("Kick already enabled.")
-                else:
-                    self.kick_enabled = True
-                    send("Kick enabled.")
-            elif cmd[1] == "module":
-                if len(cmd) < 3:
-                    send("Missing argument.")
-                    return
-                if cmd[2] in self.modules:
-                    if cmd[2] in self.disabled_mods:
-                        self.disabled_mods.remove(cmd[2])
-                        send("Module enabled.")
-                    else:
-                        send("Module already enabled.")
-                else:
-                    send("Module does not exist.")
-            elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
-                self.disabled_mods = []
-                send("Enabled all modules.")
-            elif cmd[1] == "logging":
-                if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-                    send("logging already enabled.")
-                else:
-                    logging.getLogger().setLevel(logging.DEBUG)
-                    send("Logging enabled.")
-            elif cmd[1] == "chanlog":
-                if not self.log_to_ctrlchan:
-                    self.log_to_ctrlchan = True
-                    send("Control channel logging enabled.")
-                else:
-                    send("Control channel logging is already enabled.")
-        elif cmd[0] == "get":
-            if len(cmd) < 3:
-                send("Missing argument.")
-                return
-            elif cmd[1] == "disabled" and cmd[2] == "modules":
-                mods = ", ".join(sorted(self.disabled_mods))
-                if not mods:
-                    send("No disabled modules.")
-                send(mods)
-            elif cmd[1] == "enabled" and cmd[2] == "modules":
-                mods = ", ".join(sorted([i for i in self.modules if i not in self.disabled_mods]))
-                send(mods)
-        elif cmd[0] == "help":
-            send("quote <raw command>")
-            send("cs|chanserv <chanserv command>")
-            send("disable|enable <kick|module <module>|logging|chanlog>")
-            send("get <disabled|enabled> modules")
-            send("show <guarded|issues>")
-            send("accept|reject <issuenum>")
-            send("guard|unguard <nick>")
-        elif cmd[0] == "guard":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if cmd[1] in self.guarded:
-                send("already guarding " + cmd[1])
-            else:
-                self.guarded.append(cmd[1])
-                send("guarding " + cmd[1])
-        elif cmd[0] == "unguard":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if cmd[1] not in self.guarded:
-                send("%s is not being guarded" % cmd[1])
-            else:
-                self.guarded.remove(cmd[1])
-                send("no longer guarding " + cmd[1])
-        elif cmd[0] == "show":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if cmd[1] == "guarded":
-                if self.guarded:
-                    send(", ".join(self.guarded))
-                else:
-                    send("Nobody is guarded.")
-            if cmd[1] == "issues":
-                if self.issues:
-                    for index, issue in enumerate(self.issues):
-                        msg = "#%d %s -- by %s" % (index, issue[0], issue[1])
-                        send(msg)
-                else:
-                    send("No outstanding issues.")
-        elif cmd[0] == "accept":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if not cmd[1].isdigit():
-                send("Not A Number")
-            elif not self.issues or len(self.issues) < int(cmd[1]):
-                send("Not a valid issue")
-            else:
-                num = int(cmd[1])
-                msg = self.issues[num][0]
-                source = self.issues[num][1]
-                issue = self.modules['issue'].create_issue(msg, source)
-                self.issues.pop(num)
-                send("Issue Created -- %s" % issue)
-        elif cmd[0] == "reject":
-            if len(cmd) < 2:
-                send("Missing argument.")
-                return
-            if not cmd[1].isdigit():
-                send("Not A Number")
-            elif not self.issues or len(self.issues) < int(cmd[1]):
-                send("Not a valid issue")
-            else:
-                self.issues.pop(int(cmd[1]))
-                send("Issue Rejected.")
-
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
@@ -718,7 +549,7 @@ class BotHandler():
             return
 
         if e.target == CTRLCHAN:
-            self.handle_ctrlchan(msg, c, send)
+            control.handle_ctrlchan(self, msg, c, send)
 
         # crazy regex to match urls
         match = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»....]))", msg)
@@ -756,6 +587,7 @@ class BotHandler():
         if cmd[0] == CMDCHAR:
             if cmd[1:] == 'reload' and nick in ADMINS:
                 found = True
+                imp.reload(control)
                 for x in self.modules.values():
                     imp.reload(x)
                 send("Aye Aye Capt'n")
