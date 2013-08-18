@@ -590,7 +590,6 @@ class BotHandler():
                     send("Nope, not gonna do it.")
                 else:
                     found = True
-                    imp.reload(control)
                     for x in self.modules.values():
                         imp.reload(x)
                     send("Aye Aye Capt'n")

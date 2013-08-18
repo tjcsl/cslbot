@@ -20,6 +20,7 @@ import traceback
 import imp
 import handler
 import server
+import control
 from irc.bot import ServerSpec, SingleServerIRCBot
 from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
 from os.path import basename, dirname
@@ -79,6 +80,7 @@ class IrcBot(SingleServerIRCBot):
             c.privmsg(target, output)
         imp.reload(handler)
         imp.reload(server)
+        imp.reload(control)
         self.server.shutdown()
         self.server.socket.close()
         self.server = server.init_server(self)
