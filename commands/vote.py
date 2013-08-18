@@ -16,6 +16,7 @@
 
 import json
 import os
+from itertools import groupby
 
 args = ['nick', 'srcdir', 'is_admin']
 
@@ -23,7 +24,7 @@ args = ['nick', 'srcdir', 'is_admin']
 def start_poll(pollfile, polls, poll):
     if not poll:
         return "Polls need a question."
-    poll = {'question': poll, 'active': True, 'for': [], 'against': []}
+    poll = {'question': poll, 'active': True, 'votes': {}}
     polls.append(poll)
     save_polls(pollfile, polls)
     return "Poll created."
@@ -55,22 +56,18 @@ def tally_poll(polls, poll, send):
         return
     question = polls[poll]['question']
     status = "Active" if polls[poll]['active'] else "Ended"
-    yes = polls[poll]['for']
-    no = polls[poll]['against']
-    send("%s poll: %s" % (status, question))
-    if yes:
-        send("For: %d -- %s" % (len(yes), ", ".join(yes)))
-    else:
-        send("For: 0")
-    if no:
-        send("Against: %d -- %s" % (len(no), ", ".join(no)))
-    else:
-        send("Against: 0")
+    votes = polls[poll]['votes']
+    send("%s poll: %s, %d votes" % (status, question, len(votes)))
+    votemap = {}
+    for key, group in groupby(votes, key=lambda x: votes[x]):
+        votemap[key] = list(group)
+    for x in votemap:
+        send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
 
 
-def vote(pollfile, polls, nick, vote, poll):
-    if not poll:
-        return "Syntax: !vote <yes|no> <pollnum>"
+def vote(pollfile, polls, nick, poll, vote):
+    if not vote:
+        return "Syntax: !vote <pollnum> <vote>"
     if not poll.isdigit():
         return "Not A Number."
     poll = int(poll)
@@ -79,25 +76,19 @@ def vote(pollfile, polls, nick, vote, poll):
     poll = polls[poll]
     if not poll['active']:
         return "Poll ended."
+    positive = ['yes', 'y', '1', 'aye']
+    negative = ['no', 'n', '0', 'nay']
+    if vote.lower() in positive:
+        vote = 'yes'
+    if vote.lower() in negative:
+        vote = 'no'
     output = "%s voted %s." % (nick, vote)
-    if vote == 'yes':
-        if nick in poll['for']:
-            return "You've already voted yes."
-        elif nick in poll['against']:
-            poll['against'].remove(nick)
-            poll['for'].append(nick)
-            output = "%s changed his/her vote from no to yes." % nick
+    if nick in poll['votes']:
+        if vote == poll['votes'][nick]:
+            return "You've already voted %s." % vote
         else:
-            poll['for'].append(nick)
-    else:
-        if nick in poll['against']:
-            return "You've already voted no."
-        elif nick in poll['for']:
-            poll['for'].remove(nick)
-            poll['against'].append(nick)
-            output = "%s changed his/her vote from yes to no." % nick
-        else:
-            poll['against'].append(nick)
+            output = "%s changed his/her vote from %s to %s." % (nick, poll['votes'][nick], vote)
+    poll['votes'][nick] = vote
     save_polls(pollfile, polls)
     return output
 
@@ -126,12 +117,10 @@ def cmd(send, msg, args):
         polls = json.load(open(pollfile))
     else:
         polls = []
-    positive = ['yes', 'y', '1', 'aye']
-    negative = ['no', 'n', '0', 'nay']
     cmd = msg.split()
     msg = " ".join(cmd[1:])
     if not cmd:
-        send("Missing argument.")
+        send("Which poll?")
     elif cmd[0] == 'start':
         send(start_poll(pollfile, polls, msg))
     elif cmd[0] == 'end':
@@ -141,11 +130,7 @@ def cmd(send, msg, args):
             send("Nope, not gonna do it.")
     elif cmd[0] == 'tally':
         tally_poll(polls, msg, send)
-    elif cmd[0] in positive:
-        send(vote(pollfile, polls, args['nick'], 'yes', msg))
-    elif cmd[0] in negative:
-        send(vote(pollfile, polls, args['nick'], 'no', msg))
     elif cmd[0] == 'list':
         list_polls(polls, send)
     else:
-        send("Invalid argument.")
+        send(vote(pollfile, polls, args['nick'], cmd[0], msg))

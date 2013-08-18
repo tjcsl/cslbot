@@ -187,8 +187,8 @@ def handle_reject(handler, cmd, send):
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
         send("Not a valid issue")
     else:
-        handler.issues.pop(int(cmd[1]))
-        send("Issue Rejected.")
+        issue = handler.issues.pop(int(cmd[1]))
+        send("Issue Rejected -- %s" % issue[0])
 
 
 def handle_ctrlchan(handler, msg, c, send):
