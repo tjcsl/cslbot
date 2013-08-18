@@ -15,33 +15,105 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import os
 from random import choice
 
-args = ['srcdir']
+args = ['srcdir', 'nick', 'connection', 'is_admin']
 
 
-def getquote(send, srcdir, msg):
-    quotefile = srcdir + "/data/quotes"
-    quotes = json.load(open(quotefile))
-    if not msg:
+def getquote(quotes, msg):
+    if not quotes:
+        return "Nobody has taste in this channel."
+    elif not msg:
         return choice(quotes)
     elif not msg.isdigit():
-        send("Not a Number")
-        return None
+        return "Not a Number"
     elif int(msg) >= len(quotes):
-        send("Invalid quote number.")
-        return None
+        return "Invalid quote number."
     else:
         return quotes[int(msg)]
 
 
-def cmd(send, msg, args):
-    """Returns a random quote.
-    Syntax: !quote <number>
-    """
-    try:
-        quote = getquote(send, args['srcdir'], msg)
-        if quote:
-            send(quote)
-    except (OSError, IndexError):
+def addquote(quotes, quotefile, quote):
+    if not quote:
+        return "No quote given."
+    quotes += [quote]
+    f = open(quotefile, "w")
+    json.dump(quotes, f, indent=True, sort_keys=True)
+    f.write("\n")
+    f.close()
+    return "Quote added successfully."
+
+
+def listquotes(quotes, nick, c, send):
+    if not quotes:
         send("Nobody has taste in this channel.")
+    else:
+        for i in enumerate(quotes):
+            c.privmsg(nick, "%d: %s" % i)
+
+
+def removequote(msg, quotes, quotefile):
+    if not msg:
+        return "Which quote?"
+    if not msg.isdigit():
+        return "Not A Number."
+    key = int(msg)
+    if key >= len(quotes):
+        return "Not a valid quote id."
+    quotes.remove(quotes[key])
+    f = open(quotefile, "w")
+    json.dump(quotes, f, indent=True, sort_keys=True)
+    f.write("\n")
+    f.close()
+    return "Deleted quote successfully."
+
+
+def editquote(msg, quotes, quotefile):
+    cmd = msg.split()
+    if len(cmd) < 2:
+        return "Missing arguments."
+    if not cmd[0].isdigit():
+        return "Not A Number."
+    key = int(cmd[0])
+    if key >= len(quotes):
+        return "Not a valid quote id."
+    quotes[key] = " ".join(cmd[1:])
+    f = open(quotefile, "w")
+    json.dump(quotes, f, indent=True, sort_keys=True)
+    f.write("\n")
+    f.close()
+    return "Edited quote successfully."
+
+
+def cmd(send, msg, args):
+    """Handles quotes.
+    Syntax: !quote <number>, !quote add <quote>, !quote list, !quote remove <number>, !quote edit <number> <quote>
+    """
+    quotefile = args['srcdir'] + "/data/quotes"
+    if os.path.isfile(quotefile):
+        quotes = json.load(open(quotefile))
+    else:
+        quotes = []
+    cmd = msg.split()
+    if not cmd:
+        send(getquote(quotes, msg))
+    elif cmd[0] == "add":
+        quote = " ".join(cmd[1:])
+        send(addquote(quotes, quotefile, quote))
+    elif cmd[0] == "list":
+        listquotes(quotes, args['nick'], args['connection'], send)
+    elif cmd[0] == "remove":
+        if args['is_admin'](args['nick']):
+            msg = " ".join(cmd[1:])
+            send(removequote(msg, quotes, quotefile))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd[0] == "edit":
+        if args['is_admin'](args['nick']):
+            msg = " ".join(cmd[1:])
+            send(editquote(msg, quotes, quotefile))
+        else:
+            send("Nope, not gonna do it.")
+    else:
+        send(getquote(quotes, msg))
