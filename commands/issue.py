@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
-from config import GITHUBAPIKEY, GITHUBREPO
+from config import GITHUBAPIKEY, GITHUBREPO, CTRLCHAN
 from urllib.request import urlopen, Request
 
-args = ['source']
+args = ['source', 'issues', 'connection']
 
 
 def create_issue(msg, nick):
@@ -34,5 +34,6 @@ def cmd(send, msg, args):
     """Files a github issue.
     Syntax: !issue <description>
     """
-    issue = create_issue(msg, args['source'])
-    send("Issue Created -- %s" % issue)
+    args['issues'].append([msg, args['source']])
+    args['connection'].privmsg(CTRLCHAN, "New Issue: %s" % msg)
+    send("Issue submitted for approval.")

@@ -43,6 +43,7 @@ class BotHandler():
         | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for bot abuse.
         | disabled_mods is a array of the currently disabled modules.
+        | issues is a list keeping track of pending issues.
         | logs is a dict containing a in-memory log for the primary channel, control channel, and private messages.
         | channels is a dict containing the objects for each channel the bot is connected to.
         | abuselist is a dict keeping track of how many times nicks have used rate-limited commands.
@@ -55,6 +56,7 @@ class BotHandler():
         self.caps = []
         self.ignored = []
         self.disabled_mods = []
+        self.issues = []
         self.logs = {CHANNEL: [], CTRLCHAN: [], 'private': []}
         self.channels = {}
         self.abuselist = {}
@@ -72,6 +74,7 @@ class BotHandler():
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
         data['disabled_mods'] = list(self.disabled_mods)
+        data['issues'] = list(self.issues)
         data['logs'] = dict(self.logs)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
@@ -85,6 +88,7 @@ class BotHandler():
         self.caps = data['caps']
         self.ignored = data['ignored']
         self.disabled_mods = data['disabled_mods']
+        self.issues = data['issues']
         self.logs = data['logs']
         self.logfiles = data['logfiles']
         self.channels = data['channels']
@@ -502,6 +506,7 @@ class BotHandler():
                 'srcdir': self.srcdir,
                 'logs': self.logs,
                 'admins': self.admins,
+                'issues': self.issues,
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,
                 'source': source,
@@ -609,7 +614,7 @@ class BotHandler():
             if len(cmd) < 3:
                 send("Missing argument.")
                 return
-            if cmd[1] == "disabled" and cmd[2] == "modules":
+            elif cmd[1] == "disabled" and cmd[2] == "modules":
                 mods = ", ".join(sorted(self.disabled_mods))
                 if not mods:
                     send("No disabled modules.")
@@ -622,7 +627,8 @@ class BotHandler():
             send("cs|chanserv <chanserv command>")
             send("disable|enable <kick|module <module>|logging|chanlog>")
             send("get <disabled|enabled> modules")
-            send("show guarded")
+            send("show <guarded|issues>")
+            send("approve|reject <issuenum>")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":
             if len(cmd) < 2:
@@ -651,6 +657,40 @@ class BotHandler():
                     send(", ".join(self.guarded))
                 else:
                     send("Nobody is guarded.")
+            if cmd[1] == "issues":
+                if self.issues:
+                    for index, issue in enumerate(self.issues):
+                        msg = "#%d %s -- by %s" % (index, issue[0], issue[1])
+                        send(msg)
+                else:
+                    send("No outstanding issues.")
+        elif cmd[0] == "approve":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if not cmd[1].isdigit():
+                send("Not A Number")
+            elif len(self.issues) < int(cmd[1]):
+                send("Not a valid issue")
+            else:
+                num = int(cmd[1])
+                msg = self.issues[num][0]
+                source = self.issues[num][1]
+                issue = self.modules['issue'].create_issue(msg, source)
+                send(str(self.issues))
+                self.issues.pop(num)
+                send("Issue Created -- %s" % issue)
+        elif cmd[0] == "reject":
+            if len(cmd) < 2:
+                send("Missing argument.")
+                return
+            if not cmd[1].isdigit():
+                send("Not A Number")
+            elif len(self.issues) < int(cmd[1]):
+                send("Not a valid issue")
+            else:
+                self.issues.pop(int(cmd[1]))
+                send("Issue Rejected.")
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
