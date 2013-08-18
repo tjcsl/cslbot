@@ -132,5 +132,7 @@ def cmd(send, msg, args):
         tally_poll(polls, msg, send)
     elif cmd[0] == 'list':
         list_polls(polls, send)
-    else:
+    elif cmd[0].isdigit():
         send(vote(pollfile, polls, args['nick'], cmd[0], msg))
+    else:
+        send("Syntax: !vote <pollnum> <vote>")
