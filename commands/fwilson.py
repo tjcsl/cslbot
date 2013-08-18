@@ -26,4 +26,5 @@ def cmd(send, msg, args):
         send(output.upper())
     else:
         output = ['fwil' + x for x in msg.split()]
+        output = ' '.join(output)
         send(output.lower())
