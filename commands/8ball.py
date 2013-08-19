@@ -19,7 +19,8 @@ from config import NICK
 
 args = ['connection', 'do_log', 'target', 'nick']
 
-limit = 2
+# prevent people from !8balling repeatedly to get the answer they want.
+limit = 1
 
 
 def cmd(send, msg, args):
