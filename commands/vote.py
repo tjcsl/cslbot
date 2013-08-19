@@ -81,7 +81,7 @@ def tally_poll(polls, poll, send):
         send("Invalid poll index.")
         return
     question = polls[poll]['question']
-    status = "Active" if polls[poll]['active'] else "Ended"
+    status = "Active" if polls[poll]['active'] else "Closed"
     votes = polls[poll]['votes']
     send("%s poll: %s, %d total votes" % (status, question, len(votes)))
     votemap = {}
