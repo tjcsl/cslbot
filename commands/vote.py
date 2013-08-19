@@ -16,7 +16,6 @@
 
 import json
 import os
-from itertools import groupby
 
 args = ['nick', 'srcdir', 'is_admin']
 
@@ -84,11 +83,13 @@ def tally_poll(polls, poll, send):
     question = polls[poll]['question']
     status = "Active" if polls[poll]['active'] else "Ended"
     votes = polls[poll]['votes']
-    send("%s poll: %s, %d votes" % (status, question, len(votes)))
+    send("%s poll: %s, %d total votes" % (status, question, len(votes)))
     votemap = {}
-    for key, group in groupby(votes, key=lambda x: votes[x]):
-        votemap[key] = list(group)
-    for x in votemap:
+    for nick, vote in votes.items():
+        if vote not in votemap:
+            votemap[vote] = []
+        votemap[vote].append(nick)
+    for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
 
 
