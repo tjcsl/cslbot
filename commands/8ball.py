@@ -19,7 +19,7 @@ from config import NICK
 
 args = ['connection', 'do_log', 'target', 'nick']
 
-limit = 1
+limit = 2
 
 
 def cmd(send, msg, args):
