@@ -21,7 +21,7 @@ from random import choice
 
 def cmd(send, msg, args):
     """Return either a random value or the specified one from errno.h.
-    Syntax: !errno <errorcode>
+    Syntax: !errno <errorcode|list>
     """
     errno = subprocess.check_output(['gcc', '-include', 'errno.h', '-fdirectives-only', '-E', '-xc', '/dev/null'])
     errors = re.findall('^#define (E[A-Z]*) ([0-9]+)', errno.decode(), re.MULTILINE)
@@ -29,7 +29,9 @@ def cmd(send, msg, args):
     valtoerr = dict((y, x) for x, y in errors)
     if not msg:
         msg = choice(list(valtoerr.keys()))
-    if msg in errtoval:
+    if msg == 'list':
+        send(", ".join(errtoval.keys()))
+    elif msg in errtoval:
         send('#define %s %s' % (msg, errtoval[msg]))
     elif msg in valtoerr:
         send('#define %s %s' % (valtoerr[msg], msg))

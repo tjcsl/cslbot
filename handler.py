@@ -233,12 +233,12 @@ class BotHandler():
         Records the message in the log.
         """
         msgs = []
-        if len(msg) > 400:
+
+        while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
-            for i in range(0, (int(len(msg) / split_pos)) + 1):
-                msgs.append(msg[i * split_pos:(i + 1) * split_pos].strip())
-        else:
-            msgs.append(msg)
+            msgs.append(msg[:split_pos].strip())
+            msg = msg[split_pos:]
+        msgs.append(msg.strip())
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             self.connection.privmsg(target, i)
