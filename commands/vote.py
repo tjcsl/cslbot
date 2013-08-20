@@ -64,6 +64,8 @@ def end_poll(pollfile, polls, poll):
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."
+    if not polls[poll]['active']:
+        return "Poll already ended."
     polls[poll]['active'] = False
     save_polls(pollfile, polls)
     return "Poll ended."
