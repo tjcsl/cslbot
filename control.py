@@ -177,7 +177,13 @@ def handle_accept(handler, cmd, send):
         apikey = handler.config.get('api', 'githubapikey')
         issue = handler.modules['issue'].create_issue(msg, source, repo, apikey)
         handler.issues.pop(num)
-        send("Issue Created -- %s" % issue)
+        ctrlchan = handler.config.get('core', 'ctrlchan')
+        channel = handler.config.get('core', 'channel')
+        botnick = handler.config.get('core', 'nick')
+        nick = source.split('!')[0]
+        msg = "Issue Created -- %s -- %s" % (issue, msg)
+        handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+        handler.do_log('private', botnick, msg, 'privmsg')
 
 
 def handle_reject(handler, cmd, send):
@@ -189,8 +195,14 @@ def handle_reject(handler, cmd, send):
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
         send("Not a valid issue")
     else:
-        issue = handler.issues.pop(int(cmd[1]))
-        send("Issue Rejected -- %s" % issue[0])
+        msg, source = handler.issues.pop(int(cmd[1]))
+        ctrlchan = handler.config.get('core', 'ctrlchan')
+        channel = handler.config.get('core', 'channel')
+        botnick = handler.config.get('core', 'nick')
+        nick = source.split('!')[0]
+        msg = "Issue Rejected -- %s" % msg
+        handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+        handler.do_log('private', botnick, msg, 'privmsg')
 
 
 def handle_ctrlchan(handler, msg, c, send):
