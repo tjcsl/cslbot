@@ -17,7 +17,7 @@
 import socketserver
 import threading
 import traceback
-import importlib
+import imp
 from os.path import basename
 
 WELCOME = """
@@ -104,7 +104,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     ctrlchan = bot.config.get('core', 'ctrlchan')
                     output = bot.do_reload(bot.connection, ctrlchan, cmdargs, 'server')
                     for x in bot.handler.modules.values():
-                        importlib.reload(x)
+                        imp.reload(x)
                     if output:
                         send(output + '\n')
                     send("Aye Aye Capt'n\n")

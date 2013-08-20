@@ -19,6 +19,7 @@ import re
 import os
 import json
 import importlib
+import imp
 import time
 import socket
 import string
@@ -598,7 +599,7 @@ class BotHandler():
                 else:
                     found = True
                     for x in self.modules.values():
-                        importlib.reload(x)
+                        imp.reload(x)
                     send("Aye Aye Capt'n")
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
