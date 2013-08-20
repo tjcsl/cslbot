@@ -17,7 +17,8 @@
 from urllib.request import urlopen
 from urllib.parse import quote
 from xml.etree import ElementTree
-from config import DICTIONARYAPIKEY
+
+args = ['config']
 
 
 def cmd(send, msg, args):
@@ -27,7 +28,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Define what?")
         return
-    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), DICTIONARYAPIKEY))
+    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), args['config'].get('api', 'dictionaryapikey')))
     xml = ElementTree.parse(xml)
     word = xml.find('./entry/def/dt')
     if not hasattr(word, 'text'):

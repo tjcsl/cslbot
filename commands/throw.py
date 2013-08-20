@@ -16,9 +16,8 @@
 
 import re
 from random import choice
-from config import NICK
 
-args = ['channels', 'target', 'connection', 'nick', 'do_log']
+args = ['channels', 'target', 'connection', 'nick', 'do_log', 'config']
 
 
 def cmd(send, msg, args):
@@ -40,4 +39,4 @@ def cmd(send, msg, args):
     else:
         send("Throw what?")
         return
-    args['do_log'](NICK, msg, 'action')
+    args['do_log'](args['config'].get('core', 'nick'), msg, 'action')

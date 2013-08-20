@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import NICK
+args = ['config']
 
 
 def cmd(send, msg, args):
@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         send("This tastes yummy!")
-    elif msg == NICK:
+    elif msg == args['config'].get('core', 'nick'):
         send("wyang says Cannibalism is generally frowned upon.")
     else:
         send(msg.capitalize() + " tastes yummy!")

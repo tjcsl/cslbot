@@ -21,23 +21,25 @@ import imp
 import handler
 import server
 import control
+from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
-from config import CHANNEL, CTRLCHAN, NICK, NICKPASS, HOST, ADMINS, CTRLKEY
 from os.path import basename, dirname
 from time import sleep
 
 
 class IrcBot(SingleServerIRCBot):
 
-    def __init__(self, channel, nick, nickpass, host, port=6667):
+    def __init__(self, config, port=6667):
         """Setup everything.
 
         | Setup the handler.
         | Setup the server.
         | Connect to the server.
         """
-        self.handler = handler.BotHandler()
-        serverinfo = ServerSpec(host, port, nickpass)
+        self.handler = handler.BotHandler(config)
+        self.config = config
+        serverinfo = ServerSpec(config.get('core', 'host'), port, config.get('auth', 'nickpass'))
+        nick = config.get('core', 'nick')
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         #fix unicode problems
         self.connection.buffer_class.errors = 'replace'
@@ -55,7 +57,8 @@ class IrcBot(SingleServerIRCBot):
             if not cmd:
                 return
             if cmd.split()[0] == '!reload':
-                if e.source.nick not in ADMINS:
+                admins = self.config.get('auth', 'admins').split(',')
+                if e.source.nick not in admins:
                     c.privmsg(target, "Nope, not gonna do it.")
                     return
                 cmdargs = cmd[len('!reload') + 1:]
@@ -76,17 +79,18 @@ class IrcBot(SingleServerIRCBot):
         """
         output = None
         if cmdargs == 'pull':
-            output = self.handler.modules['pull'].do_pull(dirname(__file__))
+            output = self.handler.modules['pull'].do_pull(dirname(__file__), self.config.get('core', 'nick'))
             c.privmsg(target, output)
         imp.reload(handler)
         imp.reload(server)
         imp.reload(control)
+        self.config.read_file(open('config.cfg'))
         self.server.shutdown()
         self.server.socket.close()
         self.server = server.init_server(self)
         # preserve data
         data = self.handler.get_data()
-        self.handler = handler.BotHandler()
+        self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
         if output:
@@ -103,11 +107,11 @@ class IrcBot(SingleServerIRCBot):
         | Join the primary channel.
         | Join the control channel.
         """
-        logging.info("Connected to server " + HOST)
+        logging.info("Connected to server %s" % self.config.get('core', 'host'))
         self.handler.connection = c
         self.handler.get_admins(c)
-        c.join(CHANNEL)
-        c.join(CTRLCHAN, CTRLKEY)
+        c.join(self.config.get('core', 'channel'))
+        c.join(self.config.get('core', 'ctrlchan'), self.config.get('auth', 'ctrlkey'))
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -127,7 +131,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nick(self, c, e):
         """Log nick changes."""
-        self.handler.do_log(CHANNEL, e.source.nick, e.target, 'nick')
+        self.handler.do_log(self.config.get('core', 'channel'), e.source.nick, e.target, 'nick')
 
     def on_mode(self, c, e):
         """Pass mode changes to :func:`handle_msg`."""
@@ -135,7 +139,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_quit(self, c, e):
         """Log quits."""
-        self.handler.do_log(CHANNEL, e.source, e.arguments[0], 'quit')
+        self.handler.do_log(self.config.get('core', 'channel'), e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
         """Handle joins.
@@ -145,7 +149,7 @@ class IrcBot(SingleServerIRCBot):
         | If we've been kicked, yell at the kicker.
         """
         self.handler.do_log(e.target, e.source, e.target, 'join')
-        if e.source.nick != NICK:
+        if e.source.nick != self.config.get('core', 'nick'):
             return
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
@@ -161,7 +165,7 @@ class IrcBot(SingleServerIRCBot):
         | Remove the channel from the list of channels.
         """
         self.handler.do_log(e.target, e.source, e.target, 'part')
-        if e.source.nick != NICK:
+        if e.source.nick != self.config.get('core', 'nick'):
             return
         del self.handler.channels[e.target]
         logging.info("Parted channel " + e.target)
@@ -179,7 +183,7 @@ class IrcBot(SingleServerIRCBot):
         """
         self.handler.do_log(e.target, e.source.nick, ','.join(e.arguments), 'kick')
         # we don't care about other people.
-        if e.arguments[0] != NICK:
+        if e.arguments[0] != self.config.get('core', 'nick'):
             return
         logging.info("Kicked from channel " + e.target)
         self.kick = [e.source.nick, e.arguments[1]]
@@ -195,7 +199,9 @@ def main():
     | Initialize the bot and start processing messages.
     """
     logging.basicConfig(level=logging.INFO)
-    bot = IrcBot(CHANNEL, NICK, NICKPASS, HOST)
+    config = ConfigParser()
+    config.read_file(open('config.cfg'))
+    bot = IrcBot(config)
     bot.server = server.init_server(bot)
     bot.start()
 

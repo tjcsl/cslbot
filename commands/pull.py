@@ -15,14 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-from config import NICK
 
-args = ['srcdir', 'is_admin', 'nick']
+args = ['srcdir', 'is_admin', 'nick', 'config']
 
 
-def do_pull(srcdir):
+def do_pull(srcdir, nick):
     #FIXME: Permissions hack.
-    if NICK == "msbobBot":
+    if nick == "msbobBot":
         subprocess.check_output(["sudo", "/home/peter/ircbot/fixperms.sh"], stderr=subprocess.STDOUT)
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
@@ -35,7 +34,7 @@ def cmd(send, msg, args):
         send("Nope, not gonna do it.")
     else:
         try:
-            send(do_pull(args['srcdir']))
+            send(do_pull(args['srcdir']), args['config'].get('core', 'nick'))
         except subprocess.CalledProcessError as e:
             for line in e.output.decode().splitlines():
                 send(line)

@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import CHANNEL
 from random import choice
-args = ['nick', 'channels', 'target']
+args = ['nick', 'channels', 'target', 'config']
 
 
 def cmd(send, msg, args):
@@ -26,7 +25,7 @@ def cmd(send, msg, args):
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     slap = '%s slaps %s around a bit with %s'
     if not msg:
-        channel = args['target'] if args['target'] != 'private' else CHANNEL
+        channel = args['target'] if args['target'] != 'private' else args['config'].get('core', 'channel')
         users = list(args['channels'][channel].users())
         send(slap % (args['nick'], choice(users), choice(implements)))
         return

@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-from config import NICK
-args = ['logs', 'target', 'nick']
+args = ['logs', 'target', 'nick', 'config']
 
 
 def cmd(send, msg, args):
@@ -28,7 +27,7 @@ def cmd(send, msg, args):
     if not msg or len(msg) < 3:
         return
     if args['target'] == 'private':
-        send("Don't worry, %s is not a grammar Nazi." % NICK)
+        send("Don't worry, %s is not a grammar Nazi." % args['config'].get('core', 'nick'))
         return
     log = args['logs'][args['target']][:-1]
     string = msg[0]

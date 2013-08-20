@@ -17,10 +17,9 @@
 import re
 import time
 import sys
-from config import CHANNEL
 
 limit = 5
-args = ['nick', 'channels', 'connection', 'is_admin', 'target']
+args = ['nick', 'channels', 'connection', 'is_admin', 'target', 'config']
 
 
 def do_nuke(args, target, channel):
@@ -50,7 +49,7 @@ def cmd(send, msg, args):
     Syntax: !microvave <level> <target>
     """
     nick = args['nick']
-    channel = args['target'] if args['target'] != 'private' else CHANNEL
+    channel = args['target'] if args['target'] != 'private' else args['config'].get('core', 'channel')
     levels = {1: 'Whirr...',
               2: 'Vrrm...',
               3: 'Zzzzhhhh...',

@@ -173,7 +173,9 @@ def handle_accept(handler, cmd, send):
     else:
         num = int(cmd[1])
         msg, source = handler.issues[num]
-        issue = handler.modules['issue'].create_issue(msg, source)
+        repo = handler.config.get('api', 'githubrepo')
+        apikey = handler.config.get('api', 'githubapikey')
+        issue = handler.modules['issue'].create_issue(msg, source, repo, apikey)
         handler.issues.pop(num)
         send("Issue Created -- %s" % issue)
 

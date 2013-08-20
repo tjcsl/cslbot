@@ -16,11 +16,12 @@
 
 import json
 from random import choice
-from config import EBAYAPIKEY
 from urllib.request import urlopen, Request
 
+args = ['config']
 
-def get_categories():
+
+def get_categories(apikey):
     url = 'http://open.api.ebay.com/shopping'
     url += '?callname=GetCategoryInfo'
     url += '&CategoryID=-1'
@@ -28,14 +29,14 @@ def get_categories():
     req = Request(url)
     req.add_header('X-EBAY-API-RESPONSE-ENCODING', 'JSON')
     req.add_header('X-EBAY-API-VERSION', '733')
-    req.add_header('X-EBAY-API-APP-ID', EBAYAPIKEY)
+    req.add_header('X-EBAY-API-APP-ID', apikey)
     data = json.loads(urlopen(req).read().decode())
     categories = [category['CategoryID'] for category in data['CategoryArray']['Category']]
     categories.remove('-1')
     return categories
 
 
-def get_item(category):
+def get_item(category, apikey):
     url = 'http://svcs.ebay.com/services/search/FindingService/v1'
     url += '?itemFilter(0).name=FreeShippingOnly&itemFilter(0).value=true'
     url += '&itemFilter(1).name=MaxPrice&itemFilter(1).value=1'
@@ -46,7 +47,7 @@ def get_item(category):
     req = Request(url)
     req.add_header('X-EBAY-SOA-RESPONSE-DATA-FORMAT', 'json')
     req.add_header('X-EBAY-SOA-OPERATION-NAME', 'findItemsAdvanced')
-    req.add_header('X-EBAY-SOA-SECURITY-APPNAME', EBAYAPIKEY)
+    req.add_header('X-EBAY-SOA-SECURITY-APPNAME', apikey)
     data = json.loads(urlopen(req).read().decode())
     item = data['findItemsAdvancedResponse'][0]['searchResult'][0]
     if int(item['@count']) == 0:
@@ -60,8 +61,9 @@ def cmd(send, msg, args):
     """Implements xkcd 576.
     Syntax: !ebay
     """
-    categories = get_categories()
+    apikey = args['config'].get('api', 'ebayapikey')
+    categories = get_categories(apikey)
     item = None
     while not item:
-        item = get_item(choice(categories))
+        item = get_item(choice(categories), apikey)
     send(item)

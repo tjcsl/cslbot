@@ -25,7 +25,6 @@ import socket
 import string
 import errno
 import control
-from config import ADMINS, CHANNEL, CTRLCHAN, NICK, LOGDIR, CMDCHAR
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -36,7 +35,7 @@ from random import choice, random
 
 class BotHandler():
 
-    def __init__(self):
+    def __init__(self, config):
         """ Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not..
@@ -51,22 +50,24 @@ class BotHandler():
         | srcdir is the path to the directory where the bot is stored.
         | logfiles is a dict containing the file objects to which the logs are written.
         """
+        self.config = config
         self.guarded = []
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
         self.disabled_mods = []
         self.issues = []
-        self.logs = {CHANNEL: [], CTRLCHAN: [], 'private': []}
+        self.logs = {config.get('core', 'channel'): [], config.get('core', 'ctrlchan'): [], 'private': []}
         self.channels = {}
         self.abuselist = {}
-        self.admins = {nick: False for nick in ADMINS}
+        admins = config.get('auth', 'admins').split(',')
+        self.admins = {nick: False for nick in admins}
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.logfiles = {CHANNEL: open("%s/%s.log" % (LOGDIR, CHANNEL), "a"),
-                         CTRLCHAN: open("%s/%s.log" % (LOGDIR, CTRLCHAN), "a"),
-                         'private': open("%s/private.log" % LOGDIR, "a")}
+        self.logfiles = {config.get('core', 'channel'): open("%s/%s.log" % (config.get('core', 'logdir'), config.get('core', 'channel')), "a"),
+                         config.get('core', 'ctrlchan'): open("%s/%s.log" % (config.get('core', 'logdir'), config.get('core', 'ctrlchan')), "a"),
+                         'private': open("%s/private.log" % config.get('core', 'logdir'), "a")}
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
@@ -122,12 +123,12 @@ class BotHandler():
         | If the nick is not in :const:`ADMINS` then it's not a admin.
         | If NickServ hasn't responded yet, then the admin is unverified, so assume they aren't a admin.
         """
-        if nick not in ADMINS:
+        if nick not in self.config.get('auth', 'admins').split(','):
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
             if complain:
-                c.privmsg(CHANNEL, "Unverified admin: " + nick)
+                c.privmsg(self.config.get('core', 'channel'), "Unverified admin: " + nick)
             return False
         else:
             return True
@@ -142,8 +143,8 @@ class BotHandler():
         if not match:
             return
         if nick != 'NickServ':
-            if nick in self.channels[CHANNEL].users():
-                c.privmsg(CHANNEL, "Attemped admin abuse by " + nick)
+            if nick in list(self.channels[self.config.get('core', 'channel')].users()):
+                c.privmsg(self.config.get('core', 'channel'), "Attemped admin abuse by " + nick)
                 self.do_kick(c, send, target, nick, "imposter", 'private')
             return
         if int(match.group(2)) == 3:
@@ -176,7 +177,7 @@ class BotHandler():
                 msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
             else:
                 msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
-            self.send(CHANNEL, nick, msg, msgtype)
+            self.send(self.config.get('core', 'channel'), nick, msg, msgtype)
             self.ignore(send, nick)
             return True
 
@@ -188,10 +189,11 @@ class BotHandler():
         """
         nick = e.source.nick
         msg = e.arguments[0].strip()
-        if msg.startswith('%sissue' % CMDCHAR):
+        cmdchar = self.config.get('core', 'cmdchar')
+        if msg.startswith('%sissue' % cmdchar):
             self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
             return
-        elif msg.startswith('%sgcc' % CMDCHAR):
+        elif msg.startswith('%sgcc' % cmdchar):
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
             return
         elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
@@ -304,9 +306,10 @@ class BotHandler():
                 nick = '@' + nick
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
-            if target != CTRLCHAN:
+            ctrlchan = self.config.get('core', 'ctrlchan')
+            if target != ctrlchan:
                 ctrlmsg = "(%s) %s" % (target, log)
-                self.connection.privmsg(CTRLCHAN, ctrlmsg.strip())
+                self.connection.privmsg(ctrlchan, ctrlmsg.strip())
         self.logs[target].append([day, log])
         self.logfiles[target].write(log)
         self.logfiles[target].flush()
@@ -316,18 +319,20 @@ class BotHandler():
 
         Prevent user from leaving the primary channel.
         """
+        channel = self.config.get('core', 'channel')
+        botnick = self.config.get('core', 'nick')
         if not cmdargs:
             # don't leave the primary channel
-            if target == CHANNEL:
-                send("%s must have a home." % NICK)
+            if target == channel:
+                send("%s must have a home." % botnick)
                 return
             else:
                 cmdargs = target
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
         # don't leave the primary channel
-        if cmdargs == CHANNEL:
-            send("%s must have a home." % NICK)
+        if cmdargs == channel:
+            send("%s must have a home." % botnick)
             return
         self.send(cmdargs, nick, "Leaving at the request of " + nick, msgtype)
         c.part(cmdargs)
@@ -344,11 +349,11 @@ class BotHandler():
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
         if cmdargs in self.channels and len(cmd) > 1 and cmd[1] != "force":
-            send("%s is already a member of %s" % (NICK, cmdargs))
+            send("%s is already a member of %s" % (self.config.get('core', 'nick'), cmdargs))
             return
         c.join(cmd[0])
         self.logs[cmd[0]] = []
-        self.logfiles[cmd[0]] = open("%s/%s.log" % (LOGDIR, cmd[0]), "a")
+        self.logfiles[cmd[0]] = open("%s/%s.log" % (self.config.get('core', 'logdir'), cmd[0]), "a")
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
     def do_scores(self, matches, send, msgtype, nick):
@@ -441,7 +446,7 @@ class BotHandler():
         if not ops:
             ops = ['someone']
         if nick not in ops:
-            if NICK not in ops:
+            if self.config.get('core', 'nick') not in ops:
                 c.privmsg(target, self.modules['creffett'].gen_creffett("%s: /op the bot" % choice(ops)))
             elif random() < 0.01 and msg == "shutting caps lock off":
                 c.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
@@ -478,7 +483,8 @@ class BotHandler():
             self.abuselist = {}
             send("Abuse list cleared.")
         elif cmd == 'cadmin':
-            self.admins = {nick: False for nick in ADMINS}
+            admins = self.config.get('auth', 'admins').split(',')
+            self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
         elif cmd == 'ignore':
@@ -509,6 +515,7 @@ class BotHandler():
                 'issues': self.issues,
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,
+                'config': self.config,
                 'source': source,
                 'target': target if target[0] == "#" else "private",
                 'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
@@ -536,7 +543,7 @@ class BotHandler():
             target = e.target
         else:
             target = nick
-        send = lambda msg: self.send(target, NICK, msg, msgtype)
+        send = lambda msg: self.send(target, self.config.get('core', 'nick'), msg, msgtype)
 
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
@@ -548,7 +555,7 @@ class BotHandler():
             self.do_mode(target, msg, nick, send)
             return
 
-        if e.target == CTRLCHAN:
+        if e.target == self.config.get('core', 'ctrlchan'):
             control.handle_ctrlchan(self, msg, c, send)
 
         # crazy regex to match urls
@@ -560,10 +567,11 @@ class BotHandler():
             return
 
         cmd = msg.split()[0]
+        cmdchar = self.config.get('core', 'cmdchar')
+        admins = self.config.get('auth', 'admins').split(',')
 
         self.do_caps(msg, c, target, nick, send)
-
-        if cmd[0] != CMDCHAR:
+        if cmd[0] != cmdchar:
             self.do_band(msg, send)
 
         if cmd[1:] in self.disabled_mods:
@@ -571,11 +579,11 @@ class BotHandler():
             return
 
         # handle !s/a/b/
-        if cmd[:2] == CMDCHAR + 's':
+        if cmd[:2] == cmdchar + 's':
             cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd) + 1:]
         found = False
-        if cmd[0] == CMDCHAR:
+        if cmd[0] == cmdchar:
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
                 if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
@@ -584,9 +592,9 @@ class BotHandler():
                 mod.cmd(send, cmdargs, args)
                 found = True
         # special commands
-        if cmd[0] == CMDCHAR:
+        if cmd[0] == cmdchar:
             if cmd[1:] == 'reload':
-                if nick not in ADMINS:
+                if nick not in admins:
                     send("Nope, not gonna do it.")
                 else:
                     found = True

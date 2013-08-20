@@ -14,10 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import STEAMAPIKEY
-from urllib.request import urlopen
 import json
 import pickle
+from urllib.request import urlopen
+
+args = ['config']
 
 
 def get_ids():
@@ -29,12 +30,13 @@ def cmd(send, msg, args):
     """Gets steam status.
     Syntax: !steam <user>
     """
-    if not STEAMAPIKEY:
+    apikey = args['config'].get('api', 'steamapikey')
+    if not apikey:
         send("API Key not specified.")
         return
     idlist = get_ids()
     try:
-        output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s' % (STEAMAPIKEY, idlist[msg])).read().decode()
+        output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s' % (apikey, idlist[msg])).read().decode()
     except KeyError:
         send("I don't have that player in my database.")
         return

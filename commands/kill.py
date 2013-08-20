@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import NICK
+args = ['config']
 
 
 def cmd(send, msg, args):
@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     if not msg:
         send("kill who?")
         return
-    if msg.lower() == NICK.lower():
+    if msg.lower() == args['config'].get('core', 'nick').lower():
         send('%s is not feeling suicidal right now.' % msg)
     else:
         send('Die, %s!' % msg)

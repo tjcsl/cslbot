@@ -19,7 +19,6 @@ import threading
 import traceback
 import imp
 from os.path import basename
-from config import SERVERPORT, CTRLPASS, CTRLCHAN
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -39,7 +38,8 @@ quit\t\t\tquit the console session
 
 
 def init_server(bot):
-    server = BotNetServer(('', SERVERPORT), BotNetHandler)
+    port = bot.config.getint('core', 'serverport')
+    server = BotNetServer(('', port), BotNetHandler)
     server.bot = bot
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
@@ -69,7 +69,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
-            if not msg or msg[0].strip() != CTRLPASS:
+            ctrlpass = self.bot.config.get('auth', 'ctrlpass')
+            if not msg or msg[0].strip() != ctrlpass:
                 send("Incorrect password.\n")
                 self.request.close()
                 return
@@ -100,13 +101,14 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     send(admins + '\n')
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
-                    output = bot.do_reload(bot.connection, CTRLCHAN, cmdargs, 'server')
+                    ctrlchan = bot.config.get('core', 'ctrlchan')
+                    output = bot.do_reload(bot.connection, ctrlchan, cmdargs, 'server')
                     for x in bot.handler.modules.values():
                         imp.reload(x)
                     if output:
                         send(output + '\n')
                     send("Aye Aye Capt'n\n")
-                    bot.connection.privmsg(CTRLCHAN, "Aye Aye Capt'n (triggered from server)")
+                    bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
                     self.request.close()
                     break
                 elif cmd[0] == "raw":
@@ -127,6 +129,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
-            msg = '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex))
+            msg = '%s in %s on line %s: %s\n' % (name, trace[0], trace[1], str(ex))
             send(msg + '\n')
-            bot.connection.privmsg(CTRLCHAN, msg)
+            ctrlchan = bot.config.get('core', 'ctrlchan')
+            bot.connection.privmsg(ctrlchan, msg)

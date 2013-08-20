@@ -16,11 +16,10 @@
 
 import json
 import re
-from config import WEATHERAPIKEY
 from urllib.request import urlopen
 from urllib.parse import quote
 
-args = ['nick', 'srcdir']
+args = ['nick', 'srcdir', 'config']
 
 
 def get_default(nick, prefsfile, send):
@@ -48,11 +47,11 @@ def set_default(nick, location, prefsfile, send):
     f.close()
 
 
-def get_weather(msg, send):
+def get_weather(msg, send, apikey):
     msg = quote(msg)
     if msg[0] == "-":
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                       % (WEATHERAPIKEY, msg[1:]), timeout=1).read().decode()
+                       % (apikey, msg[1:]), timeout=1).read().decode()
         data = json.loads(html)
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
@@ -78,9 +77,9 @@ def get_weather(msg, send):
         }
     else:
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                       % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+                       % (apikey, msg), timeout=1).read().decode()
         forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
-                               % (WEATHERAPIKEY, msg), timeout=1).read().decode()
+                               % (apikey, msg), timeout=1).read().decode()
         data = json.loads(html)
         if 'current_observation' in data:
             data = data['current_observation']
@@ -115,4 +114,4 @@ def cmd(send, msg, args):
         return
     if not msg:
         msg = get_default(args['nick'], prefsfile, send)
-    get_weather(msg, send)
+    get_weather(msg, send, args['config'].get('api', 'weatherapikey'))

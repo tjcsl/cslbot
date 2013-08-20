@@ -14,10 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from config import CMDCHAR
 from inspect import getdoc
 
-args = ['modules', 'nick', 'connection']
+args = ['modules', 'nick', 'connection', 'config']
 
 
 def cmd(send, msg, args):
@@ -25,7 +24,7 @@ def cmd(send, msg, args):
     Syntax: !help <command>
     """
     if msg:
-        if msg[0] == CMDCHAR:
+        if msg[0] == args['config'].get('core', 'cmdchar'):
             msg = msg[1:]
         if len(msg.split()) > 1:
             send("One argument only")

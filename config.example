@@ -1,17 +1,20 @@
-HOST = 'irc.freenode.net'
-SERVERPORT = 2688
-NICK = 'tjhsstBot'
-NICKPASS = ''
-CTRLPASS = ''
-CTRLKEY = ''
-CHANNEL = '#tjhsst'
-CTRLCHAN = '#tjhsstbot-control'
-ADMINS = ['pfoley', 'ahamilto', 'csssuf', 'fwilson', 'wyang', 'srepetsk', 'sdamashek', 'skasturi']
-STEAMAPIKEY = ''
-LOGDIR = '/var/log/irc/'
-CMDCHAR = '!'
-DICTIONARYAPIKEY = ''
-WEATHERAPIKEY = ''
-EBAYAPIKEY = ''
-GITHUBAPIKEY = ''
-GITHUBREPO = 'fwilson42/ircbot'
+[core]
+host: irc.freenode.net
+serverport: 2688
+nick: Bot
+channel: #channel
+ctrlchan: #channel-control
+cmdchar: !
+logdir: /var/log/irc/
+[auth]
+ctrlpass:
+nickpass:
+ctrlkey:
+admins: admin1, admin2
+[api]
+steamapikey:
+dictionaryapikey:
+weatherapikey:
+ebayapikey:
+githubapikey:
+githubrepo:

@@ -15,9 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from os.path import basename
-from config import NICK
 
-args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled']
+args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'nick']
 
 
 def gen_creffett(msg):
@@ -29,7 +28,7 @@ def cmd(send, msg, args):
     Syntax: !rage <text>
     """
     if 'creffett' in basename(__file__):
-        if not args['nick'].startswith('creffett') and args['nick'] != NICK:
+        if not args['nick'].startswith('creffett') and args['nick'] != args['config'].get('core', 'nick'):
             send("You're not creffett!")
             args['ignore'](args['nick'])
             if args['target'] != 'private':

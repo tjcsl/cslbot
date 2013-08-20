@@ -15,9 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-from config import NICK
 
-args = ['connection', 'do_log', 'target', 'nick']
+args = ['connection', 'do_log', 'target', 'nick', 'config']
 
 # prevent people from !8balling repeatedly to get the answer they want.
 limit = 1
@@ -36,4 +35,4 @@ def cmd(send, msg, args):
     target = args['target'] if args['target'] != 'private' else args['nick']
     msg = 'says... %s' % choice(answers)
     args['connection'].action(target, msg)
-    args['do_log'](NICK, msg, 'action')
+    args['do_log'](args['config'].get('core', 'nick'), msg, 'action')

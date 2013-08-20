@@ -17,9 +17,8 @@
 import re
 import json
 from random import choice
-from config import NICK
 
-args = ['srcdir', 'do_log', 'connection', 'target', 'nick']
+args = ['srcdir', 'do_log', 'connection', 'target', 'nick', 'config']
 
 
 def cmd(send, msg, args):
@@ -34,11 +33,12 @@ def cmd(send, msg, args):
             name = match.group(1).lower()
             try:
                 score = data[name]
-                if name == NICK.lower():
+                botnick = args['config'].get('core', 'nick')
+                if name == botnick.lower():
                     target = args['target'] if args['target'] != 'private' else args['nick']
                     output = 'has %s points! :)' % score
                     args['connection'].action(target, output)
-                    args['do_log'](NICK, output, 'action')
+                    args['do_log'](botnick, output, 'action')
                 else:
                     send("%s has %i points!" % (name, score))
             except:
