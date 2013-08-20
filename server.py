@@ -69,7 +69,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
-            ctrlpass = self.bot.config.get('auth', 'ctrlpass')
+            ctrlpass = bot.config.get('auth', 'ctrlpass')
             if not msg or msg[0].strip() != ctrlpass:
                 send("Incorrect password.\n")
                 self.request.close()

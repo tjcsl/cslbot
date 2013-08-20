@@ -17,57 +17,61 @@
 
 import logging
 import sys
+from configparser import ConfigParser
 from irc.client import SimpleIRCClient
-from config import CTRLCHAN, CTRLPASS, NICK, HOST, CTRLKEY
 
 
 class IrcClient(SimpleIRCClient):
 
-    def __init__(self, nick):
+    def __init__(self, nick, config):
         self.nick = nick
+        self.config = config
         self.loading = False
         SimpleIRCClient.__init__(self)
 
     def on_welcome(self, c, e):
-        c.join(CTRLCHAN, CTRLKEY)
+        c.join(self.config.get('core', 'ctrlchan'), self.config.get('auth', 'ctrlkey'))
 
     def on_mode(self, c, e):
         if self.loading:
             return
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            c.privmsg(CTRLCHAN, '!reload')
+            c.privmsg(self.config.get('core', 'ctrlchan'), '!reload')
             self.loading = True
 
     def on_join(self, c, e):
-        c.mode(CTRLCHAN, "")
+        c.mode(self.config.get('core', 'ctrlchan'), "")
 
     def on_channelmodeis(self, c, e):
         if self.loading:
             return
         if "m" not in e.arguments[1]:
-            c.privmsg(CTRLCHAN, '!reload')
+            c.privmsg(self.config.get('core', 'ctrlchan'), '!reload')
             self.loading = True
 
     def on_pubmsg(self, c, e):
-        if e.source.nick == NICK:
+        ctrlchan = self.config.get('core', 'ctrlchan')
+        if e.source.nick == self.config.get('core', 'nick'):
             if e.arguments[0] == "Aye Aye Capt'n":
                 print("Reload successful.")
-                c.part(CTRLCHAN)
+                c.part(ctrlchan)
                 c.quit()
                 sys.exit(0)
             else:
                 print("Reload failed.")
-                c.part(CTRLCHAN)
+                c.part(ctrlchan)
                 c.quit()
                 sys.exit(1)
 
 
 def main():
     logging.basicConfig(level=logging.INFO)
+    config = ConfigParser()
+    config.read_file(open('config.cfg'))
     PORT = 6667
     CTRLNICK = "bot-controller"
-    client = IrcClient(CTRLNICK)
-    client.connect(HOST, PORT, CTRLNICK, CTRLPASS)
+    client = IrcClient(CTRLNICK, config)
+    client.connect(config.get('core', 'host'), PORT, CTRLNICK, config.get('auth', 'ctrlpass'))
     client.start()
 
 if __name__ == '__main__':

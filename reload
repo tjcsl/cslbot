@@ -1,4 +1,4 @@
 #!/bin/bash
-PASSWORD=`sed -n "s#CTRLPASS = '\([^']*\)'#\1#gp" config.py`
-PORT=`sed -n "s#SERVERPORT = \([0-9]*\)#\1#gp" config.py`
+PASSWORD=`sed -ne 's/ctrlpass: //p' config.cfg`
+PORT=`sed -ne 's/serverport: //p' config.cfg`
 echo -e "$PASSWORD\nreload" | nc localhost $PORT
