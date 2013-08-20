@@ -84,7 +84,7 @@ class IrcBot(SingleServerIRCBot):
         imp.reload(handler)
         imp.reload(server)
         imp.reload(control)
-        self.config.read_file(open('config.cfg'))
+        self.config.read_file(open(dirname(__file__)+'/config.cfg'))
         self.server.shutdown()
         self.server.socket.close()
         self.server = server.init_server(self)
@@ -200,7 +200,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     config = ConfigParser()
-    config.read_file(open('config.cfg'))
+    config.read_file(open(dirname(__file__)+'/config.cfg'))
     bot = IrcBot(config)
     bot.server = server.init_server(bot)
     bot.start()
