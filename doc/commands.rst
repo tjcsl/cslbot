@@ -353,6 +353,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`poll` Module
+------------------
+
+.. automodule:: commands.poll
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`praise` Module
 --------------------
 
