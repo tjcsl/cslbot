@@ -17,7 +17,7 @@
 
 import logging
 import traceback
-import imp
+import importlib
 import handler
 import server
 import control
@@ -81,9 +81,9 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = self.handler.modules['pull'].do_pull(dirname(__file__), self.config.get('core', 'nick'))
             c.privmsg(target, output)
-        imp.reload(handler)
-        imp.reload(server)
-        imp.reload(control)
+        importlib.reload(handler)
+        importlib.reload(server)
+        importlib.reload(control)
         self.config.read_file(open(dirname(__file__)+'/config.cfg'))
         self.server.shutdown()
         self.server.socket.close()
