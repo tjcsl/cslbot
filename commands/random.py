@@ -34,8 +34,8 @@ def gen_random(msg):
 
 
 def cmd(send, msg, args):
-    """Gets a slogan.
-    Syntax: !slogan <text>
+    """Gets a random integer.
+    Syntax: !random <maximum length>
     """
     random = gen_random(msg)
     send(random)
