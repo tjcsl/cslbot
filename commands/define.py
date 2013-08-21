@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Define what?")
         return
-    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), args['config'].get('api', 'dictionaryapikey')))
+    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), args['config']['api']['dictionaryapikey']))
     xml = ElementTree.parse(xml)
     word = xml.find('./entry/def/dt')
     if not hasattr(word, 'text'):

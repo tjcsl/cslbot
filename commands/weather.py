@@ -114,4 +114,4 @@ def cmd(send, msg, args):
         return
     if not msg:
         msg = get_default(args['nick'], prefsfile, send)
-    get_weather(msg, send, args['config'].get('api', 'weatherapikey'))
+    get_weather(msg, send, args['config']['api']['weatherapikey'])

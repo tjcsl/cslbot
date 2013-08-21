@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     Syntax: !rage <text>
     """
     if 'creffett' in basename(__file__):
-        if not args['nick'].startswith('creffett') and args['nick'] != args['config'].get('core', 'nick'):
+        if not args['nick'].startswith('creffett') and args['nick'] != args['config']['core']['nick']:
             send("You're not creffett!")
             args['ignore'](args['nick'])
             if args['target'] != 'private':

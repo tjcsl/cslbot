@@ -61,7 +61,7 @@ def cmd(send, msg, args):
     """Implements xkcd 576.
     Syntax: !ebay
     """
-    apikey = args['config'].get('api', 'ebayapikey')
+    apikey = args['config']['api']['ebayapikey']
     categories = get_categories(apikey)
     item = None
     while not item:

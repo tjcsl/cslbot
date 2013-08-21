@@ -49,7 +49,7 @@ def cmd(send, msg, args):
     Syntax: !microvave <level> <target>
     """
     nick = args['nick']
-    channel = args['target'] if args['target'] != 'private' else args['config'].get('core', 'channel')
+    channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
     levels = {1: 'Whirr...',
               2: 'Vrrm...',
               3: 'Zzzzhhhh...',

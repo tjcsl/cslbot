@@ -34,5 +34,5 @@ def cmd(send, msg, args):
     Syntax: !issue <description>
     """
     args['issues'].append([msg, args['source']])
-    args['connection'].privmsg(args['config'].get('core', 'ctrlchan'), "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
+    args['connection'].privmsg(args['config']['core']['ctrlchan'], "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
     send("Issue submitted for approval.")

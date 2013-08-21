@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     slap = '%s slaps %s around a bit with %s'
     if not msg:
-        channel = args['target'] if args['target'] != 'private' else args['config'].get('core', 'channel')
+        channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
         users = list(args['channels'][channel].users())
         send(slap % (args['nick'], choice(users), choice(implements)))
         return

@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     """Gets steam status.
     Syntax: !steam <user>
     """
-    apikey = args['config'].get('api', 'steamapikey')
+    apikey = args['config']['api']['steamapikey']
     if not apikey:
         send("API Key not specified.")
         return

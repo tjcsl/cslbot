@@ -27,7 +27,7 @@ def cmd(send, msg, args):
     if not msg or len(msg) < 3:
         return
     if args['target'] == 'private':
-        send("Don't worry, %s is not a grammar Nazi." % args['config'].get('core', 'nick'))
+        send("Don't worry, %s is not a grammar Nazi." % args['config']['core']['nick'])
         return
     log = args['logs'][args['target']][:-1]
     string = msg[0]

@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     Syntax: !help <command>
     """
     if msg:
-        if msg[0] == args['config'].get('core', 'cmdchar'):
+        if msg[0] == args['config']['core']['cmdchar']:
             msg = msg[1:]
         if len(msg.split()) > 1:
             send("One argument only")
