@@ -8,14 +8,17 @@ def cmd(send, msg, args):
     topics = msg.split(' ')
     if topics.length == 1:
         topics.append(args['nick'])
+        
     send('wow')
-    if random() < 0.5:
-        send('        so' + topics[0])
-        send('    such' + topics[1])
-    else:
-        send('        such' + topics[0])
-        send('  so' + topics[1])
     
-    quotes = ['omg', 'amaze', 'nice', 'clap']
+    if topics.length != 0:
+        if random() < 0.5:
+            send('        so' + topics[0])
+            send('    such' + topics[1])
+        else:
+            send('        such' + topics[0])
+            send('  so' + topics[1])
+    
+    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
     send(choice(quotes))
     send('           wow')
