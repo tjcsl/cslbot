@@ -16,7 +16,8 @@
 
 
 def cmd(send, msg, args):
-    """Displays a bike.
+    """I've got a bike, you can ride it if you like. It's got a basket, a bell that rings and things to make it look good.
+    I'd give it to you if I could but I borrowed it.
     Syntax: !bike
     """
     send(' _f_,_')
