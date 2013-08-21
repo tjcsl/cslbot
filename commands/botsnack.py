@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         send("This tastes yummy!")
-    elif msg == args['config'].get('core', 'nick'):
+    elif msg == args['config']['core']['nick']:
         send("wyang says Cannibalism is generally frowned upon.")
     else:
         send(msg.capitalize() + " tastes yummy!")

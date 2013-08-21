@@ -34,7 +34,7 @@ def cmd(send, msg, args):
         send("Nope, not gonna do it.")
     else:
         try:
-            send(do_pull(args['srcdir']), args['config'].get('core', 'nick'))
+            send(do_pull(args['srcdir'], args['config']['core']['nick']))
         except subprocess.CalledProcessError as e:
             for line in e.output.decode().splitlines():
                 send(line)
