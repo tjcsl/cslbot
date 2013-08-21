@@ -14,23 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-
-
-def gen_random(msg):
-    #msg = quote(msg)
-    if msg.isdigit() and int(msg) < 1000000000:
-        msg = int(msg)
-    else:
-        msg = 1000000000
-    html = urlopen('http://www.random.org/integers/?num=1&min=1&max=%d&col=1&base=10&format=plain&rnd=new' % msg,
-                   timeout=2).read().decode()
-    return html
+from random import getrandbits
 
 
 def cmd(send, msg, args):
-    """Gets a random integer.
-    Syntax: !random <maximum length>
+    """For when you don't have enough randomness in your life.
+    Syntax: !random
     """
-    random = gen_random(msg)
-    send(random)
+    send(hex(getrandbits(50)))
