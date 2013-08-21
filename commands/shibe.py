@@ -24,19 +24,19 @@ def cmd(send, msg, args):
     Syntax: !shibe <topic> or !shibe <topic1> <topic2>
     """
     topics = msg.split()
-    if topics.length == 1:
+    if len(topics) == 1:
         topics.append(args['nick'])
 
     send('wow')
 
-    if topics.length != 0:
+    if len(topics) != 0:
         if random() < 0.5:
-            send('\t\tso' + topics[0])
+            send('\tso' + topics[0])
             send('\t\tsuch' + topics[1])
         else:
-            send('\t\tsuch' + topics[0])
+            send('\ttsuch' + topics[0])
             send('\t\tso' + topics[1])
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
     send(choice(quotes))
-    send('\t\twow')
+    send('\twow')
