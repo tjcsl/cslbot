@@ -159,11 +159,11 @@ class BotHandler():
         if not match:
             return
         if nick != 'NickServ':
-            if nick in list(self.channels[self.config.get('core', 'channel')]
+            if nick in list(self.channels[self.config['core']['channel']]
                             .users()):
-                c.privmsg(self.config.get('core', 'channel'),
+                c.privmsg(self.config['core']['channel'],
                           "Attemped admin abuse by " + nick)
-                self.do_kick(c, send, target, nick, "imposter", 'private')
+                self.do_kick(c, send, target, nick, "imposter")
             return
         if int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
@@ -489,8 +489,7 @@ class BotHandler():
             send("%s: you're lucky, kick is disabled." % nick)
             return
         if target not in self.channels:
-            send("%s: you\'re lucky, private message kicking hasn\'t been \
-                    implemented yet." % nick)
+            send("%s: you're lucky, private message kicking hasn't been implemented yet." % nick)
             return
         ops = list(self.channels[target].opers())
         if not ops:
