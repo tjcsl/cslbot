@@ -64,12 +64,12 @@ class BotHandler():
         self.ignored = []
         self.disabled_mods = []
         self.issues = []
-        self.logs = {config.get('core', 'channel'): [],
-                     config.get('core', 'ctrlchan'): [],
+        self.logs = {config['core']['channel']: [],
+                     config['core']['ctrlchan']: [],
                      'private': []}
         self.channels = {}
         self.abuselist = {}
-        admins = config.get('auth', 'admins').split(', ')
+        admins = config['auth']['admins'].split(', ')
         self.admins = {nick: False for nick in admins}
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
@@ -137,12 +137,12 @@ class BotHandler():
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
-        if nick not in self.config.get('auth', 'admins').split(', '):
+        if nick not in self.config['auth']['admins'].split(', '):
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
             if complain:
-                c.privmsg(self.config.get('core', 'channel'),
+                c.privmsg(self.config['core']['channel'],
                           "Unverified admin: " + nick)
             return False
         else:
@@ -199,7 +199,7 @@ class BotHandler():
             else:
                 msg = self.modules['creffett'].\
                     gen_creffett("%s: stop abusing the bot" % nick)
-            self.send(self.config.get('core', 'channel'), nick, msg, msgtype)
+            self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True
 
@@ -211,15 +211,14 @@ class BotHandler():
         """
         nick = e.source.nick
         msg = e.arguments[0].strip()
-        cmdchar = self.config.get('core', 'cmdchar')
+        cmdchar = self.config['core']['cmdchar']
         if msg.startswith('%sissue' % cmdchar) \
-                or msg.startswith('%s: issue' % self.config.get('core',
-                                  'cmdchar')):
+                or msg.startswith('%s: issue' % self.config['core']['nick']):
             self.send(nick, nick, 'You want to let everybody know about \
                     your problems, right?', e.type)
             return
         elif msg.startswith('%sgcc' % cmdchar) or \
-                msg.startswith('%s: gcc' % self.config.get('core', 'nick')):
+                msg.startswith('%s: gcc' % self.config['core']['nick']):
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
             return
         elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
@@ -344,7 +343,7 @@ class BotHandler():
                 nick = '@' + nick
             log = '%s <%s> %s\n' % (currenttime, nick, msg)
         if self.log_to_ctrlchan:
-            ctrlchan = self.config.get('core', 'ctrlchan')
+            ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
                 ctrlmsg = "(%s) %s" % (target, log)
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
@@ -357,8 +356,8 @@ class BotHandler():
 
         Prevent user from leaving the primary channel.
         """
-        channel = self.config.get('core', 'channel')
-        botnick = self.config.get('core', 'nick')
+        channel = self.config['core']['channel']
+        botnick = self.config['core']['nick']
         if not cmdargs:
             # don't leave the primary channel
             if target == channel:
@@ -387,14 +386,12 @@ class BotHandler():
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
         if cmdargs in self.channels and len(cmd) > 1 and cmd[1] != "force":
-            send("%s is already a member of %s" % (self.config.get('core',
-                                                                   'nick'),
+            send("%s is already a member of %s" % (self.config['core']['nick'],
                  cmdargs))
             return
         c.join(cmd[0])
         self.logs[cmd[0]] = []
-        self.logfiles[cmd[0]] = open("%s/%s.log" % (self.config.get('core',
-                                                                    'logdir'),
+        self.logfiles[cmd[0]] = open("%s/%s.log" % (self.config['core']['logdir'],
                                      cmd[0]), "a")
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
@@ -495,7 +492,7 @@ class BotHandler():
         if not ops:
             ops = ['someone']
         if nick not in ops:
-            if self.config.get('core', 'nick') not in ops:
+            if self.config['core']['nick'] not in ops:
                 c.privmsg(target, self.modules['creffett'].
                           gen_creffett("%s: /op the bot" % choice(ops)))
             elif random() < 0.01 and msg == "shutting caps lock off":
@@ -533,7 +530,7 @@ class BotHandler():
             self.abuselist = {}
             send("Abuse list cleared.")
         elif cmd == 'cadmin':
-            admins = self.config.get('auth', 'admins').split(', ')
+            admins = self.config['auth']['admins'].split(', ')
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
@@ -568,9 +565,7 @@ class BotHandler():
                 'config': self.config,
                 'source': source,
                 'target': target if target[0] == "#" else "private",
-                'do_kick': lambda target, nick, msg: self.do_kick(c, send,
-                                                                  target, nick,
-                                                                  msg),
+                'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick)}
         for arg in modargs:
@@ -594,10 +589,7 @@ class BotHandler():
             target = e.target
         else:
             target = nick
-        send = lambda msg, mtype='privmsg': self.send(target,
-                                                      self.config.get('core',
-                                                                      'nick'),
-                                                      msg, mtype)
+        send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
 
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
@@ -609,7 +601,7 @@ class BotHandler():
             self.do_mode(target, msg, nick, send)
             return
 
-        if e.target == self.config.get('core', 'ctrlchan'):
+        if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)
 
         # crazy regex to match urls
@@ -624,8 +616,8 @@ class BotHandler():
             return
 
         cmd = msg.split()[0]
-        cmdchar = self.config.get('core', 'cmdchar')
-        admins = self.config.get('auth', 'admins').split(', ')
+        cmdchar = self.config['core']['cmdchar']
+        admins = self.config['auth']['admins'].split(', ')
 
         self.do_caps(msg, c, target, nick, send)
         if cmd[0] != cmdchar:
