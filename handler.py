@@ -241,7 +241,10 @@ class BotHandler():
         msgs.append(msg.strip())
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
-            self.connection.privmsg(target, i)
+            if msgtype == 'action':
+                self.connection.action(target, i)
+            else:
+                self.connection.privmsg(target, i)
 
     def get_split_pos(self, message):
         """ Gets the proper split position at or around position 400 of a message."""
@@ -519,7 +522,6 @@ class BotHandler():
                 'config': self.config,
                 'source': source,
                 'target': target if target[0] == "#" else "private",
-                'do_log': lambda nick, msg, msgtype: self.do_log(target, nick, msg, msgtype),
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
                 'ignore': lambda nick: self.ignore(send, nick)}
@@ -544,7 +546,7 @@ class BotHandler():
             target = e.target
         else:
             target = nick
-        send = lambda msg: self.send(target, self.config.get('core', 'nick'), msg, msgtype)
+        send = lambda msg, mtype='privmsg': self.send(target, self.config.get('core', 'nick'), msg, mtype)
 
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
@@ -602,6 +604,7 @@ class BotHandler():
                     for x in self.modules.values():
                         imp.reload(x)
                     send("Aye Aye Capt'n")
+                    self.get_admins(c)
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
                 self.do_admin(c, cmd[1:], cmdargs, send, nick, msgtype, target)

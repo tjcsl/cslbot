@@ -16,7 +16,7 @@
 
 from random import choice
 
-args = ['channels', 'target', 'connection', 'nick', 'do_log', 'config']
+args = ['channels', 'target', 'nick', 'config']
 
 
 def cmd(send, msg, args):
@@ -24,10 +24,8 @@ def cmd(send, msg, args):
     Syntax: !blame <reason>
     """
     users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
-    target = args['target'] if args['target'] != 'private' else args['nick']
     user = choice(users)
     if msg:
         msg = " for " + msg
     msg = "blames " + user + msg
-    args['connection'].action(target, msg)
-    args['do_log'](args['config'].get('core', 'nick'), msg, 'action')
+    send(msg, 'action')

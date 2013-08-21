@@ -173,13 +173,13 @@ def handle_accept(handler, cmd, send):
     else:
         num = int(cmd[1])
         msg, source = handler.issues[num]
-        repo = handler.config.get('api', 'githubrepo')
-        apikey = handler.config.get('api', 'githubapikey')
+        repo = handler.config['api']['githubrepo']
+        apikey = handler.config['api']['githubapikey']
         issue = handler.modules['issue'].create_issue(msg, source, repo, apikey)
         handler.issues.pop(num)
-        ctrlchan = handler.config.get('core', 'ctrlchan')
-        channel = handler.config.get('core', 'channel')
-        botnick = handler.config.get('core', 'nick')
+        ctrlchan = handler.config['core']['ctrlchan']
+        channel = handler.config['core']['channel']
+        botnick = handler.config['core']['nick']
         nick = source.split('!')[0]
         msg = "Issue Created -- %s -- %s" % (issue, msg)
         handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
@@ -196,9 +196,9 @@ def handle_reject(handler, cmd, send):
         send("Not a valid issue")
     else:
         msg, source = handler.issues.pop(int(cmd[1]))
-        ctrlchan = handler.config.get('core', 'ctrlchan')
-        channel = handler.config.get('core', 'channel')
-        botnick = handler.config.get('core', 'nick')
+        ctrlchan = handler.config['core']['ctrlchan']
+        channel = handler.config['core']['channel']
+        botnick = handler.config['core']['nick']
         nick = source.split('!')[0]
         msg = "Issue Rejected -- %s" % msg
         handler.connection.privmsg_many([ctrlchan, channel, nick], msg)

@@ -17,7 +17,7 @@
 import re
 from random import choice
 
-args = ['channels', 'target', 'connection', 'nick', 'do_log', 'config']
+args = ['channels', 'target' 'nick']
 
 
 def cmd(send, msg, args):
@@ -25,18 +25,16 @@ def cmd(send, msg, args):
     Syntax: !throw <object> at <target>
     """
     users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
-    target = args['target'] if args['target'] != 'private' else args['nick']
     if "at" in msg and msg != "at":
         match = re.match('(.*) at (.*)', msg)
         if match:
             msg = 'throws %s at %s' % (match.group(1), match.group(2))
-            args['connection'].action(target, msg)
+            send(msg, 'action')
         else:
             return
     elif msg:
         msg = 'throws %s at %s' % (msg, choice(users))
-        args['connection'].action(target, msg)
+        send(msg, 'action')
     else:
         send("Throw what?")
         return
-    args['do_log'](args['config'].get('core', 'nick'), msg, 'action')
