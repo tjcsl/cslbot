@@ -22,7 +22,7 @@ args = ['srcdir', 'is_admin', 'nick', 'config']
 def do_pull(srcdir, nick):
     # FIXME: Permissions hack.
     if nick == "msbobBot":
-        subprocess.check_output(["sudo", "/home/peter/ircbot/fixperms.sh"], stderr=subprocess.STDOUT)
+        subprocess.check_output(["sudo", "-n", "/home/peter/ircbot/fixperms.sh"], stderr=subprocess.STDOUT)
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
