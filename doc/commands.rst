@@ -457,6 +457,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`shibe` Module
+-------------------
+
+.. automodule:: commands.shibe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`short` Module
 -------------------
 
