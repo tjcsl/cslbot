@@ -440,7 +440,10 @@ class BotHandler():
         | Kick the user.
         """
         if not self.kick_enabled:
-            send("%s: you're lucky. kick is disabled." % nick)
+            send("%s: you're lucky, kick is disabled." % nick)
+            return
+        if target not in self.channels:
+            send("%s: you're lucky, private message kicking hasn't been implemented yet." % nick)
             return
         ops = list(self.channels[target].opers())
         if not ops:
