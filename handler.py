@@ -60,7 +60,7 @@ class BotHandler():
         self.logs = {config.get('core', 'channel'): [], config.get('core', 'ctrlchan'): [], 'private': []}
         self.channels = {}
         self.abuselist = {}
-        admins = config.get('auth', 'admins').split(',')
+        admins = config.get('auth', 'admins').split(', ')
         self.admins = {nick: False for nick in admins}
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
@@ -123,7 +123,7 @@ class BotHandler():
         | If the nick is not in :const:`ADMINS` then it's not a admin.
         | If NickServ hasn't responded yet, then the admin is unverified, so assume they aren't a admin.
         """
-        if nick not in self.config.get('auth', 'admins').split(','):
+        if nick not in self.config.get('auth', 'admins').split(', '):
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
         if not self.admins[nick]:
@@ -483,7 +483,7 @@ class BotHandler():
             self.abuselist = {}
             send("Abuse list cleared.")
         elif cmd == 'cadmin':
-            admins = self.config.get('auth', 'admins').split(',')
+            admins = self.config.get('auth', 'admins').split(', ')
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
@@ -568,7 +568,7 @@ class BotHandler():
 
         cmd = msg.split()[0]
         cmdchar = self.config.get('core', 'cmdchar')
-        admins = self.config.get('auth', 'admins').split(',')
+        admins = self.config.get('auth', 'admins').split(', ')
 
         self.do_caps(msg, c, target, nick, send)
         if cmd[0] != cmdchar:

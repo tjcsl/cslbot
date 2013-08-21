@@ -57,7 +57,7 @@ class IrcBot(SingleServerIRCBot):
             if not cmd:
                 return
             if cmd.split()[0] == '!reload':
-                admins = self.config.get('auth', 'admins').split(',')
+                admins = self.config.get('auth', 'admins').split(', ')
                 if e.source.nick not in admins:
                     c.privmsg(target, "Nope, not gonna do it.")
                     return
@@ -84,6 +84,7 @@ class IrcBot(SingleServerIRCBot):
         imp.reload(handler)
         imp.reload(server)
         imp.reload(control)
+        self.config = ConfigParser()
         self.config.read_file(open(dirname(__file__)+'/config.cfg'))
         self.server.shutdown()
         self.server.socket.close()

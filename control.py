@@ -205,11 +205,21 @@ def handle_reject(handler, cmd, send):
         handler.do_log('private', botnick, msg, 'privmsg')
 
 
+def handle_quote(handler, cmd, send):
+    if len(cmd) == 1:
+        send("quote needs arguments.")
+        return
+    if cmd[1] == "join":
+        send("quote join is not suported, use !join.")
+        return
+    handler.connection.send_raw(" ".join(cmd[1:]))
+
+
 def handle_ctrlchan(handler, msg, c, send):
     """ Handle the control channel."""
     cmd = msg.split()
     if cmd[0] == "quote":
-        c.send_raw(" ".join(cmd[1:]))
+        handle_quote(handler, cmd, send)
     elif cmd[0] == "cs" or cmd[0] == "chanserv":
         handle_chanserv(c, cmd, send)
     elif cmd[0] == "disable":
