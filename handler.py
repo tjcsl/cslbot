@@ -79,7 +79,6 @@ class BotHandler():
         data['logs'] = dict(self.logs)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
-        data['admins'] = dict(self.admins)
         data['logfiles'] = dict(self.logfiles)
         data['guarded'] = list(self.guarded)
         return data
@@ -94,7 +93,6 @@ class BotHandler():
         self.logfiles = data['logfiles']
         self.channels = data['channels']
         self.abuselist = data['abuselist']
-        self.admins = data['admins']
         self.guarded = data['guarded']
 
     def loadmodules(self):
