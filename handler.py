@@ -74,15 +74,15 @@ class BotHandler():
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.logfiles = {config.get('core', 'channel'): open("%s/%s.log"
-                         % (config.get('core', 'logdir'),
-                            config.get('core', 'channel')), "a"),
-                         config.get('core', 'ctrlchan'):
-                         open("%s/%s.log", (config.get('core', 'logdir'),
-                                            config.get('core', 'ctrlchan')),
+        self.logfiles = {config['core']['channel']: open("%s/%s.log"
+                         % (config['core']['logdir'],
+                            config['core']['channel']), "a"),
+                         config['core']['ctrlchan']:
+                         open("%s/%s.log" % (config['core']['logdir'],
+                                             config['core']['ctrlchan']),
                               "a"),
                          'private': open("%s/private.log" %
-                                         config.get('core', 'logdir'), "a")}
+                                         config['core']['logdir'], "a")}
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
