@@ -69,7 +69,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
-            ctrlpass = bot.config.get('auth', 'ctrlpass')
+            ctrlpass = bot.config['auth']['ctrlpass']
             if not msg or msg[0].strip() != ctrlpass:
                 send("Incorrect password.\n")
                 self.request.close()
@@ -101,7 +101,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     send(admins + '\n')
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
-                    ctrlchan = bot.config.get('core', 'ctrlchan')
+                    ctrlchan = bot.config['core']['ctrlchan']
                     output = bot.do_reload(bot.connection, ctrlchan, cmdargs, 'server')
                     for x in bot.handler.modules.values():
                         imp.reload(x)
@@ -131,5 +131,5 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             name = type(ex).__name__
             msg = '%s in %s on line %s: %s\n' % (name, trace[0], trace[1], str(ex))
             send(msg + '\n')
-            ctrlchan = bot.config.get('core', 'ctrlchan')
+            ctrlchan = bot.config['core']['ctrlchan']
             bot.connection.privmsg(ctrlchan, msg)

@@ -26,7 +26,7 @@ def start_poll(pollfile, polls, poll):
     poll = {'question': poll, 'active': True, 'votes': {}}
     polls.append(poll)
     save_polls(pollfile, polls)
-    return "Poll #%d created." % (len(polls)-1)
+    return "Poll #%d created." % (len(polls) - 1)
 
 
 def delete_poll(pollfile, polls, poll):

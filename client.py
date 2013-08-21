@@ -30,28 +30,28 @@ class IrcClient(SimpleIRCClient):
         SimpleIRCClient.__init__(self)
 
     def on_welcome(self, c, e):
-        c.join(self.config.get('core', 'ctrlchan'), self.config.get('auth', 'ctrlkey'))
+        c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
 
     def on_mode(self, c, e):
         if self.loading:
             return
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            c.privmsg(self.config.get('core', 'ctrlchan'), '!reload')
+            c.privmsg(self.config['core']['ctrlchan'], '!reload')
             self.loading = True
 
     def on_join(self, c, e):
-        c.mode(self.config.get('core', 'ctrlchan'), "")
+        c.mode(self.config['core']['ctrlchan'], "")
 
     def on_channelmodeis(self, c, e):
         if self.loading:
             return
         if "m" not in e.arguments[1]:
-            c.privmsg(self.config.get('core', 'ctrlchan'), '!reload')
+            c.privmsg(self.config['core']['ctrlchan'], '!reload')
             self.loading = True
 
     def on_pubmsg(self, c, e):
-        ctrlchan = self.config.get('core', 'ctrlchan')
-        if e.source.nick == self.config.get('core', 'nick'):
+        ctrlchan = self.config['core']['ctrlchan']
+        if e.source.nick == self.config['core']['nick']:
             if e.arguments[0] == "Aye Aye Capt'n":
                 print("Reload successful.")
                 c.part(ctrlchan)
@@ -71,7 +71,7 @@ def main():
     PORT = 6667
     CTRLNICK = "bot-controller"
     client = IrcClient(CTRLNICK, config)
-    client.connect(config.get('core', 'host'), PORT, CTRLNICK, config.get('auth', 'ctrlpass'))
+    client.connect(config['core']['host'], PORT, CTRLNICK, config['auth']['ctrlpass'])
     client.start()
 
 if __name__ == '__main__':
