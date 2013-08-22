@@ -101,7 +101,7 @@ def cmd(send, msg, args):
         send(addquote(quotes, quotefile, quote))
     elif cmd[0] == "list":
         listquotes(quotes, args['nick'], args['connection'], send)
-    elif cmd[0] == "remove":
+    elif cmd[0] == "remove" or cmd[0] == "delete":
         if args['is_admin'](args['nick']):
             msg = " ".join(cmd[1:])
             send(removequote(msg, quotes, quotefile))
