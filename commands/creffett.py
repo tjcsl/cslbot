@@ -16,7 +16,7 @@
 
 from os.path import basename
 
-args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'nick']
+args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'config']
 
 
 def gen_creffett(msg):
