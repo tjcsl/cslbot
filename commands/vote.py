@@ -93,6 +93,8 @@ def tally_poll(polls, poll, send):
         votemap[vote].append(nick)
     for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
+    if not votemap:
+        return
     winner = sorted(votemap.keys(), key=lambda x: len(x))[0]
     send("The winner is %s with %d votes." % (winner, len(votemap[winner])))
 
