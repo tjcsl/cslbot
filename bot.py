@@ -56,12 +56,13 @@ class IrcBot(SingleServerIRCBot):
             cmd = e.arguments[0].strip()
             if not cmd:
                 return
-            if cmd.split()[0] == '!reload':
+            cmdchar = self.config['core']['cmdchar']
+            if cmd.split()[0] == '%sreload' % cmdchar:
                 admins = self.config['auth']['admins'].split(', ')
                 if e.source.nick not in admins:
                     c.privmsg(target, "Nope, not gonna do it.")
                     return
-                cmdargs = cmd[len('!reload') + 1:]
+                cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
             getattr(self.handler, msgtype)(c, e)
         except Exception as ex:

@@ -36,7 +36,8 @@ class IrcClient(SimpleIRCClient):
         if self.loading:
             return
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            c.privmsg(self.config['core']['ctrlchan'], '!reload')
+            cmdchar = self.config['core']['cmdchar']
+            c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
     def on_join(self, c, e):
@@ -46,7 +47,8 @@ class IrcClient(SimpleIRCClient):
         if self.loading:
             return
         if "m" not in e.arguments[1]:
-            c.privmsg(self.config['core']['ctrlchan'], '!reload')
+            cmdchar = self.config['core']['cmdchar']
+            c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
     def on_pubmsg(self, c, e):

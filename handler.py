@@ -212,13 +212,13 @@ class BotHandler():
         nick = e.source.nick
         msg = e.arguments[0].strip()
         cmdchar = self.config['core']['cmdchar']
-        if msg.startswith('%sissue' % cmdchar) \
-                or msg.startswith('%s: issue' % self.config['core']['nick']):
-            self.send(nick, nick, 'You want to let everybody know about \
-                    your problems, right?', e.type)
+        botnick = '%s: ' % self.config['core']['nick']
+        if msg.startswith(botnick):
+            msg = msg.replace(botnick, self.config['core']['cmdchar'])
+        if msg.startswith('%sissue' % cmdchar):
+            self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
             return
-        elif msg.startswith('%sgcc' % cmdchar) or \
-                msg.startswith('%s: gcc' % self.config['core']['nick']):
+        elif msg.startswith('%sgcc' % cmdchar):
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
             return
         elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
@@ -615,8 +615,12 @@ class BotHandler():
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
-        cmd = msg.split()[0]
         cmdchar = self.config['core']['cmdchar']
+        botnick = '%s: ' % self.config['core']['nick']
+        if msg.startswith(botnick):
+            msg = msg.replace(botnick, self.config['core']['cmdchar'])
+
+        cmd = msg.split()[0]
         admins = self.config['auth']['admins'].split(', ')
 
         self.do_caps(msg, c, target, nick, send)
