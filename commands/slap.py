@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-args = ['nick', 'channels', 'target', 'config']
+args = ['channels', 'target', 'config']
 
 
 def cmd(send, msg, args):
@@ -23,16 +23,15 @@ def cmd(send, msg, args):
     Syntax: !slap <nick> for <reason>
     """
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
-    slap = '%s slaps %s around a bit with %s'
+    slap = 'slaps %s around a bit with %s'
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
         users = list(args['channels'][channel].users())
-        send(slap % (args['nick'], choice(users), choice(implements)))
-        return
+        send(slap % (choice(users), choice(implements)), 'action')
     else:
         if "for" in msg:
             msg = msg.split("for")
-            slap = slap % (args['nick'], msg[0].strip(), choice(implements) + " for" + msg[1])
+            slap = slap % (msg[0].strip(), choice(implements) + " for" + msg[1])
         else:
-            slap = slap % (args['nick'], msg, choice(implements))
-        send(slap)
+            slap = slap % (msg, choice(implements))
+        send(slap, 'action')
