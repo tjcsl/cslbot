@@ -93,6 +93,8 @@ def tally_poll(polls, poll, send):
         votemap[vote].append(nick)
     for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
+    winner = sorted(votemap.keys(), key=lambda x: len(x))[0]
+    send("The winner is %s with %d votes." % (winner, len(votemap[winner])))
 
 
 def vote(pollfile, polls, nick, poll, vote):
@@ -151,9 +153,9 @@ def cmd(send, msg, args):
     msg = " ".join(cmd[1:])
     if not cmd:
         send("Which poll?")
-    elif cmd[0] == 'start':
+    elif cmd[0] == 'start' or cmd[0] == 'open':
         send(start_poll(pollfile, polls, msg))
-    elif cmd[0] == 'end':
+    elif cmd[0] == 'end' or cmd[0] == 'close':
         if args['is_admin'](args['nick']):
             send(end_poll(pollfile, polls, msg))
         else:
