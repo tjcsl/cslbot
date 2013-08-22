@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import random, choice
+from time import sleep
 
 args = ['nick']
 
@@ -28,15 +29,22 @@ def cmd(send, msg, args):
         topics.append(args['nick'])
 
     send('wow')
+    sleep(0.2)
 
     if len(topics) != 0:
         if random() < 0.5:
-            send('\tso' + topics[0])
-            send('\t\tsuch' + topics[1])
+            send('so ' + topics[0])
+            sleep(0.2)
+            send('such ' + topics[1])
+            sleep(0.2)
         else:
-            send('\ttsuch' + topics[0])
-            send('\t\tso' + topics[1])
+            send('such ' + topics[0])
+            sleep(0.2)
+            send('so ' + topics[1])
+            sleep(0.2)
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
     send(choice(quotes))
-    send('\twow')
+    sleep(0.2)
+    send('wow')
+    sleep(0.2)
