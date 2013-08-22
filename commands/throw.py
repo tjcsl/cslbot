@@ -17,7 +17,7 @@
 import re
 from random import choice
 
-args = ['channels', 'target' 'nick']
+args = ['channels', 'target', 'nick']
 
 
 def cmd(send, msg, args):
