@@ -95,8 +95,22 @@ def tally_poll(polls, poll, send):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
     if not votemap:
         return
-    winner = sorted(votemap.keys(), key=lambda x: len(x))[0]
-    send("The winner is %s with %d votes." % (winner, len(votemap[winner])))
+    ranking = {}
+    for x in votemap.keys():
+        num = len(votemap[x])
+        if num not in ranking:
+            ranking[num] = []
+        ranking[num].append(x)
+    high = max(ranking)
+    winners = (ranking[high], high)
+    import logging
+    logging.error(winners)
+    if len(winners[0]) == 1:
+        winners = (winners[0][0], high)
+        send("The winner is %s with %d votes." % winners)
+    else:
+        winners = (", ".join(winners[0]), high)
+        send("Tie between %s with %d votes." % winners)
 
 
 def vote(pollfile, polls, nick, poll, vote):
