@@ -33,12 +33,12 @@ def get_default(nick, prefsfile, send):
     return location
 
 
-def set_default(nick, location, prefsfile, send):
+def set_default(nick, location, prefsfile, send, apikey):
     try:
         defaults = json.load(open(prefsfile))
     except OSError:
         defaults = {}
-    if get_weather(location, send):
+    if get_weather(location, send, apikey):
         send("Setting default location")
         defaults[nick] = location
     f = open(prefsfile, "w")
@@ -108,10 +108,11 @@ def cmd(send, msg, args):
     Syntax: !weather <location|set default>
     """
     prefsfile = args['srcdir'] + "/data/weather"
+    apikey = args['config']['api']['weatherapikey']
     match = re.match("set (.*)", msg)
     if match:
-        set_default(args['nick'], match.group(1), prefsfile, send)
+        set_default(args['nick'], match.group(1), prefsfile, send, apikey)
         return
     if not msg:
         msg = get_default(args['nick'], prefsfile, send)
-    get_weather(msg, send, args['config']['api']['weatherapikey'])
+    get_weather(msg, send, apikey)
