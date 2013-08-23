@@ -537,15 +537,27 @@ class BotHandler():
             self.get_admins(c)
             send("Verified admins reset.")
         elif cmd == 'ignore':
-            if cmdargs == 'clear':
+            cmdargs = cmdargs.split()
+            if cmdargs[0] == 'clear':
                 self.ignored = []
                 send("Ignore list cleared.")
-            elif cmdargs == 'show':
-                send(", ".join(self.ignored))
-            elif cmdargs in self.ignored:
-                send("%s is already ignored." % cmdargs)
+            elif cmdargs[0] == 'show':
+                if self.ignored:
+                    send(", ".join(self.ignored))
+                else:
+                    send("Nobody is ignored.")
+            elif cmdargs[0] == 'delete':
+                if len(cmdargs) == 1:
+                    send("Unignore who?")
+                elif cmdargs[1] not in self.ignored:
+                    send("%s is not ignored." % cmdargs[1])
+                else:
+                    self.ignored.remove(cmdargs[1])
+                    send("%s is no longer ignored." % cmdargs[1])
+            elif cmdargs[0] in self.ignored:
+                send("%s is already ignored." % cmdargs[0])
             else:
-                self.ignore(send, cmdargs)
+                self.ignore(send, cmdargs[0])
         elif cmd == 'join':
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
