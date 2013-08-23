@@ -442,7 +442,7 @@ class BotHandler():
             # Wikipedia doesn't like the default User-Agent
             req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             html = parse(urlopen(req, timeout=5))
-            title = html.find(".//title").text.strip()
+            title = html.getroot().find(".//title").text.strip()
             # strip unicode
             title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
             send('** %s - %s' % (title, shorturl))
