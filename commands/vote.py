@@ -127,6 +127,24 @@ def vote(pollfile, polls, nick, poll, vote):
     return output
 
 
+def retract(pollfile, polls, poll, nick):
+    if not poll:
+        return "Syntax: !vote retract <pollnum>"
+    if not poll.isdigit():
+        return "Not A Number."
+    poll = int(poll)
+    if len(polls) <= poll:
+        return "Invalid poll index."
+    votes = polls[poll]['votes']
+    if nick in votes:
+        msg = "Vote Retracted."
+        del votes[nick]
+    else:
+        msg = "You haven't voted yet."
+    save_polls(pollfile, polls)
+    return msg
+
+
 def list_polls(polls, send):
     if not polls:
         send("No polls.")
@@ -144,7 +162,7 @@ def save_polls(pollfile, polls):
 
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: !vote <start|end|list|tally|edit|delete|vote>
+    Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
     """
     pollfile = args['srcdir'] + "/data/polls"
     if os.path.isfile(pollfile):
@@ -176,6 +194,8 @@ def cmd(send, msg, args):
         tally_poll(polls, msg, send)
     elif cmd[0] == 'list':
         list_polls(polls, send)
+    elif cmd[0] == 'retract':
+        send(retract(pollfile, polls, msg, args['nick']))
     elif cmd[0].isdigit():
         send(vote(pollfile, polls, args['nick'], cmd[0], msg))
     else:
