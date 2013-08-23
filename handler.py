@@ -126,7 +126,9 @@ class BotHandler():
 
     def ignore(self, send, nick):
         """Ignores a nick."""
-        if nick not in self.ignored:
+        if not nick:
+            send("Ignore who?")
+        elif nick not in self.ignored:
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
@@ -523,21 +525,25 @@ class BotHandler():
             self.caps.remove(nick)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'cignore':
-            self.ignored = []
-            send("Ignore list cleared.")
-        elif cmd == 'cabuse':
-            self.abuselist = {}
-            send("Abuse list cleared.")
+        if cmd == 'abuse':
+            if cmdargs == 'clear':
+                self.abuselist = {}
+                send("Abuse list cleared.")
+            elif cmdargs == 'show':
+                send(str(self.abuselist))
         elif cmd == 'cadmin':
             admins = self.config['auth']['admins'].split(', ')
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
         elif cmd == 'ignore':
-            self.ignore(send, cmdargs)
-        elif cmd == 'showignore':
-            send(str(self.ignored))
+            if cmdargs == 'clear':
+                self.ignored = []
+                send("Ignore list cleared.")
+            if cmdargs == 'show':
+                send(str(self.ignored))
+            else:
+                self.ignore(send, cmdargs)
         elif cmd == 'join':
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
@@ -639,13 +645,9 @@ class BotHandler():
         if cmd[0] == cmdchar:
             if cmd[1:] in self.modules:
                 mod = self.modules[cmd[1:]]
-                if hasattr(mod, 'limit') and self.abusecheck(send, nick,
-                                                             mod.limit,
-                                                             msgtype,
-                                                             cmd[1:]):
+                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
                     return
-                args = self.do_args(mod.args, send, nick, target, e.source, c)\
-                    if hasattr(mod, 'args') else {}
+                args = self.do_args(mod.args, send, nick, target, e.source, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
         # special commands
