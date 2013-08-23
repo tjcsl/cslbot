@@ -541,7 +541,7 @@ class BotHandler():
                 self.ignored = []
                 send("Ignore list cleared.")
             elif cmdargs == 'show':
-                send(str(self.ignored))
+                send(", ".join(self.ignored)))
             elif cmdargs in self.ignored:
                 send("%s is already ignored." % cmdargs)
             else:
