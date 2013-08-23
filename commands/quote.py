@@ -17,6 +17,7 @@
 import json
 import os
 from random import choice
+from time import sleep
 
 args = ['srcdir', 'nick', 'connection', 'is_admin']
 
@@ -48,6 +49,8 @@ def listquotes(quotes, nick, c, send):
     else:
         for i in enumerate(quotes):
             c.privmsg(nick, "%d: %s" % i)
+            # work around broken clients.
+            sleep(0.5)
 
 
 def removequote(msg, quotes, quotefile):
