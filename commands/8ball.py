@@ -19,6 +19,8 @@ from random import choice
 # prevent people from !8balling repeatedly to get the answer they want.
 limit = 1
 
+args = ['abuse', 'nick']
+
 
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
@@ -27,8 +29,11 @@ def cmd(send, msg, args):
     if not msg:
         send("What is your question?")
         return
-    answers = ["It is certain", "It is decidedly so", "Without a doubt", "Yes, definitely", "You may rely on it", "As I see it, yes", "Most likely", "Outlook good", "Yes", "Signs point to yes",
-               "Reply hazy, try again", "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
-               "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
-    msg = 'says... %s' % choice(answers)
-    send(msg, 'action')
+    answers = {"It is certain": "yes", "It is decidedly so": "yes", "Without a doubt": "yes", "Yes, definitely": "yes", "You may rely on it": "yes", "As I see it, yes": "yes",
+               "Most likely": "yes", "Outlook good": "yes", "Yes": "yes", "Signs point to yes": "yes",
+               "Reply hazy, try again": "maybe", "Ask again later": "maybe", "Better not tell you now": "maybe", "Cannot predict now": "maybe", "Concentrate and ask again": "maybe",
+               "Don't count on it": "no", "My reply is no": "no", "My sources say no": "no", "Outlook not so good": "no", "Very doubtful": "no"}
+    answer = choice(list(answers.keys()))
+    if answers[answer] == 'maybe':
+        args['abuse'][args['nick']]['8ball'].pop()
+    send('says... %s' % answer, 'action')

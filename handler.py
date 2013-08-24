@@ -196,11 +196,9 @@ class BotHandler():
                 count = count + 1
         if count > limit:
             if cmd == 'scores':
-                msg = self.modules['creffett'].\
-                    gen_creffett("%s: don't abuse scores" % nick)
+                msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
             else:
-                msg = self.modules['creffett'].\
-                    gen_creffett("%s: stop abusing the bot" % nick)
+                msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True
@@ -580,6 +578,7 @@ class BotHandler():
                 'logs': self.logs,
                 'admins': self.admins,
                 'issues': self.issues,
+                'abuse': self.abuselist,
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,
                 'config': self.config,
