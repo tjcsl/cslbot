@@ -25,4 +25,5 @@ def cmd(send, msg, args):
     if len(topics) == 1:
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
-    send('wow. so ' + topics[0] + ' such ' + topics[1] + ' ' + choice(quotes) ' wow')
+    msg = 'wow. so %s such %s wow' (topics[0], topics[1], choice(quotes))
+    send(msg)
