@@ -1,9 +1,28 @@
+# Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek and James Forcier
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 from random import choice
 
 args = ['channels', 'target', 'nick', 'config']
 
 
 def cmd(send, msg, args):
+    """Insults a user.
+    Syntax: !insult (nick)
+    """
     adj = [
         "acidic", "antique", "contemptible", "culturally-unsound",
         "despicable", "evil", "fermented", "festering", "foul", "fulminating",
@@ -47,10 +66,9 @@ def cmd(send, msg, args):
         "poop", "craptacular carpet droppings", "jizzum", "cold sores",
         "anal warts"]
     if not msg:
-        users = (list(args['channels'][args['target']].users())
-                 if args['target'] != 'private' else ['you'])
+        users = list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you']
         user = choice(users)
     else:
         user = msg
-    msg = '%s is a %s of %s.' % user, choice(adj), choice(amt), choice(noun)
+    msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
     send(msg)
