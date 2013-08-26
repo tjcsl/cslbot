@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 import subprocess
 
 
@@ -25,11 +24,9 @@ def cmd(send, msg, args):
     if not msg:
         send("eix what?")
         return
-    match = re.match('([A-Za-z0-9][A-Za-z0-9\\-_/]*)', msg)
-    if match:
-            try:
-                answer = subprocess.check_output(['eix', '-c',
-                                                 match.group(1)])
-                send(answer.decode().split('\n')[0].rstrip())
-            except subprocess.CalledProcessError:
-                send(match.group(1) + " isn't important enough for Gentoo.")
+    try:
+        args = ['eix', '-c'] + msg.split()
+        answer = subprocess.check_output(args)
+        send(answer.decode().split('\n')[0].rstrip())
+    except subprocess.CalledProcessError:
+        send(msg + " isn't important enough for Gentoo.")
