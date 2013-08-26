@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from random import choice
+
 args = ['nick']
 
 
@@ -23,7 +25,8 @@ def cmd(send, msg, args):
     """
     topics = msg.split()
     if len(topics) == 1:
+        topics.append(args['nick'])
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
-    msg = 'wow. so %s such %s wow' (topics[0], topics[1], choice(quotes))
+    msg = 'wow. so %s. such %s. %s. wow.' % (topics[0], topics[1], choice(quotes))
     send(msg)
