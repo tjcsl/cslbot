@@ -50,7 +50,7 @@ def listquotes(quotes, nick, c, send):
         for i in enumerate(quotes):
             c.privmsg(nick, "%d: %s" % i)
             # work around broken clients.
-            sleep(0.5)
+            sleep(0.7)
 
 
 def removequote(msg, quotes, quotefile):
