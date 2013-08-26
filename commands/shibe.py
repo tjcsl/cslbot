@@ -16,16 +16,19 @@
 
 from random import choice
 
-args = ['nick']
+args = ['nick', 'modules']
 
 
 def cmd(send, msg, args):
     """Generates a shibe reaction.
-    Syntax: !shibe <topic> or !shibe <topic1> <topic2>
+    Syntax: !shibe (topic1) (topic2)
     """
     topics = msg.split()
-    if len(topics) == 1:
-        topics.append(args['nick'])
+    if len(topics) > 2:
+        send("No more than two arguments, please.")
+        return
+    while len(topics) < 2:
+        topics.append(args['modules']['word'].gen_word())
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
     msg = 'wow. so %s. such %s. %s. wow.' % (topics[0], topics[1], choice(quotes))
