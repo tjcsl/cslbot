@@ -103,8 +103,6 @@ def tally_poll(polls, poll, send):
         ranking[num].append(x)
     high = max(ranking)
     winners = (ranking[high], high)
-    import logging
-    logging.error(winners)
     if len(winners[0]) == 1:
         winners = (winners[0][0], high)
         send("The winner is %s with %d votes." % winners)
