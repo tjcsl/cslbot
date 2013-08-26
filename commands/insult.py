@@ -52,5 +52,5 @@ def cmd(send, msg, args):
         user = choice(users)
     else:
         user = msg
-    send(user + ' is a ' + choice(adj) + ' ' +
-         choice(amt) + ' of ' + choice(noun) + '.')
+    msg = '%s is a %s of %s.' % user, choice(adj), choice(amt), choice(noun)
+    send(msg)
