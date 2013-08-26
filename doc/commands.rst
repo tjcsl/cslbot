@@ -273,6 +273,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`insult` Module
+--------------------
+
+.. automodule:: commands.insult
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`issue` Module
 -------------------
 
