@@ -30,7 +30,7 @@ def getquote(quotes, msg):
     elif not msg.isdigit():
         return "Not A Valid Positive Integer"
     elif int(msg) >= len(quotes):
-        return "Invalid quote number."
+        return "Quote Number Out Of Range."
     else:
         return quotes[int(msg)]
 
@@ -60,7 +60,7 @@ def removequote(msg, quotes, quotefile):
         return "Not A Valid Positive Integer."
     key = int(msg)
     if key >= len(quotes):
-        return "Not a valid quote id."
+        return "Quote Number Out Of Range."
     quotes.remove(quotes[key])
     save_quotes(quotefile, quotes)
     return "Deleted quote successfully."
@@ -74,7 +74,7 @@ def editquote(msg, quotes, quotefile):
         return "Not A Valid Positive Integer."
     key = int(cmd[0])
     if key >= len(quotes):
-        return "Not a valid quote id."
+        return "Quote Number Out Of Range."
     quotes[key] = " ".join(cmd[1:])
     save_quotes(quotefile, quotes)
     return "Edited quote successfully."
