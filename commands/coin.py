@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     if not msg:
         send('The coin lands on... %s' % choice(coin))
     elif not msg.isdigit():
-        send("Not A Number.")
+        send("Not A Valid Positive Integer.")
     else:
         msg = int(msg)
         if msg < 0:

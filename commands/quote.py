@@ -57,7 +57,7 @@ def removequote(msg, quotes, quotefile):
     if not msg:
         return "Which quote?"
     if not msg.isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     key = int(msg)
     if key >= len(quotes):
         return "Not a valid quote id."
@@ -71,7 +71,7 @@ def editquote(msg, quotes, quotefile):
     if len(cmd) < 2:
         return "Missing arguments."
     if not cmd[0].isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     key = int(cmd[0])
     if key >= len(quotes):
         return "Not a valid quote id."

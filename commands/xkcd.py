@@ -32,7 +32,7 @@ def cmd(send, msg, args):
     if not msg:
         msg = randrange(1, latest)
     elif msg != 'latest' and not msg.isdigit():
-        send("Not A Number")
+        send("Not A Valid Positive Integer")
         return
     msg = int(msg)
     if msg > latest or msg < 1:

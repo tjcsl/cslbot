@@ -33,7 +33,7 @@ def delete_poll(pollfile, polls, poll):
     if not poll:
         return "Syntax: !vote delete <pollnum>"
     if not poll.isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."
@@ -47,7 +47,7 @@ def edit_poll(pollfile, polls, poll):
     if len(cmd) < 2:
         return "Syntax: !vote edit <pollnum> <question>"
     if not cmd[0].isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     poll = int(cmd[0])
     if len(polls) <= poll:
         return "Invalid poll index."
@@ -60,7 +60,7 @@ def end_poll(pollfile, polls, poll):
     if not poll:
         return "Syntax: !vote end <pollnum>"
     if not poll.isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."
@@ -76,7 +76,7 @@ def tally_poll(polls, poll, send):
         send("Syntax: !vote tally <pollnum>")
         return
     if not poll.isdigit():
-        send("Not A Number.")
+        send("Not A Valid Positive Integer.")
         return
     poll = int(poll)
     if len(polls) <= poll:
@@ -117,7 +117,7 @@ def vote(pollfile, polls, nick, poll, vote):
     if not vote:
         return "Syntax: !vote <pollnum> <vote>"
     if not poll.isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."
@@ -145,7 +145,7 @@ def retract(pollfile, polls, poll, nick):
     if not poll:
         return "Syntax: !vote retract <pollnum>"
     if not poll.isdigit():
-        return "Not A Number."
+        return "Not A Valid Positive Integer."
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."

@@ -167,7 +167,7 @@ def handle_accept(handler, cmd, send):
         send("Missing argument.")
         return
     if not cmd[1].isdigit():
-        send("Not A Number")
+        send("Not A Valid Positive Integer")
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
         send("Not a valid issue")
     else:
@@ -191,7 +191,7 @@ def handle_reject(handler, cmd, send):
         send("Missing argument.")
         return
     if not cmd[1].isdigit():
-        send("Not A Number")
+        send("Not A Valid Positive Integer")
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
         send("Not a valid issue")
     else:
