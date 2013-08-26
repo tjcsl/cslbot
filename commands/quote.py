@@ -28,7 +28,7 @@ def getquote(quotes, msg):
     elif not msg:
         return choice(quotes)
     elif not msg.isdigit():
-        return "Not a Number"
+        return "Not A Valid Positive Integer"
     elif int(msg) >= len(quotes):
         return "Invalid quote number."
     else:
