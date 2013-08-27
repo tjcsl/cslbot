@@ -24,9 +24,6 @@ def cmd(send, msg, args):
     Syntax: !shibe (topic1)...(topicn)
     """
     topics = msg.split()
-    while len(topics) < 2:
-        topics.append(args['modules']['word'].gen_word())
-
     reaction = 'wow'
     adverbs = ['so', 'such']
     for i in topics:
