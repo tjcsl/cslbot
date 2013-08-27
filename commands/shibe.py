@@ -21,11 +21,13 @@ args = ['nick', 'modules']
 
 def cmd(send, msg, args):
     """Generates a shibe reaction.
-    Syntax: !shibe (topic1)...(topicn)
+    Syntax: !shibe topic1...topicn or !shibe -wow (topic1)
+    Use -wow for shibe to react to a random word (feature dedicated to pfoley)
     """
     topics = msg.split()
-    while len(topics) < 2:
-        topics.append(args['modules']['word'].gen_word())
+    if topics[0] == '-wow':
+        while len(topics) < 2:
+            topics.append(args['modules']['word'].gen_word())
 
     reaction = 'wow'
     adverbs = ['so', 'such']
