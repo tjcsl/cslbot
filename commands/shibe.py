@@ -14,22 +14,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import choice
+from random import choice, randint
 
 args = ['nick', 'modules']
 
 
 def cmd(send, msg, args):
     """Generates a shibe reaction.
-    Syntax: !shibe (topic1) (topic2)
+    Syntax: !shibe or !shibe topic1 topic2...
+    Use !wow for a random word.
     """
+    msg = 'wow '
     topics = msg.split()
-    if len(topics) > 2:
-        send("No more than two arguments, please.")
-        return
-    while len(topics) < 2:
-        topics.append(args['modules']['word'].gen_word())
-
-    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
-    msg = 'wow. so %s. such %s. %s. wow.' % (topics[0], topics[1], choice(quotes))
+    if topics:
+        adverbs = ['so ', 'such ']
+        for i in range(0, len(topics) - 1)
+            if topics[i] == '!wow':
+                msg += choice(adverbs) + args['modules']['word'].gen_word() + ' '
+            else:
+                msg += choice(adverbs) + topics[i] + ' '
+    quotes = ['omg ', 'amaze ', 'nice ', 'clap ', 'cool ', 'doge ', 'shibe ']
+    for i in range(0, randint(0, 1))
+        msg += choice(quotes)
+    msg += 'wow'
     send(msg)
