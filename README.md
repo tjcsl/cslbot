@@ -11,7 +11,7 @@ See http://fwilson42.github.io/ircbot for api docs.
 
 Setup
 -----
-Copy config.example to config.py and change values as needed.  
+Copy config.example to config.cfg and change values as needed.  
 Install irc (https://pypi.python.org/pypi/irc) and lxml (https://pypi.python.org/pypi/lxml)
 
 Adding Modules
