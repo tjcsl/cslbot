@@ -28,13 +28,13 @@ Use !wow for a random word.
     topics = msg.split()
     if topics:
         adverbs = ['so ', 'such ']
-        for i in range(0, len(topics))
+        for i in range(0, len(topics)):
             if topics[i] == '!wow':
                 reaction += choice(adverbs) + args['modules']['word'].gen_word() + ' '
             else:
                 reaction += choice(adverbs) + topics[i] + ' '
     quotes = ['omg ', 'amaze ', 'nice ', 'clap ', 'cool ', 'doge ', 'shibe ']
-    for i in range(randint(1, 2))
+    for i in range(randint(1, 2)):
         reaction += choice(quotes)
     reaction += 'wow'
     send(reaction)
