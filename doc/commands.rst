@@ -313,6 +313,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`math` Module
+------------------
+
+.. automodule:: commands.math
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`meme` Module
 ------------------
 
