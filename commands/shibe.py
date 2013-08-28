@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     """Generates a shibe reaction.
     Syntax: !shibe (topic1)...(topicn)
     """
-    topics = msg.split() if msg else args['modules']['word'].gen_word()
+    topics = msg.split() if msg else [args['modules']['word'].gen_word()]
 
     reaction = 'wow'
     adverbs = ['so', 'such']
