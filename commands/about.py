@@ -14,9 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+args = ['config']
+
 
 def cmd(send, msg, args):
     """Returns info about the bot.
     Syntax: !about
     """
-    send("See https://github.com/fwilson42/ircbot Developed by fwilson, pfoley, csssuf, sdamashek, and skasturi. Type !help for a list of commands.")
+    send("See https://github.com/%s Developed by fwilson, pfoley, csssuf, sdamashek, and skasturi. Type !help for a list of commands." % args['config']['api']['githubrepo'])
