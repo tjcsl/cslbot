@@ -29,7 +29,7 @@ def main(outfile):
         quotes = []
     quotes = [(i + " -- ").split("--") for i in quotes]
     output = ''
-    env = Environment(loader=FileSystemLoader('static/templates'))
+    env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
     output = env.get_template('quotes.html').render(quotes=quotes)
     open(outfile, 'w').write(output)
 
