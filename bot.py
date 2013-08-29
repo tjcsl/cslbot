@@ -139,6 +139,10 @@ class IrcBot(SingleServerIRCBot):
         """Pass mode changes to :func:`handle_msg`."""
         self.handle_msg('mode', c, e)
 
+    #FIXME: do something.
+    #def on_disconnect(self, c, e):
+        """Handle ping timeouts."""
+
     def on_quit(self, c, e):
         """Log quits."""
         self.handler.do_log(self.config['core']['channel'], e.source, e.arguments[0], 'quit')
