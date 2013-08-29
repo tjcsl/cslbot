@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped">
+    <tr>
+        <th>Quote</th>
+        <th>Author</th>
+    </tr>
+    {% for i in quotes %}
+    <tr>
+        <td>{{ i[0] }}</td>
+        <td>{{ i[1] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
