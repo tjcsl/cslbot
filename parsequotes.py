@@ -31,7 +31,7 @@ def main(outfile):
     output = ''
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
     output = env.get_template('quotes.html').render(quotes=quotes)
-    open(outfile, 'w').write(output)
+    open(outfile, 'w').write(output.encode('utf8'))
 
 
 if __name__ == '__main__':

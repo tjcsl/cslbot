@@ -9,4 +9,5 @@ IrcBot
    commands
    control
    handler
+   parsequotes
    server
