@@ -156,7 +156,8 @@ class IrcBot(SingleServerIRCBot):
         """
         self.handler.do_log(e.target, e.source, e.target, 'join')
         if e.source.nick != self.config['core']['nick']:
-            return
+            if random < .75:
+            	c.privmsg(e.target + "Hello " + e.source.nick)
         self.handler.channels[e.target] = self.channels[e.target]
         logging.info("Joined channel " + e.target)
         if hasattr(self, 'kick'):
