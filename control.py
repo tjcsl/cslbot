@@ -30,118 +30,116 @@ def handle_chanserv(c, cmd, send):
         action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
     elif cmd[1] == "devoice" or cmd[1] == "dv":
         action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
+    else:
+        send("Invalid action.")
+        return
     c.privmsg("ChanServ", action)
 
 
-def handle_disable(handler, cmd, send):
+def handle_disable(handler, cmd):
         if len(cmd) < 2:
-            send("Missing argument.")
-            return
+            return "Missing argument."
         if cmd[1] == "kick":
             if not handler.kick_enabled:
-                send("Kick already disabled.")
+                return "Kick already disabled."
             else:
                 handler.kick_enabled = False
-                send("Kick disabled.")
+                return "Kick disabled."
         elif cmd[1] == "module":
             if len(cmd) < 3:
-                send("Missing argument.")
-                return
+                return "Missing argument."
             if cmd[2] in handler.disabled_mods:
-                send("Module already disabled.")
+                return "Module already disabled."
             elif cmd[2] in handler.modules:
                 handler.disabled_mods.append(cmd[2])
-                send("Module disabled.")
+                return "Module disabled."
             else:
-                send("Module does not exist.")
+                return "Module does not exist."
         elif cmd[1] == "logging":
             if logging.getLogger().getEffectiveLevel() == logging.INFO:
-                send("logging already disabled.")
+                return "logging already disabled."
             else:
                 logging.getLogger().setLevel(logging.INFO)
-                send("Logging disabled.")
+                return "Logging disabled."
         elif cmd[1] == "chanlog":
             if handler.log_to_ctrlchan:
                 handler.log_to_ctrlchan = False
-                send("Control channel logging disabled.")
+                return "Control channel logging disabled."
             else:
-                send("Control channel logging is already disabled.")
+                return "Control channel logging is already disabled."
 
 
-def handle_enable(handler, cmd, send):
+def handle_enable(handler, cmd):
     if len(cmd) < 2:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     if cmd[1] == "kick":
         if handler.kick_enabled:
-            send("Kick already enabled.")
+            return "Kick already enabled."
         else:
             handler.kick_enabled = True
-            send("Kick enabled.")
+            return "Kick enabled."
     elif cmd[1] == "module":
         if len(cmd) < 3:
-            send("Missing argument.")
-            return
+            return "Missing argument."
         if cmd[2] in handler.modules:
             if cmd[2] in handler.disabled_mods:
                 handler.disabled_mods.remove(cmd[2])
-                send("Module enabled.")
+                return "Module enabled."
             else:
-                send("Module already enabled.")
+                return "Module already enabled."
         else:
-            send("Module does not exist.")
+            return "Module does not exist."
     elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
         handler.disabled_mods = []
-        send("Enabled all modules.")
+        return "Enabled all modules."
     elif cmd[1] == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-            send("logging already enabled.")
+            return "logging already enabled."
         else:
             logging.getLogger().setLevel(logging.DEBUG)
-            send("Logging enabled.")
+            return "Logging enabled."
     elif cmd[1] == "chanlog":
         if not handler.log_to_ctrlchan:
             handler.log_to_ctrlchan = True
-            send("Control channel logging enabled.")
+            return "Control channel logging enabled."
         else:
-            send("Control channel logging is already enabled.")
+            return "Control channel logging is already enabled."
 
 
-def handle_get(handler, cmd, send):
+def handle_get(handler, cmd):
     if len(cmd) < 3:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     elif cmd[1] == "disabled" and cmd[2] == "modules":
         mods = ", ".join(sorted(handler.disabled_mods))
         if mods:
-            send(mods)
+            return mods
         else:
-            send("No disabled modules.")
+            return "No disabled modules."
     elif cmd[1] == "enabled" and cmd[2] == "modules":
         mods = ", ".join(sorted([i for i in handler.modules if i not in handler.disabled_mods]))
-        send(mods)
+        return mods
+    else:
+        return "Invalid arguments."
 
 
-def handle_guard(handler, cmd, send):
+def handle_guard(handler, cmd):
     if len(cmd) < 2:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     if cmd[1] in handler.guarded:
-        send("already guarding " + cmd[1])
+        return "Already guarding " + cmd[1]
     else:
         handler.guarded.append(cmd[1])
-        send("guarding " + cmd[1])
+        return "Guarding " + cmd[1]
 
 
-def handle_unguard(handler, cmd, send):
+def handle_unguard(handler, cmd):
     if len(cmd) < 2:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     if cmd[1] not in handler.guarded:
-        send("%s is not being guarded" % cmd[1])
+        return "%s is not being guarded" % cmd[1]
     else:
         handler.guarded.remove(cmd[1])
-        send("no longer guarding " + cmd[1])
+        return "No longer guarding %s" % cmd[1]
 
 
 def handle_show(handler, cmd, send):
@@ -162,14 +160,13 @@ def handle_show(handler, cmd, send):
             send("No outstanding issues.")
 
 
-def handle_accept(handler, cmd, send):
+def handle_accept(handler, cmd):
     if len(cmd) < 2:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     if not cmd[1].isdigit():
-        send("Not A Valid Positive Integer")
+        return "Not A Valid Positive Integer"
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
-        send("Not a valid issue")
+        return "Not a valid issue"
     else:
         num = int(cmd[1])
         msg, source = handler.issues[num]
@@ -186,14 +183,13 @@ def handle_accept(handler, cmd, send):
         handler.do_log('private', botnick, msg, 'privmsg')
 
 
-def handle_reject(handler, cmd, send):
+def handle_reject(handler, cmd):
     if len(cmd) < 2:
-        send("Missing argument.")
-        return
+        return "Missing argument."
     if not cmd[1].isdigit():
-        send("Not A Valid Positive Integer")
+        return "Not A Valid Positive Integer"
     elif not handler.issues or len(handler.issues) < int(cmd[1]):
-        send("Not a valid issue")
+        return "Not a valid issue"
     else:
         msg, source = handler.issues.pop(int(cmd[1]))
         ctrlchan = handler.config['core']['ctrlchan']
@@ -205,13 +201,11 @@ def handle_reject(handler, cmd, send):
         handler.do_log('private', botnick, msg, 'privmsg')
 
 
-def handle_quote(handler, cmd, send):
+def handle_quote(handler, cmd):
     if len(cmd) == 1:
-        send("quote needs arguments.")
-        return
+        return "quote needs arguments."
     if cmd[1] == "join":
-        send("quote join is not suported, use !join.")
-        return
+        return "quote join is not suported, use !join."
     handler.connection.send_raw(" ".join(cmd[1:]))
 
 
@@ -219,30 +213,30 @@ def handle_ctrlchan(handler, msg, c, send):
     """ Handle the control channel."""
     cmd = msg.split()
     if cmd[0] == "quote":
-        handle_quote(handler, cmd, send)
+        send(handle_quote(handler, cmd))
     elif cmd[0] == "cs" or cmd[0] == "chanserv":
         handle_chanserv(c, cmd, send)
     elif cmd[0] == "disable":
-        handle_disable(handler, cmd, send)
+        send(handle_disable(handler, cmd))
     elif cmd[0] == "enable":
-        handle_enable(handler, cmd, send)
+        send(handle_enable(handler, cmd))
     elif cmd[0] == "get":
-        handle_enable(handler, cmd, send)
+        send(handle_get(handler, cmd))
     elif cmd[0] == "help":
         send("quote <raw command>")
         send("cs|chanserv <chanserv command>")
-        send("disable|enable <kick|module <module>|logging|chanlog>")
+        send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
         send("get <disabled|enabled> modules")
         send("show <guarded|issues>")
         send("accept|reject <issuenum>")
         send("guard|unguard <nick>")
     elif cmd[0] == "guard":
-        handle_guard(handler, cmd, send)
+        send(handle_guard(handler, cmd))
     elif cmd[0] == "unguard":
-        handle_unguard(handler, cmd, send)
+        send(handle_unguard(handler, cmd))
     elif cmd[0] == "show":
         handle_show(handler, cmd, send)
     elif cmd[0] == "accept":
-        handle_accept(handler, cmd, send)
+        send(handle_accept(handler, cmd))
     elif cmd[0] == "reject":
-        handle_reject(handler, cmd, send)
+        send(handle_reject(handler, cmd))

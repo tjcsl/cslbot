@@ -462,8 +462,8 @@ class BotHandler():
     def do_mode(self, target, msg, nick, send):
         """ reop"""
         # reop
-        # un-hard-code this
-        match = re.search(r".*(-o|\+b).*tjhsstBot", msg)
+        botnick = self.config['core']['nick']
+        match = re.search(r".*(-o|\+b).*%s" % botnick, msg)
         if match:
             self.connection.privmsg(target, "WAI U DO THIS " + nick + "?!??!")
             self.connection.privmsg("ChanServ", "OP " + target)
