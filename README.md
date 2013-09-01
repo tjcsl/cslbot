@@ -30,6 +30,13 @@ to STEAMID64. An example steamid mapping file is provided in the static folder.
 For this reason the !steam command is disabled by default;  
 to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
 
+parsequotes.py
+--------------
+
+This python script parses the quotes stored and generates a jinja2-templated
+html file containing the quotes. It is intended to be used as a cronjob with
+a webserver to serve quotes over HTTP.
+
 Credits
 -------
 Licensed under the GPL v2  
