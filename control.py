@@ -181,6 +181,7 @@ def handle_accept(handler, cmd):
         msg = "Issue Created -- %s -- %s" % (issue, msg)
         handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
         handler.do_log('private', botnick, msg, 'privmsg')
+    return ""
 
 
 def handle_reject(handler, cmd):
@@ -199,6 +200,7 @@ def handle_reject(handler, cmd):
         msg = "Issue Rejected -- %s" % msg
         handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
         handler.do_log('private', botnick, msg, 'privmsg')
+    return ""
 
 
 def handle_quote(handler, cmd):

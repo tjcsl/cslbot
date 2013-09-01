@@ -23,8 +23,9 @@ def cmd(send, msg, args):
     """Gives help.
     Syntax: !help <command>
     """
+    cmdchar = args['config']['core']['cmdchar']
     if msg:
-        if msg[0] == args['config']['core']['cmdchar']:
+        if msg[0] == cmdchar:
             msg = msg[1:]
         if len(msg.split()) > 1:
             send("One argument only")
@@ -42,7 +43,7 @@ def cmd(send, msg, args):
     else:
         modules = sorted(args['modules'])
         num = int(len(modules) / 2)
-        cmdlist1 = ' !'.join([x for x in modules[:num]])
-        cmdlist2 = ' !'.join([x for x in modules[num:]])
-        args['connection'].privmsg(args['nick'], 'Commands: !' + cmdlist1)
-        args['connection'].privmsg(args['nick'], '!' + cmdlist2)
+        cmdlist1 = (' %s' % cmdchar).join([x for x in modules[:num]])
+        cmdlist2 = (' %s' % cmdchar).join([x for x in modules[num:]])
+        args['connection'].privmsg(args['nick'], 'Commands: %s%s' % (cmdchar, cmdlist1))
+        args['connection'].privmsg(args['nick'], '%s%s' % (cmdchar, cmdlist2))
