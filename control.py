@@ -67,6 +67,8 @@ def handle_disable(handler, cmd):
                 return "Control channel logging disabled."
             else:
                 return "Control channel logging is already disabled."
+        else:
+            return "Invalid argument."
 
 
 def handle_enable(handler, cmd):
@@ -104,6 +106,8 @@ def handle_enable(handler, cmd):
             return "Control channel logging enabled."
         else:
             return "Control channel logging is already enabled."
+    else:
+        return "Invalid argument."
 
 
 def handle_get(handler, cmd):
