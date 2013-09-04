@@ -449,14 +449,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`say` Module
------------------
-
-.. automodule:: commands.say
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`score` Module
 -------------------
 

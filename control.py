@@ -213,6 +213,7 @@ def handle_quote(handler, cmd):
     if cmd[1] == "join":
         return "quote join is not suported, use !join."
     handler.connection.send_raw(" ".join(cmd[1:]))
+    return ""
 
 
 def handle_ctrlchan(handler, msg, c, send):
