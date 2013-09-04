@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
+{% block title %}Quotes Page{% endblock %}
 {% block content %}
 <table class="table table-bordered table-hover table-striped">
     <tr>
+	<th>Number</th>
         <th>Quote</th>
         <th>Author</th>
     </tr>
     {% for i in quotes %}
     <tr>
-        <td>{{ i[0] }}</td>
-        <td>{{ i[1] }}</td>
+	<td>{{ loop.index0 }}</td>
+        <td>{{ i[0]|trim }}</td>
+        <td>{{ i[1]|trim }}</td>
     </tr>
     {% endfor %}
 </table>
