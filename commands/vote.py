@@ -185,7 +185,7 @@ def cmd(send, msg, args):
     msg = " ".join(cmd[1:])
     if not cmd:
         send("Which poll?")
-    elif cmd[0] == 'start' or cmd[0] == 'open':
+    elif cmd[0] == 'start' or cmd[0] == 'open' or cmd[0] == 'add':
         send(start_poll(pollfile, polls, msg))
     elif cmd[0] == 'end' or cmd[0] == 'close':
         if args['is_admin'](args['nick']):
