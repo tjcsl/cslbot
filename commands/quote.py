@@ -19,7 +19,7 @@ import os
 from random import choice
 from time import sleep
 
-args = ['srcdir', 'nick', 'connection', 'is_admin']
+args = ['srcdir', 'nick', 'connection', 'is_admin', 'config']
 
 
 def getquote(quotes, msg):
@@ -103,7 +103,9 @@ def cmd(send, msg, args):
         quote = " ".join(cmd[1:])
         send(addquote(quotes, quotefile, quote))
     elif cmd[0] == "list":
-        listquotes(quotes, args['nick'], args['connection'], send)
+        send("See %s" % args['config']['core']['quoteurl'])
+        # disabled due to slowness.
+        # listquotes(quotes, args['nick'], args['connection'], send)
     elif cmd[0] == "remove" or cmd[0] == "delete":
         if args['is_admin'](args['nick']):
             msg = " ".join(cmd[1:])
