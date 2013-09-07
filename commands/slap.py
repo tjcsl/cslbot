@@ -23,15 +23,16 @@ def cmd(send, msg, args):
     Syntax: !slap <nick> for <reason>
     """
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
-    slap = 'slaps %s around a bit with %s'
+    method = ['around a bit', 'upside the head']
+    slap = 'slaps %s %s with %s'
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
         users = list(args['channels'][channel].users())
-        send(slap % (choice(users), choice(implements)), 'action')
+        send(slap % (choice(users), choice(method), choice(implements)), 'action')
     else:
         if "for" in msg:
             msg = msg.split("for")
-            slap = slap % (msg[0].strip(), choice(implements) + " for" + msg[1])
+            slap = slap % (msg[0].strip(), choice(method), choice(implements) + " for" + msg[1])
         else:
-            slap = slap % (msg, choice(implements))
+            slap = slap % (msg, choice(method), choice(implements))
         send(slap, 'action')
