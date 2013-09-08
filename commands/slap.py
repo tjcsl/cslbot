@@ -22,7 +22,7 @@ def cmd(send, msg, args):
     """Slap somebody.
     Syntax: !slap <nick> for <reason>
     """
-    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
+    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'the moon', 'an Itanium', 'fwilson', 'a wombat']
     method = ['around a bit', 'upside the head']
     slap = 'slaps %s %s with %s'
     if not msg:
