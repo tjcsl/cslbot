@@ -21,14 +21,17 @@ args = ['nick', 'modules']
 
 def cmd(send, msg, args):
     """Generates a shibe reaction.
-    Syntax: !shibe (topic1)...(topicn)
+    Syntax: !shibe (topic1)...(topicn) or !shibe (number) for random words
     """
-    topics = msg.split() if msg else [args['modules']['word'].gen_word()]
-
+    topics = msg.split()
     reaction = 'wow'
     adverbs = ['so', 'such']
-    for i in topics:
-        reaction += ' %s %s' % (choice(adverbs), i)
+    if len(topics) == 1 && topics[0].isdigit():
+        for i in range(int(topics[0])):
+            reaction += ' %s &s' % (choice(adverbs, args['modules']['word'].gen_word())
+    else:
+        for i in topics:
+            reaction += ' %s %s' % (choice(adverbs), i)
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
     for i in range(randint(1, 2)):
