@@ -26,7 +26,9 @@ def cmd(send, msg, args):
         return
     try:
         answer = subprocess.check_output(['ping', '-q', '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
-        send(answer.decode().splitlines()[-2])
+        answer = answer.decode().splitlines()
+        send(answer[0])
+        send(answer[-2])
     except subprocess.CalledProcessError as e:
         if e.returncode == 2:
             send("ping: unknown host " + msg)

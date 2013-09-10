@@ -84,6 +84,8 @@ def get_weather(msg, send, apikey):
         if 'current_observation' in data:
             data = data['current_observation']
         else:
+            import logging
+            logging.error(data)
             send("Invalid or Ambiguous Location")
             return False
         forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
