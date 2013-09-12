@@ -445,19 +445,18 @@ class BotHandler():
             title = html.getroot().find(".//title").text.strip()
             # strip unicode
             title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
-            send('** %s - %s' % (title, shorturl))
         except URLError as ex:
             # website does not exist
             if hasattr(ex.reason, 'errno'):
-                if ex.reason.errno == socket.EAI_NONAME or \
-                        ex.reason.errno == errno.ENETUNREACH:
-                    pass
+                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
+                    return
             else:
-                send('%s: %s' % (type(ex).__name__,
-                                 str(ex).replace('\n', ' ')))
+                send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
+                return
         # page does not contain a title
         except AttributeError:
-            pass
+            title = 'No Title Found'
+        send('** %s - %s' % (title, shorturl))
 
     def do_mode(self, target, msg, nick, send):
         """ reop"""
