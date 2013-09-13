@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         msg = args['modules']['word'].gen_word()
-    if random() < 0.5:
+    if msg.startswith('fwil') or random() < 0.5:
         output = "wheeeee %s" % msg
         send(output.upper())
     else:
