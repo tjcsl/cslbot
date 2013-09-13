@@ -7,7 +7,7 @@ The bot that inhabits the #tjhsst channel on freenode.
 
 Documentation
 -------------
-See http://fwilson42.github.io/ircbot for api docs.
+See http://tjcsl.github.io/cslbot for api docs.
 
 Setup
 -----

@@ -15,16 +15,18 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-from urllib.request import urlopen
 import json
 import os
+from urllib.request import urlopen
+
+args = ['config']
 
 
 def cmd(send, msg, args):
     """Check the git revison.
     Syntax: !version <check|master>
     """
-    apiOutput = json.loads(urlopen('https://api.github.com/repos/fwilson42/ircbot/branches/master', timeout=1).read().decode())
+    apiOutput = json.loads(urlopen('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo'], timeout=1).read().decode())
     gitdir = os.path.dirname(__file__) + "/../.git"
     try:
         version = subprocess.check_output(['git', '--git-dir=' + gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
