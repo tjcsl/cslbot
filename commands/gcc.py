@@ -26,9 +26,9 @@ def cmd(send, msg, args):
     Syntax: !gcc <code>
     """
     tmpfile = tempfile.NamedTemporaryFile()
-    msg = msg.replace('\\n', '\n')
-    for line in msg.splitlines():
-        tmpfile.write(msg.encode())
+    for line in msg.split('\\n'):
+        line = line + '\n'
+        tmpfile.write(line.encode())
     tmpfile.flush()
     process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = process.communicate()[0]
