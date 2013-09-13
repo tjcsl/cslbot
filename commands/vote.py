@@ -17,7 +17,7 @@
 import json
 import os
 
-args = ['nick', 'srcdir', 'is_admin']
+args = ['nick', 'srcdir', 'is_admin', 'connection']
 
 
 def start_poll(pollfile, polls, poll):
@@ -157,12 +157,12 @@ def retract(pollfile, polls, poll, nick):
     return msg
 
 
-def list_polls(polls, send):
+def list_polls(polls, send, c, nick):
     if not polls:
         send("No polls.")
     else:
         for index, poll in enumerate(polls):
-            send("%d: %s" % (index, poll['question']))
+            c.privmsg(nick, "%d: %s" % (index, poll['question']))
 
 
 def save_polls(pollfile, polls):
@@ -205,7 +205,7 @@ def cmd(send, msg, args):
     elif cmd[0] == 'tally':
         tally_poll(polls, msg, send)
     elif cmd[0] == 'list':
-        list_polls(polls, send)
+        list_polls(polls, send, args['connection'], args['nick'])
     elif cmd[0] == 'retract':
         send(retract(pollfile, polls, msg, args['nick']))
     elif cmd[0].isdigit():
