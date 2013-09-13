@@ -12,7 +12,8 @@ See http://tjcsl.github.io/cslbot for api docs.
 Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
-Install irc (https://pypi.python.org/pypi/irc) and lxml (https://pypi.python.org/pypi/lxml)
+Install irc (https://pypi.python.org/pypi/irc), beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
+and lxml (https://pypi.python.org/pypi/lxml)
 
 Adding Modules
 --------------
