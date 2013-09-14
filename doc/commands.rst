@@ -505,6 +505,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`smack` Module
+-------------------
+
+.. automodule:: commands.smack
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`ssearch` Module
 ---------------------
 
