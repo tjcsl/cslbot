@@ -322,7 +322,7 @@ class BotHandler():
             if target != ctrlchan:
                 ctrlmsg = "(%s) %s" % (target, log)
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
-        self.logs[target].append([day, log])
+        #self.logs[target].append([day, log])
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.

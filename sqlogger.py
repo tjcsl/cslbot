@@ -49,7 +49,7 @@ class Logger():
         |   - mode - channel mode sets
         """
         #print(channel, nick, msg_text, msg_type)
-        self.dbcursor.execute('INSERT INTO log VALUES(?,?,?,?,?)',
+        self.dbcursor.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
                               (nick, isop, channel, msg_text, msg_type,
                                datetime.now().strftime("%s.%f")))
         self.dbconn.commit()
