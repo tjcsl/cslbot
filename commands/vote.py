@@ -71,7 +71,7 @@ def end_poll(pollfile, polls, poll):
     return "Poll ended."
 
 
-def tally_poll(polls, poll, send):
+def tally_poll(polls, poll, send, c, target):
     if not poll:
         send("Syntax: !vote tally <pollnum>")
         return
@@ -92,7 +92,7 @@ def tally_poll(polls, poll, send):
             votemap[vote] = []
         votemap[vote].append(nick)
     for x in sorted(votemap.keys()):
-        send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
+        c.privmsg(target, "%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
     if not votemap:
         return
     ranking = {}
@@ -203,7 +203,7 @@ def cmd(send, msg, args):
         else:
             send("Nope, not gonna do it.")
     elif cmd[0] == 'tally':
-        tally_poll(polls, msg, send)
+        tally_poll(polls, msg, send, args['connection'], args['nick'])
     elif cmd[0] == 'list':
         list_polls(polls, send, args['connection'], args['nick'])
     elif cmd[0] == 'retract':
