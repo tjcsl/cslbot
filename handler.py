@@ -33,6 +33,7 @@ from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 from random import choice, random
+from sqlogger import Logger
 
 
 class BotHandler():
@@ -54,7 +55,7 @@ class BotHandler():
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
         | srcdir is the path to the directory where the bot is stored.
-        | logfiles is a dict containing the file objects to which the logs are
+        | logger - See logging.py, is a db wrapper for logging purposes
         |   written.
         """
         self.config = config
@@ -74,15 +75,7 @@ class BotHandler():
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.logfiles = {config['core']['channel']: open("%s/%s.log"
-                         % (config['core']['logdir'],
-                            config['core']['channel']), "a"),
-                         config['core']['ctrlchan']:
-                         open("%s/%s.log" % (config['core']['logdir'],
-                                             config['core']['ctrlchan']),
-                              "a"),
-                         'private': open("%s/private.log" %
-                                         config['core']['logdir'], "a")}
+        self.logger = Logger(config['core']['logfile'])
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
@@ -94,7 +87,7 @@ class BotHandler():
         data['logs'] = dict(self.logs)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
-        data['logfiles'] = dict(self.logfiles)
+        data['logger'] = dict(self.logger)
         data['guarded'] = list(self.guarded)
         return data
 
@@ -105,7 +98,7 @@ class BotHandler():
         self.disabled_mods = data['disabled_mods']
         self.issues = data['issues']
         self.logs = data['logs']
-        self.logfiles = data['logfiles']
+        self.logger = data['logger']
         self.channels = data['channels']
         self.abuselist = data['abuselist']
         self.guarded = data['guarded']
@@ -306,50 +299,30 @@ class BotHandler():
             if day != self.logs[target][-1][0]:
                 log = time.strftime('New Day: %a, %b %d, %Y\n')
                 self.logs[target].append([day, log])
-                self.logfiles[target].write(log)
-                self.logfiles[target].flush()
+                #TODO: Log datetime changes
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
-        if msgtype == 'action':
-            log = '%s * %s %s\n' % (currenttime, nick, msg)
-        elif msgtype == 'nick':
-            log = '%s -- %s is now known as %s\n' % (currenttime, nick, msg)
-        elif msgtype == 'join':
-            fullname = nick
-            nick = nick.nick
-            log = '%s --> %s (%s) has joined %s\n' % (currenttime, nick,
-                                                      fullname, msg)
-        elif msgtype == 'part':
-            fullname = nick
-            nick = nick.nick
-            log = '%s <-- %s (%s) has left %s\n' % (currenttime, nick,
-                                                    fullname, msg)
-        elif msgtype == 'quit':
-            fullname = nick
-            nick = nick.nick
-            log = '%s <-- %s (%s) has quit (%s)\n' % (currenttime, nick,
-                                                      fullname, msg)
-        elif msgtype == 'kick':
-            msg = msg.split(',')
-            log = '%s <-- %s has kicked %s (%s)\n' % (currenttime, nick,
-                                                      msg[0], msg[1])
-        elif msgtype == 'mode':
-            log = '%s -- Mode %s [%s] by %s\n' % (currenttime, target,
-                                                  msg, nick)
-        else:
-            if isop:
-                nick = '@' + nick
-            log = '%s <%s> %s\n' % (currenttime, nick, msg)
+        #TODO: We need to implement the following in the log generation script:
+        # -action
+        # -nick
+        # -join
+        # -part
+        # -quit
+        # -kick
+        # -mode
+        # -pub
+        # -private
+        #log to sqlite logger
+        self.logger.log(target, nick, msg, msgtype)
+        
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
                 ctrlmsg = "(%s) %s" % (target, log)
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
         self.logs[target].append([day, log])
-        self.logfiles[target].write(log)
-        self.logfiles[target].flush()
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.
