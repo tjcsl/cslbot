@@ -6,3 +6,4 @@ __pycache__
 gh-pages
 *.*~
 fixperms.sh
+log.sqlite

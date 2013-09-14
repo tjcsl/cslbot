@@ -293,7 +293,7 @@ class BotHandler():
                     isop = True
         else:
             target = 'private'
-        currenttime = time.strftime('%H:%M:%S')
+        #currenttime = time.strftime('%H:%M:%S')
         day = int(time.strftime('%d'))
         if len(self.logs[target]) > 0:
             if day != self.logs[target][-1][0]:
@@ -315,8 +315,8 @@ class BotHandler():
         # -pub
         # -private
         #log to sqlite logger
-        self.logger.log(target, nick, msg, msgtype)
-        
+        self.logger.log(target, nick, isop, msg, msgtype)
+
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:

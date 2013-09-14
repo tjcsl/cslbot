@@ -18,17 +18,14 @@
 # USA.
 
 import sqlite3
-import datetime as dt
-
-class CslIrcBotSqlException(BaseException):
-    pass
+from datetime import datetime
 
 
 class Logger():
 
     def __init__(self, dbfile):
         """ Set everything up
-        
+
         | dbconn is a connection to a database. Currently only sqlite is
         |   supported
         """
@@ -36,7 +33,7 @@ class Logger():
         self.dbcursor = self.dbconn.cursor()
         self.verify_db()
 
-    def log(self, channel, nick, msg_text, msg_type):
+    def log(self, channel, nick, isop, msg_text, msg_type):
         """ Logs a message to the database
 
         | channel: The channel we are in
@@ -44,49 +41,49 @@ class Logger():
         |   decorated with @ for ops
         | msg_text: The text of the message
         | msg_type: The type of message we are recieving. Valid types are
-        |   - action Chats, commands, ect.
+        |   - action Chats, commands, etc.
         |   - join - channel joins
-        |   - part - channel parts 
-        |   - quit - channel quits?
+        |   - part - channel parts
+        |   - quit - server quits
         |   - kick - channel kicks
         |   - mode - channel mode sets
         """
-        print(channel, nick,msg_text,msg_type)
-        self.dbcursor.execute('INSERT INTO events VALUES(?,?,?,?,?)', 
-                (nick, channel, msg_text, msg_type, dt.datetime.now().strftime("%s.%f")))
+        #print(channel, nick, msg_text, msg_type)
+        self.dbcursor.execute('INSERT INTO log VALUES(?,?,?,?,?)',
+                              (nick, isop, channel, msg_text, msg_type,
+                               datetime.now().strftime("%s.%f")))
         self.dbconn.commit()
-        pass
 
     def verify_db(self):
         """ Verifies that the database is going to be OK
         """
         #define needed tables and the statements used to create them
-        tables_needed={
-                'events': 'CREATE TABLE events(nick TEXT, channel TEXT, msg TEXT, msg_type TEXT, time TEXT)',
+        tables_needed = {
+            'log': 'CREATE TABLE log(nick TEXT, channel TEXT, oper BOOL, msg TEXT, msg_type TEXT, time TEXT)',
         }
         #Make sure the tables are all OK
-        print ("Verifying DB");
+        #print ("Verifying DB");
         for tbl in tables_needed.keys():
-            print ("Checking table", tbl, end="...")
-            current_tbl = self.dbcursor.execute('SELECT sql FROM sqlite_master WHERE name=?', (tbl,)).fetchone();
-            if current_tbl == None:
-                print("Not extant, creating...", end="")
+            #print ("Checking table", tbl, end="...")
+            current_tbl = self.dbcursor.execute('SELECT sql FROM sqlite_master WHERE name=?', (tbl,)).fetchone()
+            if current_tbl is None:
+                #print("Not extant, creating...", end="")
                 self.dbcursor.execute(tables_needed[tbl])
             elif current_tbl[0] != tables_needed[tbl]:
                 #Here we do some ugly text transformation hacks to see if we can get the two tablespecs to line up.
-                hack_sql = lambda x: x.replace(' ','').replace('\n','').replace(';','')
+                hack_sql = lambda x: x.replace(' ', '').replace('\n', '').replace(';', '')
                 if hack_sql(current_tbl[0]) != hack_sql(tables_needed[tbl]):
                     print("Not OK!")
                     print("hacked up sql strings:\n Wanted:")
                     print(hack_sql(tables_needed))
                     print("recieved")
                     print(hack_sql(current_tbl[0]))
-                    print("The structure of table ", tbl, " doesn't equal what we expect!");
+                    print("The structure of table ", tbl, " doesn't equal what we expect!")
                     print("We Want:")
                     print(tables_needed[tbl])
                     print("but got:")
                     print(current_tbl[0])
                     print("Please execute an ALTER TABLE ", tbl, " query so that everything lines up!")
-                    raise CslIrcBotSqlException()
-            print(" OK")
-        print ("DB verified")
+                    raise Exception("Invalid DB")
+            #print(" OK")
+        #print ("DB verified")
