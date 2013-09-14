@@ -23,7 +23,9 @@ args = ['source', 'issues', 'connection', 'config']
 def create_issue(msg, nick, repo, apikey):
     url = 'https://api.github.com/repos/%s/issues' % repo
     req = Request(url)
-    req.data = json.dumps({"title": msg, "body": "Issue created by %s" % nick}).encode()
+    req.data = json.dumps({"title": msg,
+                           "body": "Issue created by %s" % nick,
+                           "labels": ["bot"]}).encode()
     req.add_header('Authorization', 'token %s' % apikey)
     data = json.loads(urlopen(req).read().decode())
     return data['html_url']
