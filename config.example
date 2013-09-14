@@ -5,7 +5,7 @@ nick: Bot
 channel: #channel
 ctrlchan: #channel-control
 cmdchar: !
-logdir: /var/log/irc/
+logfile: /var/log/irc/log.sqlite
 quoteurl: http://pefoley.com/irc/quotes.html
 [auth]
 ctrlpass:
