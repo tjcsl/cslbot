@@ -315,7 +315,7 @@ class BotHandler():
         # -pub
         # -private
         #log to sqlite logger
-        self.logger.log(target, nick, isop, msg, msgtype)
+        self.logger.log(nick, target, isop, msg, msgtype)
 
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']

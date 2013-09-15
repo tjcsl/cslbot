@@ -29,46 +29,46 @@ class Logger():
         | dbconn is a connection to a database. Currently only sqlite is
         |   supported
         """
-        self.dbconn = sqlite3.connect(dbfile)
-        self.dbcursor = self.dbconn.cursor()
+        self.db = sqlite3.connect(dbfile)
         self.verify_db()
 
-    def log(self, channel, nick, isop, msg_text, msg_type):
+    def log(self, source, target, operator, msg_text, msg_type):
         """ Logs a message to the database
 
-        | channel: The channel we are in
-        | nick: The nickname of the user who sent the message, optionaly
-        |   decorated with @ for ops
-        | msg_text: The text of the message
-        | msg_type: The type of message we are recieving. Valid types are
-        |   - action Chats, commands, etc.
+        | source: The source of the message.
+        | target: The target of the message.
+        | operator: Is the user a operator?
+        | msg_text: The text of the message.
+        | msg_type: The type of message. Valid types are
+        |   - action - /me, etc.
         |   - join - channel joins
         |   - part - channel parts
         |   - quit - server quits
         |   - kick - channel kicks
-        |   - mode - channel mode sets
+        |   - mode - channel mode changes
+        | time: The current date.
         """
-        #print(channel, nick, msg_text, msg_type)
-        self.dbcursor.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                              (nick, isop, channel, msg_text, msg_type,
-                               datetime.now().strftime("%s.%f")))
-        self.dbconn.commit()
+        time = datetime.now().strftime("%s.%f")
+        self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
+                        (source, target, operator, msg_text, msg_type, time))
+        self.db.commit()
 
     def verify_db(self):
+        # FIXME: there has to be a better way to do this.
         """ Verifies that the database is going to be OK
         """
         #define needed tables and the statements used to create them
         tables_needed = {
-            'log': 'CREATE TABLE log(nick TEXT, channel TEXT, oper BOOL, msg TEXT, msg_type TEXT, time TEXT)',
+            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg_text TEXT, msg_type TEXT, time TEXT)',
         }
         #Make sure the tables are all OK
         #print ("Verifying DB");
         for tbl in tables_needed.keys():
             #print ("Checking table", tbl, end="...")
-            current_tbl = self.dbcursor.execute('SELECT sql FROM sqlite_master WHERE name=?', (tbl,)).fetchone()
+            current_tbl = self.db.execute('SELECT sql FROM sqlite_master WHERE name=?', (tbl,)).fetchone()
             if current_tbl is None:
                 #print("Not extant, creating...", end="")
-                self.dbcursor.execute(tables_needed[tbl])
+                self.db.execute(tables_needed[tbl])
             elif current_tbl[0] != tables_needed[tbl]:
                 #Here we do some ugly text transformation hacks to see if we can get the two tablespecs to line up.
                 hack_sql = lambda x: x.replace(' ', '').replace('\n', '').replace(';', '')
