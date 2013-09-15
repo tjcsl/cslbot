@@ -19,16 +19,17 @@
 
 import sqlite3
 from time import time
+from os.path import dirname
 
 
-class Logger():
+class Sql():
 
-    def __init__(self, dbfile):
+    def __init__(self):
         """ Set everything up
 
-        | dbconn is a connection to a database. Currently only sqlite is
-        |   supported
+        | dbconn is a connection to a sqlite database.
         """
+        dbfile = dirname(__file__) + '/db.sqlite'
         self.db = sqlite3.connect(dbfile)
         self.setup_db()
 
@@ -45,6 +46,9 @@ class Logger():
         self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
                         (source, target, operator, msg, msg_type, time()))
         self.db.commit()
+
+    def get(self):
+        return self.db.cursor()
 
     def setup_db(self):
         """ Sets up the database.

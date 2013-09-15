@@ -21,7 +21,7 @@ import imp
 import handler
 import server
 import control
-import sqlogger
+import sql
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import basename, dirname
@@ -86,7 +86,7 @@ class IrcBot(SingleServerIRCBot):
         imp.reload(handler)
         imp.reload(server)
         imp.reload(control)
-        imp.reload(sqlogger)
+        imp.reload(sql)
         self.config = ConfigParser()
         self.config.read_file(open(dirname(__file__) + '/config.cfg'))
         self.server.shutdown()

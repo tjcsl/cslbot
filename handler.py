@@ -27,13 +27,13 @@ import socket
 import string
 import errno
 import control
+import sql
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 from random import choice, random
-from sqlogger import Logger
 
 
 class BotHandler():
@@ -53,7 +53,7 @@ class BotHandler():
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
         | srcdir is the path to the directory where the bot is stored.
-        | logger - See logging.py, is a db wrapper for logging purposes.
+        | db - Is a db wrapper for data storage.
         """
         self.config = config
         self.guarded = []
@@ -69,7 +69,7 @@ class BotHandler():
         self.modules = self.loadmodules()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.logger = Logger(config['core']['logfile'])
+        self.db = sql.Sql()
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
@@ -291,7 +291,7 @@ class BotHandler():
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
-        self.logger.log(nick, target, isop, msg, msgtype)
+        self.db.log(nick, target, isop, msg, msgtype)
 
         #FIXME: reenable log to ctrlchan
         #if self.log_to_ctrlchan:
@@ -521,6 +521,7 @@ class BotHandler():
                 'admins': self.admins,
                 'issues': self.issues,
                 'abuse': self.abuselist,
+                'db': self.db.get(),
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,
                 'config': self.config,
