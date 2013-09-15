@@ -32,9 +32,9 @@ def write_log(name, outdir, msg):
 
 def gen_log(row):
     logtime = strftime('%H:%M:%S', localtime(row['time']))
-    if row['msg_type'] == 'join':
+    if row['type'] == 'join':
         nick = row['source'].split('!')[0]
-        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg_text'])
+        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg'])
     else:
         log = row['msg_type'] + '\n'
     return log

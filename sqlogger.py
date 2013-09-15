@@ -32,14 +32,14 @@ class Logger():
         self.db = sqlite3.connect(dbfile)
         self.verify_db()
 
-    def log(self, source, target, operator, msg_text, msg_type):
+    def log(self, source, target, operator, msg, msg_type):
         """ Logs a message to the database
 
         | source: The source of the message.
         | target: The target of the message.
         | operator: Is the user a operator?
-        | msg_text: The text of the message.
-        | msg_type: The type of message. Valid types are
+        | msg: The text of the message.
+        | msg: The type of message. Valid types are
         |   - action - /me, etc.
         |   - join - channel joins
         |   - part - channel parts
@@ -49,7 +49,7 @@ class Logger():
         | time: The current time (Unix Epoch).
         """
         self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                        (source, target, operator, msg_text, msg_type, time()))
+                        (source, target, operator, msg, msg_type, time()))
         self.db.commit()
 
     def verify_db(self):
@@ -58,7 +58,7 @@ class Logger():
         """
         #define needed tables and the statements used to create them
         tables_needed = {
-            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg_text TEXT, msg_type TEXT, time INTEGER)',
+            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)',
         }
         #Make sure the tables are all OK
         #print ("Verifying DB");
