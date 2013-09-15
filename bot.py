@@ -96,6 +96,7 @@ class IrcBot(SingleServerIRCBot):
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
+        self.handler.clean_sql_connection_pool()
         self.handler.connection = c
         if output:
             return output

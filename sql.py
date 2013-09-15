@@ -18,6 +18,7 @@
 # USA.
 
 import sqlite3
+from _thread import get_ident
 from time import time
 from os.path import dirname
 
@@ -27,13 +28,13 @@ class Sql():
     def __init__(self):
         """ Set everything up
 
-        | dbconn is a connection to a sqlite database.
+        | dbfile is the filename of the database
+        | connection_pool is a dictionary of threadid->dbconnection.
         """
-        dbfile = dirname(__file__) + '/db.sqlite'
-        #FIXME: There has to be a better way to do this.
-        self.db = sqlite3.connect(dbfile, check_same_thread=False)
-        self.db.row_factory = sqlite3.Row
-        self.cursor = self.db.cursor()
+        self.dbfile = dirname(__file__) + '/db.sqlite'
+        self.connection_pool = {}
+#        self.db = sqlite3.connect(dbfile)
+#        self.db.row_factory = sqlite3.Row
         self.setup_db()
 
     def log(self, source, target, operator, msg, msg_type):
@@ -46,15 +47,36 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        self.cursor.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                            (source, target, operator, msg, msg_type, time()))
-        self.db.commit()
+        db = self.get_db_for_current_thread()
+        db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
+                        (source, target, operator, msg, msg_type, time()))
+        db.commit()
+
+    def get_db_for_current_thread(self):
+        """ Gets a database connection unique to the current thread
+        """
+        tid = get_ident()
+        if tid in self.connection_pool.keys():
+            return self.connection_pool[tid]
+        else:
+            dbconn = sqlite3.connect(self.dbfile)
+            dbconn.row_factory = sqlite3.Row
+            self.connection_pool[tid] = dbconn
+            return dbconn
+
+    def clean_connection_pool(self):
+        """ Cleans out the connection pool.
+        """
+        for tid in self.connection_pool:
+            conn = self.connection_pool[tid]
+            conn.commit()
+            conn.close()
+        self.connection_pool.clear()
 
     def get(self):
-        return self.cursor
+        return get_db_for_current_thread().cursor()
 
     def setup_db(self):
         """ Sets up the database.
         """
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
-        self.db.commit()
+        self.get_db_for_current_thread().execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')

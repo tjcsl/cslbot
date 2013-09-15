@@ -93,6 +93,10 @@ class BotHandler():
         self.abuselist = data['abuselist']
         self.guarded = data['guarded']
 
+    def clean_sql_connection_pool(self):
+        """ Cleans the sql connection pool."""
+        self.db.clean_connection_pool()
+
     def loadmodules(self):
         """Load all the commands.
 
