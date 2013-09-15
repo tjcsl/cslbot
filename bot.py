@@ -206,7 +206,7 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/config.cfg'))
+    config.read_file(open(dirname(__file__) + 'config.cfg'))
     bot = IrcBot(config)
     bot.server = server.init_server(bot)
     bot.start()
