@@ -20,10 +20,10 @@ args = ['db', 'target']
 
 
 def get_log(cursor, user):
-    if user:
-        cursor.execute('SELECT msg FROM log WHERE source=? ORDER BY time DESC', (user,))
-    else:
+    if user is None:
         cursor.execute('SELECT msg FROM log ORDER BY time DESC')
+    else:
+        cursor.execute('SELECT msg FROM log WHERE source=? ORDER BY time DESC', (user,))
     # Don't parrot back the !reverse call.
     cursor.fetchone()
     return cursor.fetchone()
@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>
     """
-    user = msg[2:] if re.search("^--", msg) else False
+    user = msg[2:] if re.search("^--", msg) else None
     if msg and not user:
         send(msg[::-1].strip())
         return
