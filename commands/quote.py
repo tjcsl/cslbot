@@ -19,104 +19,61 @@ import os
 from random import choice
 from time import sleep
 
-args = ['srcdir', 'nick', 'connection', 'is_admin', 'config']
+args = ['db', 'nick', 'connection', 'is_admin', 'config']
 
+def do_usage(send):
+    send("Usage: !quote <number>, !quote list, !quote add <quote> -- <nick>, !quote [remove|delete] <number>, !quote edit <number> <quote> -- <nick>")
 
-def getquote(quotes, msg):
-    if not quotes:
-        return "Nobody has taste in this channel."
-    elif not msg:
-        return choice(quotes)
-    elif not msg.isdigit():
-        return "Not A Valid Positive Integer"
-    elif int(msg) >= len(quotes):
-        return "Quote Number Out Of Range."
-    else:
-        return quotes[int(msg)]
+def do_get_quote(num, cursor, send):
+    quid = int(num)
+    quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
+    if quote == None:
+        send(num + " is not a valid quote number! Use !quote list to see valid quotes")
+        return
+    send(quote[1] + " -- " + quote[0])
 
+def do_add_quote(cmd, cursor, send):
+    #We need to strip off the 'add ' but we don't want to split the quote into tiny little annoying peices
+    cmd = cmd[len('add '):]
+    split = cmd.find('--')
+    if split == -1:
+        send("To add a quote, it must be in the format <quote> -- <nick>")
+        return
+    quote = cmd.split('--')
+    #strip off excess leading/ending spaces
+    quote = list(map (lambda x: x.strip(), quote))
+    cursor.execute('INSERT INTO quotes(quote, nick, rowid) VALUES(?,?,NULL)', (quote[0], quote[1]))
+    cursor.fetchone()
+    send ("Added quote!")
 
-def addquote(quotes, quotefile, quote):
-    if not quote:
-        return "No quote given."
-    quotes += [quote]
-    save_quotes(quotefile, quotes)
-    return "Quote added successfully."
-
-
-def listquotes(quotes, nick, c, send):
-    if not quotes:
-        send("Nobody has taste in this channel.")
-    else:
-        for i in enumerate(quotes):
-            c.privmsg(nick, "%d: %s" % i)
-            # work around broken clients.
-            sleep(0.7)
-
-
-def removequote(msg, quotes, quotefile):
-    if not msg:
-        return "Which quote?"
-    if not msg.isdigit():
-        return "Not A Valid Positive Integer."
-    key = int(msg)
-    if key >= len(quotes):
-        return "Quote Number Out Of Range."
-    quotes.remove(quotes[key])
-    save_quotes(quotefile, quotes)
-    return "Deleted quote successfully."
-
-
-def editquote(msg, quotes, quotefile):
-    cmd = msg.split()
-    if len(cmd) < 2:
-        return "Missing arguments."
-    if not cmd[0].isdigit():
-        return "Not A Valid Positive Integer."
-    key = int(cmd[0])
-    if key >= len(quotes):
-        return "Quote Number Out Of Range."
-    quotes[key] = " ".join(cmd[1:])
-    save_quotes(quotefile, quotes)
-    return "Edited quote successfully."
-
-
-def save_quotes(quotefile, quotes):
-    f = open(quotefile, "w")
-    json.dump(quotes, f, indent=True, sort_keys=True)
-    f.write("\n")
-    f.close()
-
+def do_list_quotes(cursor, send):
+    cursor.execute("SELECT id,quote,nick FROM quotes");
+    send("List of quotes: ")
+    for q in cursor:
+        send(str(q[0]) + ":" + q[1] + " -- " + q[2])
 
 def cmd(send, msg, args):
     """Handles quotes.
-    Syntax: !quote <number>, !quote add <quote>, !quote list, !quote remove <number>, !quote edit <number> <quote>
+    Syntax: !quote <number>, !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
     """
-    quotefile = args['srcdir'] + "/data/quotes"
-    if os.path.isfile(quotefile):
-        quotes = json.load(open(quotefile))
+    cursor = args['db']
+    cmd = msg.split(' ')
+   
+    print(msg)
+    if len(cmd) < 1:
+        do_usage(send)
+    elif cmd[0] == 'add':
+        do_add_quote(msg, cursor, send)
+    elif cmd[0] == 'list':
+        do_list_quotes(cursor, send)
+    elif cmd[0] == 'remove' or cmd[0] == 'delete':
+        if not(args['is_admin'](args['nick'])):
+            send ("You aren't allowed to do delete quotes. Please ask a bot admin to do it")
+            return
+        send('That command isn\'t implemented yet!')
+    elif cmd[0] == 'edit':
+        send('That command isn\'t implemented yet!')
+    elif cmd[0].isdigit():
+        do_get_quote(cmd[1], cursor, send)
     else:
-        quotes = []
-    cmd = msg.split()
-    if not cmd:
-        send(getquote(quotes, msg))
-    elif cmd[0] == "add":
-        quote = " ".join(cmd[1:])
-        send(addquote(quotes, quotefile, quote))
-    elif cmd[0] == "list":
-        send("See %s" % args['config']['core']['quoteurl'])
-        # disabled due to slowness.
-        # listquotes(quotes, args['nick'], args['connection'], send)
-    elif cmd[0] == "remove" or cmd[0] == "delete":
-        if args['is_admin'](args['nick']):
-            msg = " ".join(cmd[1:])
-            send(removequote(msg, quotes, quotefile))
-        else:
-            send("Nope, not gonna do it.")
-    elif cmd[0] == "edit":
-        if args['is_admin'](args['nick']):
-            msg = " ".join(cmd[1:])
-            send(editquote(msg, quotes, quotefile))
-        else:
-            send("Nope, not gonna do it.")
-    else:
-        send(getquote(quotes, msg))
+        do_usage(send)

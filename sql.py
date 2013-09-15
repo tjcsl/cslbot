@@ -77,3 +77,4 @@ class Sql():
         """ Sets up the database.
         """
         self.get_db_for_current_thread().execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
+        self.get_db_for_current_thread().execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
