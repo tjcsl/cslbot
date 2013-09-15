@@ -56,3 +56,4 @@ class Sql():
         """ Sets up the database.
         """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
+        self.db.commit()

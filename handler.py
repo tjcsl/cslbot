@@ -632,6 +632,6 @@ class BotHandler():
             if not found and self.is_admin(c, nick):
                 self.do_admin(c, cmd[1:], cmdargs, send, nick, msgtype, target)
         # ++ and --
-        matches = re.findall(r"([a-zA-Z0-9]+)(\+\+|--)", msg)
+        matches = re.findall(r"([a-zA-Z0-9_]+)(\+\+|--)", msg)
         if matches:
             self.do_scores(matches, send, msgtype, nick)
