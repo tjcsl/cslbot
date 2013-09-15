@@ -32,11 +32,24 @@ def write_log(name, outdir, msg):
 
 def gen_log(row):
     logtime = strftime('%H:%M:%S', localtime(row['time']))
+    nick = row['source'].split('!')[0]
     if row['type'] == 'join':
-        nick = row['source'].split('!')[0]
         log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg'])
+    elif row['type'] == 'part':
+        log = '%s <-- %s (%s) has left %s\n' % (logtime, nick, row['source'], row['msg'])
+    elif row['type'] == 'quit':
+        log = '%s <-- %s (%s) has quit (%s)\n' % (logtime, nick, row['source'], row['msg'])
+    elif row['type'] == 'action':
+        log = '%s * %s %s\n' % (logtime, nick, row['msg'])
+    elif row['type'] == 'mode':
+        log = '%s Mode %s [%s] by %s\n' % (logtime, row['target'], row['msg'], nick)
+    elif row['type'] == 'pubnotice':
+        log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
+    elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':
+        nick = '@' + nick if row['operator'] else nick
+        log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
     else:
-        log = row['msg_type'] + '\n'
+        log = row['type'] + '\n'
     return log
 
 

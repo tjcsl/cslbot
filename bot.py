@@ -21,6 +21,7 @@ import imp
 import handler
 import server
 import control
+import sqlogger
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import basename, dirname
@@ -85,6 +86,7 @@ class IrcBot(SingleServerIRCBot):
         imp.reload(handler)
         imp.reload(server)
         imp.reload(control)
+        imp.reload(sqlogger)
         self.config = ConfigParser()
         self.config.read_file(open(dirname(__file__) + '/config.cfg'))
         self.server.shutdown()
@@ -93,6 +95,7 @@ class IrcBot(SingleServerIRCBot):
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
+        self.handler.logger = sqlogger.Logger(self.config['core']['logfile'])
         self.handler.set_data(data)
         self.handler.connection = c
         if output:
@@ -130,6 +133,10 @@ class IrcBot(SingleServerIRCBot):
     def on_privnotice(self, c, e):
         """Pass privnotices to :func:`handle_msg`."""
         self.handle_msg('privnotice', c, e)
+
+    def on_pubnotice(self, c, e):
+        """Pass pubnotices to :func:`handle_msg`."""
+        self.handle_msg('pubnotice', c, e)
 
     def on_nick(self, c, e):
         """Log nick changes."""

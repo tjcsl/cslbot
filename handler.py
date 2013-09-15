@@ -65,9 +65,6 @@ class BotHandler():
         self.ignored = []
         self.disabled_mods = []
         self.issues = []
-        self.logs = {config['core']['channel']: [],
-                     config['core']['ctrlchan']: [],
-                     'private': []}
         self.channels = {}
         self.abuselist = {}
         admins = config['auth']['admins'].split(', ')
@@ -84,10 +81,8 @@ class BotHandler():
         data['ignored'] = list(self.ignored)
         data['disabled_mods'] = list(self.disabled_mods)
         data['issues'] = list(self.issues)
-        data['logs'] = dict(self.logs)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
-        data['logger'] = dict(self.logger)
         data['guarded'] = list(self.guarded)
         return data
 
@@ -97,8 +92,6 @@ class BotHandler():
         self.ignored = data['ignored']
         self.disabled_mods = data['disabled_mods']
         self.issues = data['issues']
-        self.logs = data['logs']
-        self.logger = data['logger']
         self.channels = data['channels']
         self.abuselist = data['abuselist']
         self.guarded = data['guarded']
@@ -234,17 +227,24 @@ class BotHandler():
         """
         self.handle_msg('privnotice', c, e)
 
+    def pubnotice(self, c, e):
+        """ Handle public notices.
+
+        Forward notices to :func:`handle_msg`.
+        """
+        self.handle_msg('pubnotice', c, e)
+
     def action(self, c, e):
         """ Handle actions.
 
-        Forward notices to :func:`handle_msg`.
+        Forward actions to :func:`handle_msg`.
         """
         self.handle_msg('action', c, e)
 
     def mode(self, c, e):
         """ Handle actions.
 
-        Forward notices to :func:`handle_msg`.
+        Forward mode changes to :func:`handle_msg`.
         """
         self.handle_msg('mode', c, e)
 
@@ -294,12 +294,12 @@ class BotHandler():
         else:
             target = 'private'
         #currenttime = time.strftime('%H:%M:%S')
-        day = int(time.strftime('%d'))
+        #day = int(time.strftime('%d'))
         #FIXME: Log datetime changes
-        if len(self.logs[target]) > 0:
-            if day != self.logs[target][-1][0]:
-                log = time.strftime('New Day: %a, %b %d, %Y\n')
-                self.logs[target].append([day, log])
+        #if len(self.logs[target]) > 0:
+        #    if day != self.logs[target][-1][0]:
+        #        log = time.strftime('New Day: %a, %b %d, %Y\n')
+        #        self.logs[target].append([day, log])
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
@@ -317,11 +317,12 @@ class BotHandler():
         #log to sqlite logger
         self.logger.log(nick, target, isop, msg, msgtype)
 
-        if self.log_to_ctrlchan:
-            ctrlchan = self.config['core']['ctrlchan']
-            if target != ctrlchan:
-                ctrlmsg = "(%s) %s" % (target, log)
-                self.connection.privmsg(ctrlchan, ctrlmsg.strip())
+        #FIXME: enable log to ctrlchan
+        #if self.log_to_ctrlchan:
+        #    ctrlchan = self.config['core']['ctrlchan']
+        #    if target != ctrlchan:
+        #        ctrlmsg = "(%s) %s" % (target, log)
+        #       self.connection.privmsg(ctrlchan, ctrlmsg.strip())
         #self.logs[target].append([day, log])
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
@@ -582,7 +583,7 @@ class BotHandler():
             msg = " ".join(e.arguments)
         else:
             msg = e.arguments[0].strip()
-        if msgtype == 'pubmsg' or msgtype == 'action' or msgtype == 'mode':
+        if msgtype == 'pubmsg' or msgtype == 'pubnotice' or msgtype == 'action' or msgtype == 'mode':
             target = e.target
         else:
             target = nick
@@ -591,6 +592,7 @@ class BotHandler():
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
             return
+
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
 
