@@ -37,6 +37,8 @@ def delete_poll(pollfile, polls, poll):
     poll = int(poll)
     if len(polls) <= poll:
         return "Invalid poll index."
+    if polls[poll]['active']:
+        return "Cannot delete open poll."
     polls.pop(poll)
     save_polls(pollfile, polls)
     return "Poll deleted."

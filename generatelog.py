@@ -43,6 +43,8 @@ def gen_log(row):
         log = '%s * %s %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'mode':
         log = '%s Mode %s [%s] by %s\n' % (logtime, row['target'], row['msg'], nick)
+    elif row['type'] == 'nick':
+        log = '%s -- %s is now know as %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'pubnotice':
         log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':

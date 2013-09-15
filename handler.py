@@ -47,8 +47,6 @@ class BotHandler():
         |   bot abuse.
         | disabled_mods is a array of the currently disabled modules.
         | issues is a list keeping track of pending issues.
-        | logs is a dict containing a in-memory log for the primary channel,
-        |   control channel, and private messages.
         | channels is a dict containing the objects for each channel the bot
         |   is connected to.
         | abuselist is a dict keeping track of how many times nicks have used
@@ -352,7 +350,6 @@ class BotHandler():
         """ Join a channel.
 
         | Checks if bot is already joined to channel.
-        | Opens logs for channel.
         """
         cmd = cmdargs.split()
         if not cmdargs:
@@ -364,9 +361,6 @@ class BotHandler():
                  cmdargs))
             return
         c.join(cmd[0])
-        self.logs[cmd[0]] = []
-        self.logfiles[cmd[0]] = open("%s/%s.log" % (self.config['core']['logdir'],
-                                     cmd[0]), "a")
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
     def do_scores(self, matches, send, msgtype, nick):
@@ -547,7 +541,6 @@ class BotHandler():
                 'connection': self.connection,
                 'modules': self.modules,
                 'srcdir': self.srcdir,
-                'logs': self.logs,
                 'admins': self.admins,
                 'issues': self.issues,
                 'abuse': self.abuselist,
