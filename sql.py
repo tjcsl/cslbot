@@ -31,6 +31,7 @@ class Sql():
         """
         dbfile = dirname(__file__) + '/db.sqlite'
         self.db = sqlite3.connect(dbfile)
+        self.db.row_factory = sqlite3.Row
         self.setup_db()
 
     def log(self, source, target, operator, msg, msg_type):

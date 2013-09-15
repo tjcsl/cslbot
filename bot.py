@@ -162,7 +162,7 @@ class IrcBot(SingleServerIRCBot):
         | Add the joined channel to the channel list.
         | If we've been kicked, yell at the kicker.
         """
-        self.handler.do_log(e.target, e.source, e.target, 'join')
+        self.handler.do_log(e.target, e.source.nick, e.target, 'join')
         if e.source.nick != self.config['core']['nick']:
             return
         self.handler.channels[e.target] = self.channels[e.target]

@@ -15,23 +15,30 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+
 args = ['db', 'target']
+
+
+def get_log(cursor, user):
+    if user:
+        cursor.execute('SELECT msg FROM log WHERE source=? ORDER BY time DESC', (user,))
+    else:
+        cursor.execute('SELECT msg FROM log ORDER BY time DESC')
+    # Don't parrot back the !reverse call.
+    cursor.fetchone()
+    return cursor.fetchone()
 
 
 def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>
     """
-    log = args['logs'][args['target']][:-1]
-    if not msg:
-        send(re.search(r"<.*> (.*)", log[-1][1]).groups(1)[0].strip()[::-1])
+    user = msg[2:] if re.search("^--", msg) else False
+    if msg and not user:
+        send(msg[::-1].strip())
         return
-    if re.search("^--", msg):
-        user = msg[2:]
-        for line in reversed(log[-50:]):
-            if re.search(r"<@?\+?" + user + ">", line[1]):
-                send(re.search(r"<.*> (.*)", line[1]).groups(1)[0].strip()[::-1])
-                return
-        send("Couldn't find a message from " + user + " :(")
-        return
-    send(msg[::-1].strip())
+    log = get_log(args['db'], user)
+    if user and not log:
+        send("Couldn't find a message from %s :(" % user)
+    else:
+        send(log['msg'][::-1])
