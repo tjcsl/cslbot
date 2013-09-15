@@ -218,14 +218,14 @@ class BotHandler():
             self.send(nick, nick, 'Hey, no points in private messages!',
                       e.type)
             return
-        self.handle_msg('priv', c, e)
+        self.handle_msg('privmsg', c, e)
 
     def pubmsg(self, c, e):
         """ Handle public messages.
 
         Forward messages to :func:`handle_msg`.
         """
-        self.handle_msg('pub', c, e)
+        self.handle_msg('pubmsg', c, e)
 
     def privnotice(self, c, e):
         """ Handle private notices.
@@ -295,11 +295,11 @@ class BotHandler():
             target = 'private'
         #currenttime = time.strftime('%H:%M:%S')
         day = int(time.strftime('%d'))
+        #FIXME: Log datetime changes
         if len(self.logs[target]) > 0:
             if day != self.logs[target][-1][0]:
                 log = time.strftime('New Day: %a, %b %d, %Y\n')
                 self.logs[target].append([day, log])
-                #TODO: Log datetime changes
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
@@ -582,7 +582,7 @@ class BotHandler():
             msg = " ".join(e.arguments)
         else:
             msg = e.arguments[0].strip()
-        if msgtype == 'pub' or msgtype == 'action' or msgtype == 'mode':
+        if msgtype == 'pubmsg' or msgtype == 'action' or msgtype == 'mode':
             target = e.target
         else:
             target = nick

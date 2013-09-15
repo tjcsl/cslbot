@@ -17,6 +17,7 @@
 
 import argparse
 import sqlite3
+from time import strftime, localtime
 from os.path import dirname
 
 logs = {}
@@ -30,9 +31,10 @@ def write_log(name, outdir, msg):
 
 
 def gen_log(row):
+    logtime = strftime('%H:%M:%S', localtime(row['time']))
     if row['msg_type'] == 'join':
         nick = row['source'].split('!')[0]
-        log = '%s --> %s (%s) has joined %s\n' % (row['time'], nick, row['source'], row['msg_text'])
+        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg_text'])
     else:
         log = row['msg_type'] + '\n'
     return log

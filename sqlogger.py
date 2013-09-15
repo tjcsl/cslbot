@@ -18,7 +18,7 @@
 # USA.
 
 import sqlite3
-from datetime import datetime
+from time import time
 
 
 class Logger():
@@ -46,11 +46,10 @@ class Logger():
         |   - quit - server quits
         |   - kick - channel kicks
         |   - mode - channel mode changes
-        | time: The current date.
+        | time: The current time (Unix Epoch).
         """
-        time = datetime.now().strftime("%s.%f")
         self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                        (source, target, operator, msg_text, msg_type, time))
+                        (source, target, operator, msg_text, msg_type, time()))
         self.db.commit()
 
     def verify_db(self):
@@ -59,7 +58,7 @@ class Logger():
         """
         #define needed tables and the statements used to create them
         tables_needed = {
-            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg_text TEXT, msg_type TEXT, time TEXT)',
+            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg_text TEXT, msg_type TEXT, time INTEGER)',
         }
         #Make sure the tables are all OK
         #print ("Verifying DB");
