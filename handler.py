@@ -592,11 +592,6 @@ class BotHandler():
                 raise Exception("Invalid Argument: " + arg)
         return realargs
 
-    def do_stallman(self, msg, nick, send):
-        msgl = msg.lower()
-        if "linux" in msgl and "gnu/linux" not in msgl and self.config['feature']['stallmanmode'] == 'True':
-            send(nick + ": What you are referring to as \"Linux\" is, in fact, GNU/Linux.")
-
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
@@ -622,9 +617,6 @@ class BotHandler():
         if msgtype == 'mode':
             self.do_mode(target, msg, nick, send)
             return
-
-        # Stallman mode
-        self.do_stallman(msg, nick, send)
 
         if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)

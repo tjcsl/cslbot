@@ -12,8 +12,6 @@ ctrlpass:
 nickpass:
 ctrlkey:
 admins: admin1, admin2
-[feature]
-stallmanmode = False
 [api]
 steamapikey:
 dictionaryapikey:
