@@ -41,7 +41,7 @@ class BotHandler():
     def __init__(self, config):
         """ Set everything up.
 
-        | kick_enabled controls whether the bot will kick people or not..
+        | kick_enabled controls whether the bot will kick people or not.
         | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for
         |   bot abuse.
@@ -53,8 +53,7 @@ class BotHandler():
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
         | srcdir is the path to the directory where the bot is stored.
-        | logger - See logging.py, is a db wrapper for logging purposes
-        |   written.
+        | logger - See logging.py, is a db wrapper for logging purposes.
         """
         self.config = config
         self.guarded = []
@@ -276,9 +275,7 @@ class BotHandler():
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
 
-        | Logs nick and time.
-        | Logs "New Day" when day turns over.
-        | Logs both to a file and a in-memory array.
+        | Logs to a sqlite db.
         """
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a " +
@@ -286,42 +283,22 @@ class BotHandler():
         target = target.lower()
         isop = False
         if target[0] == "#":
-            if target in self.channels and nick in \
-                    self.channels[target].opers():
+            if target in self.channels and nick in self.channels[target].opers():
                     isop = True
         else:
             target = 'private'
-        #currenttime = time.strftime('%H:%M:%S')
-        #day = int(time.strftime('%d'))
-        #FIXME: Log datetime changes
-        #if len(self.logs[target]) > 0:
-        #    if day != self.logs[target][-1][0]:
-        #        log = time.strftime('New Day: %a, %b %d, %Y\n')
-        #        self.logs[target].append([day, log])
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
-        #TODO: We need to implement the following in the log generation script:
-        # -action
-        # -nick
-        # -join
-        # -part
-        # -quit
-        # -kick
-        # -mode
-        # -pub
-        # -private
-        #log to sqlite logger
         self.logger.log(nick, target, isop, msg, msgtype)
 
-        #FIXME: enable log to ctrlchan
+        #FIXME: reenable log to ctrlchan
         #if self.log_to_ctrlchan:
         #    ctrlchan = self.config['core']['ctrlchan']
         #    if target != ctrlchan:
         #        ctrlmsg = "(%s) %s" % (target, log)
         #       self.connection.privmsg(ctrlchan, ctrlmsg.strip())
-        #self.logs[target].append([day, log])
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.

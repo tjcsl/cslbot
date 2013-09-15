@@ -30,7 +30,7 @@ class Logger():
         |   supported
         """
         self.db = sqlite3.connect(dbfile)
-        self.verify_db()
+        self.setup_db()
 
     def log(self, source, target, operator, msg, msg_type):
         """ Logs a message to the database
@@ -39,50 +39,14 @@ class Logger():
         | target: The target of the message.
         | operator: Is the user a operator?
         | msg: The text of the message.
-        | msg: The type of message. Valid types are
-        |   - action - /me, etc.
-        |   - join - channel joins
-        |   - part - channel parts
-        |   - quit - server quits
-        |   - kick - channel kicks
-        |   - mode - channel mode changes
+        | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
         self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
                         (source, target, operator, msg, msg_type, time()))
         self.db.commit()
 
-    def verify_db(self):
-        # FIXME: there has to be a better way to do this.
-        """ Verifies that the database is going to be OK
+    def setup_db(self):
+        """ Sets up the database.
         """
-        #define needed tables and the statements used to create them
-        tables_needed = {
-            'log': 'CREATE TABLE log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)',
-        }
-        #Make sure the tables are all OK
-        #print ("Verifying DB");
-        for tbl in tables_needed.keys():
-            #print ("Checking table", tbl, end="...")
-            current_tbl = self.db.execute('SELECT sql FROM sqlite_master WHERE name=?', (tbl,)).fetchone()
-            if current_tbl is None:
-                #print("Not extant, creating...", end="")
-                self.db.execute(tables_needed[tbl])
-            elif current_tbl[0] != tables_needed[tbl]:
-                #Here we do some ugly text transformation hacks to see if we can get the two tablespecs to line up.
-                hack_sql = lambda x: x.replace(' ', '').replace('\n', '').replace(';', '')
-                if hack_sql(current_tbl[0]) != hack_sql(tables_needed[tbl]):
-                    print("Not OK!")
-                    print("hacked up sql strings:\n Wanted:")
-                    print(hack_sql(tables_needed))
-                    print("recieved")
-                    print(hack_sql(current_tbl[0]))
-                    print("The structure of table ", tbl, " doesn't equal what we expect!")
-                    print("We Want:")
-                    print(tables_needed[tbl])
-                    print("but got:")
-                    print(current_tbl[0])
-                    print("Please execute an ALTER TABLE ", tbl, " query so that everything lines up!")
-                    raise Exception("Invalid DB")
-            #print(" OK")
-        #print ("DB verified")
+        self.db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')

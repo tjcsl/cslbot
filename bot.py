@@ -95,7 +95,6 @@ class IrcBot(SingleServerIRCBot):
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
-        self.handler.logger = sqlogger.Logger(self.config['core']['logfile'])
         self.handler.set_data(data)
         self.handler.connection = c
         if output:
@@ -131,15 +130,16 @@ class IrcBot(SingleServerIRCBot):
         self.handle_msg('action', c, e)
 
     def on_privnotice(self, c, e):
-        """Pass privnotices to :func:`handle_msg`."""
+        """Pass private notices to :func:`handle_msg`."""
         self.handle_msg('privnotice', c, e)
 
     def on_pubnotice(self, c, e):
-        """Pass pubnotices to :func:`handle_msg`."""
+        """Pass public notices to :func:`handle_msg`."""
         self.handle_msg('pubnotice', c, e)
 
     def on_nick(self, c, e):
         """Log nick changes."""
+        # Nick changes don't have a associated channel, so we just use the default channel.
         self.handler.do_log(self.config['core']['channel'], e.source.nick, e.target, 'nick')
 
     def on_mode(self, c, e):
@@ -152,6 +152,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_quit(self, c, e):
         """Log quits."""
+        # Quits don't have a associated channel, so we just use the default channel.
         self.handler.do_log(self.config['core']['channel'], e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
@@ -184,6 +185,7 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Parted channel " + e.target)
 
     def on_bannedfromchan(self, c, e):
+        # FIXME: Implement auto-rejoin on ban.
         sleep(5)
         c.join(e.arguments[0])
 
