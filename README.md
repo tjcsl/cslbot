@@ -45,6 +45,7 @@ Licensed under the GPL v2
 Created by fwilson (Fox Wilson, Class of 2016).  
 Rewritten by pfoley (Peter Foley, Class of 2013).  
 Improved by sdamashek (Samuel Damashek, Class of 2017).  
+Improved by bob_twinkles (Reed Koser, Class of 2015).  
 Improved by csssuf.  
 Improved by skasturi. (Srijay Kasturi)  
 Criticized by creffett. (Chris Reffett, Class of 2011).
