@@ -18,7 +18,7 @@
 # USA.
 
 import sqlite3
-from _thread import get_ident
+from threading import current_thread
 from time import time
 from os.path import dirname
 
@@ -55,7 +55,7 @@ class Sql():
     def get_db_for_current_thread(self):
         """ Gets a database connection unique to the current thread
         """
-        tid = get_ident()
+        tid = current_thread().ident
         if tid in self.connection_pool.keys():
             return self.connection_pool[tid]
         else:
