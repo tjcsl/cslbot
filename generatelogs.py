@@ -72,7 +72,7 @@ def gen_log(row):
 
 
 def main(config, outdir):
-    dbname = dirname(__file__) + "/log.sqlite"
+    dbname = dirname(__file__) + "/db.sqlite"
     db = sqlite3.connect(dbname)
     db.row_factory = sqlite3.Row
     cursor = db.cursor()
