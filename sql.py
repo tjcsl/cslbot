@@ -30,7 +30,8 @@ class Sql():
         | dbconn is a connection to a sqlite database.
         """
         dbfile = dirname(__file__) + '/db.sqlite'
-        self.db = sqlite3.connect(dbfile)
+        #FIXME: There has to be a better way to do this.
+        self.db = sqlite3.connect(dbfile, check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.cursor = self.db.cursor()
         self.setup_db()
