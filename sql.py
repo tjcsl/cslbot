@@ -32,6 +32,7 @@ class Sql():
         dbfile = dirname(__file__) + '/db.sqlite'
         self.db = sqlite3.connect(dbfile)
         self.db.row_factory = sqlite3.Row
+        self.cursor = self.db.cursor()
         self.setup_db()
 
     def log(self, source, target, operator, msg, msg_type):
@@ -44,14 +45,14 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        self.db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                        (source, target, operator, msg, msg_type, time()))
+        self.cursor.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
+                            (source, target, operator, msg, msg_type, time()))
         self.db.commit()
 
     def get(self):
-        return self.db.cursor()
+        return self.cursor
 
     def setup_db(self):
         """ Sets up the database.
         """
-        self.db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
+        self.cursor.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
