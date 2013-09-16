@@ -47,7 +47,7 @@ class Sql():
         """
         db = self.get_db_for_current_thread()
         db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                        (source, target, operator, msg, msg_type, time()))
+                   (source, target, operator, msg, msg_type, time()))
         db.commit()
 
     def get_db_for_current_thread(self):
@@ -65,14 +65,13 @@ class Sql():
     def clean_connection_pool(self):
         """ Cleans out the connection pool.
         """
-        for tid in self.connection_pool:
-            conn = self.connection_pool[tid]
+        for conn in self.connection_pool.values():
             conn.commit()
             conn.close()
         self.connection_pool.clear()
 
     def get(self):
-        return get_db_for_current_thread().cursor()
+        return self.get_db_for_current_thread().cursor()
 
     def setup_db(self):
         """ Sets up the database.
