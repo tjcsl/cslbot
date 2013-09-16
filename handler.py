@@ -628,6 +628,7 @@ class BotHandler():
                     send("Nope, not gonna do it.")
                 else:
                     found = True
+                    self.clean_sql_connection_pool()
                     for x in self.modules.values():
                         imp.reload(x)
                     send("Aye Aye Capt'n")
