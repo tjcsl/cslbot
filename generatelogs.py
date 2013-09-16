@@ -37,7 +37,10 @@ def check_day(row, outdir, name):
     global day
     time = localtime(row['time'])
     rowday = strftime('%d', time)
-    if day and day != rowday:
+    if not day:
+        day = rowday
+        return
+    if day != rowday:
         day = rowday
         log = strftime('New Day: %a, %b %d, %Y\n', time)
         write_log(name, outdir, log)
