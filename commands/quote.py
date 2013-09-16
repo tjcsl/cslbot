@@ -21,24 +21,25 @@ args = ['db', 'nick', 'connection', 'is_admin', 'config']
 
 
 def check_quote_exists_by_id(cursor, qid):
-    quote = cursor.execute("SELECT count(id) FROM quotes WHERE id=?", qid).fetchone()
-    return False if quote is None else True
+    quote = cursor.execute("SELECT count(id) FROM quotes WHERE id=?", (qid,)).fetchone()
+    return False if quote[0] == 0 else True
 
 
 def do_get_quote(cursor, qid=None):
     if qid is None:
         quotes = cursor.execute('SELECT quote FROM quotes').fetchall()
+        if not quotes:
+            return "There aren't any quotes yet."
         return choice(quotes)['quote']
     elif check_quote_exists_by_id(cursor, qid):
-        quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', qid).fetchone()
+        quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
         return quote['quote'] + " -- " + quote['nick']
     else:
         return "That quote doesn't exist!"
 
 
 def do_add_quote(cmd, cursor):
-    split = cmd.find('--')
-    if split == -1:
+    if '--' not in cmd:
         return "To add a quote, it must be in the format <quote> -- <nick>"
     quote = cmd.split('--')
     #strip off excess leading/ending spaces
@@ -51,6 +52,8 @@ def do_add_quote(cmd, cursor):
 def do_update_quote(cursor, qid, msg):
     if not qid.isdigit():
         return "The first argument to !quote edit must be a number!"
+    if '--' not in msg:
+        return "To add a quote, it must be in the format <quote> -- <nick>"
     quote = msg.split('--')
     #strip off excess leading/trailing spaces
     quote = [x.strip() for x in quote]
@@ -72,7 +75,7 @@ def do_delete_quote(cursor, qid):
     qid = int(qid)
     if not check_quote_exists_by_id(cursor, qid):
         return "That quote doesn't exist!"
-    cursor.execute("DELETE FROM quotes WHERE id=?", qid)
+    cursor.execute("DELETE FROM quotes WHERE id=?", (qid,))
     return 'Deleted quote with ID %d' % qid
 
 
@@ -94,11 +97,16 @@ def cmd(send, msg, args):
         send(do_list_quotes(cursor, args['config']['core']['quoteurl']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
         if args['is_admin'](args['nick']):
-            send(do_delete_quote(cursor, cmd[1]))
+            if len(cmd) == 1:
+                send("Which quote?")
+            else:
+                send(do_delete_quote(cursor, cmd[1]))
         else:
             send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
     elif cmd[0] == 'edit':
-        if args['is_admin'](args['nick']):
+        if len(cmd) == 1:
+            send("Which quote?")
+        elif args['is_admin'](args['nick']):
             msg = " ".join(cmd[2:])
             send(do_update_quote(cursor, cmd[1], msg))
         else:
