@@ -27,10 +27,10 @@ dbconn = sqlite3.connect(dirname(__file__) + "/db.sqlite")
 cur = dbconn.cursor()
 
 for quote in quotes:
-    quote = quote.split ('--')
+    quote = quote.split('--')
     if (len(quote) < 2):
         quote.append("Unknown")
     quote = list(map(lambda x: x.strip(), quote))
-    cur.execute("INSERT INTO quotes(quote, nick, rowid) VALUES(?,?,NULL)",(quote[0], quote[1]))
+    cur.execute("INSERT INTO quotes(quote, nick, rowid) VALUES(?,?,NULL)", (quote[0], quote[1]))
 
 dbconn.commit()
