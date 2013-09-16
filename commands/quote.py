@@ -92,7 +92,6 @@ def cmd(send, msg, args):
     cursor = args['db']
     cmd = msg.split(' ')
    
-    print(msg)
     if len(cmd) < 1:
         do_usage(send)
     elif cmd[0] == 'add':
@@ -101,10 +100,13 @@ def cmd(send, msg, args):
         do_list_quotes(cursor, args['config']['core']['quoteurl'], send)
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
         if not(args['is_admin'](args['nick'])):
-            send ("You aren't allowed to do delete quotes. Please ask a bot admin to do it")
+            send ("You aren't allowed to delete quotes. Please ask a bot admin to do it")
             return
         do_delete_quote(cursor, cmd[1], send)
     elif cmd[0] == 'edit':
+        if not(args['is_admin'](args['nick'])):
+            send ("You aren't allowed to edit quotes. Please ask a bot admin to do it")
+            return
         do_update_quote(cursor, msg, send)
     elif cmd[0].isdigit():
         do_get_quote(cmd[1], cursor, send)
