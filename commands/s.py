@@ -65,13 +65,16 @@ def cmd(send, msg, args):
 
     # limit to the last 50 lines.
     for line in log[:50]:
+        # ignore previous !s calls.
+        if line['msg'].startswith('%ss' % args['config']['core']['cmdchar']):
+            continue
         if regex.search(line['msg']):
             output = regex.sub(replacement, line['msg'])
             if len(output) > 256:
                 output = output[:253] + "..."
             if line['type'] == 'action':
                 send("correction: * %s %s" % (line['source'], output))
-            else:
+            elif line['type'] != 'mode':
                 send("%s actually meant: %s" % (line['source'], output))
             return
     send("No match found.")
