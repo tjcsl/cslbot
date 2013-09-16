@@ -21,15 +21,20 @@ from time import sleep
 
 args = ['db', 'nick', 'connection', 'is_admin', 'config']
 
+def check_quote_exists_by_id(cursor, qid):
+    if (cursor.execute("SELECT count(id) FROM quotes WHERE id=?", (qid,)).fetchone()[0] == 0):
+        return False
+    return True
+
 def do_usage(send):
     send("Usage: !quote <number>, !quote list, !quote add <quote> -- <nick>, !quote [remove|delete] <number>, !quote edit <number> <quote> -- <nick>")
 
 def do_get_quote(num, cursor, send):
     quid = int(num)
-    quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
-    if quote == None:
-        send(num + " is not a valid quote number! Use !quote list to see valid quotes")
+    if not(check_quote_exists_by_id(cursor, qid)):
+        send("That quote doesn't exist!")
         return
+    quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
     send(quote[1] + " -- " + quote[0])
 
 def do_add_quote(cmd, cursor, send):
@@ -46,11 +51,39 @@ def do_add_quote(cmd, cursor, send):
     cursor.fetchone()
     send ("Added quote!")
 
-def do_list_quotes(cursor, send):
-    cursor.execute("SELECT id,quote,nick FROM quotes");
-    send("List of quotes: ")
-    for q in cursor:
-        send(str(q[0]) + ":" + q[1] + " -- " + q[2])
+def do_update_quote(cursor, cmd, send): 
+    #We need to strip off the 'edit ' but we don't want to split the quote into tiny little annoying peices
+    cmd = cmd[len('edit '):]
+    qid = cmd.split(' ')[0]
+    if not qid.isdigit():
+        send("The first argument to !quote edit must be a number!")
+        return
+    #and strip off the id of the quote we are editing
+    cmd = cmd[len(qid)+1:]
+    quote = cmd.split('--')
+    #strip off excess leading/ending spaces
+    quote = list(map (lambda x: x.strip(), quote))
+    if not(check_quote_exists_by_id(cursor, qid)):
+        send("That quote doesn't exist!")
+        return
+    cursor.execute('UPDATE quotes SET quote=?,nick=?', (quote[0],quote[1]))
+    send ("Updated quote!")
+
+def do_list_quotes(cursor, quote_url, send):
+    cursor.execute("SELECT count(id) FROM quotes");
+    send("There are " + str(cursor.fetchone()[0]) + " quotes. Check them out at " + quote_url)
+
+def do_delete_quote(cursor, qid, send):
+    if not qid.isdigit():
+        send("Second argument to !quote remove must be a number!")
+        return
+    qid = int(qid)
+    if not(check_quote_exists_by_id(cursor, qid)):
+        send("That quote doesn't exist!")
+        return
+    cursor.execute("DELETE FROM quotes WHERE id=?", (qid,))
+    send ('Deleted quote with ID ' + str(qid))
+
 
 def cmd(send, msg, args):
     """Handles quotes.
@@ -65,14 +98,14 @@ def cmd(send, msg, args):
     elif cmd[0] == 'add':
         do_add_quote(msg, cursor, send)
     elif cmd[0] == 'list':
-        do_list_quotes(cursor, send)
+        do_list_quotes(cursor, args['config']['core']['quoteurl'], send)
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
         if not(args['is_admin'](args['nick'])):
             send ("You aren't allowed to do delete quotes. Please ask a bot admin to do it")
             return
-        send('That command isn\'t implemented yet!')
+        do_delete_quote(cursor, cmd[1], send)
     elif cmd[0] == 'edit':
-        send('That command isn\'t implemented yet!')
+        do_update_quote(cursor, msg, send)
     elif cmd[0].isdigit():
         do_get_quote(cmd[1], cursor, send)
     else:
