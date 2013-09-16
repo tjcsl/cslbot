@@ -9,9 +9,9 @@
     </tr>
     {% for i in quotes %}
     <tr>
-	<td>{{ loop.index0 }}</td>
         <td>{{ i[0]|trim }}</td>
         <td>{{ i[1]|trim }}</td>
+        <td>{{ i[2]|trim }}</td>
     </tr>
     {% endfor %}
 </table>

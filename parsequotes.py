@@ -15,19 +15,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
+import sqlite3
 import argparse
 from jinja2 import Environment, FileSystemLoader
-from os.path import dirname, isfile
+from os.path import dirname
+
+
+def get_quotes(filename):
+    conn = sqlite3.connect(filename)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute('SELECT id,quote,nick FROM quotes')
+    rows = cur.fetchall()
+    quotes = []
+    for x in rows:
+        quotes.append(list(x))
+    return quotes
 
 
 def main(outfile):
-    filename = dirname(__file__) + "/data/quotes"
-    if isfile(filename):
-        quotes = json.load(open(filename))
-    else:
-        quotes = []
-    quotes = [(i + " -- ").split("--") for i in quotes]
+    filename = dirname(__file__) + "/db.sqlite"
+    quotes = get_quotes(filename)
     output = ''
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
     output = env.get_template('quotes.html').render(quotes=quotes)

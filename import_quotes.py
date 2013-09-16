@@ -1,3 +1,4 @@
+#!/usr/bin/python3 -OO
 # -*- coding: utf-8 -*-
 # Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi,
 # Samuel Damashek, James Forcier, and Reed Koser
