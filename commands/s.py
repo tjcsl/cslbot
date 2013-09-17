@@ -29,17 +29,19 @@ def get_log(cursor, user):
     return cursor.fetchall()
 
 
-def get_modifiers(msg):
-    mods = {'ignorecase': False, 'allnicks': False, 'nick': None}
+def get_modifiers(msg, nick):
+    mods = {'ignorecase': False, 'allnicks': False, 'nick': nick}
     if not msg:
         return mods
     elif msg == "i":
         mods['ignorecase'] = True
     elif msg == "g":
         mods['allnicks'] = True
+        mods['nick'] = None
     elif msg == "ig" or msg == "gi":
         mods['allnicks'] = True
         mods['ignorecase'] = True
+        mods['nick'] = None
     else:
         mods['nick'] = msg
     return mods
@@ -59,14 +61,14 @@ def cmd(send, msg, args):
         return
     string = msg[0]
     replacement = msg[1]
-    modifiers = get_modifiers(msg[2])
+    modifiers = get_modifiers(msg[2], args['nick'])
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
     log = get_log(args['db'], modifiers['nick'])
 
     # limit to the last 50 lines.
     for line in log[:50]:
         # ignore previous !s calls.
-        if line['msg'].startswith('%ss' % args['config']['core']['cmdchar']):
+        if line['msg'].startswith('%ss/' % args['config']['core']['cmdchar']):
             continue
         if regex.search(line['msg']):
             output = regex.sub(replacement, line['msg'])
