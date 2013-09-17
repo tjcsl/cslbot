@@ -47,3 +47,4 @@ def cmd(send, msg, args):
         cmdlist2 = (' %s' % cmdchar).join([x for x in modules[num:]])
         args['connection'].privmsg(args['nick'], 'Commands: %s%s' % (cmdchar, cmdlist1))
         args['connection'].privmsg(args['nick'], '%s%s' % (cmdchar, cmdlist2))
+        args['connection'].privmsg(args['nick'], '%shelp <command> for more info on a command.' % cmdchar)

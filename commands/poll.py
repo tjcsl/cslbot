@@ -1,1 +1,1 @@
-commands/vote.py
+vote.py

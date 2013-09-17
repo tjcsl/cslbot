@@ -31,19 +31,19 @@ for poll in polls:
     active = poll['active']
     question = poll['question']
     votes = poll['votes']
-    
+
     if active:
         active = 1
     else:
         active = 0
-    
+
     cur.execute('INSERT INTO polls(question, active, deleted, rowid) VALUES (?,?,0,NULL)',
                 (question, active))
 
     dbconn.commit()
     qid = cur.execute('SELECT id FROM polls WHERE question=? ORDER BY id DESC', (question,)).fetchone()[0]
 
-    for nick,vote in votes.items():
+    for nick, vote in votes.items():
         print(nick, vote)
         cur.execute('INSERT INTO poll_responses(qid, voter, response, id) VALUES(?,?,?,Null)', (qid, nick, vote))
     dbconn.commit()

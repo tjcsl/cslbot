@@ -19,8 +19,9 @@ args = ['db', 'nick', 'is_admin', 'connection']
 
 def start_poll(cursor, msg):
     """ Starts a poll """
-    cursor.execute("INSERT INTO polls(question,active,rowid,deleted) VALUES(?,1,NULL,0)",
-                   (msg,))
+    if not msg:
+        return "Polls need a question."
+    cursor.execute("INSERT INTO polls(question) VALUES(?)", (msg,))
     return "Poll created!"
 
 
@@ -30,11 +31,11 @@ def delete_poll(cursor, poll):
         return "Syntax: !poll delete <pollnum>"
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
-    qid = int(poll)
-    query_result = cursor.execute("SELECT active,deleted FROM polls WHERE id=?", (qid,)).fetchone()
+    pid = int(poll)
+    query_result = cursor.execute("SELECT active,deleted FROM polls WHERE pid=?", (pid,)).fetchone()
     if query_result[0] == 1:
         return "You can't delete an active poll!"
-    cursor.execute("UPDATE polls SET deleted=1 WHERE id=?", (qid,))
+    cursor.execute("UPDATE polls SET deleted=1 WHERE pid=?", (pid,))
     return "Poll deleted."
 
 
@@ -45,11 +46,11 @@ def edit_poll(cursor, msg):
         return "Syntax: !vote edit <pollnum> <question>"
     if not cmd[0].isdigit():
         return "Not A Valid Positive Integer."
-    qid = int(cmd[0])
-    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND deleted=0", (qid,)).fetchone()[0] == 0:
+    pid = int(cmd[0])
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0", (pid,)).fetchone()[0] == 0:
         return "That poll was deleted or does not exist!"
     newq = " ".join(cmd[1:])
-    cursor.execute("UPDATE polls SET question=? WHERE id=?", (newq, qid))
+    cursor.execute("UPDATE polls SET question=? WHERE pid=?", (newq, pid))
     return "Poll updated!"
 
 
@@ -59,10 +60,10 @@ def end_poll(cursor, poll):
         return "Syntax: !vote end <pollnum>"
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
-    qid = int(poll)
-    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND deleted=0", (qid,)).fetchone()[0] == 0:
+    pid = int(poll)
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or has already been deleted!"
-    cursor.execute("UPDATE polls SET active=0 WHERE id=?", (qid,))
+    cursor.execute("UPDATE polls SET active=0 WHERE pid=?", (pid,))
     return "Poll ended!"
 
 
@@ -73,19 +74,15 @@ def tally_poll(cursor, poll, send, c, target):
         return
     if not poll.isdigit():
         send("Not A Valid Positive Integer.")
-    qid = int(poll)
-    query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND id=?", (qid,)).fetchone()
+    pid = int(poll)
+    query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND pid=?", (pid,)).fetchone()
     if query_result is None:
         send("That poll doesn't exist or was deleted. Use !poll list to see valid polls")
         return
     question = query_result[0]
-    status = "unknwon"
-    if (query_result[1] == 1):
-        status = "Active"
-    else:
-        status = "Closed"
-    votes = cursor.execute("SELECT response,voter FROM poll_responses WHERE qid=?", (qid,)).fetchall()
-    send("%s poll: %s, %d total votes" % (status, question, len(votes)))
+    state = "Active" if query_result['active'] == 1 else "Closed"
+    votes = cursor.execute("SELECT response,voter FROM poll_responses WHERE pid=?", (pid,)).fetchall()
+    send("%s poll: %s, %d total votes" % (state, question, len(votes)))
     votemap = {}
     for v in votes:
         vote = v[0]
@@ -113,23 +110,26 @@ def tally_poll(cursor, poll, send, c, target):
         send("Tie between %s with %d votes." % winners)
 
 
-def vote(cursor, nick, poll, vote):
+def vote(cursor, nick, pid, vote):
     """ Votes on a poll"""
-    qid = int(poll)
-    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND active=1 AND deleted=0", (qid,)).fetchone()[0] == 0:
+    if not vote:
+        return "You have to vote something!"
+    if vote == "0" or vote == "n" or vote == "nay":
+        vote = "no"
+    elif vote == "1" or vote == "y" or vote == "aye":
+        vote = "yes"
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND active=1 AND deleted=0", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
-    old_vote = cursor.execute("SELECT response FROM poll_responses WHERE qid=? AND voter=?", (qid, nick)).fetchone()
-    output = ""
-    if old_vote is not None:
-        if vote == old_vote[0]:
+    old_vote = cursor.execute("SELECT response FROM poll_responses WHERE pid=? AND voter=?", (pid, nick)).fetchone()
+    if old_vote is None:
+        cursor.execute("INSERT INTO poll_responses(pid, response, voter) VALUES(?,?,?)", (pid, vote, nick))
+        return "%s voted %s." % (nick, vote)
+    else:
+        if vote == old_vote['response']:
             return "You've already voted %s." % vote
         else:
-            cursor.execute("UPDATE poll_responses SET response=? WHERE qid=? AND voter=?", (vote, qid, nick))
-            output = "%s changed his/her vote from %s to %s." % (nick, old_vote[0], vote)
-    else:
-        cursor.execute("INSERT INTO poll_responses(qid, response, voter, rowid) VALUES(?,?,?,NULL)",
-                       (qid, vote, nick))
-    return output
+            cursor.execute("UPDATE poll_responses SET response=? WHERE pid=? AND voter=?", (vote, pid, nick))
+            return "%s changed his/her vote from %s to %s." % (nick, old_vote['response'], vote)
 
 
 def retract(cursor, poll, nick):
@@ -139,21 +139,20 @@ def retract(cursor, poll, nick):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     poll = int(poll)
-    if cursor.execute("SELECT count(1) FROM poll_responses WHERE voter=? AND qid=?", (nick, poll))[0] == 0:
+    if cursor.execute("SELECT count(1) FROM poll_responses WHERE voter=? AND pid=?", (nick, poll)).fetchone()[0] == 0:
         return "You haven't voted on that poll yet!"
-    cursor.execute("DELETE FROM poll_responses WHERE voter=? AND qid=?", (nick, poll))
+    cursor.execute("DELETE FROM poll_responses WHERE voter=? AND pid=?", (nick, poll))
     return "Vote retracted"
 
 
-def list_polls(cursor, send, c, nick):
+def list_polls(cursor, c, nick):
     """ Sends nick the list of polls in a PM"""
-    active_polls = cursor.execute("SELECT id,question FROM polls WHERE deleted=0").fetchall()
-    if not active_polls:
-        send("No polls currently active.")
-        return
-    for poll in active_polls:
-        c.privmsg(nick, "%d): %s" % (poll[0], poll[1]))
-    send("Polls sent in a pm")
+    polls = cursor.execute("SELECT pid,question FROM polls WHERE deleted=0").fetchall()
+    if not polls:
+        return "No polls currently active."
+    for poll in polls:
+        c.privmsg(nick, "%d): %s" % (poll['pid'], poll['question']))
+    return "%d currently active polls." % len(polls)
 
 
 def cmd(send, msg, args):
@@ -165,30 +164,33 @@ def cmd(send, msg, args):
     msg = " ".join(cmd[1:])
     if not cmd:
         send("Which poll?")
-    elif cmd[0] == 'start' or cmd[0] == 'open' or cmd[0] == 'add' or cmd[0] == 'create':
+        return
+    else:
+        cmd = cmd[0]
+    if cmd == 'start' or cmd == 'open' or cmd == 'add' or cmd == 'create':
         send(start_poll(cursor, msg))
-    elif cmd[0] == 'end' or cmd[0] == 'close':
+    elif cmd == 'end' or cmd == 'close':
         if args['is_admin'](args['nick']):
             send(end_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd[0] == 'delete':
+    elif cmd == 'delete':
         if args['is_admin'](args['nick']):
             send(delete_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd[0] == 'edit':
+    elif cmd == 'edit':
         if args['is_admin'](args['nick']):
             send(edit_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd[0] == 'tally':
+    elif cmd == 'tally':
         tally_poll(cursor, msg, send, args['connection'], args['nick'])
-    elif cmd[0] == 'list':
-        list_polls(cursor, send, args['connection'], args['nick'])
-    elif cmd[0] == 'retract':
+    elif cmd == 'list':
+        send(list_polls(cursor, args['connection'], args['nick']))
+    elif cmd == 'retract':
         send(retract(cursor, msg, args['nick']))
-    elif cmd[0].isdigit():
-        send(vote(cursor, args['nick'], cmd[0], msg))
+    elif cmd.isdigit():
+        send(vote(cursor, args['nick'], int(cmd), msg))
     else:
-        send("Syntax: !vote <pollnum> <vote>")
+        send('Invalid Syntax.')

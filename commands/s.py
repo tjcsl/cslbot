@@ -21,9 +21,9 @@ args = ['db', 'target', 'nick', 'config']
 
 def get_log(cursor, user):
     if user is None:
-        cursor.execute('SELECT msg,type,source FROM log ORDER BY time DESC')
+        cursor.execute('SELECT msg,type,source FROM log ORDER BY time DESC LIMIT 50')
     else:
-        cursor.execute('SELECT msg,type,source FROM log WHERE source=? ORDER BY time DESC', (user,))
+        cursor.execute('SELECT msg,type,source FROM log WHERE source=? ORDER BY time DESC LIMIT 50', (user,))
     # Don't parrot back the !s call.
     cursor.fetchone()
     return cursor.fetchall()
@@ -65,8 +65,7 @@ def cmd(send, msg, args):
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
     log = get_log(args['db'], modifiers['nick'])
 
-    # limit to the last 50 lines.
-    for line in log[:50]:
+    for line in log:
         # ignore previous !s calls.
         if line['msg'].startswith('%ss/' % args['config']['core']['cmdchar']):
             continue
