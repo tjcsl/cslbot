@@ -17,79 +17,78 @@
 import json
 import os
 
-args = ['nick', 'srcdir', 'is_admin', 'connection']
+args = ['db', 'nick', 'is_admin', 'connection']
 
+def start_poll(cursor, msg):
+    """ Starts a poll """
+    cursor.execute("INSERT INTO polls(question,active,rowid,deleted) VALUES(?,1,NULL,0)",
+                    (msg,))
+    return "Poll created!"
 
-def start_poll(pollfile, polls, poll):
+def delete_poll(cursor, poll):
+    """ Deletes a poll """
     if not poll:
-        return "Polls need a question."
-    poll = {'question': poll, 'active': True, 'votes': {}}
-    polls.append(poll)
-    save_polls(pollfile, polls)
-    return "Poll #%d created." % (len(polls) - 1)
-
-
-def delete_poll(pollfile, polls, poll):
-    if not poll:
-        return "Syntax: !vote delete <pollnum>"
+        return "Syntax: !poll delete <pollnum>"
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
-    poll = int(poll)
-    if len(polls) <= poll:
-        return "Invalid poll index."
-    if polls[poll]['active']:
-        return "Cannot delete open poll."
-    polls.pop(poll)
-    save_polls(pollfile, polls)
+    qid = int(poll)
+    query_result = cursor.execute("SELECT active,deleted FROM polls WHERE id=?", (qid,)).fetchone()
+    if query_result[0] == 1:
+        return "You can't delete an active poll!"
+    cursor.execute("UPDATE polls SET deleted=1 WHERE id=?", (qid,))
     return "Poll deleted."
 
-
-def edit_poll(pollfile, polls, poll):
-    cmd = poll.split()
+def edit_poll(cursor, msg):
+    """ Edits a poll """
+    cmd = msg.split()
     if len(cmd) < 2:
         return "Syntax: !vote edit <pollnum> <question>"
     if not cmd[0].isdigit():
         return "Not A Valid Positive Integer."
-    poll = int(cmd[0])
-    if len(polls) <= poll:
-        return "Invalid poll index."
-    polls[poll]['question'] = " ".join(cmd[1:])
-    save_polls(pollfile, polls)
-    return "Poll updated."
+    qid = int(cmd[0])
+    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND deleted=0", (qid,)).fetchone()[0] == 0:
+        return "That poll was deleted or does not exist!"
+    newq = " ".join(cmd[1:])
+    cursor.execute("UPDATE polls SET question=? WHERE id=?", (newq,qid))
+    return "Poll updated!"
 
-
-def end_poll(pollfile, polls, poll):
+def end_poll(cursor, poll):
+    """ Ends a poll """
     if not poll:
         return "Syntax: !vote end <pollnum>"
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
-    poll = int(poll)
-    if len(polls) <= poll:
-        return "Invalid poll index."
-    if not polls[poll]['active']:
-        return "Poll already ended."
-    polls[poll]['active'] = False
-    save_polls(pollfile, polls)
-    return "Poll ended."
+    qid = int(poll)
+    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND deleted=0", (qid,)).fetchone()[0] == 0:
+        return "That poll doesn't exist or has already been deleted!"
+    cursor.execute("UPDATE polls SET active=0 WHERE id=?", (qid,))
+    return "Poll ended!"
 
 
-def tally_poll(polls, poll, send, c, target):
+def tally_poll(cursor, poll, send, c, target):
+    """Shows the results of poll """
     if not poll:
         send("Syntax: !vote tally <pollnum>")
         return
     if not poll.isdigit():
         send("Not A Valid Positive Integer.")
+    qid = int(poll)
+    query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND id=?", (qid,)).fetchone()
+    if query_result == None:
+        send("That poll doesn't exist or was deleted. Use !poll list to see valid polls")
         return
-    poll = int(poll)
-    if len(polls) <= poll:
-        send("Invalid poll index.")
-        return
-    question = polls[poll]['question']
-    status = "Active" if polls[poll]['active'] else "Closed"
-    votes = polls[poll]['votes']
+    question = query_result[0]
+    status = "unknwon"
+    if (query_result[1] == 1):
+        status = "Active"
+    else:
+        status = "Closed"
+    votes = cursor.execute("SELECT response,voter FROM poll_responses WHERE qid=?", (qid,)).fetchall()
     send("%s poll: %s, %d total votes" % (status, question, len(votes)))
     votemap = {}
-    for nick, vote in votes.items():
+    for v in votes:
+        vote = v[0]
+        nick = v[1]
         if vote not in votemap:
             votemap[vote] = []
         votemap[vote].append(nick)
@@ -113,104 +112,81 @@ def tally_poll(polls, poll, send, c, target):
         send("Tie between %s with %d votes." % winners)
 
 
-def vote(pollfile, polls, nick, poll, vote):
-    if not vote:
-        return "Syntax: !vote <pollnum> <vote>"
-    if not poll.isdigit():
-        return "Not A Valid Positive Integer."
-    poll = int(poll)
-    if len(polls) <= poll:
-        return "Invalid poll index."
-    poll = polls[poll]
-    if not poll['active']:
-        return "Poll ended."
-    positive = ['yes', 'y', '1', 'aye']
-    negative = ['no', 'n', '0', 'nay']
-    if vote.lower() in positive:
-        vote = 'yes'
-    if vote.lower() in negative:
-        vote = 'no'
-    output = "%s voted %s." % (nick, vote)
-    if nick in poll['votes']:
-        if vote == poll['votes'][nick]:
+def vote(cursor, nick, poll, vote):
+    """ Votes on a poll"""
+    qid = int(poll)
+    if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND active=1 AND deleted=0", (qid,)).fetchone()[0] == 0:
+        return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
+    old_vote = cursor.execute("SELECT response FROM poll_responses WHERE qid=? AND voter=?", (qid, nick)).fetchone()
+    output = ""
+    if old_vote != None:
+        if vote == old_vote[0]:
             return "You've already voted %s." % vote
         else:
-            output = "%s changed his/her vote from %s to %s." % (nick, poll['votes'][nick], vote)
-    poll['votes'][nick] = vote
-    save_polls(pollfile, polls)
+            cursor.execute("UPDATE poll_responses SET response=? WHERE qid=? AND voter=?", (vote, qid, nick))
+            output = "%s changed his/her vote from %s to %s." % (nick, old_vote[0], vote)
+    else:
+        cursor.execute("INSERT INTO poll_responses(qid, response, voter, rowid) VALUES(?,?,?,NULL)",
+            (qid, vote, nick))
     return output
 
 
-def retract(pollfile, polls, poll, nick):
+def retract(cursor, poll, nick):
+    """ Deletes a vote for a poll """
     if not poll:
         return "Syntax: !vote retract <pollnum>"
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     poll = int(poll)
-    if len(polls) <= poll:
-        return "Invalid poll index."
-    votes = polls[poll]['votes']
-    if nick in votes:
-        msg = "Vote Retracted."
-        del votes[nick]
-    else:
-        msg = "You haven't voted yet."
-    save_polls(pollfile, polls)
-    return msg
+    if cursor.execute("SELECT count(1) FROM poll_responses WHERE voter=? AND qid=?" , (nick, poll))[0] == 0:
+        return "You haven't voted on that poll yet!"
+    cursor.execute("DELETE FROM poll_responses WHERE voter=? AND qid=?", (nick, poll))
+    return "Vote retracted"
 
 
-def list_polls(polls, send, c, nick):
-    if not polls:
-        send("No polls.")
-    else:
-        for index, poll in enumerate(polls):
-            c.privmsg(nick, "%d: %s" % (index, poll['question']))
-
-
-def save_polls(pollfile, polls):
-    f = open(pollfile, "w")
-    json.dump(polls, f, indent=True, sort_keys=True)
-    f.write("\n")
-    f.close()
-
+def list_polls(cursor, send, c, nick):
+    """ Sends nick the list of polls in a PM"""
+    active_polls = cursor.execute("SELECT id,question FROM polls WHERE deleted=0").fetchall()
+    if not active_polls:
+        send("No polls currently active.")
+        return
+    for poll in active_polls:
+        c.privmsg(nick, "%d): %s" % (poll[0], poll[1]))
+    send ("Polls sent in a pm")
 
 def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
     """
-    pollfile = args['srcdir'] + "/data/polls"
-    if os.path.isfile(pollfile):
-        polls = json.load(open(pollfile))
-    else:
-        polls = []
+    cursor = args['db']
     cmd = msg.split()
     msg = " ".join(cmd[1:])
     if not cmd:
         send("Which poll?")
     elif cmd[0] == 'start' or cmd[0] == 'open' or cmd[0] == 'add' or cmd[0] == 'create':
-        send(start_poll(pollfile, polls, msg))
+        send(start_poll(cursor, msg))
     elif cmd[0] == 'end' or cmd[0] == 'close':
         if args['is_admin'](args['nick']):
-            send(end_poll(pollfile, polls, msg))
+            send(end_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
     elif cmd[0] == 'delete':
         if args['is_admin'](args['nick']):
-            send(delete_poll(pollfile, polls, msg))
+            send(delete_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
     elif cmd[0] == 'edit':
         if args['is_admin'](args['nick']):
-            send(edit_poll(pollfile, polls, msg))
+            send(edit_poll(cursor, msg))
         else:
             send("Nope, not gonna do it.")
     elif cmd[0] == 'tally':
-        tally_poll(polls, msg, send, args['connection'], args['nick'])
+        tally_poll(cursor, msg, send, args['connection'], args['nick'])
     elif cmd[0] == 'list':
-        list_polls(polls, send, args['connection'], args['nick'])
+        list_polls(cursor, send, args['connection'], args['nick'])
     elif cmd[0] == 'retract':
-        send(retract(pollfile, polls, msg, args['nick']))
+        send(retract(cursor, msg, args['nick']))
     elif cmd[0].isdigit():
-        send(vote(pollfile, polls, args['nick'], cmd[0], msg))
+        send(vote(cursor, args['nick'], cmd[0], msg))
     else:
         send("Syntax: !vote <pollnum> <vote>")

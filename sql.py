@@ -80,3 +80,5 @@ class Sql():
         db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
         db.execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS weather(location INTEGER, nick TEXT)')
+        db.execute('CREATE TABLE IF NOT EXISTS polls(question TEXT, active INTEGER, deleted INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT)')
+        db.execute('CREATE TABLE IF NOT EXISTS poll_responses(qid INTEGER, response TEXT, voter TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
