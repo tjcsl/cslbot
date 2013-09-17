@@ -42,7 +42,6 @@ for poll in polls:
 
     cur.execute('INSERT INTO polls(question, active, deleted, rowid) VALUES (?,?,0,NULL)',
                 (question, active))
-
     dbconn.commit()
     qid = cur.execute('SELECT pid FROM polls WHERE question=? ORDER BY pid DESC', (question,)).fetchone()[0]
 
