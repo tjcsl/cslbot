@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     try:
         scorefile = args['srcdir'] + '/data/score'
         data = json.load(open(scorefile))
-        match = re.match('([a-zA-Z0-9_]+)', msg)
+        match = re.match('([a-zA-Z0-9_\|]+)', msg)
         if match:
             name = match.group(1).lower()
             try:
