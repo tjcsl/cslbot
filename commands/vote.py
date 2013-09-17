@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek and James Forcier
+# Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashe, James Forcier and Reed Koser
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,16 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-import os
-
 args = ['db', 'nick', 'is_admin', 'connection']
+
 
 def start_poll(cursor, msg):
     """ Starts a poll """
     cursor.execute("INSERT INTO polls(question,active,rowid,deleted) VALUES(?,1,NULL,0)",
-                    (msg,))
+                   (msg,))
     return "Poll created!"
+
 
 def delete_poll(cursor, poll):
     """ Deletes a poll """
@@ -38,6 +37,7 @@ def delete_poll(cursor, poll):
     cursor.execute("UPDATE polls SET deleted=1 WHERE id=?", (qid,))
     return "Poll deleted."
 
+
 def edit_poll(cursor, msg):
     """ Edits a poll """
     cmd = msg.split()
@@ -49,8 +49,9 @@ def edit_poll(cursor, msg):
     if cursor.execute("SELECT count(1) FROM polls WHERE id=? AND deleted=0", (qid,)).fetchone()[0] == 0:
         return "That poll was deleted or does not exist!"
     newq = " ".join(cmd[1:])
-    cursor.execute("UPDATE polls SET question=? WHERE id=?", (newq,qid))
+    cursor.execute("UPDATE polls SET question=? WHERE id=?", (newq, qid))
     return "Poll updated!"
+
 
 def end_poll(cursor, poll):
     """ Ends a poll """
@@ -74,7 +75,7 @@ def tally_poll(cursor, poll, send, c, target):
         send("Not A Valid Positive Integer.")
     qid = int(poll)
     query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND id=?", (qid,)).fetchone()
-    if query_result == None:
+    if query_result is None:
         send("That poll doesn't exist or was deleted. Use !poll list to see valid polls")
         return
     question = query_result[0]
@@ -119,7 +120,7 @@ def vote(cursor, nick, poll, vote):
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
     old_vote = cursor.execute("SELECT response FROM poll_responses WHERE qid=? AND voter=?", (qid, nick)).fetchone()
     output = ""
-    if old_vote != None:
+    if old_vote is not None:
         if vote == old_vote[0]:
             return "You've already voted %s." % vote
         else:
@@ -127,7 +128,7 @@ def vote(cursor, nick, poll, vote):
             output = "%s changed his/her vote from %s to %s." % (nick, old_vote[0], vote)
     else:
         cursor.execute("INSERT INTO poll_responses(qid, response, voter, rowid) VALUES(?,?,?,NULL)",
-            (qid, vote, nick))
+                       (qid, vote, nick))
     return output
 
 
@@ -138,7 +139,7 @@ def retract(cursor, poll, nick):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     poll = int(poll)
-    if cursor.execute("SELECT count(1) FROM poll_responses WHERE voter=? AND qid=?" , (nick, poll))[0] == 0:
+    if cursor.execute("SELECT count(1) FROM poll_responses WHERE voter=? AND qid=?", (nick, poll))[0] == 0:
         return "You haven't voted on that poll yet!"
     cursor.execute("DELETE FROM poll_responses WHERE voter=? AND qid=?", (nick, poll))
     return "Vote retracted"
@@ -152,7 +153,8 @@ def list_polls(cursor, send, c, nick):
         return
     for poll in active_polls:
         c.privmsg(nick, "%d): %s" % (poll[0], poll[1]))
-    send ("Polls sent in a pm")
+    send("Polls sent in a pm")
+
 
 def cmd(send, msg, args):
     """Handles voting.
