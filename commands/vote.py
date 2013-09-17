@@ -68,20 +68,6 @@ def reopen(cursor, msg):
     return "Poll %d reopened!" % pid
 
 
-def undelete(cursor, msg):
-    """ undeletes a deleted poll."""
-    cmd = msg.split()
-    if not cmd:
-        return "Syntax: !poll undelete <pollnum>"
-    if not cmd[0].isdigit():
-        return "Not a valid positve integer."
-    pid = int(cmd[0])
-    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=1", (pid,)).fetchone()[0] == 0:
-        return "That poll doesn't exist or has not yet been deleted!"
-    cursor.execute("UPDATE polls SET deleted=0 WHERE pid=?", (pid,))
-    return "Poll %d reopened!" % pid
-
-
 def end_poll(cursor, poll):
     """ Ends a poll """
     if not poll:
@@ -221,11 +207,6 @@ def cmd(send, msg, args):
     elif cmd == 'reopen':
         if args['is_admin'](args['nick']):
             send(reopen(cursor, msg))
-        else:
-            send("Nope, not gonna do it.")
-    elif cmd == 'undelete':
-        if args['is_admin'](args['nick']):
-            send(undelete(cursor, msg))
         else:
             send("Nope, not gonna do it.")
     elif cmd.isdigit():
