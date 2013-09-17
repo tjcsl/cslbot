@@ -22,16 +22,28 @@ import sqlite3
 import json
 from os.path import dirname
 
-quotes = json.load(open(dirname(__file__) + "/data/quotes"))
-
+polls = json.load(open(dirname(__file__) + "/data/polls"))
 dbconn = sqlite3.connect(dirname(__file__) + "/db.sqlite")
+
 cur = dbconn.cursor()
 
-for quote in quotes:
-    quote = quote.split('--')
-    if (len(quote) < 2):
-        quote.append("Unknown")
-    quote = list(map(lambda x: x.strip(), quote))
-    cur.execute("INSERT INTO quotes(quote, nick, rowid) VALUES(?,?,NULL)", (quote[0], quote[1]))
+for poll in polls:
+    active = poll['active']
+    question = poll['question']
+    votes = poll['votes']
+    
+    if active:
+        active = 1
+    else:
+        active = 0
+    
+    cur.execute('INSERT INTO polls(question, active, deleted, rowid) VALUES (?,?,0,NULL)',
+                (question, active))
 
-dbconn.commit()
+    dbconn.commit()
+    qid = cur.execute('SELECT id FROM polls WHERE question=? ORDER BY id DESC', (question,)).fetchone()[0]
+
+    for nick,vote in votes.items():
+        print(nick, vote)
+        cur.execute('INSERT INTO poll_responses(qid, voter, response, id) VALUES(?,?,?,Null)', (qid, nick, vote))
+    dbconn.commit()
