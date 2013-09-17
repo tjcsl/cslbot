@@ -10,7 +10,7 @@ IrcBot
    control
    generatelogs
    handler
-   import_quotes
+   import_polls
    parsequotes
    server
    sql

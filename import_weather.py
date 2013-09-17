@@ -22,30 +22,14 @@ import sqlite3
 import json
 from os.path import dirname
 
-polls = json.load(open(dirname(__file__) + "/data/polls"))
+weather = json.load(open(dirname(__file__) + "/data/weather"))
 dbconn = sqlite3.connect(dirname(__file__) + "/db.sqlite")
 
 cur = dbconn.cursor()
 
-cur.execute('delete from polls')
-cur.execute('delete from poll_responses')
+cur.execute('delete from weather_prefs')
 
-for poll in polls:
-    active = poll['active']
-    question = poll['question']
-    votes = poll['votes']
-
-    if active:
-        active = 1
-    else:
-        active = 0
-
-    cur.execute('INSERT INTO polls(question, active, deleted, rowid) VALUES (?,?,0,NULL)',
-                (question, active))
-    dbconn.commit()
-    qid = cur.execute('SELECT pid FROM polls WHERE question=? ORDER BY pid DESC', (question,)).fetchone()[0]
-
-    for nick, vote in votes.items():
-        print(nick, vote)
-        cur.execute('INSERT INTO poll_responses(pid, voter, response) VALUES(?,?,?)', (qid, nick, vote))
+for k in weather.keys():
+    cur.execute('INSERT INTO weather_prefs(nick, location) VALUES (?,?)',
+                (k, weather[k]))
     dbconn.commit()
