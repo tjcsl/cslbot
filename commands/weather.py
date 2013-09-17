@@ -19,32 +19,26 @@ import re
 from urllib.request import urlopen
 from urllib.parse import quote
 
-args = ['nick', 'srcdir', 'config']
+args = ['nick', 'srcdir', 'config', 'db']
 
 
-def get_default(nick, prefsfile, send):
-    try:
-        defaults = json.load(open(prefsfile))
-        location = defaults[nick]
-    except (OSError, KeyError):
+def get_default(nick, cursor, send):
+    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=?', (nick,)).fetchone()
+    if location is not None:
+        location = location[0]
+    else:
         send("No default location for %s, defaulting to TJ." % nick)
         # default to TJHSST
         location = '22312'
     return location
 
 
-def set_default(nick, location, prefsfile, send, apikey):
-    try:
-        defaults = json.load(open(prefsfile))
-    except OSError:
-        defaults = {}
+def set_default(nick, location, cursor, send, apikey):
+    """Sets nick's default location to location."""
     if get_weather(location, send, apikey):
         send("Setting default location")
-        defaults[nick] = location
-    f = open(prefsfile, "w")
-    json.dump(defaults, f, indent=True, sort_keys=True)
-    f.write("\n")
-    f.close()
+        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(:nick,:loc)',
+                       {'nick': nick, 'loc': location})
 
 
 def get_weather(msg, send, apikey):
@@ -52,6 +46,7 @@ def get_weather(msg, send, apikey):
     if msg[0] == "-":
         html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
                        % (apikey, msg[1:]), timeout=1).read().decode()
+
         data = json.loads(html)
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
@@ -109,12 +104,12 @@ def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
     """
-    prefsfile = args['srcdir'] + "/data/weather"
+    cursor = args['db']
     apikey = args['config']['api']['weatherapikey']
     match = re.match("set (.*)", msg)
     if match:
-        set_default(args['nick'], match.group(1), prefsfile, send, apikey)
+        set_default(args['nick'], match.group(1), cursor, send, apikey)
         return
     if not msg:
-        msg = get_default(args['nick'], prefsfile, send)
+        msg = get_default(args['nick'], cursor, send)
     get_weather(msg, send, apikey)
