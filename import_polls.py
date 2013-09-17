@@ -27,6 +27,9 @@ dbconn = sqlite3.connect(dirname(__file__) + "/db.sqlite")
 
 cur = dbconn.cursor()
 
+cur.execute('delete from polls')
+cur.execute('delete from poll_responses')
+
 for poll in polls:
     active = poll['active']
     question = poll['question']
@@ -41,9 +44,9 @@ for poll in polls:
                 (question, active))
 
     dbconn.commit()
-    qid = cur.execute('SELECT id FROM polls WHERE question=? ORDER BY id DESC', (question,)).fetchone()[0]
+    qid = cur.execute('SELECT pid FROM polls WHERE question=? ORDER BY pid DESC', (question,)).fetchone()[0]
 
     for nick, vote in votes.items():
         print(nick, vote)
-        cur.execute('INSERT INTO poll_responses(qid, voter, response, id) VALUES(?,?,?,Null)', (qid, nick, vote))
+        cur.execute('INSERT INTO poll_responses(pid, voter, response) VALUES(?,?,?)', (qid, nick, vote))
     dbconn.commit()
