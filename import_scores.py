@@ -22,14 +22,14 @@ import sqlite3
 import json
 from os.path import dirname
 
-weather = json.load(open(dirname(__file__) + "/data/weather"))
+scores = json.load(open(dirname(__file__) + "/data/score"))
 dbconn = sqlite3.connect(dirname(__file__) + "/db.sqlite")
 
 cur = dbconn.cursor()
 
-cur.execute('delete from weather_prefs')
+cur.execute('delete from scores')
 
-for k in weather.keys():
-    cur.execute('INSERT INTO weather_prefs(nick, location) VALUES (?,?)',
-                (k, weather[k]))
-    dbconn.commit()
+for k in scores.keys():
+    cur.execute('INSERT INTO scores(nick, score) VALUES (?,?)',
+                (k, scores[k]))
+dbconn.commit()

@@ -1,6 +1,5 @@
 b
 config.cfg
-data
 __pycache__
 *.sw?
 gh-pages
