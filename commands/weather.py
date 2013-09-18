@@ -27,7 +27,7 @@ def get_default(nick, cursor, send):
     if location is not None:
         location = location[0]
     else:
-        send("No default location for %s, defaulting to TJ." % nick)
+        c.privmsg(nick, "No default location for %s, defaulting to TJ." % nick)
         # default to TJHSST
         location = '22312'
     return location
@@ -36,7 +36,7 @@ def get_default(nick, cursor, send):
 def set_default(nick, location, cursor, send, apikey):
     """Sets nick's default location to location."""
     if get_weather(location, send, apikey):
-        send("Setting default location")
+        c.privmsg(nick, "Setting default location")
         cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(:nick,:loc)',
                        {'nick': nick, 'loc': location})
 
@@ -49,7 +49,7 @@ def get_weather(msg, send, apikey):
 
         data = json.loads(html)
         if 'current_observation' not in data:
-            send("Invalid or Ambiguous Location")
+            c.privmsg(nick, "Invalid or Ambiguous Location")
             return False
         data = {
             'display_location': {
@@ -81,10 +81,10 @@ def get_weather(msg, send, apikey):
         else:
             import logging
             logging.error(data)
-            send("Invalid or Ambiguous Location")
+            c.privmsg(nick, "Invalid or Ambiguous Location")
             return False
         forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
-    send("Current weather for %s:" % data['display_location']['full'])
+    c.privmsg(nick, "Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],
         data['temp_f'],
@@ -95,8 +95,8 @@ def get_weather(msg, send, apikey):
         forecastdata['conditions'],
         forecastdata['high']['fahrenheit'],
         forecastdata['low']['fahrenheit'])
-    send(current)
-    send("Forecast: " + forecast)
+    c.privmsg(nick, current)
+    c.privmsg(nick, "Forecast: " + forecast)
     return True
 
 
