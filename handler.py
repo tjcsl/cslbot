@@ -367,7 +367,7 @@ class BotHandler():
             if cursor.execute("SELECT count(1) FROM scores WHERE nick=?", (name,)).fetchone()[0] == 1:
                 cursor.execute("UPDATE scores SET score=score+? WHERE nick=?", (score, name))
             else:
-                cursor.execute("INSERT INTO scores(score,nick,rowid) VALUES(?,?,NULL)", (score, name))
+                cursor.execute("INSERT INTO scores(score,nick) VALUES(?,?)", (score, name))
 
     def do_urls(self, match, send):
         """ Get titles for urls.

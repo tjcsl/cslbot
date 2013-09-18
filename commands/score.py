@@ -44,23 +44,16 @@ def cmd(send, msg, args):
         if match:
             if match.group(1) == 'high':
                 data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
-                print(data[0][0])
                 send('High Scores:')
-                for x in [-1, -2, -3]:
-                    try:
-                        send("%s: %s" % (data[x][0], data[x][1]))
-                    except IndexError:
-                        pass
+                for x in data:
+                    send("%s: %s" % (x['nick'], x['score']))
             elif match.group(1) == 'low':
                 data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
                 send('Low Scores:')
-                for x in range(0, 3):
-                    try:
-                        send("%s: %s" % (data[x][0], data[x][1]))
-                    except IndexError:
-                        pass
+                for x in data:
+                    send("%s: %s" % (x['nick'], x['score']))
             else:
-                send("%s is not valid flag" % match.group(1))
+                send("%s is not a valid flag" % match.group(1))
         elif msg:
             send("Invalid nick")
         else:
