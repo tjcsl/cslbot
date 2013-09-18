@@ -297,11 +297,11 @@ class BotHandler():
         self.db.log(nick, target, isop, msg, msgtype)
 
         #FIXME: reenable log to ctrlchan
-        #if self.log_to_ctrlchan:
-        #    ctrlchan = self.config['core']['ctrlchan']
-        #    if target != ctrlchan:
-        #        ctrlmsg = "(%s) %s" % (target, log)
-        #       self.connection.privmsg(ctrlchan, ctrlmsg.strip())
+        if self.log_to_ctrlchan:
+            ctrlchan = self.config['core']['ctrlchan']
+            if target != ctrlchan:
+                ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
+                self.connection.privmsg(ctrlchan, ctrlmsg.strip())
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
         """ Leaves a channel.
