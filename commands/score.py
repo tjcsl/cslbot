@@ -15,56 +15,62 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-import json
-from random import choice
+from random import randint
 
-args = ['srcdir', 'config']
+args = ['srcdir', 'config', 'db']
 
 
 def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
     """
-    try:
-        scorefile = args['srcdir'] + '/data/score'
-        data = json.load(open(scorefile))
-        match = re.match('([a-zA-Z0-9_\|]+)', msg)
-        if match:
-            name = match.group(1).lower()
-            try:
-                score = data[name]
-                botnick = args['config']['core']['nick']
-                if name == botnick.lower():
-                    output = 'has %s points! :)' % score
-                    send(output, 'action')
-                else:
-                    send("%s has %i points!" % (name, score))
-            except:
-                send("Nobody cares about " + name)
-        else:
-            match = re.match('--(.*)', msg)
-            if match:
-                sorted_data = sorted(data, key=data.get)
-                if match.group(1) == 'high':
-                    send('High Scores:')
-                    for x in [-1, -2, -3]:
-                        try:
-                            name = sorted_data[x]
-                            send("%s: %s" % (name, data[name]))
-                        except IndexError:
-                            pass
-                if match.group(1) == 'low':
-                    send('Low Scores:')
-                    for x in range(0, 3):
-                        try:
-                            name = sorted_data[x]
-                            send("%s: %s" % (name, data[name]))
-                        except IndexError:
-                            pass
-            elif msg:
-                send("Invalid nick")
+    cursor = args['db']
+    match = re.match('([a-zA-Z0-9_\|]+)', msg)
+    if match:
+        name = match.group(1).lower()
+        score = cursor.execute("SELECT score FROM scores WHERE nick=?", (name,)).fetchone()
+        if score is not None:
+            score = score[0]
+            botnick = args['config']['core']['nick']
+            if name == botnick.lower():
+                output = 'has %s points! :)' % score
+                send(output, 'action')
             else:
-                name = choice(list(data.keys()))
-                send("%s has %i points!" % (name, data[name]))
-    except OSError:
-        send("Nobody cares about anything.")
+                send("%s has %i points!" % (name, score))
+        else:
+            send("Nobody cares about " + name)
+    else:
+        match = re.match('--(.*)', msg)
+        if match:
+            if match.group(1) == 'high':
+                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
+                print(data[0][0])
+                send('High Scores:')
+                for x in [-1, -2, -3]:
+                    try:
+                        send("%s: %s" % (data[x][0], data[x][1]))
+                    except IndexError:
+                        pass
+            elif match.group(1) == 'low':
+                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
+                send('Low Scores:')
+                for x in range(0, 3):
+                    try:
+                        send("%s: %s" % (data[x][0], data[x][1]))
+                    except IndexError:
+                        pass
+            else:
+                send("%s is not valid flag" % match.group(1))
+        elif msg:
+            send("Invalid nick")
+        else:
+            count = cursor.execute("SELECT count(*) FROM scores").fetchone()
+            if count is None or count[0] == 0:
+                send("Nobody cares about anything =(")
+            else:
+                if count[0] == 1:
+                    randid = 1
+                else:
+                    randid = randint(1, count[0])
+                query = cursor.execute("SELECT nick,score FROM scores WHERE id=?", (randid,)).fetchone()
+                send("%s has %i points!" % (query[0], query[1]))

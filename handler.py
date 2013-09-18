@@ -19,7 +19,6 @@
 
 import re
 import os
-import json
 import importlib
 import imp
 import time
@@ -351,7 +350,6 @@ class BotHandler():
         | themselves.
         | Otherwise substract one point.
         """
-        scorefile = self.srcdir + '/data/score'
         for match in matches:
             name = match[0].lower()
             # limit to 5 score changes per minute
@@ -364,18 +362,12 @@ class BotHandler():
                     score = -10
             else:
                 score = -1
-            if os.path.isfile(scorefile):
-                scores = json.load(open(scorefile))
+            #TODO: maybe we can do this with INSERT OR REPLACE?
+            cursor = self.db.get()
+            if cursor.execute("SELECT count(1) FROM scores WHERE nick=?", (name,)).fetchone()[0] == 1:
+                cursor.execute("UPDATE scores SET score=score+? WHERE nick=?", (score, name))
             else:
-                scores = {}
-            if name in scores:
-                scores[name] += score
-            else:
-                scores[name] = score
-            f = open(scorefile, "w")
-            json.dump(scores, f, indent=True, sort_keys=True)
-            f.write("\n")
-            f.close()
+                cursor.execute("INSERT INTO scores(score,nick,rowid) VALUES(?,?,NULL)", (score, name))
 
     def do_urls(self, match, send):
         """ Get titles for urls.
