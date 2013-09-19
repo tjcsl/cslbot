@@ -70,7 +70,7 @@ def gen_log(row):
         nick = '@' + nick if row['operator'] else nick
         log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
     else:
-        log = row['type'] + '\n'
+        raise Exception("Invalid type.")
     return log
 
 
