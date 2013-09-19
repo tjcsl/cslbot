@@ -35,6 +35,9 @@ def cmd(send, msg, args):
     """Files a github issue.
     Syntax: !issue <description>
     """
+    if not msg:
+        send("Issue needs a description.")
+        return
     args['issues'].append([msg, args['source']])
     args['connection'].privmsg(args['config']['core']['ctrlchan'], "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
     send("Issue submitted for approval.")
