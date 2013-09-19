@@ -30,4 +30,4 @@ def cmd(send, msg, args):
     action = ['draws a slip of paper from a hat and gets...', 'says eenie, menie, miney, moe and chooses...',
               'picks a random number and gets...', 'rolls dice and gets...', 'asks a random person and gets...',
               'plays rock, paper, scissors, lizard, spock and gets...']
-    send("%s %s %s" % (args['nick'], choice(action), choice(choices)))
+    send("%s %s" % (choice(action), choice(choices)), 'action')
