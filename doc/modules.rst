@@ -8,8 +8,8 @@ IrcBot
    client
    commands
    control
-   generatelogs
    handler
+   parselogs
    parsequotes
    server
    sql
