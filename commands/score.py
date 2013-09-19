@@ -43,12 +43,12 @@ def cmd(send, msg, args):
         match = re.match('--(.*)', msg)
         if match:
             if match.group(1) == 'high':
-                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
+                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
                 send('High Scores:')
                 for x in data:
                     send("%s: %s" % (x['nick'], x['score']))
             elif match.group(1) == 'low':
-                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
+                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
                 send('Low Scores:')
                 for x in data:
                     send("%s: %s" % (x['nick'], x['score']))
