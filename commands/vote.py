@@ -22,7 +22,8 @@ def start_poll(cursor, msg):
     if not msg:
         return "Polls need a question."
     cursor.execute("INSERT INTO polls(question) VALUES(?)", (msg,))
-    return "Poll created!"
+    pid = cursor.execute('select last_insert_rowid()').fetchone()[0]
+    return "Poll #%d created!" % pid
 
 
 def delete_poll(cursor, poll):
