@@ -582,8 +582,7 @@ class BotHandler():
             return
 
         cmdchar = self.config['core']['cmdchar']
-        #FIXME: make this dynamic
-        botnick = '%s: ' % self.config['core']['nick']
+        botnick = '%s: ' % self.connection.real_nickname
         if msg.startswith(botnick):
             msg = msg.replace(botnick, self.config['core']['cmdchar'])
 
