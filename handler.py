@@ -205,6 +205,8 @@ class BotHandler():
             self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
         elif msg.startswith('%sgcc' % cmdchar):
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
+        elif msg.startswith('%svote' % cmdchar) or msg.startswith('%spoll' % cmdchar):
+            self.send(nick, nick, "We don't have secret ballots in this benevolent dictatorship!", e.type)
         elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
             self.send(nick, nick, 'Hey, no points in private messages!', e.type)
         else:
