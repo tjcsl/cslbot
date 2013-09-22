@@ -203,15 +203,12 @@ class BotHandler():
             msg = msg.replace(botnick, self.config['core']['cmdchar'])
         if msg.startswith('%sissue' % cmdchar):
             self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
-            return
         elif msg.startswith('%sgcc' % cmdchar):
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
-            return
         elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
-            self.send(nick, nick, 'Hey, no points in private messages!',
-                      e.type)
-            return
-        self.handle_msg('privmsg', c, e)
+            self.send(nick, nick, 'Hey, no points in private messages!', e.type)
+        else:
+            self.handle_msg('privmsg', c, e)
 
     def pubmsg(self, c, e):
         """ Handle public messages.
@@ -593,29 +590,29 @@ class BotHandler():
         admins = self.config['auth']['admins'].split(', ')
 
         self.do_caps(msg, c, target, nick, send)
-        if cmd[0] != cmdchar:
+        if not cmd.startswith(cmdchar):
             self.do_band(msg, send)
 
-        if cmd[1:] in self.disabled_mods:
+        if cmd[len(cmdchar):] in self.disabled_mods:
             send("That module is disabled, sorry.")
             return
 
         # handle !s/a/b/
-        if cmd[:2] == cmdchar + 's':
+        if cmd.startswith('%ss/' % cmdchar):
             cmd = cmd.split('/')[0]
         cmdargs = msg[len(cmd) + 1:]
         found = False
-        if cmd[0] == cmdchar:
-            if cmd[1:] in self.modules:
-                mod = self.modules[cmd[1:]]
-                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[1:]):
+        if cmd.startswith(cmdchar):
+            if cmd[len(cmdchar):] in self.modules:
+                mod = self.modules[cmd[len(cmdchar):]]
+                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[len(cmdchar):]):
                     return
                 args = self.do_args(mod.args, send, nick, target, e.source, c) if hasattr(mod, 'args') else {}
                 mod.cmd(send, cmdargs, args)
                 found = True
         # special commands
-        if cmd[0] == cmdchar:
-            if cmd[1:] == 'reload':
+        if cmd.startswith(cmdchar):
+            if cmd[len(cmdchar):] == 'reload':
                 if nick not in admins:
                     send("Nope, not gonna do it.")
                 else:

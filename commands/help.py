@@ -25,8 +25,8 @@ def cmd(send, msg, args):
     """
     cmdchar = args['config']['core']['cmdchar']
     if msg:
-        if msg[0] == cmdchar:
-            msg = msg[1:]
+        if msg.startswith(cmdchar):
+            msg = msg[len(cmdchar):]
         if len(msg.split()) > 1:
             send("One argument only")
             return
