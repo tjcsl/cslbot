@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     Syntax: !score <--high|--low|nick>
     """
     cursor = args['db']
-    match = re.match('([a-zA-Z0-9_\|]+)', msg)
+    match = re.match('(%s+)' % args['config']['core']['nickregex'], msg)
     if match:
         name = match.group(1).lower()
         score = cursor.execute("SELECT score FROM scores WHERE nick=?", (name,)).fetchone()

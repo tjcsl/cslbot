@@ -207,7 +207,7 @@ class BotHandler():
             self.send(nick, nick, 'GCC is a group excercise!', e.type)
         elif msg.startswith('%svote' % cmdchar) or msg.startswith('%spoll' % cmdchar):
             self.send(nick, nick, "We don't have secret ballots in this benevolent dictatorship!", e.type)
-        elif re.search(r"([a-zA-Z0-9]+)(\+\+|--)", msg):
+        elif re.search(r"(%s+)(\+\+|--)" % self.config['core']['nickregex'], msg):
             self.send(nick, nick, 'Hey, no points in private messages!', e.type)
         else:
             self.handle_msg('privmsg', c, e)
@@ -628,6 +628,6 @@ class BotHandler():
             if not found and self.is_admin(c, nick):
                 self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
         # ++ and --
-        matches = re.findall(r"([a-zA-Z0-9_\|]+)(\+\+|--)", msg)
+        matches = re.findall(r"(%s+)(\+\+|--)" % self.config['core']['nickregex'], msg)
         if matches:
             self.do_scores(matches, send, msgtype, nick)

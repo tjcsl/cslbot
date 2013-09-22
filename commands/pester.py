@@ -17,6 +17,7 @@
 import re
 
 limit = 5
+args = ['config']
 
 
 def cmd(send, msg, args):
@@ -26,7 +27,7 @@ def cmd(send, msg, args):
     if not msg or len(msg.split()) < 2:
         send("Pester needs at least two arguments.")
         return
-    match = re.match('([a-zA-Z0-9`]+) (.*)', msg)
+    match = re.match('(%s+) (.*)' % args['core']['nickregex'], msg)
     if match:
         message = match.group(2) + " "
         send('%s: %s' % (match.group(1), message * 3))

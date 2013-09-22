@@ -6,6 +6,7 @@ channel: #channel
 ctrlchan: #channel-control
 cmdchar: !
 quoteurl: http://pefoley.com/irc/quotes.html
+nickregex: [a-zA-Z0-9_\|`]
 [auth]
 ctrlpass:
 nickpass:
