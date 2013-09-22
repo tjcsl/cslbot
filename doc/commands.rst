@@ -505,6 +505,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`son` Module
+-----------------
+
+.. automodule:: commands.son
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`ssearch` Module
 ---------------------
 
