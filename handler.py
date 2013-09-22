@@ -582,6 +582,7 @@ class BotHandler():
             return
 
         cmdchar = self.config['core']['cmdchar']
+        #FIXME: make this dynamic
         botnick = '%s: ' % self.config['core']['nick']
         if msg.startswith(botnick):
             msg = msg.replace(botnick, self.config['core']['cmdchar'])
@@ -624,7 +625,7 @@ class BotHandler():
                     self.get_admins(c)
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
-                self.do_admin(c, cmd[1:], cmdargs, send, nick, msgtype, target)
+                self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
         # ++ and --
         matches = re.findall(r"([a-zA-Z0-9_\|]+)(\+\+|--)", msg)
         if matches:
