@@ -19,8 +19,10 @@ from random import choice
 args = ['db']
 
 
+#FIXME: make sphinx happy
 def build_markov(cursor, nick):
     """ Builds a markov dictionary of the form
+
         word : {
            nextword1 : num_apperences,
            nextword2 : num_apperances,
