@@ -32,13 +32,26 @@ def output_quotes(env, cursor, outdir):
     open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
 
 
+def get_scores(cursor):
+    rows = cursor.execute('SELECT nick,score FROM scores').fetchall()
+    return [list(row) for row in rows]
+
+
+def output_scores(env, cursor, outdir):
+    scores = get_scores(cursor)
+    output = env.get_template('scores.html').render(scores=scores)
+    open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
+
+
 def main(outdir):
     filename = dirname(__file__) + "/db.sqlite"
     conn = sqlite3.connect(filename)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
+
     output_quotes(env, cursor, outdir)
+    output_scores(env, cursor, outdir)
 
 
 if __name__ == '__main__':
