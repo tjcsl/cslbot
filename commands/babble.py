@@ -71,6 +71,5 @@ def cmd(send, msg, args):
     cursor = args['db']
     if not msg:
         msg = get_nick(cursor)
-        send(msg)
     markov = build_markov(cursor, msg.split()[0])
     send(build_msg(markov, msg))
