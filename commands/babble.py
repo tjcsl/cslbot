@@ -28,7 +28,7 @@ def build_markov(cursor, nick):
            nextwordn : num_apperances
         }
     """
-    messages = cursor.execute("SELECT msg FROM log WHERE source=?", (nick,)).fetchall()
+    messages = cursor.execute("SELECT msg FROM log WHERE UPPER(source)=UPPER(?)", (nick,)).fetchall()
     markov = {}
     if messages is None or len(messages) == 0:
         return {}
