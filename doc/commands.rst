@@ -49,6 +49,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`babble` Module
+--------------------
+
+.. automodule:: commands.babble
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`bc` Module
 ----------------
 
