@@ -18,6 +18,7 @@ from random import choice
 
 args = ['db']
 
+
 def build_markov(cursor, nick):
     """ Builds a markov dictionary of the form
         word : {
@@ -43,16 +44,20 @@ def build_markov(cursor, nick):
                 markov[msg[i - 1]][msg[i]] += 1
     return markov
 
+
 def build_msg(markov):
+    if (len(markov.keys())) == 0:
+        return "Noone has talked with that nick =("
     msg = choice(list(markov.keys()))
     last_word = msg
     while len(msg) < 100:
-        if last_word not in markov.keys():
+        if last_word not in markov.keys() or len(list(markov[last_word])) == 0:
             break
         next_word = choice(list(markov[last_word]))
         msg = msg + " " + next_word
         last_word = next_word
     return msg
+
 
 def cmd(send, msg, args):
     """Babbles like a user
