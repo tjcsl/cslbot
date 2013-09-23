@@ -31,10 +31,9 @@ def build_markov(cursor, nick):
     messages = cursor.execute("SELECT msg FROM log WHERE UPPER(source)=UPPER(?)", (nick,)).fetchall()
     markov = {}
     if messages is None or len(messages) == 0:
-        return {}
+        return markov
     for msg in messages:
-        msg = msg[0]
-        msg = msg.split()
+        msg = msg[0].split()
         for i in range(1, len(msg)):
             if msg[i - 1] not in markov:
                 markov[msg[i - 1]] = {}
@@ -45,25 +44,33 @@ def build_markov(cursor, nick):
     return markov
 
 
-def build_msg(markov):
-    if (len(markov.keys())) == 0:
-        return "Noone has talked with that nick =("
+def build_msg(markov, nick):
+    if len(markov.keys()) == 0:
+        return "No one has talked with %s =(" % nick
     msg = choice(list(markov.keys()))
     last_word = msg
     while len(msg) < 100:
         if last_word not in markov.keys() or len(list(markov[last_word])) == 0:
             break
         next_word = choice(list(markov[last_word]))
-        msg = msg + " " + next_word
+        msg = "%s %s" % (msg, next_word)
         last_word = next_word
     return msg
 
 
+def get_nick(cursor):
+    rows = cursor.execute("SELECT source from log WHERE type='privmsg' OR type='pubmsg'").fetchall()
+    nicks = list(set(row['source'].split('!')[0] for row in rows))
+    return choice(nicks)
+
+
 def cmd(send, msg, args):
     """Babbles like a user
+    Syntax: !babble (nick)
     """
     cursor = args['db']
-    if len(msg.split()) != 1:
-        send("I ain't goin work")
-        return
-    send(build_msg(build_markov(cursor, msg.split()[0])))
+    if not msg:
+        msg = get_nick(cursor)
+        send(msg)
+    markov = build_markov(cursor, msg.split()[0])
+    send(build_msg(markov, msg))
