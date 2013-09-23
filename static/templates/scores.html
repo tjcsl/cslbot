@@ -4,12 +4,12 @@
 <table class="table table-bordered table-hover table-striped">
     <tr>
         <th>Nick</th>
-	<th>Score</th>
+        <th>Score</th>
     </tr>
-    {% for i in scores %}
+    {% for i in sorted(scores, key=lambda k:k[1]) %}
     <tr>
-        <td>{{ i[0]|trim }}</td>
-        <td>{{ i[1]|trim }}</td>
+        <td>{{ i[0] | trim }}</td>
+        <td>{{ i[1] | trim }}</td>
     </tr>
     {% endfor %}
 </table>
