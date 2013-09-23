@@ -9,7 +9,7 @@ IrcBot
    commands
    control
    handler
+   parsedata
    parselogs
-   parsequotes
    server
    sql
