@@ -21,29 +21,28 @@ from jinja2 import Environment, FileSystemLoader
 from os.path import dirname
 
 
-def get_quotes(filename):
+def get_quotes(cursor):
+    rows = cursor.execute('SELECT id,quote,nick FROM quotes').fetchall()
+    return [list(row) for row in rows]
+
+
+def output_quotes(env, cursor, outdir):
+    quotes = get_quotes(cursor)
+    output = env.get_template('quotes.html').render(quotes=quotes)
+    open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
+
+
+def main(outdir):
+    filename = dirname(__file__) + "/db.sqlite"
     conn = sqlite3.connect(filename)
     conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    cur.execute('SELECT id,quote,nick FROM quotes')
-    rows = cur.fetchall()
-    quotes = []
-    for x in rows:
-        quotes.append(list(x))
-    return quotes
-
-
-def main(outfile):
-    filename = dirname(__file__) + "/db.sqlite"
-    quotes = get_quotes(filename)
-    output = ''
+    cursor = conn.cursor()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
-    output = env.get_template('quotes.html').render(quotes=quotes)
-    open(outfile, 'w', encoding='utf8').write(output)
+    output_quotes(env, cursor, outdir)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('output', help='The output file.')
+    parser.add_argument('output', help='The output dir.')
     args = parser.parse_args()
     main(args.output)
