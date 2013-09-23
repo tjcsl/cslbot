@@ -16,11 +16,11 @@
 
 from random import choice
 
-args = ['db']
+args = ['db', 'config']
 
 
 #FIXME: make sphinx happy
-def build_markov(cursor, nick):
+def build_markov(cursor, speaker):
     """ Builds a markov dictionary of the form
 
         word : {
@@ -30,12 +30,15 @@ def build_markov(cursor, nick):
            nextwordn : num_apperances
         }
     """
-    messages = cursor.execute("SELECT msg FROM log WHERE UPPER(source)=UPPER(?)", (nick,)).fetchall()
+    if speaker.startswith('#'):
+        messages = cursor.execute("SELECT msg FROM log WHERE UPPER(target)=UPPER(?)", (speaker,)).fetchall()
+    else:
+        messages = cursor.execute("SELECT msg FROM log WHERE UPPER(source)=UPPER(?)", (speaker,)).fetchall()
     markov = {}
     if messages is None or len(messages) == 0:
         return markov
     for msg in messages:
-        msg = msg[0].split()
+        msg = msg['msg'].split()
         for i in range(1, len(msg)):
             if msg[i - 1] not in markov:
                 markov[msg[i - 1]] = {}
@@ -46,9 +49,9 @@ def build_markov(cursor, nick):
     return markov
 
 
-def build_msg(markov, nick):
+def build_msg(markov, speaker):
     if len(markov.keys()) == 0:
-        return "No one has talked with %s =(" % nick
+        return "No one has talked with %s =(" % speaker
     msg = choice(list(markov.keys()))
     last_word = msg
     while len(msg) < 100:
@@ -57,13 +60,7 @@ def build_msg(markov, nick):
         next_word = choice(list(markov[last_word]))
         msg = "%s %s" % (msg, next_word)
         last_word = next_word
-    return msg
-
-
-def get_nick(cursor):
-    rows = cursor.execute("SELECT source from log WHERE type='privmsg' OR type='pubmsg'").fetchall()
-    nicks = list(set(row['source'].split('!')[0] for row in rows))
-    return choice(nicks)
+    return "%s says: %s" % (speaker, msg)
 
 
 def cmd(send, msg, args):
@@ -71,7 +68,6 @@ def cmd(send, msg, args):
     Syntax: !babble (nick)
     """
     cursor = args['db']
-    if not msg:
-        msg = get_nick(cursor)
-    markov = build_markov(cursor, msg.split()[0])
-    send(build_msg(markov, msg))
+    speaker = msg.split()[0] if msg else args['config']['core']['channel']
+    markov = build_markov(cursor, speaker)
+    send(build_msg(markov, speaker))
