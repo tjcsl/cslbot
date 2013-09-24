@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Polls Page{% endblock %}
+{% block content %}
+<table class="table table-bordered table-hover table-striped sortable">
+		<tr style="cursor: pointer">
+				<th>Number</th>
+				<th>Question</th>
+				<th>Responses</th>
+		</tr>
+		{% for pid,question in polls.items() %}
+		<tr>
+				<td>{{ pid|trim }}</td>
+				<td>{{ question|trim }}</td>
+				<td>
+						<table>
+								{% for voter,response in responses[pid].items() %}
+								<tr>
+										<td>{{ voter|trim }}</td>
+										<td>{{ response|trim }}</td>
+								</tr>
+								{% endfor %}
+						</table>
+				</td>
+		</tr>
+		{% endfor %}
+</table>
+{% endblock %}

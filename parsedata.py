@@ -43,6 +43,28 @@ def output_scores(env, cursor, outdir):
     open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
 
 
+def get_polls(cursor):
+    rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1').fetchall()
+    return {row['pid']: row['question'] for row in rows}
+
+
+def get_responses(cursor, polls):
+    responses = {}
+    for pid in polls.keys():
+        responses[pid] = {}
+        rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE pid=?', (pid,)).fetchall()
+        for row in rows:
+            responses[pid][row['voter']] = row['response']
+    return responses
+
+
+def output_polls(env, cursor, outdir):
+    polls = get_polls(cursor)
+    responses = get_responses(cursor, polls)
+    output = env.get_template('polls.html').render(polls=polls, responses=responses)
+    open(outdir + '/polls.html', 'w', encoding='utf8').write(output)
+
+
 def main(outdir):
     filename = dirname(__file__) + "/db.sqlite"
     conn = sqlite3.connect(filename)
@@ -52,6 +74,7 @@ def main(outdir):
 
     output_quotes(env, cursor, outdir)
     output_scores(env, cursor, outdir)
+    output_polls(env, cursor, outdir)
 
 
 if __name__ == '__main__':
