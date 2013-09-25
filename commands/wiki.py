@@ -17,6 +17,7 @@
 import json
 from urllib.request import urlopen
 from urllib.parse import quote
+from os.path import basename
 
 
 def cmd(send, msg, args):
@@ -26,12 +27,21 @@ def cmd(send, msg, args):
     if not msg:
         send("Need a article.")
         return
-    html = urlopen('http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srlimit=1&srsearch=' + quote(msg))
+    if 'livedoc' in basename(__file__):
+        url = 'http://www.tjhsst.edu/admin/livedoc'
+        name = 'livedoc'
+    else:
+        url = 'http://en.wikipedia.org/w'
+        name = 'wikipedia'
+    html = urlopen('%s/api.php?format=json&action=query&list=search&srlimit=1&srsearch=%s' % (url, quote(msg)))
     data = json.loads(html.read().decode())
     try:
-        url = data['query']['search'][0]['title']
+        article = data['query']['search'][0]['title']
     except Exception:
-        send("%s isn't important enough to have a wikipedia article." % msg)
+        send("%s isn't important enough to have a %s article." % (msg, name))
         return
-    url = url.replace(' ', '_')
-    send('http://en.wikipedia.org/wiki/' + url)
+    article = article.replace(' ', '_')
+    # wikipedia uses /w for api and /wiki for articles
+    if 'livedoc' not in basename(__file__):
+        url += 'iki'
+    send('%s/%s' % (url, article))
