@@ -313,6 +313,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`livedoc` Module
+---------------------
+
+.. automodule:: commands.livedoc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`lmgtfy` Module
 --------------------
 

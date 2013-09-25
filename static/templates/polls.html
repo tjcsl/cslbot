@@ -13,10 +13,10 @@
 				<td>{{ question|trim }}</td>
 				<td>
 						<table>
-								{% for voter,response in responses[pid].items() %}
+								{% for response,votes in responses[pid].items() %}
 								<tr>
-										<td>{{ voter|trim }}</td>
 										<td>{{ response|trim }}</td>
+										<td>{{ votes|join(', ') }}</td>
 								</tr>
 								{% endfor %}
 						</table>

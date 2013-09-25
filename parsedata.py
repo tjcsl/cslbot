@@ -54,7 +54,9 @@ def get_responses(cursor, polls):
         responses[pid] = {}
         rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE pid=?', (pid,)).fetchall()
         for row in rows:
-            responses[pid][row['voter']] = row['response']
+            if row['response'] not in responses[pid]:
+                responses[pid][row['response']] = []
+            responses[pid][row['response']].append(row['voter'])
     return responses
 
 
