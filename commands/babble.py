@@ -24,6 +24,7 @@ def clean_msg(msg):
     msg = msg.replace('"', '')
     return msg.split()
 
+
 def weighted_rand(d):
     """ d should be a dictionary of the form
     {
@@ -37,6 +38,7 @@ def weighted_rand(d):
     for k in d:
         l += [k] * d[k]
     return choice(l)
+
 
 #FIXME: make sphinx happy
 def build_markov(cursor, speaker):
