@@ -27,6 +27,7 @@ def clean_msg(msg):
 
 def weighted_rand(d):
     """ d should be a dictionary of the form
+
     {
         thing1: freq1,
         thing2: freq2,

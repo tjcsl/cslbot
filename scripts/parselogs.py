@@ -88,7 +88,7 @@ def main(config, outdir):
 
 if __name__ == '__main__':
     config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/config.cfg'))
+    config.read_file(open(dirname(__file__) + '/../config.cfg'))
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The directory to write logs too.')
     args = parser.parse_args()

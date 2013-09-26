@@ -72,7 +72,7 @@ def main(outdir):
     conn = sqlite3.connect(filename)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    env = Environment(loader=FileSystemLoader(dirname(__file__)+'/static/templates'))
+    env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
 
     output_quotes(env, cursor, outdir)
     output_scores(env, cursor, outdir)
