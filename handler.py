@@ -66,6 +66,7 @@ class BotHandler():
         admins = config['auth']['admins'].split(', ')
         self.admins = {nick: False for nick in admins}
         self.modules = self.loadmodules()
+        self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
         self.db = sql.Sql()
@@ -96,7 +97,8 @@ class BotHandler():
         """ Cleans the sql connection pool."""
         self.db.clean_connection_pool()
 
-    def loadmodules(self):
+    @staticmethod
+    def loadmodules():
         """Load all the commands.
 
         | Globs over all the .py files in the commands dir.
@@ -104,11 +106,26 @@ class BotHandler():
         | Imports the modules into a dict
         """
         modulemap = {}
-        for f in glob(os.path.dirname(__file__) + '/commands/*.py'):
+        for f in glob(dirname(__file__) + '/commands/*.py'):
             if os.access(f, os.X_OK):
                 cmd = basename(f).split('.')[0]
                 modulemap[cmd] = importlib.import_module("commands." + cmd)
         return modulemap
+
+    @staticmethod
+    def loadhooks():
+        """Load all the hooks.
+
+        | Globs over all the .py files in the hooks dir.
+        | Skips file without the executable bit set
+        | Imports the hooks into a dict
+        """
+        hookmap = {}
+        for f in glob(dirname(__file__) + '/hooks/*.py'):
+            if os.access(f, os.X_OK):
+                cmd = basename(f).split('.')[0]
+                hookmap[cmd] = importlib.import_module("hooks." + cmd)
+        return hookmap
 
     def ignore(self, send, nick):
         """Ignores a nick."""
@@ -295,7 +312,6 @@ class BotHandler():
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
         self.db.log(nick, target, isop, msg, msgtype)
 
-        #FIXME: reenable log to ctrlchan
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
@@ -555,6 +571,9 @@ class BotHandler():
             target = nick
         send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
 
+        for hook in self.hooks.values():
+                hook.handle(send, msgtype)
+
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
             return
@@ -621,6 +640,8 @@ class BotHandler():
                     found = True
                     self.clean_sql_connection_pool()
                     for x in self.modules.values():
+                        imp.reload(x)
+                    for x in self.hooks.values():
                         imp.reload(x)
                     send("Aye Aye Capt'n")
                     self.get_admins(c)
