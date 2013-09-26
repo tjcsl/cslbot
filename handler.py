@@ -568,7 +568,7 @@ class BotHandler():
 
         for hook in self.hooks:
             realargs = self.do_args(hook.reqargs, send, nick, target, e.source, c)
-            hook.run(send, msgtype, realargs)
+            hook.run(send, msg, msgtype, realargs)
 
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)

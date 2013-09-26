@@ -53,11 +53,11 @@ class Hook():
         _known_hooks.append(self)
 
     def __call__(self, func):
-        def wrapper(send, msgtype, args):
+        def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:
-                func(send, args)
+                func(send, msg, args)
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msgtype, args):
-        self.exe(send, msgtype, args)
+    def run(self, send, msg, msgtype, args):
+        self.exe(send, msg, msgtype, args)

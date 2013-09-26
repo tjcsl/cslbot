@@ -20,5 +20,5 @@ args = ['nick']
 
 
 @Hook(types=['pubmsg'], reqargs=['nick'])
-def handle(send, args):
+def handle(send, msg, args):
     send("MSBOB ATTACKS %s!" % (args['nick']))
