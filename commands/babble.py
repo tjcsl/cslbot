@@ -24,6 +24,19 @@ def clean_msg(msg):
     msg = msg.replace('"', '')
     return msg.split()
 
+def weighted_rand(d):
+    """ d should be a dictionary of the form
+    {
+        thing1: freq1,
+        thing2: freq2,
+        ...
+        thingn: freqn
+    }
+    """
+    l = []
+    for k in d:
+        l += [k] * d[k]
+    return choice(l)
 
 #FIXME: make sphinx happy
 def build_markov(cursor, speaker):
@@ -63,7 +76,7 @@ def build_msg(markov, speaker):
     while len(msg) < 100:
         if last_word not in markov.keys() or len(list(markov[last_word])) == 0:
             break
-        next_word = choice(list(markov[last_word]))
+        next_word = weighted_rand(markov[last_word])
         msg = "%s %s" % (msg, next_word)
         last_word = next_word
     return "%s says: %s" % (speaker, msg)
