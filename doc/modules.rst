@@ -9,6 +9,7 @@ IrcBot
    commands
    control
    handler
+   hook
    parsedata
    parselogs
    server
