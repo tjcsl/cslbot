@@ -17,22 +17,47 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import sys
+import os
+from os.path import basename
+import importlib
+from glob import glob
+
+_known_hooks = []
+
+
+def scan_for_hooks(folder):
+    """ Scans folder for hooks """
+    global _known_hooks
+    _known_hooks = []
+    for f in glob(folder + '/*.py'):
+        if os.access(f, os.X_OK):
+            cmd = basename(f).split('.')[0]
+            #We only need to run import_module, the hook decorator constructor
+            #will take care of the rest
+            mod_name = "hooks." + cmd
+            if mod_name in sys.modules:
+                importlib.imp.reload(sys.modules[mod_name])
+            else:
+                importlib.import_module(mod_name)
+    print("Found hooks : " + str(_known_hooks))
+    return _known_hooks
+
 
 class Hook():
 
-    def __init__(self, types):
-        self.types = self.val_types(types)
+    def __init__(self, types, reqargs):
+        global _known_hooks
+        self.types = types
+        self.reqargs = reqargs
+        _known_hooks.append(self)
 
     def __call__(self, func):
-        def wrapper(send, msgtype):
+        def wrapper(send, msgtype, args):
             if msgtype in self.types:
-                func(send)
+                func(send, args)
+        self.exe = wrapper
         return wrapper
 
-    @staticmethod
-    def val_types(types):
-        validtypes = ['pubnotice']
-        for m in types:
-            if m not in validtypes:
-                raise Exception("Invalid type %s" % m)
-        return types
+    def run(self, send, msgtype, args):
+        self.exe(send, msgtype, args)

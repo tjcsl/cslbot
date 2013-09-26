@@ -24,8 +24,9 @@ import imp
 import time
 import socket
 import string
+import sys
 import errno
-from modules import control, sql
+from modules import control, sql, hook
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse
@@ -119,12 +120,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the hooks into a dict
         """
-        hookmap = {}
-        for f in glob(dirname(__file__) + '/hooks/*.py'):
-            if os.access(f, os.X_OK):
-                cmd = basename(f).split('.')[0]
-                hookmap[cmd] = importlib.import_module("hooks." + cmd)
-        return hookmap
+        return hook.scan_for_hooks(dirname(__file__) + '/hooks')
 
     def ignore(self, send, nick):
         """Ignores a nick."""
@@ -570,8 +566,9 @@ class BotHandler():
             target = nick
         send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
 
-        for hook in self.hooks.values():
-                hook.handle(send, msgtype)
+        for hook in self.hooks:
+            realargs = self.do_args(hook.reqargs, send, nick, target, e.source, c)
+            hook.run(send, msgtype, realargs)
 
         if msgtype == 'privnotice':
             self.set_admin(c, msg, send, nick, target)
@@ -640,8 +637,9 @@ class BotHandler():
                     self.clean_sql_connection_pool()
                     for x in self.modules.values():
                         imp.reload(x)
-                    for x in self.hooks.values():
-                        imp.reload(x)
+                    #reload hooks
+                    imp.reload(sys.modules['modules.hook'])
+                    self.loadhooks()
                     send("Aye Aye Capt'n")
                     self.get_admins(c)
             # everything below this point requires admin
