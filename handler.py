@@ -63,7 +63,7 @@ class BotHandler():
         self.channels = {}
         self.abuselist = {}
         admins = config['auth']['admins'].split(', ')
-        self.admins = {nick: False for nick in admins}
+        self.admins = {nick: None for nick in admins}
         self.modules = self.loadmodules()
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
@@ -144,7 +144,7 @@ class BotHandler():
         if nick not in self.config['auth']['admins'].split(', '):
             return False
         c.privmsg('NickServ', 'ACC ' + nick)
-        if not self.admins[nick]:
+        if not self.admins[nick] and self.admins[nick] is not None:
             if complain:
                 c.privmsg(self.config['core']['channel'],
                           "Unverified admin: " + nick)
