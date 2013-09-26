@@ -25,8 +25,7 @@ import time
 import socket
 import string
 import errno
-import control
-import sql
+from modules import control, sql
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse

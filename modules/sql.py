@@ -31,7 +31,7 @@ class Sql():
         | dbfile is the filename of the database
         | connection_pool is a dictionary of threadid->dbconnection.
         """
-        self.dbfile = dirname(__file__) + '/db.sqlite'
+        self.dbfile = dirname(__file__) + '/../db.sqlite'
         self.connection_pool = {}
         self.setup_db()
 

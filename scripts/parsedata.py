@@ -68,7 +68,7 @@ def output_polls(env, cursor, outdir):
 
 
 def main(outdir):
-    filename = dirname(__file__) + "/db.sqlite"
+    filename = dirname(__file__) + "/../db.sqlite"
     conn = sqlite3.connect(filename)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
