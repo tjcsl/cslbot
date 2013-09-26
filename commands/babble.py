@@ -19,6 +19,12 @@ from random import choice
 args = ['db', 'config']
 
 
+# Make the generated messages look better.
+def clean_msg(msg):
+    msg = msg.replace('"', '')
+    return msg.split()
+
+
 #FIXME: make sphinx happy
 def build_markov(cursor, speaker):
     """ Builds a markov dictionary of the form
@@ -38,7 +44,7 @@ def build_markov(cursor, speaker):
     if messages is None or len(messages) == 0:
         return markov
     for msg in messages:
-        msg = msg['msg'].split()
+        msg = clean_msg(msg['msg'])
         for i in range(1, len(msg)):
             if msg[i - 1] not in markov:
                 markov[msg[i - 1]] = {}
