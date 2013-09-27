@@ -14,9 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#This is an example handler, running it in an actual channel will
+#likely result it the bot getting kickbanned.
+#
+#To enable, chmod a+x bob.py
 from modules.hook import Hook
-
-args = ['nick']
 
 
 @Hook(types=['pubmsg'], reqargs=['nick'])
