@@ -21,6 +21,7 @@ import sys
 import os
 from os.path import basename
 import importlib
+import imp
 from glob import glob
 
 _known_hooks = []
@@ -37,7 +38,7 @@ def scan_for_hooks(folder):
             #will take care of the rest
             mod_name = "hooks." + cmd
             if mod_name in sys.modules:
-                importlib.imp.reload(sys.modules[mod_name])
+                imp.reload(sys.modules[mod_name])
             else:
                 importlib.import_module(mod_name)
     return _known_hooks

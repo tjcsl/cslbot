@@ -21,6 +21,6 @@
 from modules.hook import Hook
 
 
-@Hook(types=['pubmsg'], reqargs=['nick'])
+@Hook(types=['pubnotice'], reqargs=['nick'])
 def handle(send, msg, args):
     send("MSBOB ATTACKS %s!" % (args['nick']))
