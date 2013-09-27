@@ -625,6 +625,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`wolf` Module
+------------------
+
+.. automodule:: commands.wolf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`word` Module
 ------------------
 
