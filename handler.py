@@ -450,27 +450,6 @@ class BotHandler():
                 c.kick(target, nick, self.modules['slogan'].
                        gen_slogan(msg).upper())
 
-    def do_caps(self, msg, c, target, nick, send):
-        """ Check for capslock abuse.
-
-        | Check if a line is more than :const:`THRESHOLD` percent uppercase.
-        | If this is the first line, warn the user.
-        | If this is the second line in a row, kick the user.
-        """
-        # SHUT CAPS LOCK OFF, MORON
-        THRESHOLD = 0.65
-        text = "shutting caps lock off"
-        upper = [i for i in msg if i in string.ascii_uppercase]
-        upper_ratio = len(upper) / len(msg)
-        if upper_ratio > THRESHOLD and len(msg) > 6:
-            if nick in self.caps:
-                self.do_kick(c, send, target, nick, text)
-                self.caps.remove(nick)
-            else:
-                self.caps.append(nick)
-        elif nick in self.caps:
-            self.caps.remove(nick)
-
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
         if cmd == 'abuse':
             if cmdargs == 'clear':
@@ -599,8 +578,6 @@ class BotHandler():
 
         cmd = msg.split()[0]
         admins = self.config['auth']['admins'].split(', ')
-
-        self.do_caps(msg, c, target, nick, send)
 
         if cmd[len(cmdchar):] in self.disabled_mods:
             send("That module is disabled, sorry.")
