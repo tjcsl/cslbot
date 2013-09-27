@@ -41,6 +41,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ahamilton` Module
+-----------------------
+
+.. automodule:: commands.ahamilton
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`award` Module
 -------------------
 
