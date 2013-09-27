@@ -510,12 +510,6 @@ class BotHandler():
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
 
-    def do_band(self, msg, send):
-        if ':' in msg:
-            msg = msg.split(':')[1]
-        if len(msg.split()) == 3 and random() < 0.005:
-            send('"%s" would be a good name for a band...' % msg.strip())
-
     def do_args(self, modargs, send, nick, target, source, c):
         """ Handle the various args that modules need."""
         realargs = {}
@@ -607,8 +601,6 @@ class BotHandler():
         admins = self.config['auth']['admins'].split(', ')
 
         self.do_caps(msg, c, target, nick, send)
-        if not cmd.startswith(cmdchar):
-            self.do_band(msg, send)
 
         if cmd[len(cmdchar):] in self.disabled_mods:
             send("That module is disabled, sorry.")
