@@ -40,7 +40,6 @@ def scan_for_hooks(folder):
                 importlib.imp.reload(sys.modules[mod_name])
             else:
                 importlib.import_module(mod_name)
-    print("Found hooks : " + str(_known_hooks))
     return _known_hooks
 
 
