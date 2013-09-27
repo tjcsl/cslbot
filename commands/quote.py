@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-from inspect import getdoc
 
 args = ['db', 'nick', 'connection', 'is_admin', 'config']
 
@@ -112,4 +111,4 @@ def cmd(send, msg, args):
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:
-        send(getdoc())
+        send("Bad command, please use !quote <number> to get quotes. Valid commands are !quote [add|list|remove|edit]")
