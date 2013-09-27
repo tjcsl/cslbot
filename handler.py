@@ -22,15 +22,10 @@ import os
 import importlib
 import imp
 import time
-import socket
 import sys
-import errno
 from helpers import control, sql, hook
 from os.path import basename, dirname
 from glob import glob
-from lxml.html import parse
-from urllib.request import urlopen, Request
-from urllib.error import URLError
 from random import choice, random
 
 
@@ -378,36 +373,6 @@ class BotHandler():
             else:
                 cursor.execute("INSERT INTO scores(score,nick) VALUES(?,?)", (score, name))
 
-    def do_urls(self, match, send):
-        """ Get titles for urls.
-
-        | Generate a short url.
-        | Get the page title.
-        """
-        try:
-            url = match.group(1)
-            if not url.startswith('http'):
-                url = 'http://' + url
-            shorturl = self.modules['short'].get_short(url)
-            # Wikipedia doesn't like the default User-Agent
-            req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            html = parse(urlopen(req, timeout=5))
-            title = html.getroot().find(".//title").text.strip()
-            # strip unicode
-            title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
-        except URLError as ex:
-            # website does not exist
-            if hasattr(ex.reason, 'errno'):
-                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
-                    return
-            else:
-                send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
-                return
-        # page does not contain a title
-        except AttributeError:
-            title = 'No Title Found'
-        send('** %s - %s' % (title, shorturl))
-
     def do_mode(self, target, msg, nick, send):
         """ reop"""
         # reop
@@ -559,14 +524,6 @@ class BotHandler():
         if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)
 
-        # crazy regex to match urls
-        match = re.search(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.]
-                              [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
-                              <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
-                              \)|[^\s`!()\[\]{};:'\".,<>?«»....]))""", msg)
-        if match:
-            self.do_urls(match, send)
-
         if not self.is_admin(c, nick, False) and nick in self.ignored:
             return
 
@@ -606,7 +563,7 @@ class BotHandler():
                     for x in self.modules.values():
                         imp.reload(x)
                     #reload hooks
-                    imp.reload(sys.modules['modules.hook'])
+                    imp.reload(sys.modules['helpers.hook'])
                     self.loadhooks()
                     send("Aye Aye Capt'n")
                     self.get_admins(c)
