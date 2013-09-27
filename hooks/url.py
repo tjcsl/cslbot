@@ -43,7 +43,7 @@ def handle(send, msg, args):
                 url = 'http://' + url
             shorturl = get_short(url)
             # Wikipedia doesn't like the default User-Agent
-            req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 Python-urllib/3.3'})
             html = parse(urlopen(req, timeout=5))
             title = html.getroot().find(".//title").text.strip()
             # strip unicode
