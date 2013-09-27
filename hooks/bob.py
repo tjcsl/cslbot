@@ -14,13 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#This is an example handler, running it in an actual channel will
-#likely result it the bot getting kickbanned.
-#
-#To enable, chmod a+x bob.py
-from modules.hook import Hook
+from helpers.hook import Hook
 
 
 @Hook(types=['pubnotice'], reqargs=['nick'])
 def handle(send, msg, args):
-    send("MSBOB ATTACKS %s!" % (args['nick']))
+    output = "msbob attacks %s for notice abuse!" % (args['nick'])
+    send(output.upper())

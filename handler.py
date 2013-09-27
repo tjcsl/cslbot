@@ -26,7 +26,7 @@ import socket
 import string
 import sys
 import errno
-from modules import control, sql, hook
+from helpers import control, sql, hook
 from os.path import basename, dirname
 from glob import glob
 from lxml.html import parse

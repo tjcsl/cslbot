@@ -19,7 +19,7 @@ import logging
 import traceback
 import imp
 import handler
-from modules import server, control, sql
+from helpers import server, control, sql
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import basename, dirname
