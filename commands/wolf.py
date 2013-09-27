@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Evaluate what?")
         return
-    xml = urlopen('http://api.wolframalpha.com/v2/query?input=%s&format=plaintext&appid=%s' % (quote(msg), args['config']['api']['wolframapikey']))
+    xml = urlopen('http://api.wolframalpha.com/v2/query?format=plaintext&reinterpret=true&input=%s&appid=%s' % (quote(msg), args['config']['api']['wolframapikey']))
     xml = ElementTree.parse(xml)
     output = xml.findall('./pod')
     text = "No output found."
