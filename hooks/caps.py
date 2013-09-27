@@ -19,6 +19,7 @@ import string
 
 _caps = []
 
+
 @Hook(types=['pubmsg'], reqargs=['nick', 'do_kick', 'target'])
 def handle(send, msg, args):
     """ Check for capslock abuse.
@@ -38,7 +39,7 @@ def handle(send, msg, args):
     if args['target'] != 'private':
         if upper_ratio > THRESHOLD and len(msg) > 6:
             if nick in _caps:
-                args['do_kick'](args['target'], nick, text) 
+                args['do_kick'](args['target'], nick, text)
                 _caps.remove(nick)
             else:
                 _caps.append(nick)
