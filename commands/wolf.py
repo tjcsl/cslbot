@@ -31,9 +31,11 @@ def cmd(send, msg, args):
     xml = urlopen('http://api.wolframalpha.com/v2/query?format=plaintext&reinterpret=true&input=%s&appid=%s' % (quote(msg), args['config']['api']['wolframapikey']))
     xml = ElementTree.parse(xml)
     output = xml.findall('./pod')
-    url = "http://www.wolframalpha.com/input/?i=%s" % msg
-    text = "No output found."
+    url = "http://www.wolframalpha.com/input/?i=%s" % quote(msg)
+    text = ["No output found."]
     for x in output:
         if 'primary' in x.keys():
-            text = x.find('./subpod/plaintext').text.replace('\n', ' ')
-    send("%s -- %s" % (text, url))
+            text = x.find('./subpod/plaintext').text.split('\n')
+    for t in text:
+        send(t)
+    send("See %s for more info" % url)
