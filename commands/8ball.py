@@ -15,13 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-
+from helpers.command import Command
 # prevent people from !8balling repeatedly to get the answer they want.
-limit = 1
-
-args = ['abuse', 'nick']
 
 
+@Command('8ball', ['nick'], limit=1)
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
     Syntax: !8ball <question>

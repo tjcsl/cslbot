@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
+from helpers import command
 
 
 def handle_chanserv(c, cmd, send):
@@ -48,13 +49,7 @@ def handle_disable(handler, cmd):
         elif cmd[1] == "module":
             if len(cmd) < 3:
                 return "Missing argument."
-            if cmd[2] in handler.disabled_mods:
-                return "Module already disabled."
-            elif cmd[2] in handler.modules:
-                handler.disabled_mods.append(cmd[2])
-                return "Module disabled."
-            else:
-                return "Module does not exist."
+            return command.disable_command(cmd[2])
         elif cmd[1] == "logging":
             if logging.getLogger().getEffectiveLevel() == logging.INFO:
                 return "logging already disabled."
@@ -83,14 +78,7 @@ def handle_enable(handler, cmd):
     elif cmd[1] == "module":
         if len(cmd) < 3:
             return "Missing argument."
-        if cmd[2] in handler.modules:
-            if cmd[2] in handler.disabled_mods:
-                handler.disabled_mods.remove(cmd[2])
-                return "Module enabled."
-            else:
-                return "Module already enabled."
-        else:
-            return "Module does not exist."
+        command.enable_command(cmd[2])
     elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
         handler.disabled_mods = []
         return "Enabled all modules."

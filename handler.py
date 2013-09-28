@@ -18,14 +18,11 @@
 # USA.
 
 import re
-import os
-import importlib
 import imp
 import time
 import sys
-from helpers import control, sql, hook
-from os.path import basename, dirname
-from glob import glob
+from helpers import control, sql, hook, command
+from os.path import dirname
 from random import choice, random
 
 
@@ -99,12 +96,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the modules into a dict
         """
-        modulemap = {}
-        for f in glob(dirname(__file__) + '/commands/*.py'):
-            if os.access(f, os.X_OK):
-                cmd = basename(f).split('.')[0]
-                modulemap[cmd] = importlib.import_module("commands." + cmd)
-        return modulemap
+        return command.scan_for_commands(dirname(__file__) + '/commands')
 
     @staticmethod
     def loadhooks():
@@ -469,6 +461,7 @@ class BotHandler():
                 'guarded': self.guarded,
                 'config': self.config,
                 'source': source,
+                'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
@@ -545,13 +538,14 @@ class BotHandler():
         cmdargs = msg[len(cmd) + 1:]
         found = False
         if cmd.startswith(cmdchar):
-            if cmd[len(cmdchar):] in self.modules:
-                mod = self.modules[cmd[len(cmdchar):]]
-                if hasattr(mod, 'limit') and self.abusecheck(send, nick, mod.limit, msgtype, cmd[len(cmdchar):]):
-                    return
-                args = self.do_args(mod.args, send, nick, target, e.source, c) if hasattr(mod, 'args') else {}
-                mod.cmd(send, cmdargs, args)
+            cmd_name = cmd[len(cmdchar):]
+            if command.is_registered(cmd_name):
                 found = True
+                cmd_obj = command.get_command(cmd_name)
+                if cmd_obj.is_limited() and self.abusecheck(send, nick, cmd_obj.limit, msgtype, cmd[len(cmdchar):]):
+                    return
+                args = self.do_args(cmd_obj.reqargs, send, nick, target, e.source, c)
+                cmd_obj.run(send, cmd, args)
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':
@@ -560,8 +554,9 @@ class BotHandler():
                 else:
                     found = True
                     self.clean_sql_connection_pool()
-                    for x in self.modules.values():
-                        imp.reload(x)
+                    #reload commands
+                    imp.reload(sys.modules['helpers.command'])
+                    self.loadmodules()
                     #reload hooks
                     imp.reload(sys.modules['helpers.hook'])
                     self.loadhooks()
