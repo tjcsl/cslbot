@@ -21,6 +21,7 @@ import re
 import imp
 import time
 import sys
+from commands.creffett import gen_creffett
 from helpers import control, sql, hook, command
 from os.path import dirname
 from random import choice, random
@@ -179,8 +180,10 @@ class BotHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
-            msg = command.get_command('creffett').gen_creffett(text % nick)
+            if cmd == 'scores':
+                msg = gen_creffett("%s: don't abuse scores" % nick)
+            else:
+                msg = gen_creffett("%s: stop abusing the bot" % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True

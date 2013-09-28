@@ -78,8 +78,11 @@ def enable_command(command):
 class Command():
     def __init__(self, names, args, limit=0):
         global _known_commands
-        self.names = names if type(names) == list else [names]
-        self.args = args
+        if isinstance(triggers, list):
+            self.triggers = triggers
+        else:
+            self.triggers = [triggers]
+        self.reqargs = reqargs
         self.limit = limit
         for t in self.names:
             if t in _known_commands:

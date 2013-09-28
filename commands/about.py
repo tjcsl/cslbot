@@ -14,9 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['config']
+from helpers.command import Command
 
 
+@Command('about', ['config'])
 def cmd(send, msg, args):
     """Returns info about the bot.
     Syntax: !about
