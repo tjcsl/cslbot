@@ -101,9 +101,7 @@ def stopwatch_resume(cursor, sw):
 @Command(['stopwatch', 'sw'], ['db'])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
-    !stopwatch [start] Start new stopwatch
-    !stopwatch [stop|resume] [id] Resumes stopwatch id or the most recently created stopwatch
-    !stopwatch [get] [id] Gets the time elapsed for stopwatch
+    Syntax: !stopwatch <start|stop|resume|get>
     """
 
     command = msg.split(' ')[0]
