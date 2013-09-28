@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import string
+from helpers.command import Command
 from random import choice
 from itertools import groupby
 
@@ -30,6 +31,7 @@ def get_list():
     return words
 
 
+@Command("acronym", [])
 def cmd(send, msg, args):
     """Generates a meaning for the specified acronym.
     Syntax: !acronym <acronym>
