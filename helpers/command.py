@@ -76,7 +76,7 @@ def enable_command(command):
 
 
 class Command():
-    def __init__(self, names, args, limit=0):
+    def __init__(self, names, args=[], limit=0):
         global _known_commands
         if isinstance(names, list):
             self.names = names
@@ -86,7 +86,7 @@ class Command():
         self.limit = limit
         for t in self.names:
             if t in _known_commands:
-                raise ValueError("There is already a command registered with the name %s" % t)
+                raise ValueError("There is already a command registered with the name %s, is %s" % (t, str(_known_commands[t])))
             _known_commands[t] = self
 
     def __call__(self, func):
