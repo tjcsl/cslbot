@@ -9,6 +9,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`command` Module
+---------------------
+
+.. automodule:: helpers.command
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`control` Module
 ---------------------
 

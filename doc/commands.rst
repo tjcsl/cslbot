@@ -41,14 +41,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`ahamilton` Module
------------------------
-
-.. automodule:: commands.ahamilton
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`award` Module
 -------------------
 
@@ -85,14 +77,6 @@ commands Package
 -------------------
 
 .. automodule:: commands.blame
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`bofh` Module
-------------------
-
-.. automodule:: commands.bofh
     :members:
     :undoc-members:
     :show-inheritance:
@@ -141,14 +125,6 @@ commands Package
 ----------------------
 
 .. automodule:: commands.creffett
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`date` Module
-------------------
-
-.. automodule:: commands.date
     :members:
     :undoc-members:
     :show-inheritance:
@@ -217,14 +193,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`excuse` Module
---------------------
-
-.. automodule:: commands.excuse
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`fortune` Module
 ---------------------
 
@@ -245,14 +213,6 @@ commands Package
 ---------------------
 
 .. automodule:: commands.fwilson
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`g` Module
----------------
-
-.. automodule:: commands.g
     :members:
     :undoc-members:
     :show-inheritance:
@@ -321,26 +281,10 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`livedoc` Module
----------------------
-
-.. automodule:: commands.livedoc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`lmgtfy` Module
 --------------------
 
 .. automodule:: commands.lmgtfy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`math` Module
-------------------
-
-.. automodule:: commands.math
     :members:
     :undoc-members:
     :show-inheritance:
@@ -393,14 +337,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`poll` Module
-------------------
-
-.. automodule:: commands.poll
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`praise` Module
 --------------------
 
@@ -429,14 +365,6 @@ commands Package
 -------------------
 
 .. automodule:: commands.quote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`rage` Module
-------------------
-
-.. automodule:: commands.rage
     :members:
     :undoc-members:
     :show-inheritance:
@@ -481,14 +409,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`sdamashek` Module
------------------------
-
-.. automodule:: commands.sdamashek
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`sha512` Module
 --------------------
 
@@ -525,14 +445,6 @@ commands Package
 --------------------
 
 .. automodule:: commands.slogan
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`son` Module
------------------
-
-.. automodule:: commands.son
     :members:
     :undoc-members:
     :show-inheritance:
@@ -613,14 +525,6 @@ commands Package
 ----------------------
 
 .. automodule:: commands.wikipath
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`wikipedia` Module
------------------------
-
-.. automodule:: commands.wikipedia
     :members:
     :undoc-members:
     :show-inheritance:

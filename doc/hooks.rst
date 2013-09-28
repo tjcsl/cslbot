@@ -33,6 +33,22 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`scores` Module
+--------------------
+
+.. automodule:: hooks.scores
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`stallman` Module
+----------------------
+
+.. automodule:: hooks.stallman
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`url` Module
 -----------------
 
