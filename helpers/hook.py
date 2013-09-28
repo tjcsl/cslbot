@@ -46,10 +46,10 @@ def scan_for_hooks(folder):
 
 class Hook():
 
-    def __init__(self, types, reqargs):
+    def __init__(self, types, args):
         global _known_hooks
         self.types = types
-        self.reqargs = reqargs
+        self.args = args
         _known_hooks.append(self)
 
     def __call__(self, func):

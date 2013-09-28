@@ -17,7 +17,7 @@
 from helpers.hook import Hook
 
 
-@Hook(types=['pubnotice'], reqargs=['nick'])
+@Hook(types=['pubnotice'], args=['nick'])
 def handle(send, msg, args):
     output = "msbob attacks %s for notice abuse!" % (args['nick'])
     send(output.upper())
