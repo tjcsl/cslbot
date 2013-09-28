@@ -63,7 +63,7 @@ class IrcBot(SingleServerIRCBot):
                     return
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
-            getattr(self.handler, msgtype)(c, e)
+            self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]

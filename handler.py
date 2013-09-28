@@ -126,11 +126,10 @@ class BotHandler():
         """
         if nick not in self.config['auth']['admins'].split(', '):
             return False
-        c.privmsg('NickServ', 'ACC ' + nick)
+        c.privmsg('NickServ', 'ACC %s' % nick)
         if not self.admins[nick] and self.admins[nick] is not None:
             if complain:
-                c.privmsg(self.config['core']['channel'],
-                          "Unverified admin: " + nick)
+                c.privmsg(self.config['core']['channel'], "Unverified admin: %s" % nick)
             return False
         else:
             return True
@@ -146,19 +145,16 @@ class BotHandler():
         if not match:
             return
         if nick != 'NickServ':
-            if nick in list(self.channels[self.config['core']['channel']]
-                            .users()):
-                c.privmsg(self.config['core']['channel'],
-                          "Attemped admin abuse by " + nick)
+            if nick in list(self.channels[self.config['core']['channel']].users()):
+                c.privmsg(self.config['core']['channel'], "Attemped admin abuse by %s" % nick)
                 self.do_kick(c, send, target, nick, "imposter")
-            return
-        if int(match.group(2)) == 3:
+        elif int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
 
     def get_admins(self, c):
         """Check verification for all admins."""
         for admin in self.admins:
-            c.privmsg('NickServ', 'ACC ' + admin)
+            c.privmsg('NickServ', 'ACC %s' % admin)
 
     def abusecheck(self, send, nick, limit, msgtype, cmd):
         """ Rate-limits commands.
@@ -180,71 +176,11 @@ class BotHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            if cmd == 'scores':
-                msg = gen_creffett("%s: don't abuse scores" % nick)
-            else:
-                msg = gen_creffett("%s: stop abusing the bot" % nick)
+            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abuseing the bot"
+            msg = gen_creffett(text % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True
-
-    def privmsg(self, c, e):
-        """ Handle private messages.
-
-        | Prevent users from changing scores in private.
-        | Forward messages to :func:`handle_msg`.
-        """
-        nick = e.source.nick
-        msg = e.arguments[0].strip()
-        cmdchar = self.config['core']['cmdchar']
-        botnick = '%s: ' % self.config['core']['nick']
-        if msg.startswith(botnick):
-            msg = msg.replace(botnick, self.config['core']['cmdchar'])
-        if msg.startswith('%sissue' % cmdchar):
-            self.send(nick, nick, 'You want to let everybody know about your problems, right?', e.type)
-        elif msg.startswith('%sgcc' % cmdchar):
-            self.send(nick, nick, 'GCC is a group excercise!', e.type)
-        elif msg.startswith('%svote' % cmdchar) or msg.startswith('%spoll' % cmdchar):
-            self.send(nick, nick, "We don't have secret ballots in this benevolent dictatorship!", e.type)
-        elif re.search(r"(%s+)(\+\+|--)" % self.config['core']['nickregex'], msg):
-            self.send(nick, nick, 'Hey, no points in private messages!', e.type)
-        else:
-            self.handle_msg('privmsg', c, e)
-
-    def pubmsg(self, c, e):
-        """ Handle public messages.
-
-        Forward messages to :func:`handle_msg`.
-        """
-        self.handle_msg('pubmsg', c, e)
-
-    def privnotice(self, c, e):
-        """ Handle private notices.
-
-        Forward notices to :func:`handle_msg`.
-        """
-        self.handle_msg('privnotice', c, e)
-
-    def pubnotice(self, c, e):
-        """ Handle public notices.
-
-        Forward notices to :func:`handle_msg`.
-        """
-        self.handle_msg('pubnotice', c, e)
-
-    def action(self, c, e):
-        """ Handle actions.
-
-        Forward actions to :func:`handle_msg`.
-        """
-        self.handle_msg('action', c, e)
-
-    def mode(self, c, e):
-        """ Handle actions.
-
-        Forward mode changes to :func:`handle_msg`.
-        """
-        self.handle_msg('mode', c, e)
 
     def send(self, target, nick, msg, msgtype):
         """ Send a message.
@@ -347,6 +283,9 @@ class BotHandler():
         | themselves.
         | Otherwise substract one point.
         """
+        if msgtype == 'privmsg':
+            send('Hey, no points in private messages!')
+            return
         for match in matches:
             name = match[0].lower()
             # limit to 5 score changes per minute
@@ -446,7 +385,7 @@ class BotHandler():
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
 
-    def do_args(self, modargs, send, nick, target, source, c, name):
+    def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -463,6 +402,7 @@ class BotHandler():
                 'config': self.config,
                 'source': source,
                 'name': name,
+                'type': msgtype,
                 'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
@@ -492,7 +432,7 @@ class BotHandler():
         send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
 
         for hook in self.hooks:
-            realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook)
+            realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
             hook.run(send, msg, msgtype, realargs)
 
         if msgtype == 'privnotice':
@@ -536,7 +476,7 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, cmd_obj.limit, msgtype, cmd[len(cmdchar):]):
                     return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name)
+                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args)
         # special commands
         if cmd.startswith(cmdchar):

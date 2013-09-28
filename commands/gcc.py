@@ -21,11 +21,14 @@ from commands.slogan import gen_slogan
 from helpers.command import Command
 
 
-@Command('gcc')
+@Command('gcc', ['type'])
 def cmd(send, msg, args):
     """Compiles stuff.
     Syntax: !gcc <code>
     """
+    if args['type'] == 'privmsg':
+        send('GCC is a group excercise!')
+        return
     tmpfile = tempfile.NamedTemporaryFile()
     for line in msg.split('\\n'):
         line = line + '\n'

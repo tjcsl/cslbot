@@ -30,14 +30,16 @@ def create_issue(msg, nick, repo, apikey):
     return data['html_url']
 
 
-@Command('issue', ['source', 'issues', 'connection', 'config'])
+@Command('issue', ['source', 'issues', 'connection', 'config', 'type'])
 def cmd(send, msg, args):
     """Files a github issue.
     Syntax: !issue <description>
     """
-    if not msg:
+    if args['type'] == 'privmsg':
+        send('You want to let everybody know about your problems, right?')
+    elif not msg:
         send("Issue needs a description.")
-        return
-    args['issues'].append([msg, args['source']])
-    args['connection'].privmsg(args['config']['core']['ctrlchan'], "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
-    send("Issue submitted for approval.")
+    else:
+        args['issues'].append([msg, args['source']])
+        args['connection'].privmsg(args['config']['core']['ctrlchan'], "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
+        send("Issue submitted for approval.")

@@ -169,7 +169,7 @@ def list_polls(cursor, c, nick):
     return "%d currently active polls." % len(polls)
 
 
-@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'connection'])
+@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'connection', 'type'])
 def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
@@ -183,7 +183,10 @@ def cmd(send, msg, args):
     else:
         cmd = cmd[0]
     if cmd == 'start' or cmd == 'open' or cmd == 'add' or cmd == 'create':
-        send(start_poll(cursor, msg))
+        if args['type'] == 'privmsg':
+            send("We don't have secret ballots in this benevolent dictatorship!")
+        else:
+            send(start_poll(cursor, msg))
     elif cmd == 'end' or cmd == 'close':
         if args['is_admin'](args['nick']):
             send(end_poll(cursor, msg))
@@ -211,6 +214,9 @@ def cmd(send, msg, args):
         else:
             send("Nope, not gonna do it.")
     elif cmd.isdigit():
-        send(vote(cursor, args['nick'], int(cmd), msg))
+        if args['type'] == 'privmsg':
+            send("We don't have secret ballots in this benevolent dictatorship!")
+        else:
+            send(vote(cursor, args['nick'], int(cmd), msg))
     else:
         send('Invalid Syntax.')
