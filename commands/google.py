@@ -20,7 +20,7 @@ from urllib.request import urlopen
 from helpers.command import Command
 
 
-@Command(['g', 'google'])
+@Command(['google', 'g'])
 def cmd(send, msg, args):
     """Googles something.
     Syntax: !google <term>

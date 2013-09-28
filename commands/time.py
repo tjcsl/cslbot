@@ -18,7 +18,7 @@ import time
 from helpers.command import Command
 
 
-@Command(['date', 'time'])
+@Command(['time', 'date'])
 def cmd(send, msg, args):
     """Tells the time.
     Syntax: !time

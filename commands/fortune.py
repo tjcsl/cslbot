@@ -26,7 +26,7 @@ def get_list():
     return sorted(fortunes)
 
 
-@Command(['bofh', 'fortune', 'excuse'], ['name'])
+@Command(['fortune', 'bofh', 'excuse'], ['name'])
 def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|module>
