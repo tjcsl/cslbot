@@ -16,10 +16,10 @@
 
 import re
 from random import randint
+from helpers.command import Command
 
-args = ['srcdir', 'config', 'db']
 
-
+@Command('score', ['srcdir', 'config', 'db'])
 def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>

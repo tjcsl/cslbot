@@ -15,11 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-
-limit = 5
-args = ['config']
+from helpers.command import Command
 
 
+@Command('pester', ['config'], limit=5)
 def cmd(send, msg, args):
     """Pesters somebody.
     Syntax: !pester <nick> <message>

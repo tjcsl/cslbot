@@ -16,10 +16,10 @@
 
 import subprocess
 import json
+from helpers.command import Command
 
-args = ['srcdir']
 
-
+@Command(['bc', 'math'], ['srcdir'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
     Syntax: !bc <expression>
@@ -32,6 +32,8 @@ def cmd(send, msg, args):
         for u in data:
             msg = msg.replace(u, str(data[u]))
     except OSError:
+        pass
+    except IOError:
         pass
     msg += '\n'
     proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

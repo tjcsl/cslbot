@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import getrandbits
+from helpers.command import Command
 
 
+@Command('random')
 def cmd(send, msg, args):
     """For when you don't have enough randomness in your life.
     Syntax: !random

@@ -18,7 +18,8 @@ import re
 from urllib.request import urlopen
 from urllib.parse import quote
 from html.entities import entitydefs
-args = ['modules']
+from helpers.command import Command
+from commands.word import gen_word
 
 
 def gen_slogan(msg):
@@ -35,11 +36,12 @@ def gen_slogan(msg):
     return slogan.replace('&amp;', '&')
 
 
+@Command('slogan')
 def cmd(send, msg, args):
     """Gets a slogan.
     Syntax: !slogan <text>
     """
     if not msg:
-        msg = args['modules']['word'].gen_word()
+        msg = gen_word()
     slogan = gen_slogan(msg)
     send(slogan)

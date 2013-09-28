@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.parse import quote
+from helpers.command import Command
 
 
+@Command('lmgtfy')
 def cmd(send, msg, args):
     """LMGTFY.
     Syntax: !lmgtfy <text>

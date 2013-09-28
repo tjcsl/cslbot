@@ -17,6 +17,7 @@
 import json
 from urllib.request import urlopen
 from random import randrange
+from helpers.command import Command
 
 
 def get_num():
@@ -24,6 +25,7 @@ def get_num():
     return data['num']
 
 
+@Command('xkcd')
 def cmd(send, msg, args):
     """Gets a xkcd comic.
     Syntax: !xkcd <num|latest>

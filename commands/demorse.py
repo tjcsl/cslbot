@@ -14,7 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from helpers.command import Command
 
+
+@Command('demorse')
 def cmd(send, msg, args):
     """Converts morse to ascii.
     Syntax: !demorse <text>

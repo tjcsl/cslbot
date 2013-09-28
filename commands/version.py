@@ -18,10 +18,10 @@ import subprocess
 import json
 import os
 from urllib.request import urlopen
+from helpers.command import Command
 
-args = ['config']
 
-
+@Command('version', ['config'])
 def cmd(send, msg, args):
     """Check the git revison.
     Syntax: !version <check|master>

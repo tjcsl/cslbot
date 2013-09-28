@@ -16,8 +16,7 @@
 
 import json
 from urllib.request import urlopen, Request
-
-args = ['source', 'issues', 'connection', 'config']
+from helpers.command import Command
 
 
 def create_issue(msg, nick, repo, apikey):
@@ -31,6 +30,7 @@ def create_issue(msg, nick, repo, apikey):
     return data['html_url']
 
 
+@Command('issue', ['source', 'issues', 'connection', 'config'])
 def cmd(send, msg, args):
     """Files a github issue.
     Syntax: !issue <description>

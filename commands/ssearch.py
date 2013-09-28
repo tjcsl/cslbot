@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import pickle
+from helpers.command import Command
 
-args = ['srcdir']
 
-
+@Command('ssearch', ['srcdir'])
 def cmd(send, msg, args):
     """Searches steam.
     Syntax: !ssearch <text>

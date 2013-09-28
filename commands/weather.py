@@ -18,8 +18,7 @@ import json
 import re
 from urllib.request import urlopen
 from urllib.parse import quote
-
-args = ['nick', 'srcdir', 'config', 'db']
+from helpers.command import Command
 
 
 def get_default(nick, cursor, send):
@@ -100,6 +99,7 @@ def get_weather(msg, send, apikey):
     return True
 
 
+@Command('weather', ['nick', 'srcdir', 'config', 'db'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>

@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-
-args = ['db', 'nick', 'connection', 'is_admin', 'config']
+from helpers.command import Command
 
 
 def check_quote_exists_by_id(cursor, qid):
@@ -78,6 +77,7 @@ def do_delete_quote(cursor, qid):
     return 'Deleted quote with ID %d' % qid
 
 
+@Command('quote', ['db', 'nick', 'connection', 'is_admin', 'config'])
 def cmd(send, msg, args):
     """Handles quotes.
     Syntax: !quote <number>, !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>

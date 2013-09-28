@@ -18,8 +18,7 @@ import json
 from datetime import datetime
 from lxml.html import parse
 from urllib.request import urlopen
-
-args = ['modules']
+from helpers.command import Command
 
 
 def gen_path(msg):
@@ -42,6 +41,7 @@ def get_articles():
     return [data[0]['title'].replace(' ', '_'), data[1]['title'].replace(' ', '_')]
 
 
+@Command('wikipath')
 def cmd(send, msg, args):
     """Find a path between two wikipedia articles.
     Syntax: !wikipath <article> <article>

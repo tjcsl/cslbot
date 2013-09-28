@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+from helpers.command import Command
 
-args = ['nick']
 
-
+@Command('choose', ['nick'])
 def cmd(send, msg, args):
     """Chooses between multiple choices.
     Syntax: !choose <object> or <object>

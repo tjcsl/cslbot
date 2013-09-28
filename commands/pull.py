@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-
-args = ['srcdir', 'is_admin', 'nick', 'config']
+from helpers.command import Command
 
 
 def do_pull(srcdir, nick):
@@ -26,6 +25,7 @@ def do_pull(srcdir, nick):
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
+@Command('pull', ['srcdir', 'is_admin', 'nick', 'config'])
 def cmd(send, msg, args):
     """Pull changes.
     Syntax: !pull <branch>

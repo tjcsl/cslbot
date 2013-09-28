@@ -17,8 +17,10 @@
 import socket
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from helpers.command import Command
 
 
+@Command('fweather')
 def cmd(send, msg, args):
     """Gets the F***ING weather!
     Syntax: !fweather <location>

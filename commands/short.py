@@ -17,6 +17,7 @@
 import json
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
+from helpers.command import Command
 
 
 def get_short(msg):
@@ -42,6 +43,7 @@ def get_short(msg):
             raise e
 
 
+@Command('short')
 def cmd(send, msg, args):
     """Shortens the given url.
     Syntax: !short <url>

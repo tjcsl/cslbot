@@ -14,7 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from helpers.command import Command
 
+
+@Command('bike')
 def cmd(send, msg, args):
     """I've got a bike, you can ride it if you like. It's got a basket, a bell that rings and things to make it look good.
     I'd give it to you if I could but I borrowed it.

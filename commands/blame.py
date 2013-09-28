@@ -15,10 +15,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+from helpers.command import Command
 
 args = ['channels', 'target', 'nick', 'config']
 
 
+@Command('blame', ['channels', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Blames a random user for something.
     Syntax: !blame <reason>

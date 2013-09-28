@@ -17,8 +17,7 @@
 import json
 from random import choice
 from urllib.request import urlopen, Request
-
-args = ['config']
+from helpers.command import Command
 
 
 def get_categories(apikey):
@@ -57,6 +56,7 @@ def get_item(category, apikey):
     return item['title'][0] + ' -- http://www.ebay.com/itm/' + item['itemId'][0]
 
 
+@Command('ebay', ['config'])
 def cmd(send, msg, args):
     """Implements xkcd 576.
     Syntax: !ebay

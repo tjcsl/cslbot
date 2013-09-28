@@ -17,6 +17,7 @@
 from os.path import basename
 import subprocess
 import re
+from helpers.command import Command
 
 
 def get_list():
@@ -26,6 +27,7 @@ def get_list():
     return sorted(fortunes)
 
 
+@Command(['bofh', 'fortune', 'excuse'])
 def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|module>
@@ -35,6 +37,7 @@ def cmd(send, msg, args):
         if msg == 'list':
             send(" ".join(fortunes))
         else:
+            #TODO: FIX
             if 'bofh' in basename(__file__) or 'excuse' in basename(__file__):
                 mod = 'bofh-excuses'
             elif msg in fortunes or not msg:

@@ -15,15 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice, randint
+from helpers.command import Command
+from commands.word import gen_word
 
-args = ['nick', 'modules']
 
-
+@Command('shibe', ['nick'])
 def cmd(send, msg, args):
     """Generates a shibe reaction.
     Syntax: !shibe (topic1)...(topicn)
     """
-    topics = msg.split() if msg else [args['modules']['word'].gen_word()]
+    topics = msg.split() if msg else [gen_word()]
 
     reaction = 'wow'
     adverbs = ['so', 'such']

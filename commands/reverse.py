@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-
-args = ['db', 'target']
+from helpers.command import Command
 
 
 def get_log(cursor, user):
@@ -29,6 +28,7 @@ def get_log(cursor, user):
     return cursor.fetchone()
 
 
+@Command(['reverse', 'sdamashek'], ['db', 'target'])
 def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>

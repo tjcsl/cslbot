@@ -17,10 +17,10 @@
 from urllib.request import urlopen
 from urllib.parse import quote
 from xml.etree import ElementTree
+from helpers.command import Command
 
-args = ['config']
 
-
+@Command('wolf', ['config'])
 def cmd(send, msg, args):
     """Queries WolframAlpha.
     Syntax: !wolf <expression>

@@ -17,8 +17,10 @@
 from urllib.request import urlopen
 from urllib.parse import urlencode
 from lxml.html import parse
+from helpers.command import Command
 
 
+@Command('yoda')
 def cmd(send, msg, args):
     """Convert a message to Yoda-speak.
     Syntax: !yoda <msg>

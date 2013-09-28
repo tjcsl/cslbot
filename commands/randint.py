@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.request import urlopen
+from helpers.command import Command
 
 
 def gen_random(msg):
@@ -28,6 +29,7 @@ def gen_random(msg):
     return html
 
 
+@Command('randint')
 def cmd(send, msg, args):
     """Gets a random integer.
     Syntax: !random <maximum length>

@@ -14,9 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['admins']
+from helpers.command import Command
 
 
+@Command('admins', ['admins'])
 def cmd(send, msg, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.

@@ -16,9 +16,11 @@
 
 from urllib.parse import quote
 from urllib.request import urlopen
+from helpers.command import Command
 import json
 
 
+@Command('urban')
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
     Syntax: !urban <term>

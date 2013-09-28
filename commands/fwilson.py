@@ -15,16 +15,19 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import random
+from helpers.command import Command
+from commands.word import gen_word
 
 args = ['modules']
 
 
+@Command(['fwilson', 'son'], ['modules'])
 def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson <message>
     """
     if not msg:
-        msg = args['modules']['word'].gen_word()
+        msg = gen_word()
     if msg.startswith('fwil') or random() < 0.5:
         output = "wheeeee %s" % msg
         send(output.upper())

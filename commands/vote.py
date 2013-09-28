@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['db', 'nick', 'is_admin', 'connection']
+from helpers.command import Command
 
 
 def start_poll(cursor, msg):
@@ -169,6 +169,7 @@ def list_polls(cursor, c, nick):
     return "%d currently active polls." % len(polls)
 
 
+@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'connection'])
 def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>

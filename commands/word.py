@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from urllib.request import urlopen
+from helpers.command import Command
 
 
 def gen_word():
@@ -23,6 +24,7 @@ def gen_word():
         return html.decode()[1:].rstrip()
 
 
+@Command('word')
 def cmd(send, msg, args):
     """Gets a random word.
     Syntax: !word

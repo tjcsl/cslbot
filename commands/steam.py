@@ -17,8 +17,7 @@
 import json
 import pickle
 from urllib.request import urlopen
-
-args = ['config']
+from helpers.command import Command
 
 
 def get_ids():
@@ -26,6 +25,7 @@ def get_ids():
     return pickle.load(steamidfile)
 
 
+@Command('steam', ['config'])
 def cmd(send, msg, args):
     """Gets steam status.
     Syntax: !steam <user>

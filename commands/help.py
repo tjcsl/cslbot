@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from inspect import getdoc
+from helpers.command import Command
 
-args = ['modules', 'nick', 'connection', 'config']
 
-
+@Command('help', ['modules', 'nick', 'connection', 'config'])
 def cmd(send, msg, args):
     """Gives help.
     Syntax: !help <command>

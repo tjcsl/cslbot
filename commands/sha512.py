@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import hashlib
+from helpers.command import Command
 
 
+@Command('sha512')
 def cmd(send, msg, args):
     """SHA512 hashes something.
     Syntax: !sha512 <msg>

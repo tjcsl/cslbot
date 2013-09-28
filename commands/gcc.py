@@ -17,10 +17,11 @@
 import subprocess
 import tempfile
 import time
+from commands.slogan import gen_slogan
+from helpers.command import Command
 
-args = ['modules']
 
-
+@Command('gcc')
 def cmd(send, msg, args):
     """Compiles stuff.
     Syntax: !gcc <code>
@@ -37,6 +38,6 @@ def cmd(send, msg, args):
         time.sleep(1)
         send(line)
     if process.returncode == 0:
-        send(args['modules']['slogan'].gen_slogan("gcc victory"))
+        send(gen_slogan("gcc victory"))
     else:
-        send(args['modules']['slogan'].gen_slogan("gcc failed"))
+        send(gen_slogan("gcc failed"))

@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-
-args = ['db', 'config']
+from helpers.command import Command
 
 
 # Make the generated messages look better.
@@ -85,6 +84,7 @@ def build_msg(markov, speaker):
     return "%s says: %s" % (speaker, msg)
 
 
+@Command('babble', ['db', 'config'])
 def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (nick)

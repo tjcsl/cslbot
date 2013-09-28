@@ -16,8 +16,10 @@
 
 import re
 from urllib.request import urlopen
+from helpers.command import Command
 
 
+@Command('distro')
 def cmd(send, msg, args):
     """Gets a random distro.
     Syntax: !distro

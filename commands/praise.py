@@ -16,6 +16,7 @@
 
 import re
 from urllib.request import urlopen
+from helpers.command import Command
 
 
 def gen_praise(msg):
@@ -23,6 +24,7 @@ def gen_praise(msg):
     return re.search('h2>(.*)</h2', html, re.DOTALL).group(1).strip().replace('\n\n', '\n').replace('\n', ' ')
 
 
+@Command('praise')
 def cmd(send, msg, args):
     """Praises something.
     Syntax: !praise <something>

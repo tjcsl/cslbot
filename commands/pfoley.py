@@ -14,14 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-args = ['modules']
+from commands.word import gen_word
+from commands.slogan import gen_slogan
+from helpers.command import Command
 
 
+@Command('pfoley')
 def cmd(send, msg, args):
     """Imitates pfoley.
     Syntax: !pfoley <message>
     """
     if not msg:
-        msg = args['modules']['word'].gen_word()
-    output = args['modules']['slogan'].gen_slogan(msg)
+        msg = gen_word()
+    output = gen_slogan(msg)
     send(output + " :)")

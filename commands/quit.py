@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import sys
+from helpers.command import Command
 
-args = ['nick', 'connection', 'is_admin']
 
-
+@Command('quit', ['nick', 'connection', 'is_admin'])
 def cmd(send, msg, args):
     """Quit irc.
     Syntax: !quit

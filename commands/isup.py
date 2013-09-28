@@ -16,10 +16,10 @@
 
 from urllib.request import urlopen
 from urllib.parse import quote
+from helpers.command import Command
 
-args = ['nick']
 
-
+@Command('isup', ['nick'])
 def cmd(send, msg, args):
     """Checks if a website is up.
     Syntax: !isup <website>

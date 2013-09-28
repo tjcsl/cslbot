@@ -17,9 +17,7 @@
 import re
 import time
 import sys
-
-limit = 5
-args = ['nick', 'channels', 'connection', 'is_admin', 'target', 'config']
+from helpers.command import Command
 
 
 def do_nuke(args, target, channel):
@@ -44,6 +42,7 @@ def do_nuke(args, target, channel):
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
+@Command('microwave', ['nick', 'channels', 'connection', 'is_admin', 'target', 'config'], limit=5)
 def cmd(send, msg, args):
     """Microwaves something.
     Syntax: !microvave <level> <target>

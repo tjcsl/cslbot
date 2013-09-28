@@ -15,8 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-
-args = ['db', 'target', 'nick', 'config']
+from helpers.command import Command
 
 
 def get_log(cursor, user):
@@ -47,6 +46,7 @@ def get_modifiers(msg, nick):
     return mods
 
 
+@Command('s', ['db', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>

@@ -16,8 +16,10 @@
 
 from urllib.request import urlopen
 from lxml.html import parse
+from helpers.command import Command
 
 
+@Command('meme')
 def cmd(send, msg, args):
     """Gets a random meme.
     Syntax: !meme

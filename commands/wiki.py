@@ -18,8 +18,10 @@ import json
 from urllib.request import urlopen
 from urllib.parse import quote
 from os.path import basename
+from helpers.command import Command
 
 
+@Command(['wiki', 'wikipedia'])
 def cmd(send, msg, args):
     """Returns the first wikipedia result for the argument.
     Syntax: !wiki <term>
@@ -27,12 +29,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Need a article.")
         return
-    if 'livedoc' in basename(__file__):
-        url = 'http://www.tjhsst.edu/admin/livedoc'
-        name = 'livedoc'
-    else:
-        url = 'http://en.wikipedia.org/w'
-        name = 'wikipedia'
+    url = 'http://en.wikipedia.org/w'
+    name = 'wikipedia'
     html = urlopen('%s/api.php?format=json&action=query&list=search&srlimit=1&srsearch=%s' % (url, quote(msg)))
     data = json.loads(html.read().decode())
     try:

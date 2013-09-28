@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from helpers.command import Command
 
 
+@Command('wtf')
 def cmd(send, msg, args):
     """Tells you what things mean.
     Syntax: !wtf <term>
