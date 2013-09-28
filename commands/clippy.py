@@ -18,16 +18,19 @@
 from helpers.command import Command
 
 
-@Command('clippy')
+def gen_clippy(nick, msg):
+    return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
+
+
+@Command('clippy', ['nick'])
 def cmd(send, msg, args):
     """Informs a user that they are trying to do something and inquire if they want help
     Syntax: !clippy <nick> <action>
     """
     msg = msg.split()
-    if len(msg) < 1:
-        send("Syntax: !clippy <nick> <action>")
-        return
-    if len(msg) < 2:
-        send('Clippy can\'t determine what %s is trying to do!' % msg[0])
-        return
-    send('%s: I see you are trying to %s, would you like some help with that?' % (msg[0], " " .join(msg[1:])))
+    if not msg:
+        send(gen_clippy(args['nick'], "IRC"))
+    elif len(msg) == 1:
+        send(gen_clippy(args['nick'], msg[0]))
+    else:
+        send(gen_clippy(msg[0], " ".join(msg[1:])))
