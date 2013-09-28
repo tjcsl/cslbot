@@ -54,10 +54,10 @@ def stop_stopwatch(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT elapsed,active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
     if query_result is None:
         return "No stopwatch exists with that ID!"
-    if query_result[1] != 1:
+    if query_result[2] != 1:
         return "That stopwatch is already disabled!"
     elapsed = query_result[0]
     etime = time.time() - query_result[1]
