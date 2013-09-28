@@ -28,7 +28,7 @@ def create_sw(cursor):
 def check_sw_valid(sw):
     if not sw:
         return "You need to pass a stopwatch ID to !stopwatch get"
-    if not(sw[0].isdigit()):
+    if not sw[0].isdigit():
         return "Invalid ID!"
     return "OK"
 

@@ -465,6 +465,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`stopwatch` Module
+-----------------------
+
+.. automodule:: commands.stopwatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`throw` Module
 -------------------
 
