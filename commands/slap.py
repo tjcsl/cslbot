@@ -24,16 +24,57 @@ def cmd(send, msg, args):
     Syntax: !slap <nick> for <reason>
     """
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
-    method = ['around a bit', 'upside the head']
-    slap = 'slaps %s %s with %s'
+    methods = ['around a bit', 'upside the head']
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
         users = list(args['channels'][channel].users())
-        send(slap % (choice(users), choice(method), choice(implements)), 'action')
+        slap = 'slaps %s %s with %s'
+        send(slap % (choice(users), choice(methods), choice(implements)), 'action')
     else:
-        if "for" in msg:
-            msg = msg.split("for")
-            slap = slap % (msg[0].strip(), choice(method), choice(implements) + " for" + msg[1])
+        reason = ''
+        method = choice(methods)
+        implement = ''
+        msg = msg.split()
+        slapee = msg[0]
+        #Basic and stupid NLP!
+        i = 1
+        while i < len(msg):
+            if msg[i] == 'for':
+                if reason != '':
+                    send("BAD! You can only have one for clause!")
+                    return
+                i += 1
+                while i < len(msg):
+                    if msg[i] == 'with':
+                        break
+                    reason += " "
+                    reason += msg[i]
+                    i += 1
+                reason = reason.strip()
+            elif msg[i] == 'with':
+                if implement != '':
+                    send("BAD! You can only have one with clause!")
+                    return
+                i += 1
+                while i < len(msg):
+                    if msg[i] == 'for':
+                        break
+                    implement += msg[i]
+                    implement += ' '
+                    i += 1
+                implement = implement.strip()
+
+        if implement == '':
+            implement = choice(implements)
+        slap = 'derp lol'
+        if reason != '':
+            slap = 'slaps %s %s with %s for %s' % (slapee, method, implement, reason)
         else:
-            slap = slap % (msg, choice(method), choice(implements))
+            slap = 'slaps %s %s with %s' % (slapee, method, implement)
         send(slap, 'action')
+        #if "for" in msg:
+        #    msg = msg.split("for")
+        #    slap = slap % (msg[0].strip(), choice(methods), choice(implements) + " for" + msg[1])
+        #else:
+        #    slap = slap % (msg, choice(methods), choice(implements))
+        #send(slap, 'action')
