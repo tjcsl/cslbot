@@ -15,27 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import time
+from datetime import timedelta
 from helpers.command import Command
-
-
-def pretty_div(num, div, m):
-    return str((num // div) % m)
-
-
-def pretty_elapsed(time):
-    ts = ""
-    if time > 24 * 7 * 3600:
-        ts = ts + " " + pretty_div(time, 24 * 7 * 3600, 52) + " weeks"
-    if time > 24 * 3600:
-        ts = ts + " " + pretty_div(time, 24 * 3600, 7) + " days"
-    if time > 3600:
-        ts = ts + " " + pretty_div(time, 3600, 24) + " hours"
-    if time > 60:
-        ts = ts + " " + pretty_div(time, 60, 60) + " minutes"
-    if time > 1:
-        ts = ts + " " + pretty_div(time, 1, 60) + " seconds"
-    ts = ts + " " + str(((time % 1) * 1000)) + " milliseconds"
-    return ts
 
 
 def create_sw(cursor):
@@ -61,12 +42,12 @@ def get_elapsed(cursor, sw):
         return "No stopwatch exists with that ID!"
     elapsed = query_result[0]
     etime = 0
-    active = "Paused"
+    active = "Paused "
     if query_result[2] == 1:
         etime = time.time() - query_result[1]
-        active = "Active"
+        active = "Active "
     etime += float(elapsed)
-    return active + pretty_elapsed(etime)
+    return active + str(timedelta(seconds=etime))
 
 
 def stop_stopwatch(cursor, sw):
