@@ -113,6 +113,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`clippy` Module
+--------------------
+
+.. automodule:: commands.clippy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`coin` Module
 ------------------
 
