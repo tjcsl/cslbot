@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from inspect import getdoc
 from helpers.command import Command, get_commands, get_command, is_registered
 
 
@@ -32,7 +31,7 @@ def cmd(send, msg, args):
         elif not is_registered(msg):
             send("Not a module.")
         else:
-            doc = getdoc(get_command(msg))
+            doc = get_command(msg).get_doc()
             if doc is None:
                 send("No documentation found.")
             else:

@@ -21,6 +21,7 @@ import sys
 import os
 import importlib
 import imp
+from inspect import getdoc
 from os.path import basename
 from glob import glob
 
@@ -93,11 +94,15 @@ class Command():
     def __call__(self, func):
         def wrapper(send, msg, args):
             func(send, msg, args)
+        self.doc = getdoc(func)
         self.exe = wrapper
         return wrapper
 
     def run(self, send, msg, args):
         self.exe(send, msg, args)
+
+    def get_doc(self):
+        return self.doc
 
     def is_limited(self):
         return self.limit != 0
