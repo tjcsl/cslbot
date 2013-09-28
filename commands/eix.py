@@ -31,4 +31,4 @@ def cmd(send, msg, args):
         answer = subprocess.check_output(args)
         send(answer.decode().split('\n')[0].rstrip())
     except subprocess.CalledProcessError:
-        send(msg + " isn't important enough for Gentoo.")
+        send("%s isn't important enough for Gentoo." % msg)

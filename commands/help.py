@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from inspect import getdoc
-from helpers.command import Command
+from helpers.command import Command, get_commands, get_command, is_registered
 
 
-@Command('help', ['modules', 'nick', 'connection', 'config'])
+@Command('help', ['nick', 'connection', 'config'])
 def cmd(send, msg, args):
     """Gives help.
     Syntax: !help <command>
@@ -29,19 +29,17 @@ def cmd(send, msg, args):
             msg = msg[len(cmdchar):]
         if len(msg.split()) > 1:
             send("One argument only")
-            return
-        if msg not in args['modules']:
+        elif not is_registered(msg):
             send("Not a module.")
-            return
         else:
-            doc = getdoc(args['modules'][msg].cmd)
+            doc = getdoc(get_command(msg))
             if doc is None:
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
                     send(line)
     else:
-        modules = sorted(args['modules'])
+        modules = sorted(get_commands())
         num = int(len(modules) / 2)
         cmdlist1 = (' %s' % cmdchar).join([x for x in modules[:num]])
         cmdlist2 = (' %s' % cmdchar).join([x for x in modules[num:]])

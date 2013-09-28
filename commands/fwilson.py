@@ -18,10 +18,8 @@ from random import random
 from helpers.command import Command
 from commands.word import gen_word
 
-args = ['modules']
 
-
-@Command(['fwilson', 'son'], ['modules'])
+@Command(['fwilson', 'son'])
 def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson <message>

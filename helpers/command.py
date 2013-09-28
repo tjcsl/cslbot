@@ -53,6 +53,10 @@ def get_command(command_name):
     return _known_commands[command_name]
 
 
+def get_commands():
+    return _known_commands
+
+
 def disable_command(command):
     """ adds a command to the disabled comands list"""
     global _disabled_commands

@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice, randint
+from helpers.command import Command
 
 
+@Command('coin')
 def cmd(send, msg, args):
     """Flips a coin a number of times.
     Syntax: !coin <number>

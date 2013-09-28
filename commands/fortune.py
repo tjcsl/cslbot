@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from os.path import basename
 import subprocess
 import re
 from helpers.command import Command
@@ -27,7 +26,7 @@ def get_list():
     return sorted(fortunes)
 
 
-@Command(['bofh', 'fortune', 'excuse'])
+@Command(['bofh', 'fortune', 'excuse'], ['name'])
 def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|module>
@@ -37,8 +36,7 @@ def cmd(send, msg, args):
         if msg == 'list':
             send(" ".join(fortunes))
         else:
-            #TODO: FIX
-            if 'bofh' in basename(__file__) or 'excuse' in basename(__file__):
+            if 'bofh' in args['name'] or 'excuse' in args['name']:
                 mod = 'bofh-excuses'
             elif msg in fortunes or not msg:
                 mod = msg

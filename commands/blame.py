@@ -17,8 +17,6 @@
 from random import choice
 from helpers.command import Command
 
-args = ['channels', 'target', 'nick', 'config']
-
 
 @Command('blame', ['channels', 'target', 'nick', 'config'])
 def cmd(send, msg, args):

@@ -31,7 +31,7 @@ def get_list():
     return words
 
 
-@Command("acronym", [])
+@Command("acronym")
 def cmd(send, msg, args):
     """Generates a meaning for the specified acronym.
     Syntax: !acronym <acronym>

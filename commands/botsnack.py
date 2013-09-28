@@ -17,14 +17,14 @@
 from helpers.command import Command
 
 
-@Command('botsnack', ['config'])
+@Command('botsnack', ['botnick'])
 def cmd(send, msg, args):
     """Causes the bot to snack on something.
     Syntax: !botsnack <object>
     """
     if not msg:
         send("This tastes yummy!")
-    elif msg == args['config']['core']['nick']:
+    elif msg == args['botnick']:
         send("wyang says Cannibalism is generally frowned upon.")
     else:
-        send(msg.capitalize() + " tastes yummy!")
+        send("%s tastes yummy!" % msg.capitalize())

@@ -18,7 +18,7 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('choose', ['nick'])
+@Command('choose')
 def cmd(send, msg, args):
     """Chooses between multiple choices.
     Syntax: !choose <object> or <object>

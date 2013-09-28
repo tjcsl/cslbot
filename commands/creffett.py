@@ -21,13 +21,13 @@ def gen_creffett(msg):
     return '\x02\x038,4' + msg.upper() + "!!!"
 
 
-@Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'config', 'name'])
+@Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'botnick', 'name'])
 def cmd(send, msg, args):
     """RAGE!!!
     Syntax: !rage <text>
     """
     if args['name'] == 'creffett':
-        if not args['nick'].startswith('creffett') and args['nick'] != args['config']['core']['nick']:
+        if not args['nick'].startswith('creffett') and args['nick'] != args['botnick']:
             send("You're not creffett!")
             args['ignore'](args['nick'])
             if args['target'] != 'private':

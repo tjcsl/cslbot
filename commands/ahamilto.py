@@ -18,7 +18,7 @@ from helpers.command import Command
 from random import choice
 
 
-@Command(['ahamilto', 'ahamilton'], [])
+@Command(['ahamilto', 'ahamilton'])
 def cmd(send, msg, args):
     """Emulates ahamilto.
     Syntax: !ahamilto (nick)
