@@ -179,10 +179,8 @@ class BotHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            if cmd == 'scores':
-                msg = self.modules['creffett'].gen_creffett("%s: don't abuse scores" % nick)
-            else:
-                msg = self.modules['creffett'].gen_creffett("%s: stop abusing the bot" % nick)
+            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
+            msg = command.get_command('creffett').gen_creffett(text % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True
@@ -445,7 +443,7 @@ class BotHandler():
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
 
-    def do_args(self, modargs, send, nick, target, source, c):
+    def do_args(self, modargs, send, nick, target, source, c, name):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -461,6 +459,7 @@ class BotHandler():
                 'guarded': self.guarded,
                 'config': self.config,
                 'source': source,
+                'name': name,
                 'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
@@ -490,7 +489,7 @@ class BotHandler():
         send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
 
         for hook in self.hooks:
-            realargs = self.do_args(hook.args, send, nick, target, e.source, c)
+            realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook)
             hook.run(send, msg, msgtype, realargs)
 
         if msgtype == 'privnotice':
@@ -534,8 +533,8 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, cmd_obj.limit, msgtype, cmd[len(cmdchar):]):
                     return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c)
-                cmd_obj.run(send, cmd, args)
+                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name)
+                cmd_obj.run(send, cmdargs, args)
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

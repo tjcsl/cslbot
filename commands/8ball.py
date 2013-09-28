@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 # prevent people from !8balling repeatedly to get the answer they want.
-@Command('8ball', ['nick'], limit=1)
+@Command('8ball', ['nick', 'abuse'], limit=1)
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
     Syntax: !8ball <question>

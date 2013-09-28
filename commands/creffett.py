@@ -14,20 +14,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from os.path import basename
-
-args = ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'config']
+from helpers.command import Command
 
 
 def gen_creffett(msg):
     return '\x02\x038,4' + msg.upper() + "!!!"
 
 
+@Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'config', 'name'])
 def cmd(send, msg, args):
     """RAGE!!!
     Syntax: !rage <text>
     """
-    if 'creffett' in basename(__file__):
+    if args['name'] == 'creffett':
         if not args['nick'].startswith('creffett') and args['nick'] != args['config']['core']['nick']:
             send("You're not creffett!")
             args['ignore'](args['nick'])
