@@ -40,8 +40,8 @@ def cmd(send, msg, args):
         i = 1
         while i < len(msg):
             if msg[i] == 'for':
-                if reason != '':
-                    send("BAD! You can only have one for clause!")
+                if reason:
+                    send("Invalid Syntax: You can only have one for clause!")
                     return
                 i += 1
                 while i < len(msg):
@@ -52,8 +52,8 @@ def cmd(send, msg, args):
                     i += 1
                 reason = reason.strip()
             elif msg[i] == 'with':
-                if implement != '':
-                    send("BAD! You can only have one with clause!")
+                if implement:
+                    send("Invalid Synatx: You can only have one with clause!")
                     return
                 i += 1
                 while i < len(msg):
@@ -64,17 +64,10 @@ def cmd(send, msg, args):
                     i += 1
                 implement = implement.strip()
 
-        if implement == '':
+        if not implement:
             implement = choice(implements)
-        slap = 'derp lol'
-        if reason != '':
+        if reason:
             slap = 'slaps %s %s with %s for %s' % (slapee, method, implement, reason)
         else:
             slap = 'slaps %s %s with %s' % (slapee, method, implement)
         send(slap, 'action')
-        #if "for" in msg:
-        #    msg = msg.split("for")
-        #    slap = slap % (msg[0].strip(), choice(methods), choice(implements) + " for" + msg[1])
-        #else:
-        #    slap = slap % (msg, choice(methods), choice(implements))
-        #send(slap, 'action')
