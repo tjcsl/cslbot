@@ -177,7 +177,7 @@ class BotHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abuseing the bot"
+            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
             msg = gen_creffett(text % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
