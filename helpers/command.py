@@ -87,7 +87,7 @@ class Command():
         self.limit = limit
         for t in self.names:
             if t in _known_commands:
-                raise ValueError("There is already a command registered with the name %s, is %s" % (t, _known_commands[t]))
+                raise ValueError("There is already a command registered with the name %s" % t)
             _known_commands[t] = self
 
     def __call__(self, func):

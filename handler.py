@@ -22,6 +22,7 @@ import imp
 import time
 import sys
 from commands.creffett import gen_creffett
+from commands.slogan import gen_slogan
 from helpers import control, sql, hook, command
 from os.path import dirname
 from random import choice, random
@@ -57,7 +58,7 @@ class BotHandler():
         self.abuselist = {}
         admins = config['auth']['admins'].split(', ')
         self.admins = {nick: None for nick in admins}
-        self.modules = self.loadmodules()
+        self.loadmodules()
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
@@ -97,7 +98,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the modules into a dict
         """
-        return command.scan_for_commands(dirname(__file__) + '/commands')
+        command.scan_for_commands(dirname(__file__) + '/commands')
 
     @staticmethod
     def loadhooks():
@@ -308,13 +309,11 @@ class BotHandler():
             ops = ['someone']
         if nick not in ops:
             if self.config['core']['nick'] not in ops:
-                c.privmsg(target, self.modules['creffett'].
-                          gen_creffett("%s: /op the bot" % choice(ops)))
+                c.privmsg(target, gen_creffett("%s: /op the bot" % choice(ops)))
             elif random() < 0.01 and msg == "shutting caps lock off":
                 c.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
             else:
-                c.kick(target, nick, self.modules['slogan'].
-                       gen_slogan(msg).upper())
+                c.kick(target, nick, gen_slogan(msg).upper())
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
         if cmd == 'abuse':
@@ -361,7 +360,6 @@ class BotHandler():
         args = {'nick': nick,
                 'channels': self.channels,
                 'connection': self.connection,
-                'modules': self.modules,
                 'srcdir': self.srcdir,
                 'admins': self.admins,
                 'issues': self.issues,
