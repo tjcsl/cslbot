@@ -215,8 +215,7 @@ class BotHandler():
         | Logs to a sqlite db.
         """
         if not isinstance(msg, str):
-            raise Exception("IRC doesn't like it when you send it a " +
-                            type(msg).__name__)
+            raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
         isop = False
         if target[0] == "#":
@@ -275,35 +274,6 @@ class BotHandler():
             return
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
-
-    def do_scores(self, matches, send, msgtype, nick):
-        """ Handles scores
-
-        | If it's a ++ add one point unless the user is trying to promote
-        | themselves.
-        | Otherwise substract one point.
-        """
-        if msgtype == 'privmsg':
-            send('Hey, no points in private messages!')
-            return
-        for match in matches:
-            name = match[0].lower()
-            # limit to 5 score changes per minute
-            if self.abusecheck(send, nick, 5, msgtype, 'scores'):
-                return
-            if match[1] == "++":
-                score = 1
-                if name == nick.lower():
-                    send(nick + ": No self promotion! You lose 10 points.")
-                    score = -10
-            else:
-                score = -1
-            #TODO: maybe we can do this with INSERT OR REPLACE?
-            cursor = self.db.get()
-            if cursor.execute("SELECT count(1) FROM scores WHERE nick=?", (name,)).fetchone()[0] == 1:
-                cursor.execute("UPDATE scores SET score=score+? WHERE nick=?", (score, name))
-            else:
-                cursor.execute("INSERT INTO scores(score,nick) VALUES(?,?)", (score, name))
 
     def do_mode(self, target, msg, nick, send):
         """ reop"""
@@ -407,7 +377,8 @@ class BotHandler():
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(c, nick),
-                'ignore': lambda nick: self.ignore(send, nick)}
+                'ignore': lambda nick: self.ignore(send, nick),
+                'abuse': lambda nick, limit, msgtype, cmd: self.abusecheck(send, nick, limit, msgtype, cmd)}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
@@ -497,7 +468,3 @@ class BotHandler():
             # everything below this point requires admin
             if not found and self.is_admin(c, nick):
                 self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
-        # ++ and --
-        matches = re.findall(r"(%s+)(\+\+|--)" % self.config['core']['nickregex'], msg)
-        if matches:
-            self.do_scores(matches, send, msgtype, nick)
