@@ -18,11 +18,10 @@
 # USA.
 
 import sys
-import types
 import os
-from os.path import basename
 import importlib
 import imp
+from os.path import basename
 from glob import glob
 
 _known_commands = {}
@@ -77,19 +76,14 @@ def enable_command(command):
 
 
 class Command():
-    def __init__(self, triggers, reqargs, limit=0):
+    def __init__(self, names, args, limit=0):
         global _known_commands
-        #XXX: There has to be a better way to do this
-        if isinstance(triggers, types.ListType):
-            self.triggers = triggers
-        else:
-            self.triggers = [triggers]
-        self.reqargs = reqargs
+        self.names = names if type(names) == list else [names]
+        self.args = args
         self.limit = limit
-        for t in self.triggers:
-            print(t)
+        for t in self.names:
             if t in _known_commands:
-                raise ValueError("There is already a command registered for trigger %s" % (t))
+                raise ValueError("There is already a command registered with the name %s" % t)
             _known_commands[t] = self
 
     def __call__(self, func):
@@ -102,4 +96,4 @@ class Command():
         self.exe(send, msg, args)
 
     def is_limited(self):
-        return self.limit == 0
+        return self.limit != 0
