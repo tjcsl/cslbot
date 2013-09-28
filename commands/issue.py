@@ -30,7 +30,7 @@ def create_issue(msg, nick, repo, apikey):
     return data['html_url']
 
 
-@Command('issue', ['source', 'issues', 'connection', 'config', 'type'])
+@Command(['issue', 'bug'], ['source', 'issues', 'connection', 'config', 'type'])
 def cmd(send, msg, args):
     """Files a github issue.
     Syntax: !issue <description>

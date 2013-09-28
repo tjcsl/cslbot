@@ -19,7 +19,7 @@ from helpers.command import Command
 from commands.word import gen_word
 
 
-@Command('shibe', ['nick'])
+@Command('shibe')
 def cmd(send, msg, args):
     """Generates a shibe reaction.
     Syntax: !shibe (topic1)...(topicn)

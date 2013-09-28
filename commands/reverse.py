@@ -28,7 +28,7 @@ def get_log(cursor, user):
     return cursor.fetchone()
 
 
-@Command(['reverse', 'sdamashek'], ['db', 'target'])
+@Command(['reverse', 'sdamashek'], ['db'])
 def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>

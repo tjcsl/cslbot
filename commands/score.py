@@ -19,7 +19,7 @@ from random import randint
 from helpers.command import Command
 
 
-@Command('score', ['srcdir', 'config', 'db'])
+@Command('score', ['config', 'db', 'botnick'])
 def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
@@ -31,8 +31,7 @@ def cmd(send, msg, args):
         score = cursor.execute("SELECT score FROM scores WHERE nick=?", (name,)).fetchone()
         if score is not None:
             score = score[0]
-            botnick = args['config']['core']['nick']
-            if name == botnick.lower():
+            if name == args['botnick'].lower():
                 output = 'has %s points! :)' % score
                 send(output, 'action')
             else:

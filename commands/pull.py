@@ -25,7 +25,7 @@ def do_pull(srcdir, nick):
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
-@Command('pull', ['srcdir', 'is_admin', 'nick', 'config'])
+@Command('pull', ['srcdir', 'is_admin', 'nick', 'botnick'])
 def cmd(send, msg, args):
     """Pull changes.
     Syntax: !pull <branch>
@@ -34,7 +34,7 @@ def cmd(send, msg, args):
         send("Nope, not gonna do it.")
     else:
         try:
-            send(do_pull(args['srcdir'], args['config']['core']['nick']))
+            send(do_pull(args['srcdir'], args['botnick']))
         except subprocess.CalledProcessError as e:
             for line in e.output.decode().splitlines():
                 send(line)

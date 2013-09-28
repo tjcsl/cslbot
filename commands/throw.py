@@ -19,7 +19,7 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('throw', ['channels', 'target', 'nick'])
+@Command('throw', ['channels', 'target'])
 def cmd(send, msg, args):
     """Throw something.
     Syntax: !throw <object> at <target>

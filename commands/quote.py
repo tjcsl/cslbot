@@ -77,7 +77,7 @@ def do_delete_quote(cursor, qid):
     return 'Deleted quote with ID %d' % qid
 
 
-@Command('quote', ['db', 'nick', 'connection', 'is_admin', 'config'])
+@Command('quote', ['db', 'nick', 'connection', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
     Syntax: !quote <number>, !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
@@ -90,8 +90,11 @@ def cmd(send, msg, args):
     elif cmd[0].isdigit():
         send(do_get_quote(cursor, int(cmd[0])))
     elif cmd[0] == 'add':
-        msg = " ".join(cmd[1:])
-        send(do_add_quote(msg, cursor))
+        if args['type'] == 'privmsg':
+            send("You want everybody to know about your witty sayings, right?")
+        else:
+            msg = " ".join(cmd[1:])
+            send(do_add_quote(msg, cursor))
     elif cmd[0] == 'list':
         send(do_list_quotes(cursor, args['config']['core']['quoteurl']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':

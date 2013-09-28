@@ -46,7 +46,7 @@ def get_modifiers(msg, nick):
     return mods
 
 
-@Command('s', ['db', 'target', 'nick', 'config'])
+@Command('s', ['db', 'type', 'nick', 'config', 'botnick'])
 def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
@@ -56,8 +56,8 @@ def cmd(send, msg, args):
     if not msg or len(msg) < 3:
         send("Invalid Syntax.")
         return
-    if args['target'] == 'private':
-        send("Don't worry, %s is not a grammar Nazi." % args['config']['core']['nick'])
+    if args['type'] == 'privmsg':
+        send("Don't worry, %s is not a grammar Nazi." % args['botnick'])
         return
     string = msg[0]
     replacement = msg[1]
