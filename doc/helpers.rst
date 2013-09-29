@@ -33,6 +33,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`modutils` Module
+----------------------
+
+.. automodule:: helpers.modutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`server` Module
 --------------------
 

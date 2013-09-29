@@ -33,5 +33,5 @@ def cmd(send, msg, args):
                "Don't count on it": "no", "My reply is no": "no", "My sources say no": "no", "Outlook not so good": "no", "Very doubtful": "no"}
     answer = choice(list(answers.keys()))
     if answers[answer] == 'maybe':
-        args['abuse'][args['nick']]['8ball'].pop()
+        args['abuselist'][args['nick']]['8ball'].pop()
     send('says... %s' % answer, 'action')
