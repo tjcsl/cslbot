@@ -80,7 +80,7 @@ def handle_enable(handler, cmd):
             return "Missing argument."
         command.enable_command(cmd[2])
     elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
-        handler.disabled_mods = []
+        command.enable_command(cmd[1])
         return "Enabled all modules."
     elif cmd[1] == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:

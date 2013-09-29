@@ -37,7 +37,6 @@ class BotHandler():
         | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for
         |   bot abuse.
-        | disabled_mods is a array of the currently disabled modules.
         | issues is a list keeping track of pending issues.
         | channels is a dict containing the objects for each channel the bot
         |   is connected to.
@@ -52,7 +51,6 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
-        self.disabled_mods = []
         self.issues = []
         self.channels = {}
         self.abuselist = {}
@@ -69,7 +67,6 @@ class BotHandler():
         data = {}
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
-        data['disabled_mods'] = list(self.disabled_mods)
         data['issues'] = list(self.issues)
         data['channels'] = dict(self.channels)
         data['abuselist'] = dict(self.abuselist)
@@ -80,7 +77,6 @@ class BotHandler():
         """Called from :func:`bot.do_reload` to restore the handler's data."""
         self.caps = data['caps']
         self.ignored = data['ignored']
-        self.disabled_mods = data['disabled_mods']
         self.issues = data['issues']
         self.channels = data['channels']
         self.abuselist = data['abuselist']
@@ -428,10 +424,6 @@ class BotHandler():
 
         cmd = msg.split()[0]
         admins = self.config['auth']['admins'].split(', ')
-
-        if cmd[len(cmdchar):] in self.disabled_mods:
-            send("That module is disabled, sorry.")
-            return
 
         # handle !s/a/b/
         if cmd.startswith('%ss/' % cmdchar):

@@ -81,7 +81,9 @@ def disable_command(command):
 def enable_command(command):
     """ removes a command from the disabled commands list"""
     global _disabled_commands
-    if command in _disabled_commands:
+    if command == "all":
+        _disabled_commands = []
+    elif command in _disabled_commands:
         del _disabled_commands[command]
         return command + " reenabled"
     else:
