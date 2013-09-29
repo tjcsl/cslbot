@@ -447,11 +447,9 @@ class BotHandler():
                 else:
                     found = True
                     self.clean_sql_connection_pool()
-                    #reload commands
                     imp.reload(sys.modules['helpers.command'])
-                    self.loadmodules()
-                    #reload hooks
                     imp.reload(sys.modules['helpers.hook'])
+                    self.loadmodules()
                     self.loadhooks()
                     send("Aye Aye Capt'n")
                     self.get_admins(c)

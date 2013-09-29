@@ -19,14 +19,10 @@ from helpers.hook import get_known_hooks
 from helpers.command import Command
 
 
-@Command('hooks', ['nick', 'connection'])
+@Command('hooks')
 def cmd(send, msg, args):
     """Lists loaded hooks
     Syntax: !hooks
     """
-    hooks = get_known_hooks()
-    num = int(len(hooks) / 2)
-    hooklist1 = ' '.join([x.get_func_location() for x in hooks[:num]])
-    hooklist2 = ' '.join([x.get_func_location() for x in hooks[num:]])
-    args['connection'].privmsg(args['nick'], 'Loaded hooks: %s' % (hooklist1))
-    args['connection'].privmsg(args['nick'], '%s' % (hooklist2))
+    hooklist = ', '.join([str(x) for x in get_known_hooks()])
+    send('Loaded hooks: %s' % (hooklist))

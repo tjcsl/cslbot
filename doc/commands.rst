@@ -257,6 +257,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`hooks` Module
+-------------------
+
+.. automodule:: commands.hooks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`insult` Module
 --------------------
 

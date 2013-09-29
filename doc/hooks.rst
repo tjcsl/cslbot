@@ -33,6 +33,14 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`clippy` Module
+--------------------
+
+.. automodule:: hooks.clippy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`scores` Module
 --------------------
 

@@ -61,12 +61,11 @@ class Hook():
             if msgtype in self.types:
                 func(send, msg, args)
         self.exe = wrapper
-        self.hmod = func.__module__
-        self.hname = func.__name__
+        self.name = func.__module__.split('.')[1]
         return wrapper
+
+    def __str__(self):
+        return self.name
 
     def run(self, send, msg, msgtype, args):
         self.exe(send, msg, msgtype, args)
-
-    def get_func_location(self):
-        return self.hmod + "." + self.hname
