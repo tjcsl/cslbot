@@ -425,10 +425,6 @@ class BotHandler():
         cmd = msg.split()[0]
         admins = self.config['auth']['admins'].split(', ')
 
-        if command.is_command_disabled(cmd[len(cmdchar):]):
-            send("That module is disabled, sorry.")
-            return
-
         # handle !s/a/b/
         if cmd.startswith('%ss/' % cmdchar):
             cmd = cmd.split('/')[0]
