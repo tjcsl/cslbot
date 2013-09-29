@@ -105,9 +105,9 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     ctrlchan = bot.config['core']['ctrlchan']
                     output = bot.do_reload(bot.connection, ctrlchan, cmdargs, 'server')
                     imp.reload(sys.modules['helpers.command'])
-                    bot.handler.loadmodules()
-                    #reload hooks
+                    imp.reload(sys.modules['helpers.control'])
                     imp.reload(sys.modules['helpers.hook'])
+                    bot.handler.loadmodules()
                     bot.handler.loadhooks()
                     if output:
                         send(output + '\n')

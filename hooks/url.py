@@ -24,7 +24,7 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError
 
 
-@Hook(types=['pubmsg'], args=['nick', 'do_kick', 'target'])
+@Hook(types=['pubmsg', 'action'], args=['nick', 'do_kick', 'target'])
 def handle(send, msg, args):
     """ Get titles for urls.
 

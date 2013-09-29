@@ -36,8 +36,7 @@ def set_default(nick, location, cursor, send, apikey):
     """Sets nick's default location to location."""
     if get_weather(location, send, apikey):
         send("Setting default location")
-        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(:nick,:loc)',
-                       {'nick': nick, 'loc': location})
+        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(?,?)', (nick, location))
 
 
 def get_weather(msg, send, apikey):
@@ -78,8 +77,6 @@ def get_weather(msg, send, apikey):
         if 'current_observation' in data:
             data = data['current_observation']
         else:
-            import logging
-            logging.error(data)
             send("Invalid or Ambiguous Location")
             return False
         forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]

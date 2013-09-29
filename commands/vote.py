@@ -98,9 +98,7 @@ def tally_poll(cursor, poll, send, c, target):
     votes = cursor.execute("SELECT response,voter FROM poll_responses WHERE pid=?", (pid,)).fetchall()
     send("%s poll: %s, %d total votes" % (state, question, len(votes)))
     votemap = {}
-    for v in votes:
-        vote = v[0]
-        nick = v[1]
+    for vote, nick in votes:
         if vote not in votemap:
             votemap[vote] = []
         votemap[vote].append(nick)
