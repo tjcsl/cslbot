@@ -15,11 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-import json
 from helpers.command import Command
 
 
-@Command(['bc', 'math'], ['srcdir'])
+def get_scores(cursor):
+    rows = cursor.execute('SELECT nick,score FROM scores').fetchall()
+    return {row['nick']: row['score'] for row in rows}
+
+
+@Command(['bc', 'math'], ['db'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
     Syntax: !bc <expression>
@@ -27,16 +31,12 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
-    try:
-        data = json.load(open(args['srcdir'] + "/data/score"))
-        for u in data:
-            msg = msg.replace(u, str(data[u]))
-    except OSError:
-        pass
-    except IOError:
-        pass
+    scores = get_scores(args['db'])
+    for word in msg.split():
+        if word in scores:
+            msg = msg.replace(word, str(scores[word]))
     msg += '\n'
     proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = proc.communicate(msg.encode())[0]
-    output = output.decode().strip().replace('\n', ' ')
-    send(output)
+    output = proc.communicate(msg.encode())[0].decode()
+    for line in output.splitlines():
+        send(line)
