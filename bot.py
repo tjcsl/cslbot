@@ -19,7 +19,8 @@ import logging
 import traceback
 import imp
 import handler
-from helpers import server, control, sql
+import helpers
+from commands.pull import do_pull
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import basename, dirname
@@ -60,9 +61,9 @@ class IrcBot(SingleServerIRCBot):
                 admins = self.config['auth']['admins'].split(', ')
                 if e.source.nick not in admins:
                     c.privmsg(target, "Nope, not gonna do it.")
-                    return
-                cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
-                self.do_reload(c, target, cmdargs, 'irc')
+                else:
+                    cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
+                    self.do_reload(c, target, cmdargs, 'irc')
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
             trace = traceback.extract_tb(ex.__traceback__)[-1]
@@ -79,17 +80,15 @@ class IrcBot(SingleServerIRCBot):
         """
         output = None
         if cmdargs == 'pull':
-            output = self.handler.modules['pull'].do_pull(dirname(__file__), self.config['core']['nick'])
+            output = do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
+        imp.reload(helpers)
         imp.reload(handler)
-        imp.reload(server)
-        imp.reload(control)
-        imp.reload(sql)
         self.config = ConfigParser()
         self.config.read_file(open(dirname(__file__) + '/config.cfg'))
         self.server.shutdown()
         self.server.socket.close()
-        self.server = server.init_server(self)
+        self.server = helpers.server.init_server(self)
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
@@ -161,10 +160,10 @@ class IrcBot(SingleServerIRCBot):
         | If we've been kicked, yell at the kicker.
         """
         self.handler.do_log(e.target, e.source, e.target, 'join')
-        if e.source.nick != self.config['core']['nick']:
+        if e.source.nick != c.real_nickname:
             return
         self.handler.channels[e.target] = self.channels[e.target]
-        logging.info("Joined channel " + e.target)
+        logging.info("Joined channel %s" % e.target)
         if hasattr(self, 'kick'):
             #slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             #c.privmsg(e.target, slogan)
@@ -177,10 +176,10 @@ class IrcBot(SingleServerIRCBot):
         | Remove the channel from the list of channels.
         """
         self.handler.do_log(e.target, e.source, e.target, 'part')
-        if e.source.nick != self.config['core']['nick']:
+        if e.source.nick != c.real_nickname:
             return
         del self.handler.channels[e.target]
-        logging.info("Parted channel " + e.target)
+        logging.info("Parted channel %s" % e.target)
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
@@ -196,9 +195,9 @@ class IrcBot(SingleServerIRCBot):
         """
         self.handler.do_log(e.target, e.source.nick, ','.join(e.arguments), 'kick')
         # we don't care about other people.
-        if e.arguments[0] != self.config['core']['nick']:
+        if e.arguments[0] != c.real_nickname:
             return
-        logging.info("Kicked from channel " + e.target)
+        logging.info("Kicked from channel %s" % e.target)
         self.kick = [e.source.nick, e.arguments[1]]
         sleep(5)
         c.join(e.target)
@@ -215,7 +214,7 @@ def main():
     config = ConfigParser()
     config.read_file(open(dirname(__file__) + '/config.cfg'))
     bot = IrcBot(config)
-    bot.server = server.init_server(bot)
+    bot.server = helpers.server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':
