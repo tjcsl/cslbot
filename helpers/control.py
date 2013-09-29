@@ -102,13 +102,10 @@ def handle_get(handler, cmd):
     if len(cmd) < 3:
         return "Missing argument."
     elif cmd[1] == "disabled" and cmd[2] == "modules":
-        mods = ", ".join(sorted(handler.disabled_mods))
-        if mods:
-            return mods
-        else:
-            return "No disabled modules."
+        mods = ", ".join(sorted(command.get_disabled_commands()))
+        return mods if mods else "No disabled modules."
     elif cmd[1] == "enabled" and cmd[2] == "modules":
-        mods = ", ".join(sorted([i for i in handler.modules if i not in handler.disabled_mods]))
+        mods = ", ".join(sorted(command.get_enabled_commands()))
         return mods
     else:
         return "Invalid arguments."

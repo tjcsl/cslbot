@@ -26,7 +26,7 @@ from os.path import basename
 from glob import glob
 
 _known_commands = {}
-_disabled_commands = {}
+_disabled_commands = []
 
 
 def scan_for_commands(folder):
@@ -58,13 +58,21 @@ def get_commands():
     return _known_commands
 
 
+def get_enabled_commands():
+    return [x for x in _known_commands if x not in _disabled_commands]
+
+
+def get_disabled_commands():
+    return [x for x in _known_commands if x in _disabled_commands]
+
+
 def disable_command(command):
     """ adds a command to the disabled comands list"""
     global _disabled_commands
     if ("commands." + command) not in sys.modules:
         return command + " is not a loaded module"
     if command not in _disabled_commands:
-        _disabled_commands[command] = "disabled"
+        _disabled_commands.append(command)
         return "Disabled command " + command
     else:
         return "That command is already disabled!"
@@ -98,8 +106,11 @@ class Command():
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msg, args):
-        self.exe(send, msg, args)
+    def run(self, send, msg, args, name):
+        if name in _disabled_commands:
+            send("Sorry, that command is disabled.")
+        else:
+            self.exe(send, msg, args)
 
     def get_doc(self):
         return self.doc
