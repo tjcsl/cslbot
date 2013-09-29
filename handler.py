@@ -448,6 +448,7 @@ class BotHandler():
                     found = True
                     self.clean_sql_connection_pool()
                     imp.reload(sys.modules['helpers.command'])
+                    imp.reload(sys.modules['helpers.control'])
                     imp.reload(sys.modules['helpers.hook'])
                     self.loadmodules()
                     self.loadhooks()

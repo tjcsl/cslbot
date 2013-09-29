@@ -17,6 +17,7 @@
 
 import logging
 from helpers import command
+from commands.issue import create_issue
 
 
 def handle_chanserv(c, cmd, send):
@@ -161,7 +162,7 @@ def handle_accept(handler, cmd):
         msg, source = handler.issues[num]
         repo = handler.config['api']['githubrepo']
         apikey = handler.config['api']['githubapikey']
-        issue = handler.modules['issue'].create_issue(msg, source, repo, apikey)
+        issue = create_issue(msg, source, repo, apikey)
         handler.issues.pop(num)
         ctrlchan = handler.config['core']['ctrlchan']
         channel = handler.config['core']['channel']

@@ -40,10 +40,10 @@ def cmd(send, msg, args):
     elif not msg:
         send("Issue needs a description.")
     else:
-        args['issues'].append([msg, args['source']])
         if not args['is_admin'](args['nick']):
+            args['issues'].append([msg, args['source']])
             args['connection'].privmsg(args['config']['core']['ctrlchan'], "New Issue: #%d -- %s" % (len(args['issues']) - 1, msg))
             send("Issue submitted for approval.")
         else:
-            create_issue(msg, args['nick'], args['config']['api']['githubrepo'], args['config']['api']['githubapikey'])
-            send("Issue created")
+            url = create_issue(msg, args['source'], args['config']['api']['githubrepo'], args['config']['api']['githubapikey'])
+            send("Issue created -- %s -- %s" % (url, msg))
