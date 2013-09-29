@@ -44,6 +44,10 @@ def scan_for_hooks(folder):
     return _known_hooks
 
 
+def get_known_hooks():
+    return _known_hooks
+
+
 class Hook():
 
     def __init__(self, types, args):
@@ -57,7 +61,12 @@ class Hook():
             if msgtype in self.types:
                 func(send, msg, args)
         self.exe = wrapper
+        self.hmod = func.__module__
+        self.hname = func.__name__
         return wrapper
 
     def run(self, send, msg, msgtype, args):
         self.exe(send, msg, msgtype, args)
+
+    def get_func_location(self):
+        return self.hmod + "." + self.hname
