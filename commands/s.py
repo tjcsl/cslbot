@@ -21,10 +21,10 @@ from helpers.command import Command
 def get_log(cursor, user):
     if user is None:
         cursor.execute('SELECT msg,type,source FROM log ORDER BY time DESC LIMIT 50')
+        # Don't parrot back the !s call.
+        cursor.fetchone()
     else:
         cursor.execute('SELECT msg,type,source FROM log WHERE source=? ORDER BY time DESC LIMIT 50', (user,))
-    # Don't parrot back the !s call.
-    cursor.fetchone()
     return cursor.fetchall()
 
 
