@@ -19,7 +19,7 @@ import logging
 import traceback
 import imp
 import handler
-import helpers
+import helpers.server
 from commands.pull import do_pull
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
