@@ -66,6 +66,11 @@ def get_disabled_commands():
     return [x for x in _known_commands if x in _disabled_commands]
 
 
+def is_command_disabled(command):
+    global _disabled_commands
+    return command in _disabled_commands
+
+
 def disable_command(command):
     """ adds a command to the disabled comands list"""
     global _disabled_commands
