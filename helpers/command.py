@@ -18,12 +18,8 @@
 # USA.
 
 import sys
-import os
-import importlib
-import imp
 from inspect import getdoc
-from os.path import basename
-from glob import glob
+from helpers.modutils import scan_and_reimport
 
 _known_commands = {}
 _disabled_commands = []
@@ -33,16 +29,7 @@ def scan_for_commands(folder):
     """ Scans folder for commands """
     global _known_commands
     _known_commands = {}
-    for f in glob(folder + '/*.py'):
-        if os.access(f, os.X_OK):
-            cmd = basename(f).split('.')[0]
-            #We only need to run import_module, the command decorator constructor
-            #will take care of the rest
-            mod_name = "commands." + cmd
-            if mod_name in sys.modules:
-                imp.reload(sys.modules[mod_name])
-            else:
-                importlib.import_module(mod_name)
+    scan_and_reimport(folder, "commands")
     return _known_commands
 
 

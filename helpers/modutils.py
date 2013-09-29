@@ -17,41 +17,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from helpers.modutils import scan_and_reimport
+import sys
+import os
+from os.path import basename
+import importlib
+import imp
+from glob import glob
 
-_known_hooks = []
 
-
-def scan_for_hooks(folder):
+def scan_and_reimport(folder, mod_pkg):
     """ Scans folder for hooks """
-    global _known_hooks
-    _known_hooks = []
-    scan_and_reimport(folder, "hooks")
-    return _known_hooks
-
-
-def get_known_hooks():
-    return _known_hooks
-
-
-class Hook():
-
-    def __init__(self, types, args):
-        global _known_hooks
-        self.types = types
-        self.args = args
-        _known_hooks.append(self)
-
-    def __call__(self, func):
-        def wrapper(send, msg, msgtype, args):
-            if msgtype in self.types:
-                func(send, msg, args)
-        self.exe = wrapper
-        self.name = func.__module__.split('.')[1]
-        return wrapper
-
-    def __str__(self):
-        return self.name
-
-    def run(self, send, msg, msgtype, args):
-        self.exe(send, msg, msgtype, args)
+    for f in glob(folder + '/*.py'):
+        if os.access(f, os.X_OK):
+            mod = basename(f).split('.')[0]
+            mod_name = mod_pkg + "." + mod
+            if mod_name in sys.modules:
+                imp.reload(sys.modules[mod_name])
+            else:
+                importlib.import_module(mod_name)
