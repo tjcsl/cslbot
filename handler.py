@@ -425,10 +425,14 @@ class BotHandler():
         cmd = msg.split()[0]
         admins = self.config['auth']['admins'].split(', ')
 
-        # handle !s/a/b/
-        if cmd.startswith('%ss/' % cmdchar):
-            cmd = cmd.split('/')[0]
-        cmdargs = msg[len(cmd) + 1:]
+        # handle !s
+        cmdlen = len(cmd) + 1
+        if cmd.startswith('%ss' % cmdchar):
+            match = re.match('%ss(\W)' % cmdchar, cmd)
+            if match:
+                cmd = cmd.split(match.group(1))[0]
+                cmdlen = len(cmd)
+        cmdargs = msg[cmdlen:]
         found = False
         if cmd.startswith(cmdchar):
             cmd_name = cmd[len(cmdchar):]

@@ -51,7 +51,11 @@ def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
     """
-    msg = msg.split('/')
+    char = msg[0]
+    msg = msg[1:].split(char)
+    #fix for people who forget a trailing slash
+    if len(msg) == 2:
+        msg.append('')
     # not a valid sed statement.
     if not msg or len(msg) < 3:
         send("Invalid Syntax.")
@@ -67,7 +71,7 @@ def cmd(send, msg, args):
 
     for line in log:
         # ignore previous !s calls.
-        if line['msg'].startswith('%ss/' % args['config']['core']['cmdchar']):
+        if line['msg'].startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
             continue
         if regex.search(line['msg']):
             output = regex.sub(replacement, line['msg'])
