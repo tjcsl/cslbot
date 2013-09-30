@@ -17,6 +17,7 @@
 
 import sqlite3
 import argparse
+from time import strftime
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname
 
@@ -26,9 +27,9 @@ def get_quotes(cursor):
     return [list(row) for row in rows]
 
 
-def output_quotes(env, cursor, outdir):
+def output_quotes(env, cursor, outdir, time):
     quotes = get_quotes(cursor)
-    output = env.get_template('quotes.html').render(quotes=quotes)
+    output = env.get_template('quotes.html').render(quotes=quotes, time=time)
     open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
 
 
@@ -37,9 +38,9 @@ def get_scores(cursor):
     return [list(row) for row in rows]
 
 
-def output_scores(env, cursor, outdir):
+def output_scores(env, cursor, outdir, time):
     scores = get_scores(cursor)
-    output = env.get_template('scores.html').render(scores=scores)
+    output = env.get_template('scores.html').render(scores=scores, time=time)
     open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
 
 
@@ -60,10 +61,10 @@ def get_responses(cursor, polls):
     return responses
 
 
-def output_polls(env, cursor, outdir):
+def output_polls(env, cursor, outdir, time):
     polls = get_polls(cursor)
     responses = get_responses(cursor, polls)
-    output = env.get_template('polls.html').render(polls=polls, responses=responses)
+    output = env.get_template('polls.html').render(polls=polls, responses=responses, time=time)
     open(outdir + '/polls.html', 'w', encoding='utf8').write(output)
 
 
@@ -73,10 +74,11 @@ def main(outdir):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
+    time = strftime('Last Updated at %H:%M:%S %p on %a, %b %d, %Y')
 
-    output_quotes(env, cursor, outdir)
-    output_scores(env, cursor, outdir)
-    output_polls(env, cursor, outdir)
+    output_quotes(env, cursor, outdir, time)
+    output_scores(env, cursor, outdir, time)
+    output_polls(env, cursor, outdir, time)
 
 
 if __name__ == '__main__':
