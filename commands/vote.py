@@ -88,6 +88,7 @@ def tally_poll(cursor, poll, send, c, target):
         return
     if not poll.isdigit():
         send("Not A Valid Positive Integer.")
+        return
     pid = int(poll)
     query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND pid=?", (pid,)).fetchone()
     if query_result is None:
