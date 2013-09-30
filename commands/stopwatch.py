@@ -20,15 +20,14 @@ from helpers.command import Command
 
 
 def create_sw(cursor):
-    cursor.execute("INSERT INTO stopwatches(id,elapsed,active,time) VALUES(NULL,0,1,?)", (time.time(),))
-    cid = cursor.execute("SELECT max(id) FROM stopwatches").fetchall()[0][0]
-    return "Created new stopwatch. ID: %d" % cid
+    cursor.execute("INSERT INTO stopwatches(time) VALUES(?)", (time.time(),))
+    return "Created new stopwatch. ID: %d" % cursor.lastrowid
 
 
 def check_sw_valid(sw):
     if not sw:
         return "You need to pass a stopwatch ID to !stopwatch get"
-    if not sw[0].isdigit():
+    if not sw.isdigit():
         return "Invalid ID!"
     return "OK"
 
@@ -85,8 +84,8 @@ def cmd(send, msg, args):
     Syntax: !stopwatch <start|stop|resume|get>
     """
 
-    command = msg.split(' ')[0]
-    msg = msg.split(' ')[1:]
+    command = msg.split()[0]
+    msg = msg.split()[1:]
     cursor = args['db']
     if command == "start":
         send(create_sw(cursor))
