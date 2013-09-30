@@ -74,7 +74,7 @@ def main(outdir):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
-    time = strftime('Last Updated at %H:%M:%S %p on %a, %b %d, %Y')
+    time = strftime('Last Updated at %I:%M:%S %p on %a, %b %d, %Y')
 
     output_quotes(env, cursor, outdir, time)
     output_scores(env, cursor, outdir, time)
