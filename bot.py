@@ -23,7 +23,7 @@ import helpers.server
 from commands.pull import do_pull
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
-from os.path import basename, dirname
+from os.path import basename, dirname, join, exists
 from time import sleep
 
 
@@ -212,7 +212,10 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
     config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/config.cfg'))
+    configfile = join(dirname(__file__), 'config.cfg')
+    if not exists(configfile):
+        raise Exception("Please copy config.example to config.cfg and modify to fit your needs.")
+    config.read_file(open(configfile))
     bot = IrcBot(config)
     bot.server = helpers.server.init_server(bot)
     bot.start()
