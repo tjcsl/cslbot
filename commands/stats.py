@@ -16,7 +16,7 @@
 
 import re
 from random import choice
-from helpers.command import Command
+from helpers.command import Command, is_registered
 
 
 def get_commands(cursor):
@@ -24,13 +24,20 @@ def get_commands(cursor):
     return [row['command'] for row in rows]
 
 
-def get_totals(cursor, commands, nick=None):
+def get_nicks(cursor, command):
+    rows = cursor.execute('SELECT DISTINCT nick FROM commands WHERE command=?', (command,)).fetchall()
+    return [row['nick'] for row in rows]
+
+
+def get_totals(cursor, commands, name=None):
     totals = {}
-    for cmd in commands:
-        if nick is None:
+    if name is None:
+        for cmd in commands:
             totals[cmd] = cursor.execute('SELECT count() FROM commands WHERE command=?', (cmd,)).fetchone()[0]
-        else:
-            totals[cmd] = cursor.execute('SELECT count(1) FROM commands WHERE command=? AND nick=?', (cmd, nick)).fetchone()[0]
+    else:
+        nicks = get_nicks(cursor, name)
+        for nick in nicks:
+            totals[nick] = cursor.execute('SELECT COUNT() FROM commands WHERE command=? AND nick=?', (name, nick)).fetchone()[0]
     return totals
 
 
@@ -41,11 +48,13 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     commands = get_commands(cursor)
-    match = re.match('(%s+)' % args['config']['core']['nickregex'], msg)
-    if match:
-        name = match.group(1)
-        totals = get_totals(cursor, commands, name)
-        send(str(totals))
+    if msg:
+        if is_registered(msg):
+            totals = get_totals(cursor, commands, msg)
+            maxuser = sorted(totals, key=totals.get)[-1]
+            send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
+        else:
+            send("Invalid command")
     else:
         totals = get_totals(cursor, commands)
         match = re.match('--(.*)', msg)
@@ -65,8 +74,6 @@ def cmd(send, msg, args):
                         send("%s: %s" % (low[x], totals[low[x]]))
             else:
                 send("%s is not a valid flag" % match.group(1))
-        elif msg:
-            send("Invalid nick")
         else:
             cmd = choice(list(totals.keys()))
             send("%s: %s" % (cmd, totals[cmd]))
