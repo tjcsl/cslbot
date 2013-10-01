@@ -51,8 +51,12 @@ def cmd(send, msg, args):
     if msg:
         if is_registered(msg):
             totals = get_totals(cursor, commands, msg)
-            maxuser = sorted(totals, key=totals.get)[-1]
-            send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
+            maxuser = sorted(totals, key=totals.get)
+            if not maxuser:
+                send("Nobody has used that command.")
+            else:
+                maxuser = maxuser[-1]
+                send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
         else:
             send("Invalid command")
     else:
