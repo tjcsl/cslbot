@@ -473,6 +473,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`stats` Module
+-------------------
+
+.. automodule:: commands.stats
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`steam` Module
 -------------------
 
