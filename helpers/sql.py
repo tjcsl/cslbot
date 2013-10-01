@@ -83,5 +83,5 @@ class Sql():
         db.execute('CREATE TABLE IF NOT EXISTS poll_responses(pid INTEGER, response TEXT, voter TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS weather_prefs(nick TEXT UNIQUE, location TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS scores(nick TEXT UNIQUE, score INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS commands(nick TEXT, command TEXT)')
+        db.execute('CREATE TABLE IF NOT EXISTS commands(nick TEXT, command TEXT, channel TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS stopwatches (id INTEGER PRIMARY KEY AUTOINCREMENT, active INTEGER DEFAULT 1, time INTEGER, elapsed INTEGER DEFAULT 0)')
