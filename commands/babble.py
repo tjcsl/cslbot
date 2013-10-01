@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from random import choice
 from helpers.command import Command
 
@@ -21,7 +22,8 @@ from helpers.command import Command
 # Make the generated messages look better.
 def clean_msg(msg):
     msg = msg.replace('"', '')
-    return msg.split()
+    msg = [x for x in msg.split() if not re.match('https?://', x)]
+    return msg
 
 
 def weighted_rand(d):
