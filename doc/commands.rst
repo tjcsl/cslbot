@@ -81,14 +81,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`bold` Module
-------------------
-
-.. automodule:: commands.bold
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`botsnack` Module
 ----------------------
 
