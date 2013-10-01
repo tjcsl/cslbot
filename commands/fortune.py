@@ -16,6 +16,7 @@
 
 import subprocess
 import re
+from random import random
 from helpers.command import Command
 
 
@@ -37,6 +38,10 @@ def cmd(send, msg, args):
             send(" ".join(fortunes))
         else:
             if 'bofh' in args['name'] or 'excuse' in args['name']:
+                if random() < 0.05:
+                    send("BOFH Excuse #1337:")
+                    send("You don't exist, go away!")
+                    return
                 mod = 'bofh-excuses'
             elif msg in fortunes or not msg:
                 mod = msg
