@@ -23,6 +23,6 @@ from random import random
 def handle(send, msg, args):
     if args['config']['feature']['clippy'] == 'False':
         return
-    if msg and len(msg.split()) == 1 and random() < 0.005:
+    if msg and len(msg.split()) == 1 and random() < 0.001:
         output = gen_clippy(args['nick'], msg)
         send(output)
