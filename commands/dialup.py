@@ -20,6 +20,8 @@ from helpers.command import Command
 @Command('dialup')
 def cmd(send, msg, args):
     """Pesters creffett to get dialup.
-    Syntax: !dialup
+    Syntax: !dialup (nick)
     """
-    send('creffett: %s' % ("get dialup " * 15))
+    if not msg:
+        msg = 'creffett'
+    send('%s: %s' % (msg, "get dialup " * 15))
