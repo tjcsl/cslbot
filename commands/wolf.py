@@ -18,6 +18,7 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from xml.etree import ElementTree
 from helpers.command import Command
+from commands.short import get_short
 
 
 @Command('wolf', ['config'])
@@ -31,7 +32,7 @@ def cmd(send, msg, args):
     xml = urlopen('http://api.wolframalpha.com/v2/query?format=plaintext&reinterpret=true&input=%s&appid=%s' % (quote(msg), args['config']['api']['wolframapikey']))
     xml = ElementTree.parse(xml)
     output = xml.findall('./pod')
-    url = "http://www.wolframalpha.com/input/?i=%s" % quote(msg)
+    url = get_short("http://www.wolframalpha.com/input/?i=%s" % msg)
     text = ["No output found."]
     for x in output:
         if 'primary' in x.keys():
