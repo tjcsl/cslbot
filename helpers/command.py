@@ -77,6 +77,10 @@ def enable_command(command):
         return "that command isn't disabled!"
 
 
+def record_command(cursor, nick, name):
+    cursor.execute('INSERT INTO commands(nick,command) VALUES(?,?)', (nick, name))
+
+
 class Command():
     def __init__(self, names, args=[], limit=0):
         global _known_commands
@@ -95,10 +99,11 @@ class Command():
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msg, args, name):
+    def run(self, send, msg, args, name, nick, cursor):
         if name in _disabled_commands:
             send("Sorry, that command is disabled.")
         else:
+            record_command(cursor, nick, name)
             self.exe(send, msg, args)
 
     def get_doc(self):
