@@ -48,17 +48,14 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     commands = get_commands(cursor)
-    if msg:
-        if is_registered(msg):
-            totals = get_totals(cursor, commands, msg)
-            maxuser = sorted(totals, key=totals.get)
-            if not maxuser:
-                send("Nobody has used that command.")
-            else:
-                maxuser = maxuser[-1]
-                send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
+    if is_registered(msg):
+        totals = get_totals(cursor, commands, msg)
+        maxuser = sorted(totals, key=totals.get)
+        if not maxuser:
+            send("Nobody has used that command.")
         else:
-            send("Invalid command")
+            maxuser = maxuser[-1]
+            send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
     else:
         totals = get_totals(cursor, commands)
         match = re.match('--(.*)', msg)
@@ -78,6 +75,8 @@ def cmd(send, msg, args):
                         send("%s: %s" % (low[x], totals[low[x]]))
             else:
                 send("%s is not a valid flag" % match.group(1))
+        elif msg:
+            send("Invalid Command.")
         else:
             cmd = choice(list(totals.keys()))
             send("%s: %s" % (cmd, totals[cmd]))
