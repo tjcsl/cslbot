@@ -36,6 +36,14 @@ def do_get_quote(cursor, qid=None):
         return "That quote doesn't exist!"
 
 
+def get_quotes_nick(cursor, nick):
+    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=?', (nick,)).fetchall()
+    if not rows:
+        return "No quotes for %s" % nick
+    quotes = [row['quote'] for row in rows]
+    return choice(quotes)
+
+
 def do_add_quote(cmd, cursor):
     if '--' not in cmd:
         return "To add a quote, it must be in the format <quote> -- <nick>"
@@ -114,4 +122,4 @@ def cmd(send, msg, args):
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:
-        send("Bad command, please use !quote <number> to get quotes. Valid commands are !quote [add|list|remove|edit]")
+        send(get_quotes_nick(cursor, msg))
