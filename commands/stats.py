@@ -79,4 +79,4 @@ def cmd(send, msg, args):
             send("Invalid Command.")
         else:
             cmd = choice(list(totals.keys()))
-            send("%s: %s" % (cmd, totals[cmd]))
+            send("%s has been used %s times." % (cmd, totals[cmd]))
