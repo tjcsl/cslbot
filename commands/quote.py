@@ -25,13 +25,14 @@ def check_quote_exists_by_id(cursor, qid):
 
 def do_get_quote(cursor, qid=None):
     if qid is None:
-        quotes = cursor.execute('SELECT quote FROM quotes').fetchall()
+        quotes = cursor.execute('SELECT quote,nick FROM quotes').fetchall()
         if not quotes:
             return "There aren't any quotes yet."
-        return choice(quotes)['quote']
+        quote = choice(quotes)
+        return "%s -- %s" % (quote['quote'], quote['nick'])
     elif check_quote_exists_by_id(cursor, qid):
         quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
-        return quote['quote'] + " -- " + quote['nick']
+        return "%s -- %s" % (quote['quote'], quote['nick'])
     else:
         return "That quote doesn't exist!"
 
@@ -41,7 +42,7 @@ def get_quotes_nick(cursor, nick):
     if not rows:
         return "No quotes for %s" % nick
     quotes = [row['quote'] for row in rows]
-    return choice(quotes)
+    return "%s -- %s" % (choice(quotes), nick)
 
 
 def do_add_quote(cmd, cursor):
@@ -88,7 +89,7 @@ def do_delete_quote(cursor, qid):
 @Command('quote', ['db', 'nick', 'connection', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
-    Syntax: !quote <number>, !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
+    Syntax: !quote (number|nick), !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
     """
     cursor = args['db']
     cmd = msg.split()
