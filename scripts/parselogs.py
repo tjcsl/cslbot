@@ -47,7 +47,7 @@ def check_day(row, outdir, name):
 
 
 def gen_log(row):
-    logtime = strftime('%H:%M:%S', localtime(row['time']))
+    logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row['time']))
     nick = row['source'].split('!')[0]
     if row['type'] == 'join':
         log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg'])
