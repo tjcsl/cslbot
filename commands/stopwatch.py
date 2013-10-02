@@ -21,12 +21,12 @@ from helpers.command import Command
 
 def create_sw(cursor):
     cursor.execute("INSERT INTO stopwatches(time) VALUES(?)", (time.time(),))
-    return "Created new stopwatch. ID: %d" % cursor.lastrowid
+    return "Created new stopwatch with ID %d" % cursor.lastrowid
 
 
 def check_sw_valid(sw):
     if not sw:
-        return "You need to pass a stopwatch ID to !stopwatch get"
+        return "You need to pass a stopwatch ID"
     if not sw.isdigit():
         return "Invalid ID!"
     return "OK"
@@ -78,14 +78,34 @@ def stopwatch_resume(cursor, sw):
     return "Stopwatch resumed!"
 
 
-@Command(['stopwatch', 'sw'], ['db'])
+def stopwatch_list(cursor, c, send, nick):
+    rows = cursor.execute("SELECT id,elapsed,time,active FROM stopwatches").fetchall()
+    active = []
+    paused = []
+    for row in rows:
+        if int(row['active']) == 1:
+            active.append({'elapsed': row['elapsed'], 'time': row['time'], 'id': row['id']})
+        else:
+            paused.append({'elapsed': row['elapsed'], 'time': row['time'], 'id': row['id']})
+    send("%d active and %d paused stopwatches." % (len(active), len(paused)))
+    for x in active:
+        c.privmsg(nick, 'Active stopwatch #%d started at %d' % (x['id'], x['time']))
+    for x in paused:
+        c.privmsg(nick, 'Paused stopwatch #%d started at %d time elapsed %d' % (x['id'], x['time'], x['elapsed']))
+
+
+@Command(['stopwatch', 'sw'], ['db', 'connection', 'nick'])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
-    Syntax: !stopwatch <start|stop|resume|get>
+    Syntax: !stopwatch <start|stop|resume|get|list>
     """
 
-    command = msg.split()[0]
-    msg = msg.split()[1:]
+    if not msg:
+        send("Invalid Syntax.")
+        return
+    msg = msg.split()
+    command = msg[0]
+    msg = " ".join(msg[1:])
     cursor = args['db']
     if command == "start":
         send(create_sw(cursor))
@@ -95,3 +115,7 @@ def cmd(send, msg, args):
         send(stop_stopwatch(cursor, msg))
     elif command == "resume":
         send(stopwatch_resume(cursor, msg))
+    elif command == "list":
+        stopwatch_list(cursor, args['connection'], send, args['nick'])
+    else:
+        send("Invalid Syntax.")
