@@ -44,8 +44,10 @@ def get_modifiers(msg, nick):
     else:
         mods['nick'] = msg
     return mods
-def do_sed(msg, args):
-        """Corrects a previous message.
+
+
+def do_sed(send, msg, args):
+    """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
     """
     char = msg[0]
@@ -80,6 +82,7 @@ def do_sed(msg, args):
                 send("%s actually meant: %s" % (line['source'], output))
             return
     send("No match found.")
+
 
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick'])
 def cmd(send, msg, args):
