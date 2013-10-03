@@ -17,11 +17,12 @@ $^W = 1;
 sub new
 {
     my ($type, %args) = @_;
+    my $dateregex = '^\d+-\d+-\d+ (\d+):\d+:\d{2} ';
     my $self = {
         cfg => $args{cfg},
-        normalline => '',
-        actionline => '',
-        thirdline  => '',
+        normalline => $dateregex . '<([^>]+)> (.*)$',
+        actionline => $dateregex . '\* (\S+) (.*)$',
+        thirdline  => $dateregex . '',
     };
 
     bless($self, $type);
