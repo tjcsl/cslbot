@@ -6,3 +6,4 @@ gh-pages
 *.*~
 scripts/fixperms.sh
 db.sqlite
+db.sqlite-journal
