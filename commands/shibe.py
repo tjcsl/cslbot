@@ -27,11 +27,11 @@ def cmd(send, msg, args):
     topics = msg.split() if msg else [gen_word()]
 
     reaction = 'wow'
-    adverbs = ['so', 'such']
+    adverbs = ['so', 'such', 'very', 'much', 'many']
     for i in topics:
         reaction += ' %s %s' % (choice(adverbs), i)
 
-    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe']
+    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe', 'ooh']
     for i in range(randint(1, 2)):
         reaction += ' %s' % choice(quotes)
     reaction += ' wow'
