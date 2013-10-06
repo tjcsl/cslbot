@@ -57,6 +57,14 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`understanding` Module
+---------------------------
+
+.. automodule:: hooks.understanding
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`url` Module
 -----------------
 
