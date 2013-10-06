@@ -46,11 +46,7 @@ def get_modifiers(msg, nick):
     return mods
 
 
-@Command('s', ['db', 'type', 'nick', 'config', 'botnick'])
-def cmd(send, msg, args):
-    """Corrects a previous message.
-    Syntax: !s/<msg>/<replacement>/<ig|nick>
-    """
+def do_sed(send, msg, args):
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
@@ -58,10 +54,10 @@ def cmd(send, msg, args):
         msg.append('')
     # not a valid sed statement.
     if not msg or len(msg) < 3:
-        send("Invalid Syntax.")
+        send_msg = "Invalid Syntax."
         return
     if args['type'] == 'privmsg':
-        send("Don't worry, %s is not a grammar Nazi." % args['botnick'])
+        send_msg = "Don't worry, %s is not a grammar Nazi." % args['botnick']
         return
     string = msg[0]
     replacement = msg[1]
@@ -78,8 +74,17 @@ def cmd(send, msg, args):
             if len(output) > 256:
                 output = output[:253] + "..."
             if line['type'] == 'action':
-                send("correction: * %s %s" % (line['source'], output))
+                send_msg = "correction: * %s %s" % (line['source'], output)
             elif line['type'] != 'mode':
-                send("%s actually meant: %s" % (line['source'], output))
+                send_msg = "%s actually meant: %s" % (line['source'], output)
             return
-    send("No match found.")
+    send_msg = "No match found"
+
+
+@Command('s', ['db', 'type', 'nick', 'config', 'botnick'])
+def cmd(send, msg, args):
+    """Corrects a previous message.
+    Syntax: !s/<msg>/<replacement>/<ig|nick>
+    """
+    do_sed(msg, args)
+    send(send_msg)
