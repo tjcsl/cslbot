@@ -278,7 +278,7 @@ class BotHandler():
         botnick = self.config['core']['nick']
         match = re.search(r".*(-o|\+b).*%s" % botnick, msg)
         if match:
-            self.connection.privmsg(target, "WAI U DO THIS " + nick + "?!??!")
+            self.connection.privmsg(target, "%s: :(" % nick)
             self.connection.privmsg("ChanServ", "OP " + target)
             self.connection.privmsg("ChanServ", "UNBAN " + target)
 
