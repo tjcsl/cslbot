@@ -27,21 +27,9 @@ def get_quotes(cursor):
     return [list(row) for row in rows]
 
 
-def output_quotes(env, cursor, outdir, time):
-    quotes = get_quotes(cursor)
-    output = env.get_template('quotes.html').render(quotes=quotes, time=time)
-    open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
-
-
 def get_scores(cursor):
     rows = cursor.execute('SELECT nick,score FROM scores').fetchall()
     return [list(row) for row in rows]
-
-
-def output_scores(env, cursor, outdir, time):
-    scores = get_scores(cursor)
-    output = env.get_template('scores.html').render(scores=scores, time=time)
-    open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
 
 
 def get_polls(cursor):
@@ -61,10 +49,22 @@ def get_responses(cursor, polls):
     return responses
 
 
+def output_quotes(env, cursor, outdir, time):
+    args = {'quotes': get_quotes(cursor), 'time': time}
+    output = env.get_template('quotes.html').render(**args)
+    open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
+
+
+def output_scores(env, cursor, outdir, time):
+    args = {'scores': get_scores(cursor), 'time': time}
+    output = env.get_template('scores.html').render(**args)
+    open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
+
+
 def output_polls(env, cursor, outdir, time):
     polls = get_polls(cursor)
-    responses = get_responses(cursor, polls)
-    output = env.get_template('polls.html').render(polls=polls, responses=responses, time=time)
+    args = {'polls': polls, 'responses': get_responses(cursor, polls), 'time': time}
+    output = env.get_template('polls.html').render(**args)
     open(outdir + '/polls.html', 'w', encoding='utf8').write(output)
 
 
