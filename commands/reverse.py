@@ -21,10 +21,10 @@ from helpers.command import Command
 def get_log(cursor, user):
     if user is None:
         cursor.execute('SELECT msg FROM log ORDER BY time DESC')
+        # Don't parrot back the !reverse call.
+        cursor.fetchone()
     else:
         cursor.execute('SELECT msg FROM log WHERE source=? ORDER BY time DESC', (user,))
-    # Don't parrot back the !reverse call.
-    cursor.fetchone()
     return cursor.fetchone()
 
 
