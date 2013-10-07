@@ -33,8 +33,10 @@ def delete_poll(cursor, poll):
         return "Not A Valid Positive Integer."
     pid = int(poll)
     query_result = cursor.execute("SELECT active,deleted FROM polls WHERE pid=?", (pid,)).fetchone()
-    if query_result[0] == 1:
+    if query_result['active'] == 1:
         return "You can't delete an active poll!"
+    elif query_result['deleted'] == 1:
+        return "Poll already deleted."
     cursor.execute("UPDATE polls SET deleted=1 WHERE pid=?", (pid,))
     return "Poll deleted."
 
