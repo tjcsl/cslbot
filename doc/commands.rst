@@ -265,6 +265,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`imdb` Module
+------------------
+
+.. automodule:: commands.imdb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`insult` Module
 --------------------
 
