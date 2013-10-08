@@ -17,7 +17,7 @@ def cmd(send, msg, args):
     # Initialize the netmask and calculate based on CIDR mask
     mask = [0, 0, 0, 0]
     for i in range(cidr):
-        mask[i / 8] = mask[i / 8] + (1 << (7 - i % 8))
+        mask[i // 8] = mask[i // 8] + (1 << (7 - i % 8))
 
     # Initialize net and binary and netmask with addr to get network
     net = []
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     broad = list(net)
     brange = 32 - cidr
     for i in range(brange):
-        broad[3 - i / 8] = broad[3 - i / 8] + (1 << (i % 8))
+        broad[3 - i // 8] = broad[3 - i // 8] + (1 << (i % 8))
 
     # Print information, mapping integer lists to strings for easy printing
     send("%s: %s-%s" %
