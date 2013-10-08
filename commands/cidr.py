@@ -32,4 +32,4 @@ def cmd(send, msg, args):
 
     # Print information, mapping integer lists to strings for easy printing
     send("%s: %s-%s" %
-         (msg, ".".join(map(str, mask)), ".".join(map(str, net))))
+         (msg, ".".join(map(str, net)), ".".join(map(str, broad))))
