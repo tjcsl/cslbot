@@ -42,8 +42,8 @@ def handle(send, msg, args):
             if not url.startswith('http'):
                 url = 'http://' + url
             shorturl = get_short(url)
-            # Wikipedia doesn't like the default User-Agent
-            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 Python-urllib/3.3'})
+            # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
+            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
             html = parse(urlopen(req, timeout=5))
             title = html.getroot().find(".//title").text.strip()
             # strip unicode
