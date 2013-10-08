@@ -41,6 +41,14 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`hyphen` Module
+--------------------
+
+.. automodule:: hooks.hyphen
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`scores` Module
 --------------------
 

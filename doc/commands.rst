@@ -105,6 +105,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`cidr` Module
+------------------
+
+.. automodule:: commands.cidr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`clippy` Module
 --------------------
 
