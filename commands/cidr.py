@@ -1,5 +1,5 @@
 import sys
-
+from helpers.command import Command
 
 @Command('cidr', [])
 def cmd(send, msg, args):
