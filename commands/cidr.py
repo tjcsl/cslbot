@@ -30,8 +30,15 @@ def cmd(send, msg, args):
     (addrString, cidrString) = ip
 
     # Split address into octets and turn CIDR into int
-    addr = addrString.split('.')
+    addr = [int(x) for x in addrString.split('.')]
+    for x in addr:
+        if x > 255 or x < 0:
+            send("Invalid IP.")
+            return
     cidr = int(cidrString)
+    if cidr < 0 or cidr > 32:
+        send("Invalid CIDR mask.")
+        return
 
     # Initialize the netmask and calculate based on CIDR mask
     mask = [0, 0, 0, 0]
@@ -41,7 +48,7 @@ def cmd(send, msg, args):
     # Initialize net and binary and netmask with addr to get network
     net = []
     for i in range(4):
-        net.append(int(addr[i]) & mask[i])
+        net.append(addr[i] & mask[i])
 
     # Duplicate net into broad array, gather host bits, and generate broadcast
     broad = list(net)
@@ -50,5 +57,4 @@ def cmd(send, msg, args):
         broad[3 - i // 8] = broad[3 - i // 8] + (1 << (i % 8))
 
     # Print information, mapping integer lists to strings for easy printing
-    send("%s: %s-%s" %
-         (msg, ".".join(map(str, net)), ".".join(map(str, broad))))
+    send("%s-%s" % (".".join(map(str, net)), ".".join(map(str, broad))))
