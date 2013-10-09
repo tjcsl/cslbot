@@ -35,7 +35,7 @@ def cmd(send, msg, args):
         send("Which Symbol?")
         return
     quote = get_quote(msg)
-    if quote['Ask'] is None:
+    if quote['Name'] is None:
         send("Invalid Symbol.")
     else:
-        send("Current: %s Change: %s 52wk: %s" % (quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))
+        send("%s -- %s (%s) 52wk: %s" % (quote['Name'], quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))
