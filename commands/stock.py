@@ -22,10 +22,8 @@ from helpers.command import Command
 def get_quote(symbol):
     url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D'" + symbol \
         + "'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
-    data = None
-    while data is None:
-        data = json.loads(urlopen(url).read().decode())
-    return data['query']['results']['quote']
+    data = json.loads(urlopen(url).read().decode())
+    return data['query']['results']
 
 
 @Command('stock')
@@ -36,7 +34,10 @@ def cmd(send, msg, args):
     if not msg:
         send("Which Symbol?")
         return
-    quote = get_quote(msg)
+    quote = None
+    while quote is None:
+        quote = get_quote(msg)
+    quote = quote['quote']
     if quote['Name'] is None:
         send("Invalid Symbol.")
     else:
