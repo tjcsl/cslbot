@@ -130,7 +130,7 @@ def build_msg(markov, starts, ends, speaker):
         print("prefix    ", prefix)
         suffix = weighted_rand(markov[prefix])
         count += 1
-    return out
+    return speaker + " says: " + out
 
 
 @Command('babble', ['db', 'config'])
