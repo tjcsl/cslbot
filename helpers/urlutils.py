@@ -18,6 +18,7 @@ import json
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
+
 def get_short(msg):
     # prevent escaping of http://
     if '//' in msg:

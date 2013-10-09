@@ -42,8 +42,14 @@ def weighted_rand(d):
     return choice(l)
 
 
+def get_messages(cursor, speaker, cmdchar):
+    location = 'target' if speaker.startswith('#') else 'source'
+    query = "SELECT msg FROM log WHERE type='pubmsg' AND UPPER(%s)=UPPER(?) AND msg NOT LIKE '%s%%' AND msg NOT LIKE'%%:%%' ORDER BY RANDOM()" % (location, cmdchar)
+    return cursor.execute(query, (speaker,)).fetchall()
+
+
 #FIXME: make sphinx happy
-def build_markov(cursor, speaker):
+def build_markov(messages, speaker):
     """ Builds a markov dictionary of the form
 
         word : {
@@ -53,10 +59,6 @@ def build_markov(cursor, speaker):
            nextwordn : num_apperances
         }
     """
-    if speaker.startswith('#'):
-        messages = cursor.execute("SELECT msg FROM log WHERE UPPER(target)=UPPER(?)", (speaker,)).fetchall()
-    else:
-        messages = cursor.execute("SELECT msg FROM log WHERE UPPER(source)=UPPER(?)", (speaker,)).fetchall()
     markov = {}
     if messages is None or len(messages) == 0:
         return markov
@@ -93,5 +95,6 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     speaker = msg.split()[0] if msg else args['config']['core']['channel']
-    markov = build_markov(cursor, speaker)
+    messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'])
+    markov = build_markov(messages, speaker)
     send(build_msg(markov, speaker))

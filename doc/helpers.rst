@@ -57,3 +57,11 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`urlutils` Module
+----------------------
+
+.. automodule:: helpers.urlutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
