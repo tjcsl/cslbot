@@ -14,16 +14,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import json
+from urllib.request import urlopen
 from helpers.command import Command
-from helpers.urlutils import get_short
 
 
-@Command('short')
+def get_quote(symbol):
+    url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D'" + symbol \
+        + "'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
+    data = json.loads(urlopen(url).read().decode())
+    return data['query']['results']['quote']
+
+
+@Command('stock')
 def cmd(send, msg, args):
-    """Shortens the given url.
-    Syntax: !short <url>
+    """Gets a stock quote.
+    Syntax: !stock <symbol>
     """
     if not msg:
-        send("Shorten what?")
+        send("Which Symbol?")
         return
-    send(get_short(msg))
+    quote = get_quote(msg)
+    if quote['Ask'] is None:
+        send("Invalid Symbol.")
+    else:
+        send("Current: %s Change: %s 52wk: %s" % (quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))

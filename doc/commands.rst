@@ -497,6 +497,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`stock` Module
+-------------------
+
+.. automodule:: commands.stock
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`stopwatch` Module
 -----------------------
 
