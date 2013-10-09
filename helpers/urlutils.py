@@ -14,19 +14,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from lxml.html import parse
-from helpers.urlutils import get_short
-from helpers.command import Command
+import json
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 
+def get_short(msg):
+    # prevent escaping of http://
+    if '//' in msg:
+        msg = msg.split('//')[1]
 
-@Command(['movie', 'imdb'])
-def cmd(send, msg, args):
-    """Gets a random movie.
-    Syntax: !movie
-    """
+    if len(msg) <= 13:
+        return 'http://' + msg
 
-    html = parse(urlopen('http://www.imdb.com/random/title')).getroot()
-    name = html.find('.//title').text.split('-')[0].strip()
-    url = html.base_url.strip()
-    send("%s -- %s" % (name, get_short(url)))
+    data = {'longUrl': msg}
+    data = json.dumps(data).encode('utf-8')
+    headers = {'Content-Type': 'application/json'}
+    req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
+    try:
+        rep = urlopen(req, timeout=5).read().decode()
+        short = json.loads(rep)
+        return short['id']
+    except HTTPError as e:
+        if e.getcode() == 400:
+            return 'http://' + msg
+        else:
+            raise e

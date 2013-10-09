@@ -18,7 +18,7 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from xml.etree import ElementTree
 from helpers.command import Command
-from commands.short import get_short
+from helpers.urlutils import get_short
 
 
 @Command('wolf', ['config'])
