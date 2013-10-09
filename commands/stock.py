@@ -22,7 +22,9 @@ from helpers.command import Command
 def get_quote(symbol):
     url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D'" + symbol \
         + "'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
-    data = json.loads(urlopen(url).read().decode())
+    data = None
+    while data is None:
+        data = json.loads(urlopen(url).read().decode())
     return data['query']['results']['quote']
 
 
