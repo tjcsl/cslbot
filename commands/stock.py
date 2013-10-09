@@ -38,7 +38,7 @@ def cmd(send, msg, args):
     while quote is None:
         quote = get_quote(msg)
     quote = quote['quote']
-    if quote['BidRealTime'] is None:
+    if quote['BidRealtime'] is None:
         send("Invalid Symbol.")
     else:
         send("%s -- %s %s 52wk: %s" % (quote['Name'], quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))
