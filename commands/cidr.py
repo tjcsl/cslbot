@@ -30,12 +30,25 @@ def cmd(send, msg, args):
     (addrString, cidrString) = ip
 
     # Split address into octets and turn CIDR into int
-    addr = [int(x) for x in addrString.split('.')]
+    addr = []
+    for x in addrString.split('.'):
+        if x.isdigit():
+            addr.append(int(x))
+        else:
+            send("IP must be made up of integers.")
+            return
+    if len(addr) != 4:
+        send("IP must have 4 components.")
+        return
     for x in addr:
         if x > 255 or x < 0:
             send("Invalid IP.")
             return
-    cidr = int(cidrString)
+    if cidrString.isdigit():
+        cidr = int(cidrString)
+    else:
+        send("CIDR mask must be a integer.")
+        return
     if cidr < 0 or cidr > 32:
         send("Invalid CIDR mask.")
         return
