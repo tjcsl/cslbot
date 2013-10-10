@@ -79,10 +79,9 @@ def handle_enable(handler, cmd):
     elif cmd[1] == "module":
         if len(cmd) < 3:
             return "Missing argument."
-        command.enable_command(cmd[2])
+        return command.enable_command(cmd[2])
     elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
-        command.enable_command(cmd[1])
-        return "Enabled all modules."
+        return command.enable_command(cmd[1])
     elif cmd[1] == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
             return "logging already enabled."

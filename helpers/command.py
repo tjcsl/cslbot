@@ -70,11 +70,12 @@ def enable_command(command):
     global _disabled_commands
     if command == "all":
         _disabled_commands = []
+        return "Enabled all modules."
     elif command in _disabled_commands:
         _disabled_commands.remove(command)
         return command + " reenabled"
     else:
-        return "that command isn't disabled!"
+        return "That command isn't disabled!"
 
 
 def record_command(cursor, nick, command, channel):
