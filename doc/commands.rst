@@ -57,6 +57,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`badble` Module
+--------------------
+
+.. automodule:: commands.badble
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`bc` Module
 ----------------
 
@@ -325,6 +333,14 @@ commands Package
 -----------------------
 
 .. automodule:: commands.microwave
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`mission` Module
+---------------------
+
+.. automodule:: commands.mission
     :members:
     :undoc-members:
     :show-inheritance:
