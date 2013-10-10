@@ -39,19 +39,19 @@ def cmd(send, msg, args):
     delta = timedelta(seconds=int(elapsed))
     output = "%s was last seen %s ago " % (msg, delta)
     if last['type'] == 'pubmsg' or last['type'] == 'privmsg':
-        output += 'saying %s' % last['msg']
+        output += 'saying "%s"' % last['msg']
     elif last['type'] == 'action':
-        output += 'doing %s' % last['msg']
+        output += 'doing "%s"' % last['msg']
     elif last['type'] == 'part':
-        output += 'leaving and saying %s' % last['msg']
+        output += 'leaving and saying "%s"' % last['msg']
     elif last['type'] == 'join':
         output += 'joining'
     elif last['type'] == 'nick':
         output += 'nicking to %s' % last['msg']
     elif last['type'] == 'quit':
-        output += 'quiting and saying %s' % last['msg']
+        output += 'quiting and saying "%s"' % last['msg']
     elif last['type'] == 'kick':
-        output += 'kicking %s for %s' % last['msg'].split(',')
+        output += 'kicking %s for "%s"' % last['msg'].split(',')
     else:
         raise Exception("Invalid type.")
     send(output)
