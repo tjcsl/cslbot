@@ -24,8 +24,7 @@ _sentence_ends = ".!?"
 # Make the generated messages look better.
 def clean_msg(msg):
     msg = msg.replace('"', '')
-    msg = [x for x in msg.split() if not re.match('https?://', x)]
-    msg = [x.strip() for x in msg]
+    msg = [x.strip() for x in msg.split() if not re.match('https?://', x)]
     return msg
 
 
