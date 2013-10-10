@@ -76,7 +76,7 @@ def analyze_chat(messages, speaker):
     starts = {}
     ends = {}
     if messages is None or len(messages) == 0:
-        return markov
+        return ({}, {}, {})
     for msg in messages:
         msg = clean_msg(msg['msg'])
         #Make sure it's a real message
