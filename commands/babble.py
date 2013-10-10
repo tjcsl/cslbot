@@ -76,7 +76,7 @@ def build_markov(messages, speaker):
 
 def build_msg(markov, speaker):
     if len(markov.keys()) == 0:
-        return "No one has talked with %s =(" % speaker
+        return "%s hasn't said anything =(" % speaker
     msg = choice(list(markov.keys()))
     last_word = msg
     while len(msg) < 100:
