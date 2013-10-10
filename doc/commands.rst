@@ -449,6 +449,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`seen` Module
+------------------
+
+.. automodule:: commands.seen
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`sha512` Module
 --------------------
 
