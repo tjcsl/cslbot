@@ -18,12 +18,8 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('insult', ['channels', 'target', 'nick', 'config'])
-def cmd(send, msg, args):
-    """Insults a user.
-    Syntax: !insult (nick)
-    """
-    adj = [
+def gen_insult(msg):
+     adj = [
         "acidic", "antique", "contemptible", "culturally-unsound",
         "despicable", "evil", "fermented", "festering", "foul", "fulminating",
         "humid", "impure", "inept", "inferior", "industrial", "left-over",
@@ -71,4 +67,13 @@ def cmd(send, msg, args):
     else:
         user = msg
     msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
-    send(msg)
+    return msg
+
+
+@Command('insult', ['channels', 'target', 'nick', 'config'])
+def cmd(send, msg, args):
+    """Insults a user.
+    Syntax: !insult (nick)
+    """
+   
+    send(gen_insult(msg))

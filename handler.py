@@ -24,6 +24,7 @@ import sys
 from commands.creffett import gen_creffett
 from commands.slogan import gen_slogan
 from commands.fwilson import gen_fwilson
+from commands.insult import gen_insult
 from helpers import control, sql, hook, command
 from os.path import dirname
 from random import choice, random
@@ -192,7 +193,9 @@ class BotHandler():
                 "fwilson": gen_fwilson,
                 "creffett": gen_creffett,
                 "slogan": gen_slogan,
-                "passthrough": passthrough
+                "insult": gen_insult,
+                "passthrough": passthrough,
+                "reset": passthrough
                 }
         msg = output_filters[self.outputfilter](msg)
         while len(msg) > 400:
