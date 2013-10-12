@@ -333,7 +333,7 @@ class BotHandler():
             self.get_admins(c)
             send("Verified admins reset.")
         elif cmd == 'outputfilter':
-            self.outputfilter = cmdargs[0]
+            self.outputfilter = cmdargs.split()[0]
             send("Okay!")
         elif cmd == 'ignore':
             cmdargs = cmdargs.split()
