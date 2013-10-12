@@ -190,13 +190,13 @@ class BotHandler():
         msgs = []
         passthrough = lambda x: x
         output_filters = {
-                "fwilson": gen_fwilson,
-                "creffett": gen_creffett,
-                "slogan": gen_slogan,
-                "insult": gen_insult,
-                "passthrough": passthrough,
-                "reset": passthrough
-                }
+            "fwilson": gen_fwilson,
+            "creffett": gen_creffett,
+            "slogan": gen_slogan,
+            "insult": gen_insult,
+            "passthrough": passthrough,
+            "reset": passthrough
+            }
         msg = output_filters[self.outputfilter](msg)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
@@ -226,17 +226,19 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
-        isop = False
+        flags = 0
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
-                    isop = True
+                    flags |= 1
+            if target in self.channels and nick in self.channels[target].voiced():
+                    flags |= 2
         else:
             target = 'private'
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         # strip non-printable chars
         msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
-        self.db.log(nick, target, isop, msg, msgtype)
+        self.db.log(nick, target, flags, msg, msgtype)
 
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']

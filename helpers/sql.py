@@ -35,19 +35,19 @@ class Sql():
         self.connection_pool = {}
         self.setup_db()
 
-    def log(self, source, target, operator, msg, msg_type):
+    def log(self, source, target, flags, msg, msg_type):
         """ Logs a message to the database
 
         | source: The source of the message.
         | target: The target of the message.
-        | operator: Is the user a operator?
+        | flags: Is the user a operator or voiced?
         | msg: The text of the message.
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
         db = self.get_db_for_current_thread()
         db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
-                   (source, target, operator, msg, msg_type, time()))
+                   (source, target, flags, msg, msg_type, time()))
         db.commit()
 
     def get_db_for_current_thread(self):
@@ -77,7 +77,7 @@ class Sql():
         """ Sets up the database.
         """
         db = self.get_db_for_current_thread()
-        db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
+        db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, flags INTEGER, msg TEXT, type TEXT, time INTEGER)')
         db.execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS polls(question TEXT, active INTEGER DEFAULT 1, deleted INTEGER DEFAULT 0, pid INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS poll_responses(pid INTEGER, response TEXT, voter TEXT)')

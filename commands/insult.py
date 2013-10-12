@@ -18,8 +18,8 @@ from random import choice
 from helpers.command import Command
 
 
-def gen_insult(msg):
-     adj = [
+def gen_insult(user):
+    adj = [
         "acidic", "antique", "contemptible", "culturally-unsound",
         "despicable", "evil", "fermented", "festering", "foul", "fulminating",
         "humid", "impure", "inept", "inferior", "industrial", "left-over",
@@ -61,11 +61,6 @@ def gen_insult(msg):
         "eel ooze", "slurpee-backwash", "toxic waste", "Stimpy-drool", "poopy",
         "poop", "craptacular carpet droppings", "jizzum", "cold sores",
         "anal warts"]
-    if not msg:
-        users = list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you']
-        user = choice(users)
-    else:
-        user = msg
     msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
     return msg
 
@@ -75,5 +70,10 @@ def cmd(send, msg, args):
     """Insults a user.
     Syntax: !insult (nick)
     """
-   
-    send(gen_insult(msg))
+
+    if not msg:
+        users = list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you']
+        user = choice(users)
+    else:
+        user = msg
+    send(gen_insult(user))

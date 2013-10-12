@@ -67,7 +67,10 @@ def gen_log(row):
     elif row['type'] == 'pubnotice':
         log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':
-        nick = '@' + nick if row['operator'] else nick
+        if bool(row['flags'] & 1):
+            nick = '@' + nick
+        if bool(row['flags'] & 2):
+            nick = '+' + nick
         log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
     else:
         raise Exception("Invalid type.")
