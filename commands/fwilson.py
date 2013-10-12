@@ -19,6 +19,16 @@ from helpers.command import Command
 from commands.word import gen_word
 
 
+def gen_fwilson(x):
+    if x.startswith('fwil') or random() < 0.5:
+        output = "wheeeee %s" % x
+        return (output.upper())
+    else:
+        output = ['fwil' + q for q in x.split()]
+        output = ' '.join(output)
+        return (output.lower())
+
+
 @Command(['fwilson', 'son'])
 def cmd(send, msg, args):
     """Imitates fwilson.
@@ -26,10 +36,4 @@ def cmd(send, msg, args):
     """
     if not msg:
         msg = gen_word()
-    if msg.startswith('fwil') or random() < 0.5:
-        output = "wheeeee %s" % msg
-        send(output.upper())
-    else:
-        output = ['fwil' + x for x in msg.split()]
-        output = ' '.join(output)
-        send(output.lower())
+    send(gen_fwilson(msg))
