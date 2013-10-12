@@ -19,7 +19,8 @@ import argparse
 import sqlite3
 from configparser import ConfigParser
 from time import strftime, localtime
-from os.path import dirname
+from os.path import dirname, exists
+from os import mkdir
 
 logs = {}
 
@@ -29,6 +30,8 @@ day = False
 def write_log(name, outdir, msg):
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
+        if not exists(outdir):
+            mkdir(outdir)
         logs[name] = open(outfile, 'w')
     logs[name].write(msg)
 
@@ -67,9 +70,9 @@ def gen_log(row):
     elif row['type'] == 'pubnotice':
         log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':
-        if bool(row['flags'] & 1):
+        if bool(row['operator'] & 1):
             nick = '@' + nick
-        if bool(row['flags'] & 2):
+        if bool(row['operator'] & 2):
             nick = '+' + nick
         log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
     else:
