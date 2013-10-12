@@ -83,7 +83,7 @@ def end_poll(cursor, poll):
     return "Poll ended!"
 
 
-def tally_poll(cursor, poll, send, c, target):
+def tally_poll(cursor, poll, send, target):
     """Shows the results of poll """
     if not poll:
         send("Syntax: !vote tally <pollnum>")
@@ -106,7 +106,7 @@ def tally_poll(cursor, poll, send, c, target):
             votemap[vote] = []
         votemap[vote].append(nick)
     for x in sorted(votemap.keys()):
-        c.privmsg(target, "%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])))
+        send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])), target=target)
     if not votemap:
         return
     ranking = {}
@@ -160,17 +160,17 @@ def retract(cursor, poll, nick):
     return "Vote retracted"
 
 
-def list_polls(cursor, c, nick):
+def list_polls(cursor, send, nick):
     """ Sends nick the list of polls in a PM"""
     polls = cursor.execute("SELECT pid,question FROM polls WHERE deleted=0").fetchall()
     if not polls:
         return "No polls currently active."
     for poll in polls:
-        c.privmsg(nick, "%d): %s" % (poll['pid'], poll['question']))
+        send("%d): %s" % (poll['pid'], poll['question']), target=nick)
     return "%d currently active polls." % len(polls)
 
 
-@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'connection', 'type'])
+@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type'])
 def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
@@ -204,9 +204,9 @@ def cmd(send, msg, args):
         else:
             send("Nope, not gonna do it.")
     elif cmd == 'tally':
-        tally_poll(cursor, msg, send, args['connection'], args['nick'])
+        tally_poll(cursor, msg, send, args['nick'])
     elif cmd == 'list':
-        send(list_polls(cursor, args['connection'], args['nick']))
+        send(list_polls(cursor, send, args['nick']))
     elif cmd == 'retract':
         send(retract(cursor, msg, args['nick']))
     elif cmd == 'reopen':

@@ -117,7 +117,7 @@ class BotHandler():
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
-    def is_admin(self, c, nick, complain=True):
+    def is_admin(self, send, nick, complain=True):
         """Checks if a nick is a admin.
 
         | If the nick is not in :const:`ADMINS` then it's not a admin.
@@ -126,15 +126,15 @@ class BotHandler():
         """
         if nick not in self.config['auth']['admins'].split(', '):
             return False
-        c.privmsg('NickServ', 'ACC %s' % nick)
+        send('ACC %s' % nick, target='NickServ')
         if not self.admins[nick] and self.admins[nick] is not None:
             if complain:
-                c.privmsg(self.config['core']['channel'], "Unverified admin: %s" % nick)
+                send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
             return True
 
-    def set_admin(self, c, msg, send, nick, target):
+    def set_admin(self, msg, send, nick, target):
         """Handle admin verification responses from NickServ.
 
         | If someone other than NickServ is trying to become a admin,
@@ -146,8 +146,8 @@ class BotHandler():
             return
         if nick != 'NickServ':
             if nick in list(self.channels[self.config['core']['channel']].users()):
-                c.privmsg(self.config['core']['channel'], "Attemped admin abuse by %s" % nick)
-                self.do_kick(c, send, target, nick, "imposter")
+                send("Attemped admin abuse by %s" % nick, target=self.config['core']['channel'])
+                self.do_kick(send, target, nick, "imposter")
         elif int(match.group(2)) == 3:
             self.admins[match.group(1)] = True
 
@@ -244,6 +244,7 @@ class BotHandler():
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
                 ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
+                # If we call self.send, we'll get a infinite loop.
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
@@ -292,9 +293,9 @@ class BotHandler():
         botnick = self.config['core']['nick']
         match = re.search(r".*(-o|\+b).*%s" % botnick, msg)
         if match:
-            self.connection.privmsg(target, "%s: :(" % nick)
-            self.connection.privmsg("ChanServ", "OP " + target)
-            self.connection.privmsg("ChanServ", "UNBAN " + target)
+            send("%s: :(" % nick, target=target)
+            send("OP %s" % target, target='ChanServ')
+            send("UNBAN %s" % target, target='ChanServ')
 
         # if user is guarded and quieted, devoiced, or deopped, fix that
         match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".
@@ -302,7 +303,7 @@ class BotHandler():
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
 
-    def do_kick(self, c, send, target, nick, msg):
+    def do_kick(self, send, target, nick, msg):
         """ Kick users.
 
         | If kick is disabled, don't do anything.
@@ -319,11 +320,11 @@ class BotHandler():
             ops = ['someone']
         if nick not in ops:
             if self.config['core']['nick'] not in ops:
-                c.privmsg(target, gen_creffett("%s: /op the bot" % choice(ops)))
+                send(gen_creffett("%s: /op the bot" % choice(ops)), target=target)
             elif random() < 0.01 and msg == "shutting caps lock off":
-                c.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
+                self.connection.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
             else:
-                c.kick(target, nick, gen_slogan(msg).upper())
+                self.connection.kick(target, nick, gen_slogan(msg).upper())
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
         if cmd == 'abuse':
@@ -386,8 +387,8 @@ class BotHandler():
                 'type': msgtype,
                 'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
-                'do_kick': lambda target, nick, msg: self.do_kick(c, send, target, nick, msg),
-                'is_admin': lambda nick: self.is_admin(c, nick),
+                'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
+                'is_admin': lambda nick: self.is_admin(send, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
                 'abuse': lambda nick, limit, msgtype, cmd: self.abusecheck(send, nick, limit, msgtype, cmd)}
         for arg in modargs:
@@ -411,14 +412,14 @@ class BotHandler():
             target = e.target
         else:
             target = nick
-        send = lambda msg, mtype='privmsg': self.send(target, self.config['core']['nick'], msg, mtype)
+        send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
         for hook in self.hooks:
             realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
             hook.run(send, msg, msgtype, realargs)
 
         if msgtype == 'privnotice':
-            self.set_admin(c, msg, send, nick, target)
+            self.set_admin(msg, send, nick, target)
             return
 
         # must come after set_admin to prevent spam
@@ -431,7 +432,7 @@ class BotHandler():
         if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)
 
-        if not self.is_admin(c, nick, False) and nick in self.ignored:
+        if not self.is_admin(send, nick, False) and nick in self.ignored:
             return
 
         cmdchar = self.config['core']['cmdchar']
@@ -476,5 +477,5 @@ class BotHandler():
                     send("Aye Aye Capt'n")
                     self.get_admins(c)
             # everything below this point requires admin
-            if not found and self.is_admin(c, nick):
+            if not found and self.is_admin(send, nick):
                 self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)

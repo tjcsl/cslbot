@@ -78,7 +78,7 @@ def stopwatch_resume(cursor, sw):
     return "Stopwatch resumed!"
 
 
-def stopwatch_list(cursor, c, send, nick):
+def stopwatch_list(cursor, send, nick):
     rows = cursor.execute("SELECT id,elapsed,time,active FROM stopwatches").fetchall()
     active = []
     paused = []
@@ -89,12 +89,12 @@ def stopwatch_list(cursor, c, send, nick):
             paused.append({'elapsed': row['elapsed'], 'time': row['time'], 'id': row['id']})
     send("%d active and %d paused stopwatches." % (len(active), len(paused)))
     for x in active:
-        c.privmsg(nick, 'Active stopwatch #%d started at %d' % (x['id'], x['time']))
+        send('Active stopwatch #%d started at %d' % (x['id'], x['time']), target=nick)
     for x in paused:
-        c.privmsg(nick, 'Paused stopwatch #%d started at %d time elapsed %d' % (x['id'], x['time'], x['elapsed']))
+        send('Paused stopwatch #%d started at %d time elapsed %d' % (x['id'], x['time'], x['elapsed']), target=nick)
 
 
-@Command(['stopwatch', 'sw'], ['db', 'connection', 'nick'])
+@Command(['stopwatch', 'sw'], ['db', 'nick'])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
     Syntax: !stopwatch <start|stop|resume|get|list>
@@ -116,6 +116,6 @@ def cmd(send, msg, args):
     elif command == "resume":
         send(stopwatch_resume(cursor, msg))
     elif command == "list":
-        stopwatch_list(cursor, args['connection'], send, args['nick'])
+        stopwatch_list(cursor, send, args['nick'])
     else:
         send("Invalid Syntax.")

@@ -35,7 +35,7 @@ def handle_chanserv(c, cmd, send):
     else:
         send("Invalid action.")
         return
-    c.privmsg("ChanServ", action)
+    send(action, target="ChanServ")
 
 
 def handle_disable(handler, cmd):

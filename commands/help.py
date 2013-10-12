@@ -17,7 +17,7 @@
 from helpers.command import Command, get_commands, get_command, is_registered
 
 
-@Command('help', ['nick', 'connection', 'config'])
+@Command('help', ['nick', 'config'])
 def cmd(send, msg, args):
     """Gives help.
     Syntax: !help <command>
@@ -42,6 +42,6 @@ def cmd(send, msg, args):
         num = int(len(modules) / 2)
         cmdlist1 = (' %s' % cmdchar).join([x for x in modules[:num]])
         cmdlist2 = (' %s' % cmdchar).join([x for x in modules[num:]])
-        args['connection'].privmsg(args['nick'], 'Commands: %s%s' % (cmdchar, cmdlist1))
-        args['connection'].privmsg(args['nick'], '%s%s' % (cmdchar, cmdlist2))
-        args['connection'].privmsg(args['nick'], '%shelp <command> for more info on a command.' % cmdchar)
+        send('Commands: %s%s' % (cmdchar, cmdlist1), target=args['nick'])
+        send('%s%s' % (cmdchar, cmdlist2), target=args['nick'])
+        send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])
