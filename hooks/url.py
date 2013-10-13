@@ -37,7 +37,7 @@ def handle(send, msg, args):
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
     if match:
-        title = 'MSBOB'
+        title = 'No Title Found'
         try:
             url = match.group(1)
             if not url.startswith('http'):
@@ -59,5 +59,5 @@ def handle(send, msg, args):
                 return
         # page does not contain a title
         except AttributeError:
-            title = 'No Title Found'
+            pass
         send('** %s - %s' % (title, shorturl))
