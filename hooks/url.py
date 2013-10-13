@@ -37,6 +37,7 @@ def handle(send, msg, args):
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
     if match:
+        title = 'MSBOB'
         try:
             url = match.group(1)
             if not url.startswith('http'):
