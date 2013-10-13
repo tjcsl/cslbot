@@ -45,6 +45,7 @@ def gen_creffett(msg):
 
 
 def gen_slogan(msg):
+    msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
     msg = quote(msg)
     html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
                    + msg, timeout=2).read().decode()
