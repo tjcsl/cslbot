@@ -35,8 +35,6 @@ def cmd(send, msg, args):
             definitionNum = int(msgSplit[-1][1:])
         except:
             pass
-    if not msg:
-        return
     data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
     try:
         if definitionNum:
