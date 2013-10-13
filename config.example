@@ -15,6 +15,7 @@ admins: admin1, admin2
 [feature]
 stallmanmode = False
 clippy = False
+lazyregex = True
 [api]
 steamapikey:
 dictionaryapikey:
