@@ -31,7 +31,12 @@ def cmd(send, msg, args):
         "morse": gen_morse
         }
     if not msg:
-        send("Which filter?")
+        name = args['handler'].outputfilter.__name__
+        if name == '<lambda>':
+            name = 'passthrough'
+        else:
+            name = name[4:]
+        send("Current filter is %s" % name)
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough':
