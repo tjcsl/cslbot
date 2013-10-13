@@ -21,7 +21,7 @@ from commands.slogan import gen_slogan
 from commands.insult import gen_insult
 
 
-@Command(['outputfilter', 'filter'], ['handler'])
+@Command(['outputfilter', 'filter'], ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Changes the output filter.
     Syntax: !filter <filter|list|reset>
