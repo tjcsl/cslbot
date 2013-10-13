@@ -21,7 +21,7 @@ from commands.slogan import gen_slogan
 from commands.insult import gen_insult
 
 
-@Command(['outputfilter', 'filter'], ['handler', 'is_admin', 'nick'])
+@Command('filter', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Changes the output filter.
     Syntax: !filter <filter|list|reset>
@@ -37,8 +37,11 @@ def cmd(send, msg, args):
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough':
-        args['handler'].outputfilter = lambda x: x
-        send("Okay!")
+        if args['is_admin'](args['nick']):
+            args['handler'].outputfilter = lambda x: x
+            send("Okay!")
+        else:
+            send("Nope, not gonna do it!")
     elif msg in output_filters.keys():
         if args['is_admin'](args['nick']):
             args['handler'].outputfilter = output_filters[msg]

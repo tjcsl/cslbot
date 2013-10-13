@@ -209,6 +209,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`filter` Module
+--------------------
+
+.. automodule:: commands.filter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`fortune` Module
 ---------------------
 
@@ -349,14 +357,6 @@ commands Package
 -------------------
 
 .. automodule:: commands.morse
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`outputfilter` Module
---------------------------
-
-.. automodule:: commands.outputfilter
     :members:
     :undoc-members:
     :show-inheritance:
