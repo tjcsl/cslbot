@@ -35,7 +35,7 @@ def gen_fwilson(x):
         output = "wheeeee %s" % x
         return output.upper()
     else:
-        output = ['fwil %s' % q for q in x.split()]
+        output = ['fwil%s' % q for q in x.split()]
         output = ' '.join(output)
         return output.lower()
 
