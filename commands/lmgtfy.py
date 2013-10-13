@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.parse import quote
 from helpers.command import Command
 
 
@@ -26,4 +25,5 @@ def cmd(send, msg, args):
     if not msg:
         send("What?")
         return
-    send('http://lmgtfy.com/?q=%s' % quote(msg))
+    msg = msg.replace(' ', '+')
+    send('http://lmgtfy.com/?q=%s' % msg)
