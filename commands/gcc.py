@@ -26,8 +26,8 @@ def cmd(send, msg, args):
     """Compiles stuff.
     Syntax: !gcc <code>
     """
-    if args['type'] == 'privmsg':
-        send('GCC is a group excercise!')
+    if args['type'] != 'privmsg':
+        send('GCC is not a group exercise!')
         return
     tmpfile = tempfile.NamedTemporaryFile()
     for line in msg.split('\\n'):
