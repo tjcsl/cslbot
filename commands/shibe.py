@@ -16,7 +16,7 @@
 
 from random import choice, randint
 from helpers.command import Command
-from commands.word import gen_word
+from helpers.textutils import gen_word
 
 
 @Command('shibe')

@@ -15,10 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-
-
-def gen_creffett(msg):
-    return '\x02\x038,4' + msg.upper() + "!!!"
+from helpers.textutils import gen_creffett
 
 
 @Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'botnick', 'name'])

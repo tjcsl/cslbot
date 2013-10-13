@@ -15,10 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from commands.fwilson import gen_fwilson
-from commands.creffett import gen_creffett
-from commands.slogan import gen_slogan
-from commands.insult import gen_insult
+from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse
 
 
 @Command('filter', ['handler', 'is_admin', 'nick'])
@@ -30,7 +27,8 @@ def cmd(send, msg, args):
         "fwilson": gen_fwilson,
         "creffett": gen_creffett,
         "slogan": gen_slogan,
-        "insult": gen_insult
+        "insult": gen_insult,
+        "morse": gen_morse
         }
     if not msg:
         send("Which filter?")

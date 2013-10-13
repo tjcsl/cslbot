@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 from helpers.command import Command
+from helpers.textutils import gen_morse
 
 
 @Command('morse')
@@ -21,25 +23,10 @@ def cmd(send, msg, args):
     """Converts text to morse code.
     Syntax: !morse <text>
     """
-    morse_codes = {"a": ".-", "b": "-...", "c": "-.-.", "d": "-..", "e": ".", "f": "..-.",
-                   "g": "--.", "h": "....", "i": "..", "j": ".---", "k": "-.-", "l": ".-..",
-                   "m": "--", "n": "-.", "o": "---", "p": ".--.", "q": "--.-", "r": ".-.",
-                   "s": "...", "t": "-", "u": "..-", "v": "...-", "w": ".--", "x": "-..-",
-                   "y": "-.--", "z": "--..", "1": ".----", "2": "..---", "3": "...--",
-                   "4": "....-", "5": ".....", "6": "-....", "7": "--...", "8": "---..",
-                   "9": "----.", "0": "-----", " ": "  ", ".": ".-.-.-", ",": "--..--",
-                   "?": "..--..", "'": ".----.", "!": "-.-.--", "/": "-..-.", "(": "-.--.",
-                   ")": "-.--.-", "&": ".-...", ":": "---...", ";": "-.-.-.", "=": "-...-",
-                   "+": ".-.-.", "-": "-....-", "_": "..--.-", '"': ".-..-.", "$": "...-..-", "@": ".--.-."}
-    morse = ""
     if not msg:
-        send("morse what?")
+        send("Morse what?")
         return
-    for i in msg:
-        try:
-            morse += morse_codes[i.lower()] + " "
-        except Exception:
-            morse += "? "
+    morse = gen_morse(msg)
     if len(morse) > 100:
         send("Your morse is too long. Have you considered Western Union?")
     else:

@@ -57,6 +57,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`textutils` Module
+-----------------------
+
+.. automodule:: helpers.textutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`urlutils` Module
 ----------------------
 

@@ -21,9 +21,7 @@ import re
 import imp
 import time
 import sys
-from commands.creffett import gen_creffett
-from commands.slogan import gen_slogan
-from helpers import control, sql, hook, command
+from helpers import control, sql, hook, command, textutils
 from os.path import dirname
 from random import choice, random
 
@@ -132,23 +130,6 @@ class BotHandler():
         else:
             return True
 
-    def set_admin(self, msg, send, nick, target):
-        """Handle admin verification responses from NickServ.
-
-        | If someone other than NickServ is trying to become a admin,
-        | kick them.
-        | If NickServ tells us that the nick is authed, mark it as verified.
-        """
-        match = re.match("(.*) ACC ([0-3])", msg)
-        if not match:
-            return
-        if nick != 'NickServ':
-            if nick in list(self.channels[self.config['core']['channel']].users()):
-                send("Attemped admin abuse by %s" % nick, target=self.config['core']['channel'])
-                self.do_kick(send, target, nick, "imposter")
-        elif int(match.group(2)) == 3:
-            self.admins[match.group(1)] = True
-
     def get_admins(self, c):
         """Check verification for all admins."""
         for admin in self.admins:
@@ -175,7 +156,7 @@ class BotHandler():
                 count = count + 1
         if count > limit:
             text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
-            msg = gen_creffett(text % nick)
+            msg = textutils.gen_creffett(text % nick)
             self.send(self.config['core']['channel'], nick, msg, msgtype)
             self.ignore(send, nick)
             return True
@@ -212,6 +193,9 @@ class BotHandler():
 
         | Logs to a sqlite db.
         """
+        # We don't log NickServ auth calls.
+        if msgtype == 'privnotice':
+            return
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
@@ -309,11 +293,11 @@ class BotHandler():
             ops = ['someone']
         if nick not in ops:
             if self.config['core']['nick'] not in ops:
-                send(gen_creffett("%s: /op the bot" % choice(ops)), target=target)
+                send(textutils.gen_creffett("%s: /op the bot" % choice(ops)), target=target)
             elif random() < 0.01 and msg == "shutting caps lock off":
                 self.connection.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
             else:
-                self.connection.kick(target, nick, gen_slogan(msg).upper())
+                self.connection.kick(target, nick, textutils.gen_slogan(msg).upper())
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
         if cmd == 'abuse':
@@ -405,10 +389,6 @@ class BotHandler():
             realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
             hook.run(send, msg, msgtype, realargs)
 
-        if msgtype == 'privnotice':
-            self.set_admin(msg, send, nick, target)
-            return
-
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
 
@@ -459,6 +439,8 @@ class BotHandler():
                     imp.reload(sys.modules['helpers.command'])
                     imp.reload(sys.modules['helpers.control'])
                     imp.reload(sys.modules['helpers.hook'])
+                    imp.reload(sys.modules['helpers.sql'])
+                    imp.reload(sys.modules['helpers.textutils'])
                     self.loadmodules()
                     self.loadhooks()
                     send("Aye Aye Capt'n")

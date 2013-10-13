@@ -14,26 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
-from urllib.request import urlopen
-from urllib.parse import quote
-from html.entities import entitydefs
 from helpers.command import Command
-from commands.word import gen_word
-
-
-def gen_slogan(msg):
-    msg = quote(msg)
-    html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
-                   + msg, timeout=2).read().decode()
-    slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
-    slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
-    slogan = slogan.replace('%20', ' ')
-    if not slogan:
-        return gen_slogan(msg)
-    for c in entitydefs:
-        slogan = slogan.replace('&%s;' % c, entitydefs[c])
-    return slogan.replace('&amp;', '&')
+from helpers.textutils import gen_slogan, gen_word
 
 
 @Command('slogan')
@@ -43,5 +25,4 @@ def cmd(send, msg, args):
     """
     if not msg:
         msg = gen_word()
-    slogan = gen_slogan(msg)
-    send(slogan)
+    send(gen_slogan(msg))

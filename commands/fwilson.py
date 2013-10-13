@@ -14,19 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import random
 from helpers.command import Command
-from commands.word import gen_word
-
-
-def gen_fwilson(x):
-    if x.startswith('fwil') or random() < 0.5:
-        output = "wheeeee %s" % x
-        return (output.upper())
-    else:
-        output = ['fwil' + q for q in x.split()]
-        output = ' '.join(output)
-        return (output.lower())
+from helpers.textutils import gen_fwilson, gen_word
 
 
 @Command(['fwilson', 'son'])
