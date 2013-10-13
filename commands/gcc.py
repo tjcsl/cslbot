@@ -21,7 +21,7 @@ from commands.slogan import gen_slogan
 from helpers.command import Command
 
 
-@Command('gcc', ['type'])
+@Command('gcc', ['type'], limit=1)
 def cmd(send, msg, args):
     """Compiles stuff.
     Syntax: !gcc <code>
