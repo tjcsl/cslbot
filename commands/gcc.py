@@ -16,18 +16,17 @@
 
 import subprocess
 import tempfile
-import time
 from commands.slogan import gen_slogan
 from helpers.command import Command
 
 
-@Command('gcc', ['type'], limit=1)
+@Command('gcc', ['type', 'nick'])
 def cmd(send, msg, args):
     """Compiles stuff.
     Syntax: !gcc <code>
     """
-    if args['type'] != 'privmsg':
-        send('GCC is not a group exercise!')
+    if args['type'] == 'privmsg':
+        send('GCC is a group exercise!')
         return
     tmpfile = tempfile.NamedTemporaryFile()
     for line in msg.split('\\n'):
@@ -38,8 +37,7 @@ def cmd(send, msg, args):
     output = process.communicate()[0]
     tmpfile.close()
     for line in output.decode().splitlines():
-        time.sleep(1)
-        send(line)
+        send(line, target=args['nick'])
     if process.returncode == 0:
         send(gen_slogan("gcc victory"))
     else:

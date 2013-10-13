@@ -481,14 +481,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`short` Module
--------------------
-
-.. automodule:: commands.short
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`slap` Module
 ------------------
 
