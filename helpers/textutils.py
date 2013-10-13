@@ -56,7 +56,7 @@ def gen_slogan(msg):
         return gen_slogan(msg)
     for c in entitydefs:
         slogan = slogan.replace('&%s;' % c, entitydefs[c])
-    return slogan.replace('&amp;', '&')
+    return slogan.replace('&amp;', '&').replace('&quot;', '"')
 
 
 def gen_morse(msg):
