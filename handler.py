@@ -23,8 +23,6 @@ import time
 import sys
 from commands.creffett import gen_creffett
 from commands.slogan import gen_slogan
-from commands.fwilson import gen_fwilson
-from commands.insult import gen_insult
 from helpers import control, sql, hook, command
 from os.path import dirname
 from random import choice, random
@@ -50,7 +48,7 @@ class BotHandler():
         """
         self.config = config
         self.guarded = []
-        self.outputfilter = "passthrough"
+        self.outputfilter = lambda x: x
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
@@ -188,16 +186,7 @@ class BotHandler():
         Records the message in the log.
         """
         msgs = []
-        passthrough = lambda x: x
-        output_filters = {
-            "fwilson": gen_fwilson,
-            "creffett": gen_creffett,
-            "slogan": gen_slogan,
-            "insult": gen_insult,
-            "passthrough": passthrough,
-            "reset": passthrough
-            }
-        msg = output_filters[self.outputfilter](msg)
+        msg = self.outputfilter(msg)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
             msgs.append(msg[:split_pos].strip())
@@ -338,9 +327,6 @@ class BotHandler():
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
-        elif cmd == 'outputfilter':
-            self.outputfilter = cmdargs.split()[0]
-            send("Okay!")
         elif cmd == 'ignore':
             cmdargs = cmdargs.split()
             if cmdargs[0] == 'clear':
@@ -378,6 +364,7 @@ class BotHandler():
                 'admins': self.admins,
                 'issues': self.issues,
                 'abuselist': self.abuselist,
+                'handler': self,
                 'db': self.db.get(),
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,

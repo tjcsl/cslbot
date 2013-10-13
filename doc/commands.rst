@@ -353,6 +353,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`outputfilter` Module
+--------------------------
+
+.. automodule:: commands.outputfilter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`pester` Module
 --------------------
 
