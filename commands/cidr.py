@@ -14,72 +14,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from ipaddress import ip_network
 from helpers.command import Command
+
 
 @Command('cidr', [])
 def cmd(send, msg, args):
     """Gets a CIDR range.
     Syntax: !cidr <range>
     """
-    use_builtin_iptools = True
-    try:
-        from ipaddress import ip_network
-    except ImportError:
-        use_builtin_iptools = False
-    if use_builtin_iptools:
-        try:
-            ipn = ip_network(msg)
-        except:
-            send("Not a valid CIDR range.")
-        ipnl = list(ipn.hosts())
-        send("%s - %s" % (ipnl[0], ipnl[-1]))
+    if not msg:
+        send("Need a CIDR range.")
         return
-    ip = msg.split('/')
-    if len(ip) != 2:
+    try:
+        ipn = ip_network(msg)
+    except ValueError:
         send("Not a valid CIDR range.")
         return
-    # Get address string and CIDR string from command line
-    (addrString, cidrString) = ip
-
-    # Split address into octets and turn CIDR into int
-    addr = []
-    for x in addrString.split('.'):
-        if x.isdigit():
-            addr.append(int(x))
-        else:
-            send("IP must be made up of integers.")
-            return
-    if len(addr) != 4:
-        send("IP must have 4 components.")
-        return
-    for x in addr:
-        if x > 255 or x < 0:
-            send("Invalid IP.")
-            return
-    if cidrString.isdigit():
-        cidr = int(cidrString)
-    else:
-        send("CIDR mask must be a integer.")
-        return
-    if cidr < 0 or cidr > 32:
-        send("Invalid CIDR mask.")
-        return
-
-    # Initialize the netmask and calculate based on CIDR mask
-    mask = [0, 0, 0, 0]
-    for i in range(cidr):
-        mask[i // 8] = mask[i // 8] + (1 << (7 - i % 8))
-
-    # Initialize net and binary and netmask with addr to get network
-    net = []
-    for i in range(4):
-        net.append(addr[i] & mask[i])
-
-    # Duplicate net into broad array, gather host bits, and generate broadcast
-    broad = list(net)
-    brange = 32 - cidr
-    for i in range(brange):
-        broad[3 - i // 8] = broad[3 - i // 8] + (1 << (i % 8))
-
-    # Print information, mapping integer lists to strings for easy printing
-    send("%s-%s" % (".".join(map(str, net)), ".".join(map(str, broad))))
+    send("%s - %s" % (ipn[0], ipn[-1]))

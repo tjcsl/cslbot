@@ -15,6 +15,7 @@ Copy config.example to config.cfg and change values as needed.
 Install irc (https://pypi.python.org/pypi/irc), beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
 and lxml (https://pypi.python.org/pypi/lxml).
 Python must be built with support for sqlite3.
+Python must be at least 3.3.
 
 Adding Modules
 --------------
