@@ -25,6 +25,13 @@ def cmd(send, msg, args):
     Syntax: !throw <object> at <target>
     """
     users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
+    if "into" in msg and msg != "into":
+        match = re.match('(.*) into (.*)', msg)
+        if match:
+            msg = 'throws %s into %s' % (match.group(1), match.group(2))
+            send(msg, 'action')
+        else:
+            return
     if "at" in msg and msg != "at":
         match = re.match('(.*) at (.*)', msg)
         if match:
