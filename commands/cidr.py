@@ -15,17 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-use_builtin_iptools = True
-try:
-    from ipaddress import ip_network
-except ImportError:
-    use_builtin_iptools = False
 
 @Command('cidr', [])
 def cmd(send, msg, args):
     """Gets a CIDR range.
     Syntax: !cidr <range>
     """
+    use_builtin_iptools = True
+    try:
+        from ipaddress import ip_network
+    except ImportError:
+        use_builtin_iptools = False
     if use_builtin_iptools:
         try:
             ipn = ip_network(msg)
