@@ -31,9 +31,9 @@ def cmd(send, msg, args):
             ipn = ip_network(msg)
         except:
             send("Not a valid CIDR range.")
+        ipnl = list(ipn.hosts())
+        send("%s - %s" % (ipnl[0], ipnl[-1]))
         return
-    ipnl = list(ipn.hosts())
-    send("%s - %s" % (ipnl[0], ipnl[-1]))
     ip = msg.split('/')
     if len(ip) != 2:
         send("Not a valid CIDR range.")
