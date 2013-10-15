@@ -14,16 +14,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from helpers.urlutils import get_short
 from helpers.command import Command
 
 
-@Command('lmgtfy')
+@Command(['lmgtfy', 'explain'])
 def cmd(send, msg, args):
-    """LMGTFY.
-    Syntax: !lmgtfy <text>
+    """Explain things.
+    Syntax: !explain <text>
     """
     if not msg:
-        send("What?")
+        send("Explain What?")
         return
     msg = msg.replace(' ', '+')
-    send('http://lmgtfy.com/?q=%s' % msg)
+    msg = 'http://lmgtfy.com/?q=%s' % msg
+    send(get_short(msg))
