@@ -135,7 +135,7 @@ class BotHandler():
         for admin in self.admins:
             c.privmsg('NickServ', 'ACC %s' % admin)
 
-    def abusecheck(self, send, nick, limit, msgtype, cmd):
+    def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
 
         | If a nick uses commands with the limit attr set, record the time
@@ -157,7 +157,7 @@ class BotHandler():
         if count > limit:
             text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
             msg = textutils.gen_creffett(text % nick)
-            self.send(self.config['core']['channel'], nick, msg, msgtype)
+            send(msg, target=target)
             self.ignore(send, nick)
             return True
 
@@ -361,7 +361,7 @@ class BotHandler():
                 'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(send, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
-                'abuse': lambda nick, limit, msgtype, cmd: self.abusecheck(send, nick, limit, msgtype, cmd)}
+                'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
@@ -424,7 +424,7 @@ class BotHandler():
             if command.is_registered(cmd_name):
                 found = True
                 cmd_obj = command.get_command(cmd_name)
-                if cmd_obj.is_limited() and self.abusecheck(send, nick, cmd_obj.limit, msgtype, cmd[len(cmdchar):]):
+                if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self.db.get())

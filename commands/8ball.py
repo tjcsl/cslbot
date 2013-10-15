@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 # prevent people from !8balling repeatedly to get the answer they want.
-@Command('8ball', ['nick', 'abuse'], limit=1)
+@Command('8ball', ['nick', 'handler'], limit=1)
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
     Syntax: !8ball <question>
@@ -32,6 +32,7 @@ def cmd(send, msg, args):
                "Reply hazy, try again": "maybe", "Ask again later": "maybe", "Better not tell you now": "maybe", "Cannot predict now": "maybe", "Concentrate and ask again": "maybe",
                "Don't count on it": "no", "My reply is no": "no", "My sources say no": "no", "Outlook not so good": "no", "Very doubtful": "no"}
     answer = choice(list(answers.keys()))
+    # let people !8ball again if they got a ambiguous answer.
     if answers[answer] == 'maybe':
-        args['abuselist'][args['nick']]['8ball'].pop()
+        args['handler'].abuselist[args['nick']]['8ball'].pop()
     send('says... %s' % answer, 'action')

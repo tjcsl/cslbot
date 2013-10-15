@@ -35,7 +35,7 @@ def handle(send, msg, args):
     for match in matches:
         name = match[0].lower()
         # limit to 5 score changes per minute
-        if args['abuse'](args['nick'], 5, args['type'], 'scores'):
+        if args['abuse'](args['nick'], 5, 'scores'):
             return
         if match[1] == "++":
             score = 1
