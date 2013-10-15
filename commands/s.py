@@ -18,13 +18,13 @@ import re
 from helpers.command import Command
 
 
-def get_log(cursor, user):
+def get_log(cursor, target, user):
     if user is None:
-        cursor.execute('SELECT msg,type,source FROM log ORDER BY time DESC LIMIT 50')
+        cursor.execute('SELECT msg,type,source FROM log WHERE target=? ORDER BY time DESC LIMIT 50', (target,))
         # Don't parrot back the !s call.
         cursor.fetchone()
     else:
-        cursor.execute('SELECT msg,type,source FROM log WHERE source=? ORDER BY time DESC LIMIT 50', (user,))
+        cursor.execute('SELECT msg,type,source FROM log WHERE source=? AND target=? ORDER BY time DESC LIMIT 50', (user, target))
     return cursor.fetchall()
 
 
@@ -46,7 +46,7 @@ def get_modifiers(msg, nick):
     return mods
 
 
-@Command('s', ['db', 'type', 'nick', 'config', 'botnick'])
+@Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target'])
 def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
@@ -67,7 +67,7 @@ def cmd(send, msg, args):
     replacement = msg[1]
     modifiers = get_modifiers(msg[2], args['nick'])
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(args['db'], modifiers['nick'])
+    log = get_log(args['db'], args['target'], modifiers['nick'])
 
     for line in log:
         # ignore previous !s calls.
