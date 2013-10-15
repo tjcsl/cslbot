@@ -54,7 +54,7 @@ def cmd(send, msg, args):
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
-    if len(msg) == 2 and args['config']['features']['lazyregex'] == 'True':
+    if len(msg) == 2 and args['config']['feature']['lazyregex'] == 'True':
         msg.append('')
     # not a valid sed statement.
     if not msg or len(msg) < 3:
@@ -72,6 +72,8 @@ def cmd(send, msg, args):
     for line in log:
         # ignore previous !s calls.
         if line['msg'].startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
+            continue
+        if line['msg'].startswith('%s: s%s' % (args['config']['core']['nick'], char)):
             continue
         if regex.search(line['msg']):
             output = regex.sub(replacement, line['msg'])
