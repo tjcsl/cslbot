@@ -25,9 +25,9 @@ from random import random, choice
 
 
 def gen_word():
-        html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
-        # strip BOM
-        return html.decode()[1:].rstrip()
+    html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
+    # strip BOM
+    return html.decode()[1:].rstrip()
 
 
 def gen_fwilson(x):
@@ -124,10 +124,8 @@ def gen_insult(user):
         "anal warts"]
     msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
     return msg
-    
+
+
 def random_stock():
-    html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read()
-    html = html.decode()[1:].rstrip()
-    html = ''.join((html.split("("))[1].split(")"))
-    return html
-      
+    html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read().decode()
+    return re.match('(\(.*\))', html).group(0)
