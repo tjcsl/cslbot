@@ -577,6 +577,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`wai` Module
+-----------------
+
+.. automodule:: commands.wai
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`weather` Module
 ---------------------
 
