@@ -17,7 +17,7 @@
 import json
 from urllib.request import urlopen
 from helpers.command import Command
-
+from helpers.textutils import random_stock
 
 def get_quote(symbol):
     url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D'" + symbol \
@@ -25,6 +25,16 @@ def get_quote(symbol):
     data = json.loads(urlopen(url).read().decode())
     return data['query']['results']
 
+def gen_stock(msg):
+    quote = None
+    while quote is None:
+        quote = get_quote(msg)
+    quote = quote['quote']
+    if quote['BidRealtime'] is None:
+        send_msg ("Invalid Symbol.")
+    else:
+        send_msg = ("%s -- %s %s 52wk: %s" % (quote['Name'], quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))
+    return send_msg
 
 @Command('stock')
 def cmd(send, msg, args):
@@ -32,13 +42,6 @@ def cmd(send, msg, args):
     Syntax: !stock <symbol>
     """
     if not msg:
-        send("Which Symbol?")
-        return
-    quote = None
-    while quote is None:
-        quote = get_quote(msg)
-    quote = quote['quote']
-    if quote['BidRealtime'] is None:
-        send("Invalid Symbol.")
-    else:
-        send("%s -- %s %s 52wk: %s" % (quote['Name'], quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange']))
+        msg = random_stock()
+    send(gen_stock(msg))
+
