@@ -127,8 +127,7 @@ def gen_insult(user):
     
 def random_stock():
     html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read()
-      # strip BOM
-      html = html.decode()[1:].rstrip()
-      html = ''.join((html.split("("))[1].split(")"))
-      return html
+    html = html.decode()[1:].rstrip()
+    html = ''.join((html.split("("))[1].split(")"))
+    return html
       
