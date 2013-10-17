@@ -57,6 +57,14 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`reddit` Module
+--------------------
+
+.. automodule:: hooks.reddit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`scores` Module
 --------------------
 
