@@ -14,17 +14,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from helpers.urlutils import get_short
+from helpers.urlutils import get_title
 from helpers.hook import Hook
 import re
-import socket
-import errno
-from lxml.html import parse
-from urllib.request import urlopen, Request
-from urllib.error import URLError
 
 
-@Hook(types=['pubmsg', 'action'], args=['nick', 'do_kick', 'target'])
+@Hook(types=['pubmsg', 'action'], args=[])
 def handle(send, msg, args):
     """ Get titles for urls.
 
@@ -37,27 +32,4 @@ def handle(send, msg, args):
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
     if match:
-        title = 'No Title Found'
-        try:
-            url = match.group(1)
-            if not url.startswith('http'):
-                url = 'http://' + url
-            shorturl = get_short(url)
-            # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
-            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
-            html = parse(urlopen(req, timeout=5))
-            title = html.getroot().find(".//title").text.strip()
-            # strip unicode
-            title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
-        except URLError as ex:
-            # website does not exist
-            if hasattr(ex.reason, 'errno'):
-                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
-                    return
-            else:
-                send('%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' ')))
-                return
-        # page does not contain a title
-        except AttributeError:
-            pass
-        send('** %s - %s' % (title, shorturl))
+        send(get_title(match.group(1)))

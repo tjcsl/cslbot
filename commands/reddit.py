@@ -15,27 +15,29 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
-import re
 from urllib.request import urlopen, Request
-from helpers.hook import Hook
+from helpers.command import Command
+from helpers.urlutils import get_title
 
 
-#FIXME: duplicated in commands/reddit.py
+#FIXME: duplicated in hooks/reddit.py
 def check_exists(subreddit):
     req = Request('http://reddit.com/subreddits/search.json?q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
     data = json.loads(urlopen(req).read().decode())
     return len(data['data']['children']) > 0
 
 
-@Hook(types=['pubmsg', 'action'], args=[])
-def handle(send, msg, args):
-    match = re.search('/r/([\w]*)', msg)
-    if not match:
+@Command(['reddit', 'srepetsk'], ['name'])
+def cmd(send, msg, args):
+    """Gets a random Reddit post.
+    Syntax: !reddit <subreddit>
+    """
+    if args['name'] == 'srepetsk':
+        msg = 'nottheonion'
+    if msg and not check_exists(msg):
+        send("Non-existant subreddit.")
         return
-    subreddit = match.group(1)
-    if not check_exists(subreddit):
-        return
-    req = Request('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    data = urlopen(req).read().decode()
-    data = json.loads(data)['data']
-    send(data['public_description'])
+    subreddit = '/r/%s' % msg if msg else ''
+    req = Request('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    url = urlopen(req).geturl()
+    send(get_title(url))

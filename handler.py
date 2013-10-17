@@ -441,6 +441,7 @@ class BotHandler():
                     imp.reload(sys.modules['helpers.hook'])
                     imp.reload(sys.modules['helpers.sql'])
                     imp.reload(sys.modules['helpers.textutils'])
+                    imp.reload(sys.modules['helpers.urlutils'])
                     self.loadmodules()
                     self.loadhooks()
                     send("Aye Aye Capt'n")

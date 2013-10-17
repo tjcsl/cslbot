@@ -433,6 +433,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`reddit` Module
+--------------------
+
+.. automodule:: commands.reddit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`reverse` Module
 ---------------------
 
