@@ -38,7 +38,7 @@ class IrcBot(SingleServerIRCBot):
         """
         self.handler = handler.BotHandler(config)
         self.config = config
-        serverinfo = ServerSpec(config['core']['host'], config['core']['ircport'], config['auth']['nickpass'])
+        serverinfo = ServerSpec(config['core']['host'], int(config['core']['ircport']), config['auth']['nickpass'])
         nick = config['core']['nick']
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # fix unicode problems
