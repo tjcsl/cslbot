@@ -15,9 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import re
 from urllib.request import urlopen
 from helpers.command import Command
-from helpers.textutils import random_stock
 
 
 def get_quote(symbol):
@@ -35,7 +35,12 @@ def gen_stock(msg):
     if quote['BidRealtime'] is None:
         return "Invalid Symbol."
     else:
-        return "%s -- %s %s 52wk: %s" % (quote['Name'], quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange'])
+        return "%s (%s) -- %s %s 52wk: %s" % (quote['Name'], msg, quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange'])
+
+
+def random_stock():
+    html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read().decode()
+    return re.search('\((.*)\)', html).group(1)
 
 
 @Command('stock')
