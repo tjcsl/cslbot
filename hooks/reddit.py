@@ -29,7 +29,7 @@ def check_exists(subreddit):
 
 @Hook(types=['pubmsg', 'action'], args=[])
 def handle(send, msg, args):
-    match = re.search('/r/([\w]*)', msg)
+    match = re.search(r'(?:^|\s)/r/([\w|^/]*)\b', msg)
     if not match:
         return
     subreddit = match.group(1)
@@ -38,4 +38,5 @@ def handle(send, msg, args):
     req = Request('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
     data = urlopen(req).read().decode()
     data = json.loads(data)['data']
-    send(data['public_description'])
+    for line in data['public_description'].splitlines():
+        send(line)
