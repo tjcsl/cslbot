@@ -124,3 +124,10 @@ def gen_insult(user):
         "anal warts"]
     msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
     return msg
+    
+def gen_word():
+    html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read()
+      # strip BOM
+      html = html.decode()[1:].rstrip()
+      html = test = ''.join((yoda.split("("))[1].split(")"))
+      
