@@ -29,7 +29,7 @@ from time import sleep
 
 class IrcBot(SingleServerIRCBot):
 
-    def __init__(self, config, port=6667):
+    def __init__(self, config, port=config['core']['ircport']):
         """Setup everything.
 
         | Setup the handler.

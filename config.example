@@ -1,6 +1,7 @@
 [core]
 host: irc.freenode.net
-serverport: 2688
+serverport: 2668
+ircport: 6667
 nick: exampleBot
 channel: #channel
 ctrlchan: #channel-control
