@@ -51,6 +51,9 @@ def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
     """
+    if not msg:
+        send("Invalid Syntax.")
+        return
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
