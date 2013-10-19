@@ -33,6 +33,14 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`butt` Module
+------------------
+
+.. automodule:: hooks.butt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`caps` Module
 ------------------
 
