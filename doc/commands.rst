@@ -561,6 +561,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`translate` Module
+-----------------------
+
+.. automodule:: commands.translate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`urban` Module
 -------------------
 
