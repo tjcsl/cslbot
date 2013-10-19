@@ -37,3 +37,4 @@ def cmd(send, msg, args):
     send(gen_creffett(msg))
     # c.send_raw("MODE %s +c" % CHANNEL)
     send('</rage>')
+    send('zan--')
