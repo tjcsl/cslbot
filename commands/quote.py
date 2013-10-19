@@ -66,7 +66,7 @@ def do_update_quote(cursor, qid, msg):
     quote = [x.strip() for x in quote]
     if not check_quote_exists_by_id(cursor, qid):
         return "That quote doesn't exist!"
-    cursor.execute('UPDATE quotes SET quote=?,nick=?', (quote[0], quote[1]))
+    cursor.execute('UPDATE quotes SET quote=?,nick=? WHERE id=?', (quote[0], quote[1], qid))
     return "Updated quote!"
 
 

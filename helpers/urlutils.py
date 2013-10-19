@@ -15,8 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import socket
+import errno
+from lxml.html import parse
 from urllib.request import urlopen, Request
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 
 
 def get_short(msg):
@@ -40,3 +43,28 @@ def get_short(msg):
             return 'http://' + msg
         else:
             raise e
+
+
+def get_title(url):
+        title = 'No Title Found'
+        try:
+            if not url.startswith('http'):
+                url = 'http://' + url
+            shorturl = get_short(url)
+            # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
+            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
+            html = parse(urlopen(req, timeout=5))
+            title = html.getroot().find(".//title").text.strip()
+            # strip unicode
+            title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
+        except URLError as ex:
+            # website does not exist
+            if hasattr(ex.reason, 'errno'):
+                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
+                    pass
+            else:
+                return '%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' '))
+        # page does not contain a title
+        except AttributeError:
+            pass
+        return '** %s - %s' % (title, shorturl)

@@ -1,6 +1,7 @@
 [core]
 host: irc.freenode.net
 serverport: 2688
+ircport: 6667
 nick: exampleBot
 channel: #channel
 ctrlchan: #channel-control
@@ -24,3 +25,5 @@ ebayapikey:
 githubapikey:
 githubrepo:
 wolframapikey:
+translateid:
+translatesecret:

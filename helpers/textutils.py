@@ -25,9 +25,9 @@ from random import random, choice
 
 
 def gen_word():
-        html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
-        # strip BOM
-        return html.decode()[1:].rstrip()
+    html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
+    # strip BOM
+    return html.decode()[1:].rstrip()
 
 
 def gen_fwilson(x):

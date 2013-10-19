@@ -433,6 +433,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`reddit` Module
+--------------------
+
+.. automodule:: commands.reddit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`reverse` Module
 ---------------------
 
@@ -553,6 +561,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`translate` Module
+-----------------------
+
+.. automodule:: commands.translate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`urban` Module
 -------------------
 
@@ -573,6 +589,14 @@ commands Package
 ------------------
 
 .. automodule:: commands.vote
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`wai` Module
+-----------------
+
+.. automodule:: commands.wai
     :members:
     :undoc-members:
     :show-inheritance:

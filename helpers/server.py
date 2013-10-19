@@ -109,6 +109,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     imp.reload(sys.modules['helpers.hook'])
                     imp.reload(sys.modules['helpers.sql'])
                     imp.reload(sys.modules['helpers.textutils'])
+                    imp.reload(sys.modules['helpers.urlutils'])
                     bot.handler.loadmodules()
                     bot.handler.loadhooks()
                     if output:

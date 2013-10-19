@@ -14,20 +14,30 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import json
+from urllib.request import urlopen, Request
 from helpers.command import Command
-from random import choice
+from helpers.urlutils import get_title
 
 
-@Command(['wai', 'why'])
+#FIXME: duplicated in hooks/reddit.py
+def check_exists(subreddit):
+    req = Request('http://reddit.com/subreddits/search.json?q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    data = json.loads(urlopen(req).read().decode())
+    return len(data['data']['children']) > 0
+
+
+@Command(['reddit', 'srepetsk'], ['name'])
 def cmd(send, msg, args):
-    """Gives a reason for something.
-    Syntax: !wai
+    """Gets a random Reddit post.
+    Syntax: !reddit <subreddit>
     """
-    a = ["primary", "secondary", "tertiary", "hydraulic", "compressed",
-         "required", "pseudo", "intangible", "flux"]
-    b = ["compressor", "engine", "lift", "elevator", "irc bot", "stabilizer",
-         "computer", "ahamilto", "csl", "4506", "router", "switch", "thingy", "capacitor"]
-    c = ["broke", "exploded", "corrupted", "melted", "froze", "died", "reset",
-         "was seen by the godofskies", "burned", "corroded", "reversed polarity",
-         "was accidentallied", "nuked"]
-    send("%s %s %s" % ((choice(a), choice(b), choice(c))))
+    if args['name'] == 'srepetsk':
+        msg = 'nottheonion'
+    if msg and not check_exists(msg):
+        send("Non-existant subreddit.")
+        return
+    subreddit = '/r/%s' % msg if msg else ''
+    req = Request('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    url = urlopen(req).geturl()
+    send(get_title(url))

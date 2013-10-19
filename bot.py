@@ -29,7 +29,7 @@ from time import sleep
 
 class IrcBot(SingleServerIRCBot):
 
-    def __init__(self, config, port=6667):
+    def __init__(self, config):
         """Setup everything.
 
         | Setup the handler.
@@ -38,7 +38,7 @@ class IrcBot(SingleServerIRCBot):
         """
         self.handler = handler.BotHandler(config)
         self.config = config
-        serverinfo = ServerSpec(config['core']['host'], port, config['auth']['nickpass'])
+        serverinfo = ServerSpec(config['core']['host'], int(config['core']['ircport']), config['auth']['nickpass'])
         nick = config['core']['nick']
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # fix unicode problems
