@@ -15,8 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-import time
-import sys
 from helpers.command import Command
 
 
@@ -94,7 +92,3 @@ def cmd(send, msg, args):
         if level == 10:
             send(levels[10])
         send('Ding, your %s is ready.' % target)
-        if level == 10:
-            time.sleep(7)
-            args['connection'].disconnect("Caught in backwash.")
-            sys.exit(0)
