@@ -305,7 +305,7 @@ class BotHandler():
                 self.abuselist = {}
                 send("Abuse list cleared.")
             elif cmdargs == 'show':
-                send(str(self.abuselist))
+                send(",".join(self.abuselist.keys()))
         elif cmd == 'cadmin':
             admins = self.config['auth']['admins'].split(', ')
             self.admins = {nick: False for nick in admins}
