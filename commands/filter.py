@@ -38,7 +38,7 @@ def cmd(send, msg, args):
                 name = 'passthrough'
             else:
                 name = name[4:]
-            names.append(i)
+            names.append(name)
         send("Current filter(s): %s" % ", ".join(names))
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(output_filters.keys()))
