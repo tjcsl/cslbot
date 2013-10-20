@@ -489,6 +489,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`skasturi` Module
+----------------------
+
+.. automodule:: commands.skasturi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`slap` Module
 ------------------
 

@@ -43,7 +43,7 @@ def cmd(send, msg, args):
         if not args['is_admin'](args['nick']):
             args['issues'].append([msg, args['source']])
             send("New Issue: #%d -- %s" % (len(args['issues']) - 1, msg), target=args['config']['core']['ctrlchan'])
-            send("Issue submitted for approval.")
+            send("Issue submitted for approval.", target=args['nick'])
         else:
             url = create_issue(msg, args['source'], args['config']['api']['githubrepo'], args['config']['api']['githubapikey'])
             send("Issue created -- %s -- %s" % (url, msg))
