@@ -154,7 +154,7 @@ def handle_accept(handler, cmd):
         return "Missing argument."
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    elif not handler.issues or len(handler.issues) < int(cmd[1]):
+    elif not handler.issues or len(handler.issues) <= int(cmd[1]):
         return "Not a valid issue"
     else:
         num = int(cmd[1])
