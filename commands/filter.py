@@ -31,12 +31,15 @@ def cmd(send, msg, args):
         "morse": gen_morse
         }
     if not msg:
-        name = args['handler'].outputfilter[0].__name__
-        if name == '<lambda>':
-            name = 'passthrough'
-        else:
-            name = name[4:]
-        send("Current filter is %s" % name)
+        names = []
+        for i in args['handler'].outputfilter:
+            name = i.__name__
+            if name == '<lambda>':
+                name = 'passthrough'
+            else:
+                name = name[4:]
+            names.append(i)
+        send("Current filter(s): %s" % ", ".join(names))
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough':
