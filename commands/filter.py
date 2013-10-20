@@ -21,7 +21,7 @@ from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult,
 @Command('filter', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Changes the output filter.
-    Syntax: !filter <filter|list|reset>
+    Syntax: !filter <filter|list|reset|chain filter>
     """
     output_filters = {
         "fwilson": gen_fwilson,
