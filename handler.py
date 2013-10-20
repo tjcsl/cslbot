@@ -316,7 +316,9 @@ class BotHandler():
             send("Verified admins reset.")
         elif cmd == 'ignore':
             cmdargs = cmdargs.split()
-            if cmdargs[0] == 'clear':
+            if not cmdargs:
+                send("Ignore who?")
+            elif cmdargs[0] == 'clear':
                 self.ignored = []
                 send("Ignore list cleared.")
             elif cmdargs[0] == 'show':
