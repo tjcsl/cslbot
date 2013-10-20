@@ -31,7 +31,7 @@ def cmd(send, msg, args):
         "morse": gen_morse
         }
     if not msg:
-        name = args['handler'].outputfilter.__name__
+        name = args['handler'].outputfilter[0].__name__
         if name == '<lambda>':
             name = 'passthrough'
         else:
@@ -41,13 +41,20 @@ def cmd(send, msg, args):
         send("Available filters are %s" % ", ".join(output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough':
         if args['is_admin'](args['nick']):
-            args['handler'].outputfilter = lambda x: x
+            args['handler'].outputfilter = [lambda x: x]
             send("Okay!")
         else:
             send("Nope, not gonna do it!")
+    elif msg.startswith('chain'):
+        next_filter = msg.split()[1]
+        if next_filter in output_filters.keys():
+            args['handler'].outputfilter.append(output_filters[next_filter])
+            send("Okay!")
+        else:
+            send("Nope, not gonna do it.")
     elif msg in output_filters.keys():
         if args['is_admin'](args['nick']):
-            args['handler'].outputfilter = output_filters[msg]
+            args['handler'].outputfilter = [output_filters[msg]]
             send("Okay!")
         else:
             send("Nope, not gonna do it!")

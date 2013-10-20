@@ -46,7 +46,7 @@ class BotHandler():
         """
         self.config = config
         self.guarded = []
-        self.outputfilter = lambda x: x
+        self.outputfilter = [lambda x: x]
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
@@ -167,7 +167,8 @@ class BotHandler():
         Records the message in the log.
         """
         msgs = []
-        msg = self.outputfilter(msg)
+        for i in self.outputfilter:
+            msg = i(msg)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
             msgs.append(msg[:split_pos].strip())
