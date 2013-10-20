@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from random import random
 from helpers.hook import Hook
 
 
@@ -24,6 +25,9 @@ def handle(send, msg, args):
     elif "cloud" in msg:
         msg = msg.replace("cloud", "butt")
     else:
+        return
+    # make it more random.
+    if random() > 0.005:
         return
     if args['type'] == 'pubmsg':
         send("%s actually meant: %s" % (args['nick'], msg))
