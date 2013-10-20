@@ -159,7 +159,7 @@ class BotHandler():
             msg = textutils.gen_creffett(text % nick)
             send(msg, target=target)
             self.ignore(send, nick)
-            self.do_kick(send, target, nick, msg)
+            self.do_kick(send, target, nick, text % msg)
             return True
 
     def send(self, target, nick, msg, msgtype):
