@@ -18,7 +18,7 @@ from helpers.command import Command
 from random import choice, random
 
 
-@Command(['skasturi'])
+@Command(['skasturi', 'randissue'])
 def cmd(send, msg, args):
     """Gives a a random, non senscial issue.
     Syntax: !skasturi
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
          "computer", "ahamilto", "csl", "4506", "router", "switch", "thingy",
          "capacitor"]
     c = ["cslbot", "my room", "hooks", "nature", "the IMAX theater", "nowhere"]
-    if random < .9:
+    if random() < .9:
         send("!issue %s %s in %s" % ((choice(a), choice(b), choice(c))))
     else:
         send("!issue skasturi makes too many issues")
