@@ -29,14 +29,17 @@ def get_nicks(cursor, command):
     return [row['nick'] for row in rows]
 
 
-def get_totals(cursor, commands, name=None):
+def get_command_totals(cursor, commands):
     totals = {}
-    if name is None:
-        for cmd in commands:
-            totals[cmd] = cursor.execute('SELECT count() FROM commands WHERE command=?', (cmd,)).fetchone()[0]
-    else:
-        nicks = get_nicks(cursor, name)
-        for nick in nicks:
+    for cmd in commands:
+        totals[cmd] = cursor.execute('SELECT COUNT() FROM commands WHERE command=?', (cmd,)).fetchone()[0]
+    return totals
+
+
+def get_nick_totals(cursor, commands, name=None):
+    totals = {}
+    if name is not None:
+        for nick in get_nicks(cursor, name):
             totals[nick] = cursor.execute('SELECT COUNT() FROM commands WHERE command=? AND nick=?', (name, nick)).fetchone()[0]
     return totals
 
@@ -48,19 +51,18 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     commands = get_commands(cursor)
+    totals = get_command_totals(cursor, commands)
     if is_registered(msg):
-        totals = get_totals(cursor, commands, msg)
-        maxuser = sorted(totals, key=totals.get)
+        nicktotals = get_nick_totals(cursor, commands, msg)
+        maxuser = sorted(nicktotals, key=nicktotals.get)[-1]
         if not maxuser:
             send("Nobody has used that command.")
         else:
-            maxuser = maxuser[-1]
-            send("%s is the most frequent user of %s with %d uses." % (maxuser, msg, totals[maxuser]))
+            send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, msg, nicktotals[maxuser], totals[msg]))
     else:
-        totals = get_totals(cursor, commands)
         match = re.match('--(.*)', msg)
+        sortedtotals = sorted(totals, key=totals.get)
         if match:
-            sortedtotals = sorted(totals, key=totals.get)
             if match.group(1) == 'high':
                 send('Most Used Commands:')
                 high = list(reversed(sortedtotals))
