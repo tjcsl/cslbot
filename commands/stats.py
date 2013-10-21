@@ -54,10 +54,11 @@ def cmd(send, msg, args):
     totals = get_command_totals(cursor, commands)
     if is_registered(msg):
         nicktotals = get_nick_totals(cursor, commands, msg)
-        maxuser = sorted(nicktotals, key=nicktotals.get)[-1]
+        maxuser = sorted(nicktotals, key=nicktotals.get)
         if not maxuser:
             send("Nobody has used that command.")
         else:
+            maxuser = maxuser[-1]
             send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, msg, nicktotals[maxuser], totals[msg]))
     else:
         match = re.match('--(.*)', msg)
