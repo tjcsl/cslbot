@@ -122,7 +122,7 @@ class BotHandler():
         """
         if nick not in self.config['auth']['admins'].split(', '):
             return False
-        send('ACC %s' % nick, target='NickServ')
+        self.connection.privmsg('NickServ', 'ACC %s' % nick)
         if not self.admins[nick] and self.admins[nick] is not None:
             if complain:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
