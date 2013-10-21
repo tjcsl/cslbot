@@ -17,7 +17,7 @@
 from helpers.command import Command
 
 
-@Command('admins', ['admins'])
+@Command('admins', ['admins', 'nick'])
 def cmd(send, msg, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
@@ -29,4 +29,4 @@ def cmd(send, msg, args):
             admins += admin + " (V), "
         else:
             admins += admin + " (U), "
-    send(admins[:-2])
+    send(admins[:-2], target=args['nick'])
