@@ -48,7 +48,7 @@ def get_short(msg):
 def get_title(url):
         title = 'No Title Found'
         try:
-            if not url.startswith('http'):
+            if not url.lower().startswith('http'):
                 url = 'http://' + url
             shorturl = get_short(url)
             # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
