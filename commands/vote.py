@@ -160,14 +160,10 @@ def retract(cursor, poll, nick):
     return "Vote retracted"
 
 
-def list_polls(cursor, send, nick):
-    """ Sends nick the list of polls in a PM"""
-    polls = cursor.execute("SELECT pid,question FROM polls WHERE deleted=0").fetchall()
-    if not polls:
-        return "No polls currently active."
-    for poll in polls:
-        send("%d): %s" % (poll['pid'], poll['question']), target=nick)
-    return "%d currently active polls." % len(polls)
+def list_polls(cursor, poll_url):
+    cursor.execute("SELECT count(pid) FROM polls")
+    num = cursor.fetchone()[0]
+    return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
 
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type'])
@@ -206,7 +202,7 @@ def cmd(send, msg, args):
     elif cmd == 'tally':
         tally_poll(cursor, msg, send, args['nick'])
     elif cmd == 'list':
-        send(list_polls(cursor, send, args['nick']))
+        send(list_polls(cursor, args['config']['core']['url']))
     elif cmd == 'retract':
         send(retract(cursor, msg, args['nick']))
     elif cmd == 'reopen':

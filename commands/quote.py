@@ -73,7 +73,7 @@ def do_update_quote(cursor, qid, msg):
 def do_list_quotes(cursor, quote_url):
     cursor.execute("SELECT count(id) FROM quotes")
     num = cursor.fetchone()[0]
-    return "There are %d quotes. Check them out at %s" % (num, quote_url)
+    return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 
 def do_delete_quote(cursor, qid):
@@ -105,7 +105,7 @@ def cmd(send, msg, args):
             msg = " ".join(cmd[1:])
             send(do_add_quote(msg, cursor))
     elif cmd[0] == 'list':
-        send(do_list_quotes(cursor, args['config']['core']['quoteurl']))
+        send(do_list_quotes(cursor, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
         if args['is_admin'](args['nick']):
             if len(cmd) == 1:

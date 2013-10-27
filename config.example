@@ -6,7 +6,7 @@ nick: exampleBot
 channel: #channel
 ctrlchan: #channel-control
 cmdchar: !
-quoteurl: http://example.com/irc/quotes.html
+url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`]
 [auth]
 ctrlpass:
