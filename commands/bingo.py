@@ -53,7 +53,7 @@ def cmd(send, msg, args):
         row = ""
         for j in range(len(board[0])):
             row += board[i][j] + " "
-    	send(row, target=args['nick'])
+        send(row, target=args['nick'])
 
     send('------------------------------', target=args['nick'])
     send('Make yourself a real bingo board here: http://i.imgur.com/0Z3dxKw.png', target=args['nick'])
