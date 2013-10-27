@@ -166,7 +166,7 @@ def list_polls(cursor, poll_url):
     return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
 
-@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type'])
+@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
 def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
