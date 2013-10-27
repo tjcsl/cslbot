@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-
+from helpers.command import Command
 
 @Command('bingo', ['nick', 'connection'], limit=2)
 def cmd(send, msg, args):
