@@ -81,6 +81,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`bingo` Module
+-------------------
+
+.. automodule:: commands.bingo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`blame` Module
 -------------------
 
