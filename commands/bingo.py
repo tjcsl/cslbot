@@ -19,6 +19,9 @@ from helpers.command import Command
 
 @Command('bingo', ['nick', 'connection'], limit=2)
 def cmd(send, msg, args):
+    """Generates a SysLab Bingo board.
+    Syntax: !bingo
+    """
     spaces = ['"Still Alive" on piano', 'polo shirt', 'workstation broken', 'man man', 'csssuf on deadtom',
               '"oooh shiny"', 'cookie clicker', 'everyone is male', 'fwil-', 'someone hates java',
               'pit stains', 'jcotton\'s ipad', 'diet coke', 'booting itanium', 'ggolla has yogurt',
