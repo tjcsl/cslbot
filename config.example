@@ -7,7 +7,7 @@ channel: #channel
 ctrlchan: #channel-control
 cmdchar: !
 url: http://example.com/irc/
-nickregex: [a-zA-Z0-9_\|`\^]
+nickregex: [a-zA-Z0-9_\|`\^-]
 [auth]
 ctrlpass:
 nickpass:
