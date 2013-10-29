@@ -42,7 +42,7 @@ def cmd(send, msg, args):
         send("Current filter(s): %s" % ", ".join(names))
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(output_filters.keys()))
-    elif msg == 'reset' or msg == 'passthrough':
+    elif msg == 'reset' or msg == 'passthrough' or msg == 'clear':
         if args['is_admin'](args['nick']):
             args['handler'].outputfilter = [lambda x: x]
             send("Okay!")
