@@ -25,6 +25,21 @@ def cmd(send, msg, args):
     Syntax: !score <--high|--low|nick>
     """
     cursor = args['db']
+    match = re.match('--(.+)', msg)
+    if match:
+        if match.group(1) == 'high':
+            data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
+            send('High Scores:')
+            for x in data:
+                send("%s: %s" % (x['nick'], x['score']))
+        elif match.group(1) == 'low':
+            data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
+            send('Low Scores:')
+            for x in data:
+                send("%s: %s" % (x['nick'], x['score']))
+        else:
+            send("%s is not a valid flag" % match.group(1))
+        return
     match = re.match('(%s+)' % args['config']['core']['nickregex'], msg)
     if match:
         name = match.group(1).lower()
@@ -37,32 +52,17 @@ def cmd(send, msg, args):
             else:
                 send("%s has %i points!" % (name, score))
         else:
-            send("Nobody cares about " + name)
+            send("Nobody cares about %s" % name)
+    elif msg:
+        send("Invalid nick")
     else:
-        match = re.match('--(.*)', msg)
-        if match:
-            if match.group(1) == 'high':
-                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
-                send('High Scores:')
-                for x in data:
-                    send("%s: %s" % (x['nick'], x['score']))
-            elif match.group(1) == 'low':
-                data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
-                send('Low Scores:')
-                for x in data:
-                    send("%s: %s" % (x['nick'], x['score']))
-            else:
-                send("%s is not a valid flag" % match.group(1))
-        elif msg:
-            send("Invalid nick")
+        count = cursor.execute("SELECT count(*) FROM scores").fetchone()
+        if count is None or count[0] == 0:
+            send("Nobody cares about anything =(")
         else:
-            count = cursor.execute("SELECT count(*) FROM scores").fetchone()
-            if count is None or count[0] == 0:
-                send("Nobody cares about anything =(")
+            if count[0] == 1:
+                randid = 1
             else:
-                if count[0] == 1:
-                    randid = 1
-                else:
-                    randid = randint(1, count[0])
-                query = cursor.execute("SELECT nick,score FROM scores WHERE id=?", (randid,)).fetchone()
-                send("%s has %i points!" % (query[0], query[1]))
+                randid = randint(1, count[0])
+            query = cursor.execute("SELECT nick,score FROM scores WHERE id=?", (randid,)).fetchone()
+            send("%s has %i points!" % (query[0], query[1]))
