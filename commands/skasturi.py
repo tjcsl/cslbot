@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     """Gives a a random, non-sensical issue.
     Syntax: !skasturi
     """
-    a = ["add", "implement", "fix", "remove"]
+    a = ["add", "implement", "fix", "remove", "resolve", "delete", "improve"]
     b = ["compressor", "engine", "lift", "elevator", "irc bot", "stabilizer",
          "computer", "ahamilto", "csl", "4506", "router", "switch", "thingy",
          "capacitor"]
