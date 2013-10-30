@@ -255,7 +255,7 @@ class BotHandler():
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
-        if cmd[0] in self.channels and len(cmd) > 1 and cmd[1] != "force":
+        if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
             send("%s is already a member of %s" % (self.config['core']['nick'],
                  cmd[0]))
             return
