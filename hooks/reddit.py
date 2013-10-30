@@ -18,13 +18,7 @@ import json
 import re
 from urllib.request import urlopen, Request
 from helpers.hook import Hook
-
-
-#FIXME: duplicated in commands/reddit.py
-def check_exists(subreddit):
-    req = Request('http://reddit.com/subreddits/search.json?q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    data = json.loads(urlopen(req).read().decode())
-    return len(data['data']['children']) > 0
+from helpers.urlutils import check_exists
 
 
 @Hook(types=['pubmsg', 'action'], args=[])

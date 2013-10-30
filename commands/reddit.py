@@ -14,17 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 from urllib.request import urlopen, Request
 from helpers.command import Command
-from helpers.urlutils import get_title
-
-
-#FIXME: duplicated in hooks/reddit.py
-def check_exists(subreddit):
-    req = Request('http://reddit.com/subreddits/search.json?q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    data = json.loads(urlopen(req).read().decode())
-    return len(data['data']['children']) > 0
+from helpers.urlutils import get_title, check_exists
 
 
 @Command(['reddit', 'srepetsk'], ['name'])

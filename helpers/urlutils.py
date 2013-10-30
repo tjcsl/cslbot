@@ -46,25 +46,34 @@ def get_short(msg):
 
 
 def get_title(url):
-        title = 'No Title Found'
-        try:
-            if not url.lower().startswith('http'):
-                url = 'http://' + url
-            shorturl = get_short(url)
-            # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
-            req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
-            html = parse(urlopen(req, timeout=5))
-            title = html.getroot().find(".//title").text.strip()
-            # strip unicode
-            title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
-        except URLError as ex:
-            # website does not exist
-            if hasattr(ex.reason, 'errno'):
-                if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
-                    pass
-            else:
-                return '%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' '))
-        # page does not contain a title
-        except AttributeError:
-            pass
-        return '** %s - %s' % (title, shorturl)
+    title = 'No Title Found'
+    try:
+        if not url.lower().startswith('http'):
+            url = 'http://' + url
+        shorturl = get_short(url)
+        # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
+        html = parse(urlopen(req, timeout=5))
+        title = html.getroot().find(".//title").text.strip()
+        # strip unicode
+        title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
+    except URLError as ex:
+        # website does not exist
+        if hasattr(ex.reason, 'errno'):
+            if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
+                pass
+        else:
+            return '%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' '))
+    # page does not contain a title
+    except AttributeError:
+        pass
+    return '** %s - %s' % (title, shorturl)
+
+
+def check_exists(subreddit):
+    req = Request('http://reddit.com/subreddits/search.json?limit=1&q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    data = json.loads(urlopen(req).read().decode())['data']['children']
+    if len(data) > 0:
+        return "/r/%s/" % subreddit == data[0]['data']['url']
+    else:
+        return False
