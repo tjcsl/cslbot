@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-from urllib.request import urlopen
+from requests import get
 from helpers.command import Command
 
 
@@ -24,6 +24,6 @@ def cmd(send, msg, args):
     """Gets a random distro.
     Syntax: !distro
     """
-    url = urlopen('http://distrowatch.com/random.php', timeout=1).geturl()
+    url = get('http://distrowatch.com/random.php').url
     match = re.search('=(.*)', url)
     send(match.group(1))

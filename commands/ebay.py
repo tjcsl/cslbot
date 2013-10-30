@@ -16,25 +16,22 @@
 
 import json
 from random import choice
+from requests import get
 from urllib.request import urlopen, Request
 from helpers.command import Command
 
 
 def get_categories(apikey):
-    url = 'http://open.api.ebay.com/shopping'
-    url += '?callname=GetCategoryInfo'
-    url += '&CategoryID=-1'
-    url += '&IncludeSelector=ChildCategories'
-    req = Request(url)
-    req.add_header('X-EBAY-API-RESPONSE-ENCODING', 'JSON')
-    req.add_header('X-EBAY-API-VERSION', '733')
-    req.add_header('X-EBAY-API-APP-ID', apikey)
-    data = json.loads(urlopen(req).read().decode())
+    params = {'callname': 'GetCategoryInfo', 'CategoryID': -1, 'IncludeSelector': 'ChildCategories'}
+    headers = {'X-EBAY-API-RESPONSE-ENCODING': 'JSON', 'X-EBAY-API-VERSION': '733', 'X-EBAY-API-APP-ID': apikey}
+    req = get('http://open.api.ebay.com/shopping', params=params, headers=headers)
+    data = req.json()
     categories = [category['CategoryID'] for category in data['CategoryArray']['Category']]
     categories.remove('-1')
     return categories
 
 
+# Only works with urllib's unencoded query strings.
 def get_item(category, apikey):
     url = 'http://svcs.ebay.com/services/search/FindingService/v1'
     url += '?itemFilter(0).name=FreeShippingOnly&itemFilter(0).value=true'

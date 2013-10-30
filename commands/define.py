@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from urllib.parse import quote
+from requests import get
 from xml.etree import ElementTree
 from helpers.command import Command
 
@@ -28,8 +27,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Define what?")
         return
-    xml = urlopen('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s?key=%s' % (quote(msg), args['config']['api']['dictionaryapikey']))
-    xml = ElementTree.parse(xml)
+    req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % msg, params={'key': args['config']['api']['dictionaryapikey']})
+    xml = ElementTree.fromstring(req.text)
     word = xml.find('./entry/def/dt')
     if not hasattr(word, 'text'):
         send("Definition not found")
