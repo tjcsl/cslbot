@@ -21,7 +21,7 @@ from helpers.command import Command
 
 
 def get_ids():
-    steamidfile = open('steamids.pickle', 'rb')
+    steamidfile = open('static/steamids.pickle', 'rb')
     return pickle.load(steamidfile)
 
 
