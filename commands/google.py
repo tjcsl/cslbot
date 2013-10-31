@@ -27,8 +27,9 @@ def cmd(send, msg, args):
         send("Google what?")
         return
     data = get('http://ajax.googleapis.com/ajax/services/search/web', params={'v': '1.0', 'q': msg}).json()
-    try:
-        url = data['responseData']['results'][0]['url']
+    results = data['responseData']['results']
+    if len(results) == 0:
+        send("Google didn't say much.")
+    else:
+        url = results[0]['unescapedUrl']
         send("Google says %s" % url)
-    except IndexError:
-        send("Google didn't say much")
