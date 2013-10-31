@@ -85,7 +85,7 @@ class IrcBot(SingleServerIRCBot):
         imp.reload(helpers)
         imp.reload(handler)
         self.config = ConfigParser()
-        self.config.read_file(open(dirname(__file__) + '/config.cfg'))
+        self.config.read_file(open(dirname(__file__) + 'config.cfg'))
         self.server.shutdown()
         self.server.socket.close()
         self.server = helpers.server.init_server(self)
