@@ -14,41 +14,33 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.parse import quote
-from urllib.request import urlopen
+from requests import get
 from helpers.command import Command
-import json
 
 
-@Command('urban', limit=2)
+@Command('urban', limit=5)
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
-    Syntax: !urban <term>
+    Syntax: !urban (#<num>) <term>
     """
     if not msg:
         send("Lookup what?")
         return
-    msgSplit = msg.split(' ')
-    definitionNum = None
-    if msgSplit[-1][0] == '#':
-        try:
-            definitionNum = int(msgSplit[-1][1:])
-        except:
-            pass
-    data = json.loads(urlopen('http://api.urbandictionary.com/v0/define?term=%s' % (quote(toStr(msgSplit[:(len(msgSplit))]) if not definitionNum else toStr(msgSplit[:(len(msgSplit) - 1)])))).read().decode())
-    try:
-        if definitionNum:
-            definition = data['list'][definitionNum - 1]['definition'].replace('\n', ' ')
-        else:
-            definition = data['list'][0]['definition'].replace('\n', ' ')
-        send(definition.replace('shit', '$#!+').replace('fuck', 'fsck'))
-    except IndexError:
-        send("UrbanDictionary doesn't have a answer for you.")
-
-
-def toStr(arrToSplit):
-    endStr = arrToSplit[0]
-    for i in arrToSplit[1:]:
-        endStr += ' '
-        endStr += i
-    return endStr
+    msg = msg.split()
+    index = msg[0][1:] if msg[0].startswith('#') else None
+    term = " ".join(msg[1:]) if index is not None else " ".join(msg)
+    req = get('http://api.urbandictionary.com/v0/define', params={'term': term})
+    data = req.json()['list']
+    if len(data) == 0:
+        output = "UrbanDictionary doesn't have a answer for you."
+    elif index is None:
+        output = data[0]['definition']
+    elif not index.isdigit() or int(index) >= len(data):
+        output = "Invalid Index"
+    else:
+        output = data[int(index)]['output']
+    output = output.replace('shit', '$#!+').replace('fuck', 'fsck')
+    output = output.splitlines()[0]
+    if len(output) > 256:
+        output = output[:253] + "..."
+    send(output)
