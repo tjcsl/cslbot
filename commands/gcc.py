@@ -16,7 +16,7 @@
 
 import subprocess
 import tempfile
-from commands.slogan import gen_slogan
+from helpers.textutils import gen_slogan
 from helpers.command import Command
 
 
