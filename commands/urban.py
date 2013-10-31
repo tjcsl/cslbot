@@ -20,7 +20,7 @@ from helpers.command import Command
 import json
 
 
-@Command('urban')
+@Command('urban', limit=2)
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
     Syntax: !urban <term>
