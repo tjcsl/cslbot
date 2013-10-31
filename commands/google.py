@@ -14,9 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-from urllib.parse import quote
-from urllib.request import urlopen
+from requests import get
 from helpers.command import Command
 
 
@@ -28,9 +26,9 @@ def cmd(send, msg, args):
     if not msg:
         send("Google what?")
         return
-    data = json.loads(urlopen('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%s' % quote(msg)).read().decode())
+    data = get('http://ajax.googleapis.com/ajax/services/search/web', params={'v': '1.0', 'q': msg}).json()
     try:
         url = data['responseData']['results'][0]['url']
-        send("Google says " + url)
+        send("Google says %s" % url)
     except IndexError:
         send("Google didn't say much")

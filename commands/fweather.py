@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import socket
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from requests import get
 from helpers.command import Command
 
 
@@ -26,11 +25,9 @@ def cmd(send, msg, args):
     Syntax: !fweather <location>
     """
     try:
-        html = urlopen('http://thefuckingweather.com/?where=' + msg.replace(' ', '%20'), timeout=5).read()
-        soup = BeautifulSoup(html)
+        html = get('http://thefuckingweather.com/', params={'where': msg})
+        soup = BeautifulSoup(html.text)
         temp, remark, flavor = soup.findAll('p')
         send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
     except ValueError:
         send('NO FSCKING RESULTS.')
-    except socket.timeout:
-        send('CONNECTION TIMED THE FSCK OUT.')

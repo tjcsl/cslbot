@@ -74,6 +74,7 @@ def check_exists(subreddit):
     req = Request('http://reddit.com/subreddits/search.json?limit=1&q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
     data = json.loads(urlopen(req).read().decode())['data']['children']
     if len(data) > 0:
-        return "/r/%s/" % subreddit == data[0]['data']['url']
+        url = data[0]['data']['url'].lower()
+        return "/r/%s/" % subreddit.lower() == url
     else:
         return False

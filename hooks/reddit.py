@@ -32,5 +32,8 @@ def handle(send, msg, args):
     req = Request('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
     data = urlopen(req).read().decode()
     data = json.loads(data)['data']
-    for line in data['public_description'].splitlines():
-        send(line)
+    if data['public_description']:
+        for line in data['public_description'].splitlines():
+            send(line)
+    else:
+        send(data['description'].splitlines()[0])

@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from lxml.html import parse
+from requests import get
+from lxml.html import fromstring
 from helpers.urlutils import get_short
 from helpers.command import Command
 
@@ -26,7 +26,7 @@ def cmd(send, msg, args):
     Syntax: !movie
     """
 
-    html = parse(urlopen('http://www.imdb.com/random/title')).getroot()
-    name = html.find('.//title').text.split('-')[0].strip()
-    url = html.base_url.strip()
-    send("%s -- %s" % (name, get_short(url)))
+    req = get('http://www.imdb.com/random/title')
+    html = fromstring(req.text)
+    name = html.find('head/title').text.split('-')[0].strip()
+    send("%s -- %s" % (name, get_short(req.url)))
