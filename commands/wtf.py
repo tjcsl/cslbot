@@ -25,6 +25,6 @@ def cmd(send, msg, args):
     """
     try:
         answer = subprocess.check_output(['wtf', msg], stderr=subprocess.STDOUT)
-        send(answer.decode().replace('\n', ' or ').replace('fuck', 'fsck'))
+        send(answer.decode().strip().replace('\n', ' or ').replace('fuck', 'fsck'))
     except subprocess.CalledProcessError as ex:
         send(ex.output.decode().rstrip().splitlines()[0])
