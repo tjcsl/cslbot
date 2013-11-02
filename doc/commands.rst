@@ -425,14 +425,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`randint` Module
----------------------
-
-.. automodule:: commands.randint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`random` Module
 --------------------
 
