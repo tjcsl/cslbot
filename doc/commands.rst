@@ -457,6 +457,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`roman` Module
+-------------------
+
+.. automodule:: commands.roman
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`s` Module
 ---------------
 
