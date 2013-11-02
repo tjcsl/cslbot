@@ -129,9 +129,9 @@ def vote(cursor, nick, pid, vote):
     """ Votes on a poll"""
     if not vote:
         return "You have to vote something!"
-    if vote == "0" or vote == "n" or vote == "nay":
+    if vote == "n" or vote == "nay":
         vote = "no"
-    elif vote == "1" or vote == "y" or vote == "aye":
+    elif vote == "y" or vote == "aye":
         vote = "yes"
     if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND active=1 AND deleted=0", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
