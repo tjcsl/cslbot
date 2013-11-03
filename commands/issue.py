@@ -15,18 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
-from urllib.request import urlopen, Request
+from requests import post
 from helpers.command import Command
 
 
 def create_issue(msg, nick, repo, apikey):
-    url = 'https://api.github.com/repos/%s/issues' % repo
-    req = Request(url)
-    req.data = json.dumps({"title": msg,
-                           "body": "Issue created by %s" % nick,
-                           "labels": ["bot"]}).encode()
-    req.add_header('Authorization', 'token %s' % apikey)
-    data = json.loads(urlopen(req).read().decode())
+    body = {"title": msg, "body": "Issue created by %s" % nick, "labels": ["bot"]}
+    headers = {'Authorization': 'token %s' % apikey}
+    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
+    data = req.json()
     return data['html_url']
 
 
