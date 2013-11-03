@@ -225,6 +225,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fml` Module
+-----------------
+
+.. automodule:: commands.fml
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`fortune` Module
 ---------------------
 

@@ -15,12 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from lxml import etree
+from helpers.command import Command
 
 
-@Command('fmlxml', ['config'])
+@Command('fml', ['config'])
 def cmd(send, msg, args):
     """Gets a random FML post.
     Syntax: !fml
     """
-    tree = etree.parse("http://api.fmylife.com/view/random/nosex/?key=%s&language=en" % args['config']['api']['fmlapikey'])
+    tree = etree.parse("http://api.fmylife.com/view/random/nosex/?key=%s&language=en" % args['config']['api']['fmlkey'])
     send(tree.xpath('//text')[0].text)
