@@ -18,6 +18,7 @@ stallmanmode = False
 clippy = False
 lazyregex = True
 [api]
+fmlapikey:
 steamapikey:
 dictionaryapikey:
 weatherapikey:
