@@ -18,6 +18,7 @@ import json
 import socket
 import errno
 from lxml.html import parse
+from requests import get
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
 
@@ -71,10 +72,5 @@ def get_title(url):
 
 
 def check_exists(subreddit):
-    req = Request('http://reddit.com/subreddits/search.json?limit=1&q=%s' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    data = json.loads(urlopen(req).read().decode())['data']['children']
-    if len(data) > 0:
-        url = data[0]['data']['url'].lower()
-        return "/r/%s/" % subreddit.lower() == url
-    else:
-        return False
+    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
+    return req.status_code == 200

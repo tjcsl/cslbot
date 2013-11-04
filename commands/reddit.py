@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen, Request
+from requests import get
 from helpers.command import Command
 from helpers.urlutils import get_title, check_exists
 
@@ -30,6 +30,5 @@ def cmd(send, msg, args):
         send("Non-existant subreddit.")
         return
     subreddit = '/r/%s' % msg if msg else ''
-    req = Request('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    url = urlopen(req).geturl()
-    send(get_title(url))
+    req = get('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    send(get_title(req.url))

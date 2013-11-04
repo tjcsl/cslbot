@@ -14,16 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 import re
-from urllib.request import urlopen
+from requests import get
 from helpers.command import Command
 
 
 def get_quote(symbol):
-    url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D'" + symbol \
-        + "'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
-    data = json.loads(urlopen(url).read().decode())
+    params = {'q': "select BidRealtime,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
+              'format': 'json', 'env': 'store://datatables.org/alltableswithkeys'}
+    data = get("http://query.yahooapis.com/v1/public/yql", params=params).json()
     return data['query']['results']
 
 
@@ -39,7 +38,7 @@ def gen_stock(msg):
 
 
 def random_stock():
-    html = urlopen('http://www.openicon.com/rsp/rsp_n100.php', timeout=1).read().decode()
+    html = get('http://www.openicon.com/rsp/rsp_n100.php').text
     return re.search('\((.*)\)', html).group(1)
 
 
