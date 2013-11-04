@@ -18,6 +18,7 @@
 import logging
 import traceback
 import imp
+import sys
 import handler
 import helpers.server
 from commands.pull import do_pull
@@ -222,4 +223,6 @@ def main():
     bot.start()
 
 if __name__ == '__main__':
+    if sys.version_info < (3, 3):
+        raise Exception("Need Python 3.3 or higher.")
     main()
