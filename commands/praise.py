@@ -14,14 +14,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
-from urllib.request import urlopen
+from requests import get
+from lxml.html import fromstring
 from helpers.command import Command
 
 
 def gen_praise(msg):
-    html = urlopen('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG', timeout=1).read().decode()
-    return re.search('h2>(.*)</h2', html, re.DOTALL).group(1).strip().replace('\n\n', '\n').replace('\n', ' ')
+    html = fromstring(get('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG').text)
+    return html.find('body/center/h2').text.replace('\n', ' ').strip()
 
 
 @Command('praise')

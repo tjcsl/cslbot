@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from urllib.parse import quote
+from requests import get
 from helpers.command import Command
 
 
@@ -28,7 +27,7 @@ def cmd(send, msg, args):
         send("What are you trying to get to?")
         return
     nick = args['nick']
-    isup = urlopen("http://isup.me/%s" % quote(msg)).read().decode('utf-8')
+    isup = get("http://isup.me/%s" % msg).text
     if "looks down from here" in isup:
         send("%s: %s is down" % (nick, msg))
     elif "like a site on the interwho" in isup:

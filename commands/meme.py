@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from lxml.html import parse
+from requests import get
+from lxml.html import fromstring
 from helpers.command import Command
 
 
@@ -24,6 +24,6 @@ def cmd(send, msg, args):
     """Gets a random meme.
     Syntax: !meme
     """
-    html = parse(urlopen('http://knowyourmeme.com/random', timeout=1))
+    html = fromstring(get('http://knowyourmeme.com/random').text)
     title = html.find(".//title").text.split('|')[0]
     send(title)

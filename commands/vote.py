@@ -161,7 +161,7 @@ def retract(cursor, poll, nick):
 
 
 def list_polls(cursor, poll_url):
-    cursor.execute("SELECT count(pid) FROM polls")
+    cursor.execute("SELECT COUNT() FROM polls WHERE enabled=1")
     num = cursor.fetchone()[0]
     return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
