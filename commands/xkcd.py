@@ -33,12 +33,15 @@ def cmd(send, msg, args):
     latest = get_num()
     if not msg:
         msg = randrange(1, latest)
-    elif msg != 'latest' and not msg.isdigit():
+    elif msg == 'latest':
+        msg = latest
+    elif msg.isdigit():
+        msg = int(msg)
+        if msg > latest or msg < 1:
+            send("Number out of range")
+            return
+    else:
         send("Not A Valid Positive Integer")
-        return
-    msg = int(msg)
-    if msg > latest or msg < 1:
-        send("Number out of range")
         return
     url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
     data = json.loads(urlopen(url).read().decode())
