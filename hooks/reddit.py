@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 import re
-from urllib.request import urlopen, Request
+from requests import get
 from helpers.hook import Hook
 from helpers.urlutils import check_exists
 
@@ -29,9 +28,7 @@ def handle(send, msg, args):
     subreddit = match.group(1)
     if not check_exists(subreddit):
         return
-    req = Request('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    data = urlopen(req).read().decode()
-    data = json.loads(data)['data']
+    data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
     if data['public_description']:
         for line in data['public_description'].splitlines():
             send(line)
