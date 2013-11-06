@@ -14,13 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-import socket
 import errno
+import json
 from lxml.html import fromstring
 from requests import get, post
-from urllib.request import urlopen, Request
-from urllib.error import HTTPError, URLError
+from requests.exceptions import ConnectionError
 
 
 def get_short(msg):
@@ -42,17 +40,9 @@ def get_title(url):
         html = fromstring(req.text)
         title = html.find('.//title').text
         # strip unicode
-        #title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
-    except URLError as ex:
-        # website does not exist
-        if hasattr(ex.reason, 'errno'):
-            if ex.reason.errno == socket.EAI_NONAME or ex.reason.errno == errno.ENETUNREACH:
-                pass
-        else:
-            return '%s: %s' % (type(ex).__name__, str(ex).replace('\n', ' '))
-    # page does not contain a title
-    except AttributeError:
-        pass
+    except ConnectionError as ex:
+        if ex.args[0].reason.errno != -errno.ENOENT:
+            raise ex
     return '** %s - %s' % (title, shorturl)
 
 
