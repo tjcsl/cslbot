@@ -30,7 +30,10 @@ def gen_stock(msg):
     quote = None
     while quote is None:
         quote = get_quote(msg)
-    quote = quote['quote']
+    try:
+        quote = quote['quote']
+    except KeyError:
+        return "Malformed (or no) response received."
     if quote['BidRealtime'] is None:
         return "Invalid Symbol."
     else:
