@@ -14,10 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 import re
-from urllib.request import urlopen
-from urllib.parse import quote
+from requests import get
 from helpers.command import Command
 
 
@@ -40,12 +38,8 @@ def set_default(nick, location, cursor, send, apikey):
 
 
 def get_weather(msg, send, apikey):
-    msg = quote(msg)
     if msg[0] == "-":
-        html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                       % (apikey, msg[1:]), timeout=1).read().decode()
-
-        data = json.loads(html)
+        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg[1:])).json()
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
             return False
@@ -69,17 +63,14 @@ def get_weather(msg, send, apikey):
             }
         }
     else:
-        html = urlopen('http://api.wunderground.com/api/%s/conditions/q/%s.json'
-                       % (apikey, msg), timeout=1).read().decode()
-        forecasthtml = urlopen('http://api.wunderground.com/api/%s/forecast/q/%s.json'
-                               % (apikey, msg), timeout=1).read().decode()
-        data = json.loads(html)
+        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg)).json()
+        forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, msg)).json()
         if 'current_observation' in data:
             data = data['current_observation']
         else:
             send("Invalid or Ambiguous Location")
             return False
-        forecastdata = json.loads(forecasthtml)['forecast']['simpleforecast']['forecastday'][0]
+        forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
     send("Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],

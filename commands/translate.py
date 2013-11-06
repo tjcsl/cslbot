@@ -14,18 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 import re
-from urllib.parse import urlencode, quote
-from urllib.request import Request, urlopen
+from requests import post, get
 from helpers.command import Command
 
 
 #FIXME: can cache for 10 minutes.
 def get_token(client_id, secret):
-    url = 'https://datamarket.accesscontrol.windows.net/v2/OAuth2-13'
-    postdata = urlencode({'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}).encode('UTF-8')
-    data = json.loads(urlopen(url, postdata).read().decode())
+    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
+    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
     return data['access_token']
 
 
@@ -38,7 +35,7 @@ def cmd(send, msg, args):
         send("Translate what?")
         return
     token = get_token(args['config']['api']['translateid'], args['config']['api']['translatesecret'])
-    req = Request('http://api.microsofttranslator.com/V2/Http.svc/Translate?text=%s&to=en' % quote(msg))
-    req.add_header('Authorization', 'Bearer %s' % token)
-    data = urlopen(req).read().decode()
+    params = {'text': msg, 'to': 'en'}
+    headers = {'Authorization': 'Bearer %s' % token}
+    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
     send(re.search('>(.*)<', data).group(1))

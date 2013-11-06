@@ -18,16 +18,15 @@
 # USA.
 
 import re
-from urllib.request import urlopen
-from urllib.parse import quote
-from html.entities import entitydefs
+from requests import get
+from html.parser import HTMLParser
 from random import random, choice
 
 
 def gen_word():
-    html = urlopen('http://randomword.setgetgo.com/get.php', timeout=1).read()
-    # strip BOM
-    return html.decode()[1:].rstrip()
+    html = get('http://randomword.setgetgo.com/get.php').text
+    # Strip BOM
+    return html[3:].rstrip()
 
 
 def gen_fwilson(x):
@@ -45,18 +44,13 @@ def gen_creffett(msg):
 
 
 def gen_slogan(msg):
-    msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
-    msg = quote(msg)
-    html = urlopen('http://www.sloganizer.net/en/outbound.php?slogan='
-                   + msg, timeout=2).read().decode()
-    slogan = re.search('>(.*)<', html).group(1).replace('\\', '').strip()
-    slogan = ''.join(c for c in slogan if ord(c) > 31 and ord(c) < 127)
-    slogan = slogan.replace('%20', ' ')
+    html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg})
+    slogan = re.search('>(.*)<', html.text).group(1)
     if not slogan:
         return gen_slogan(msg)
-    for c in entitydefs:
-        slogan = slogan.replace('&%s;' % c, entitydefs[c])
-    return slogan.replace('&amp;', '&').replace('&quot;', '"')
+    parser = HTMLParser()
+    slogan = parser.unescape(parser.unescape(slogan))
+    return slogan.replace('\\', '')
 
 
 def gen_morse(msg):

@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 import pickle
-from urllib.request import urlopen
+from requests import get
 from helpers.command import Command
 
 
@@ -36,11 +35,11 @@ def cmd(send, msg, args):
         return
     idlist = get_ids()
     try:
-        output = urlopen('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s' % (apikey, idlist[msg])).read().decode()
+        params = {'key': apikey, 'steamids': idlist[msg]}
+        output = get('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/', params=params).json()
     except KeyError:
         send("I don't have that player in my database.")
         return
-    output = json.loads(output)
     try:
         output = output['response']['players'][0]
     except KeyError:

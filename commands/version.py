@@ -15,9 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-import json
-import os
-from urllib.request import urlopen
+from os.path import dirname
+from requests import get
 from helpers.command import Command
 
 
@@ -26,19 +25,19 @@ def cmd(send, msg, args):
     """Check the git revison.
     Syntax: !version <check|master>
     """
-    apiOutput = json.loads(urlopen('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo'], timeout=1).read().decode())
-    gitdir = os.path.dirname(__file__) + "/../.git"
+    apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
+    gitdir = dirname(__file__) + "/../.git"
     try:
-        version = subprocess.check_output(['git', '--git-dir=' + gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
+        version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
     except subprocess.CalledProcessError:
         send("Couldn't get the version.")
     if not msg:
         send(version)
+        return
+    if msg == 'master':
+        send(apiOutput['commit']['sha'])
+    elif msg == 'check':
+        check = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
+        send(check)
     else:
-        if msg == 'master':
-            send(apiOutput['commit']['sha'])
-        elif msg == 'check':
-            check = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
-            send(check)
-        else:
-            send('Invalid argument')
+        send('Invalid argument')
