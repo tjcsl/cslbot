@@ -17,47 +17,32 @@
 import json
 import socket
 import errno
-from lxml.html import parse
-from requests import get
+from lxml.html import fromstring
+from requests import get, post
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
 
 
 def get_short(msg):
-    # prevent escaping of http://
-    if '//' in msg:
-        msg = msg.split('//')[1]
-
-    if len(msg) <= 13:
-        return 'http://' + msg
-
-    data = {'longUrl': msg}
-    data = json.dumps(data).encode('utf-8')
-    headers = {'Content-Type': 'application/json'}
-    req = Request('https://www.googleapis.com/urlshortener/v1/url', data, headers)
-    try:
-        rep = urlopen(req, timeout=5).read().decode()
-        short = json.loads(rep)
-        return short['id']
-    except HTTPError as e:
-        if e.getcode() == 400:
-            return 'http://' + msg
-        else:
-            raise e
+    if len(msg) < 20:
+        return msg
+    data = post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps({'longUrl': msg}), headers={'Content-Type': 'application/json'}).json()
+    if 'error' in data:
+        return msg
+    else:
+        return data['id']
 
 
 def get_title(url):
     title = 'No Title Found'
     try:
-        if not url.lower().startswith('http'):
-            url = 'http://' + url
         shorturl = get_short(url)
         # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
-        req = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
-        html = parse(urlopen(req, timeout=5))
-        title = html.getroot().find(".//title").text.strip()
+        req = get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
+        html = fromstring(req.text)
+        title = html.find('.//title').text
         # strip unicode
-        title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
+        #title = title.encode('utf-8', 'ignore').decode().replace('\n', ' ')
     except URLError as ex:
         # website does not exist
         if hasattr(ex.reason, 'errno'):
