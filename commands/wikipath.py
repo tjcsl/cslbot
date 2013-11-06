@@ -14,18 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 from datetime import datetime
-from lxml.html import parse
-from urllib.request import urlopen
+from lxml.html import fromstring
+from requests import get
 from helpers.command import Command
 
 
 def gen_path(msg):
     epoch = datetime.now().timestamp()
-    url = 'http://beta.degreesofwikipedia.com/?a1=%s&linktype=1&a2=%s&allowsideboxes=1&submit=%s' % (msg[0], msg[1], epoch)
-    html = parse(urlopen(url))
-    path = html.find('body/pre')
+    params = {'a1': msg[0], 'linktype': 1, 'a2': msg[1], 'allowsideboxes': 1, 'submit': epoch}
+    html = get('http://beta.degreesofwikipedia.com/', params=params).text
+    path = fromstring(html).find('pre')
     if path is None:
         return False
     output = []
@@ -36,7 +35,8 @@ def gen_path(msg):
 
 
 def get_articles():
-    data = json.loads(urlopen('http://en.wikipedia.org/w/api.php?action=query&list=random&rnlimit=2&rnnamespace=0&format=json').read().decode('ascii', 'ignore'))
+    params = {'action': 'query', 'list': 'random', 'rnlimit': 2, 'rnnamespace': 0, 'format': 'json'}
+    data = get('http://en.wikipedia.org/w/api.php', params=params).json()
     data = data['query']['random']
     return [data[0]['title'].replace(' ', '_'), data[1]['title'].replace(' ', '_')]
 

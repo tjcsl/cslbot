@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from urllib.parse import urlencode
-from lxml.html import parse
+from requests import post
+from lxml.html import fromstring
 from helpers.command import Command
 
 
@@ -28,7 +27,6 @@ def cmd(send, msg, args):
     if not msg:
         send("A message, Yoda did not receive, hmmmmmm.")
         return
-    data = urlencode({'YodaMe': msg}).encode('UTF-8')
-    html = urlopen("http://www.yodaspeak.co.uk/index.php", data, timeout=1)
-    text = parse(html).find('//*[@id="result"]/div[1]/span/textarea').text
+    html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
+    text = fromstring(html.text).findtext('.//textarea[@readonly]')
     send(text)

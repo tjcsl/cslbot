@@ -23,21 +23,15 @@ def get_quote(symbol):
     params = {'q': "select BidRealtime,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
               'format': 'json', 'env': 'store://datatables.org/alltableswithkeys'}
     data = get("http://query.yahooapis.com/v1/public/yql", params=params).json()
-    try:
-        ret = data['query']['results']
-    except KeyError:
-        return {}
-    return ret
+    print(data)
+    return data['query']['results']
 
 
 def gen_stock(msg):
     quote = None
     while quote is None:
         quote = get_quote(msg)
-    try:
-        quote = quote['quote']
-    except KeyError:
-        return "Malformed (or no) response received."
+    quote = quote['quote']
     if quote['BidRealtime'] is None:
         return "Invalid Symbol."
     else:

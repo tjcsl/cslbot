@@ -14,9 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-from urllib.request import urlopen
-from urllib.parse import quote
+from requests import get
 from helpers.command import Command
 
 
@@ -34,11 +32,11 @@ def cmd(send, msg, args):
     else:
         url = 'http://en.wikipedia.org/w'
         name = 'wikipedia'
-    html = urlopen('%s/api.php?format=json&action=query&list=search&srlimit=1&srsearch=%s' % (url, quote(msg)))
-    data = json.loads(html.read().decode())
+    params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': msg}
+    data = get('%s/api.php' % url, params=params).json()
     try:
         article = data['query']['search'][0]['title']
-    except Exception:
+    except IndexError:
         send("%s isn't important enough to have a %s article." % (msg, name))
         return
     article = article.replace(' ', '_')

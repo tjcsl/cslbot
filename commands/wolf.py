@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from urllib.request import urlopen
-from urllib.parse import quote
-from xml.etree import ElementTree
+from requests import get
+from lxml import etree
 from helpers.command import Command
 from helpers.urlutils import get_short
 
@@ -29,8 +28,9 @@ def cmd(send, msg, args):
     if not msg:
         send("Evaluate what?")
         return
-    xml = urlopen('http://api.wolframalpha.com/v2/query?format=plaintext&reinterpret=true&input=%s&appid=%s' % (quote(msg), args['config']['api']['wolframapikey']))
-    xml = ElementTree.parse(xml)
+    params = {'format': 'plaintext', 'reinterpret': 'true', 'input': msg, 'appid': args['config']['api']['wolframapikey']}
+    xml = get('http://api.wolframalpha.com/v2/query', params=params)
+    xml = etree.fromstring(xml.text.encode())
     output = xml.findall('./pod')
     url = get_short("http://www.wolframalpha.com/input/?i=%s" % msg)
     text = ["No output found."]

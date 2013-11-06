@@ -14,15 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-from urllib.request import urlopen
+from requests import get
 from random import randrange
 from helpers.command import Command
 
 
-def get_num():
-    data = json.loads(urlopen('http://xkcd.com/info.0.json').read().decode())
-    return data['num']
+def get_latest():
+    return get('http://xkcd.com/info.0.json').json()['num']
 
 
 @Command('xkcd')
@@ -30,7 +28,7 @@ def cmd(send, msg, args):
     """Gets a xkcd comic.
     Syntax: !xkcd <num|latest>
     """
-    latest = get_num()
+    latest = get_latest()
     if not msg:
         msg = randrange(1, latest)
     elif msg == 'latest':
@@ -44,6 +42,6 @@ def cmd(send, msg, args):
         send("Not A Valid Positive Integer")
         return
     url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
-    data = json.loads(urlopen(url).read().decode())
+    data = get(url).json()
     output = "%s -- http://xkcd.com/%d" % (data['safe_title'], data['num'])
     send(output)
