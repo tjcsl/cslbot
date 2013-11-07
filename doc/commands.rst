@@ -313,6 +313,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ipa` Module
+-----------------
+
+.. automodule:: commands.ipa
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`issue` Module
 -------------------
 

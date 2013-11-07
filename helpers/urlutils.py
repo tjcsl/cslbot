@@ -38,8 +38,9 @@ def get_title(url):
         # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
         req = get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'})
         html = fromstring(req.text)
-        title = html.find('.//title').text
-        # strip unicode
+        t = html.find('.//title')
+        if t is not None:
+            title = t.text.strip()
     except ConnectionError as ex:
         if ex.args[0].reason.errno != -errno.ENOENT:
             raise ex
