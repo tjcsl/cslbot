@@ -53,7 +53,7 @@ class BotHandler():
         self.issues = []
         self.channels = {}
         self.abuselist = {}
-        admins = config['auth']['admins'].split(', ')
+        admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: None for nick in admins}
         self.loadmodules()
         self.hooks = self.loadhooks()
@@ -120,7 +120,7 @@ class BotHandler():
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
-        if nick not in self.config['auth']['admins'].split(', '):
+        if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
             return False
         self.connection.privmsg('NickServ', 'ACC %s' % nick)
         if not self.admins[nick] and self.admins[nick] is not None:
@@ -310,7 +310,7 @@ class BotHandler():
                 abusers = [x for x in self.abuselist.keys() if x in self.ignored]
                 send(", ".join(abusers))
         elif cmd == 'cadmin':
-            admins = self.config['auth']['admins'].split(', ')
+            admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
             send("Verified admins reset.")
@@ -413,7 +413,7 @@ class BotHandler():
             msg = msg.replace(botnick, self.config['core']['cmdchar'])
 
         cmd = msg.split()[0]
-        admins = self.config['auth']['admins'].split(', ')
+        admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
 
         # handle !s
         cmdlen = len(cmd) + 1

@@ -20,7 +20,8 @@ import traceback
 import imp
 import sys
 import handler
-import helpers.server
+from helpers.server import init_server
+from helpers.config import do_setup
 from commands.pull import do_pull
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
@@ -59,7 +60,7 @@ class IrcBot(SingleServerIRCBot):
                 return
             cmdchar = self.config['core']['cmdchar']
             if cmd.split()[0] == '%sreload' % cmdchar:
-                admins = self.config['auth']['admins'].split(', ')
+                admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
                 if e.source.nick not in admins:
                     c.privmsg(target, "Nope, not gonna do it.")
                 else:
@@ -90,7 +91,7 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         self.server.shutdown()
         self.server.socket.close()
-        self.server = helpers.server.init_server(self)
+        self.server = init_server(self)
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
@@ -216,10 +217,12 @@ def main():
     config = ConfigParser()
     configfile = join(dirname(__file__), 'config.cfg')
     if not exists(configfile):
-        raise Exception("Please copy config.example to config.cfg and modify to fit your needs.")
+        print("Setting up config file")
+        do_setup(configfile)
+        return
     config.read_file(open(configfile))
     bot = IrcBot(config)
-    bot.server = helpers.server.init_server(bot)
+    bot.server = init_server(bot)
     bot.start()
 
 if __name__ == '__main__':
