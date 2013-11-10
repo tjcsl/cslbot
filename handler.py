@@ -390,9 +390,10 @@ class BotHandler():
             target = nick
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
-        for hook in self.hooks:
-            realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
-            hook.run(send, msg, msgtype, realargs)
+        if self.config['feature']['hooks'] == "True":
+            for hook in self.hooks:
+                realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
+                hook.run(send, msg, msgtype, realargs)
 
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)
