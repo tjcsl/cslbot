@@ -84,7 +84,7 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
-        imp.reload(helpers)
+        imp.reload(sys.modules['helpers'])
         imp.reload(handler)
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')

@@ -21,6 +21,7 @@ import re
 from shutil import copyfile
 from configparser import ConfigParser
 
+
 def do_config(config):
     nickregex = config['core']['nickregex']
     channelregex = "#[^ ,]{1,49}"
@@ -40,11 +41,12 @@ def do_config(config):
     while not re.match(channelregex, controlchannel):
         controlchannel = input(prompttext % "control channel")
     config['core']['ctrlchan'] = controlchannel
-    
+
     admins = ""
     while not check_admins(admins, nickregex):
         admins = input(prompttext % "coma-delimited list of admins")
     config['auth']['admins'] = admins
+
 
 def check_admins(admins, nickregex):
     admins = [x.strip() for x in admins.split(',')]
@@ -52,6 +54,7 @@ def check_admins(admins, nickregex):
         if not re.match(nickregex, x):
             return False
     return True
+
 
 def do_setup(configfile):
     examplefile = configfile.replace('cfg', 'example')

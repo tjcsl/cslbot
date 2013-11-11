@@ -17,6 +17,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`config` Module
+--------------------
+
+.. automodule:: helpers.config
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`control` Module
 ---------------------
 
