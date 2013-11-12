@@ -52,8 +52,7 @@ def do_add_quote(cmd, cursor):
     #strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
     cursor.execute('INSERT INTO quotes(quote, nick) VALUES(?,?)', (quote[0], quote[1]))
-    cursor.fetchone()
-    return "Added quote!"
+    return "Added quote %d!" % cursor.lastrowid
 
 
 def do_update_quote(cursor, qid, msg):
