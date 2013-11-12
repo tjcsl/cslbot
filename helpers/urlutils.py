@@ -42,7 +42,7 @@ def get_title(url):
         html = fromstring(req.text.encode())
         t = html.find('.//title')
         if t is not None and t.text is not None:
-            title = t.text.strip()
+            title = t.text.replace('\n', ' ').strip()
     except ConnectionError as ex:
         if ex.args[0].reason.errno != -errno.ENOENT:
             raise ex
