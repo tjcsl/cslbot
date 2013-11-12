@@ -641,6 +641,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`whatif` Module
+--------------------
+
+.. automodule:: commands.whatif
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`wiki` Module
 ------------------
 
