@@ -45,7 +45,7 @@ def gen_creffett(msg):
 
 def gen_slogan(msg):
     html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg})
-    slogan = re.search('>(.*)<', html.text).group(1)
+    slogan = re.search('>(.*)<', html.text).group(1).strip()
     if not slogan:
         return gen_slogan(msg)
     parser = HTMLParser()
