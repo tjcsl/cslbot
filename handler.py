@@ -321,7 +321,7 @@ class BotHandler():
             elif cmdargs[0] == 'clear':
                 self.ignored = []
                 send("Ignore list cleared.")
-            elif cmdargs[0] == 'show':
+            elif cmdargs[0] == 'show' or cmdargs[0] == 'list':
                 if self.ignored:
                     send(", ".join(self.ignored))
                 else:
