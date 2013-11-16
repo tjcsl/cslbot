@@ -26,7 +26,7 @@ def handle(send, msg, args):
     | themselves.
     | Otherwise substract one point.
     """
-    matches = re.findall(r"(%s+)(\+\+|--)" % args['config']['core']['nickregex'], msg)
+    matches = re.findall(r"(%s{2,})(\+\+|--)" % args['config']['core']['nickregex'], msg)
     if not matches:
         return
     if args['type'] == 'privmsg':

@@ -43,6 +43,9 @@ def cmd(send, msg, args):
     match = re.match('(%s+)' % args['config']['core']['nickregex'], msg)
     if match:
         name = match.group(1).lower()
+        if name == 'c':
+            send("We all know you love C better than anything else, so why rub it in?")
+            return
         score = cursor.execute("SELECT score FROM scores WHERE nick=?", (name,)).fetchone()
         if score is not None:
             score = score[0]
