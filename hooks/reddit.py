@@ -17,7 +17,7 @@
 import re
 from requests import get
 from helpers.hook import Hook
-from helpers.urlutils import check_exists
+from helpers.misc import check_exists
 
 
 @Hook(types=['pubmsg', 'action'], args=[])

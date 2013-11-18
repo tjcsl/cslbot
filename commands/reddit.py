@@ -16,7 +16,8 @@
 
 from requests import get
 from helpers.command import Command
-from helpers.urlutils import get_title, check_exists
+from helpers.urlutils import get_title
+from helpers.misc import check_exists
 
 
 @Command(['reddit', 'srepetsk'], ['name'])

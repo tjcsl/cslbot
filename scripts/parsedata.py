@@ -23,7 +23,7 @@ from os.path import dirname
 
 
 def get_quotes(cursor):
-    rows = cursor.execute('SELECT id,quote,nick FROM quotes').fetchall()
+    rows = cursor.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=1').fetchall()
     return [list(row) for row in rows]
 
 

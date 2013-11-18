@@ -18,7 +18,7 @@ import errno
 import json
 from lxml.html import parse
 from urllib.request import Request, urlopen
-from requests import get, post
+from requests import post
 from requests.exceptions import ConnectionError, Timeout
 
 
@@ -51,8 +51,3 @@ def get_title(url):
     except Timeout:
         title = 'Request Timed Out'
     return '** %s - %s' % (title, shorturl)
-
-
-def check_exists(subreddit):
-    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
-    return req.status_code == 200

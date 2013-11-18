@@ -16,43 +16,49 @@
 
 from random import choice
 from helpers.command import Command
-
-
-def check_quote_exists_by_id(cursor, qid):
-    quote = cursor.execute("SELECT count(id) FROM quotes WHERE id=?", (qid,)).fetchone()
-    return False if quote[0] == 0 else True
+from helpers.misc import check_quote_exists_by_id
 
 
 def do_get_quote(cursor, qid=None):
     if qid is None:
-        quotes = cursor.execute('SELECT quote,nick FROM quotes').fetchall()
+        quotes = cursor.execute('SELECT quote,nick FROM quotes WHERE approved=1').fetchall()
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
         return "%s -- %s" % (quote['quote'], quote['nick'])
     elif check_quote_exists_by_id(cursor, qid):
-        quote = cursor.execute('SELECT nick,quote FROM quotes WHERE id=?', (qid,)).fetchone()
-        return "%s -- %s" % (quote['quote'], quote['nick'])
+        quote = cursor.execute('SELECT nick,quote,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+        if int(quote['approved']) == 0:
+            return "That quote hasn't been approved yet."
+        else:
+            return "%s -- %s" % (quote['quote'], quote['nick'])
     else:
         return "That quote doesn't exist!"
 
 
 def get_quotes_nick(cursor, nick):
-    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=?', (nick,)).fetchall()
+    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=? AND approved=1', (nick,)).fetchall()
     if not rows:
         return "No quotes for %s" % nick
     quotes = [row['quote'] for row in rows]
     return "%s -- %s" % (choice(quotes), nick)
 
 
-def do_add_quote(cmd, cursor):
+def do_add_quote(cmd, cursor, isadmin, send, args):
     if '--' not in cmd:
-        return "To add a quote, it must be in the format <quote> -- <nick>"
+        send("To add a quote, it must be in the format <quote> -- <nick>")
+        return
     quote = cmd.split('--')
     #strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
-    cursor.execute('INSERT INTO quotes(quote, nick) VALUES(?,?)', (quote[0], quote[1]))
-    return "Added quote %d!" % cursor.lastrowid
+    cursor.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(?,?,?)', (quote[0], quote[1], args['nick']))
+    qid = cursor.lastrowid
+    if isadmin:
+        cursor.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
+        send("Added quote %d!" % qid)
+    else:
+        send("Quote submitted for approval.", target=args['nick'])
+        send("New Quote: #%d %s -- %s, submitted by %s" % (qid, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
 
 
 def do_update_quote(cursor, qid, msg):
@@ -70,7 +76,7 @@ def do_update_quote(cursor, qid, msg):
 
 
 def do_list_quotes(cursor, quote_url):
-    cursor.execute("SELECT count(id) FROM quotes")
+    cursor.execute("SELECT count(id) FROM quotes WHERE approved=1")
     num = cursor.fetchone()[0]
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
@@ -92,6 +98,7 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     cmd = msg.split()
+    isadmin = args['is_admin'](args['nick'])
 
     if not cmd:
         send(do_get_quote(cursor))
@@ -102,11 +109,11 @@ def cmd(send, msg, args):
             send("You want everybody to know about your witty sayings, right?")
         else:
             msg = " ".join(cmd[1:])
-            send(do_add_quote(msg, cursor))
+            do_add_quote(msg, cursor, isadmin, send, args)
     elif cmd[0] == 'list':
         send(do_list_quotes(cursor, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
-        if args['is_admin'](args['nick']):
+        if isadmin:
             if len(cmd) == 1:
                 send("Which quote?")
             else:
@@ -116,7 +123,7 @@ def cmd(send, msg, args):
     elif cmd[0] == 'edit':
         if len(cmd) == 1:
             send("Which quote?")
-        elif args['is_admin'](args['nick']):
+        elif isadmin:
             msg = " ".join(cmd[2:])
             send(do_update_quote(cursor, cmd[1], msg))
         else:
