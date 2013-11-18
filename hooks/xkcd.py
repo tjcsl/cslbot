@@ -30,10 +30,12 @@ substitutions={'keyboard': 'leopard', 'witnesses': 'these dudes I know',
 @Hook(types=['pubmsg', 'action'], args=['nick', 'type'])
 def handle(send, msg, args):
     """ Implements several XKCD comics """
+    subbed=False
     for key in substitutions.keys:
         if key in msg:
             msg = msg.replace(key, substitutions[key])
-    if not re.search('[\w]-ass ', msg):
+	    subbed=True
+    if not re.search('[\w]-ass ', msg) and not subbed:
         return
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', msg)
     if args['type'] == 'pubmsg':
