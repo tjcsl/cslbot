@@ -17,24 +17,25 @@
 from helpers.hook import Hook
 import re
 
-substitutions={'keyboard': 'leopard', 'witnesses': 'these dudes I know',
-    'allegedly': 'kinda probably', 'new study': 'tumblr post', 
-    'rebuild': 'avenge', 'space': 'SPAAAAAACCCEEEEE', 
-    'google glass': 'virtual boy', 'smartphone': 'pokedex',
-    'electric': 'atomic', 'senator': 'elf-lord', 'car': 'cat',
-    'election': 'eating contest', 'congressional leaders':
-    'river spirits', 'homeland security': 'homestar runner',
-    'could not be reached for comment':
-    'is guilty and everyone knows it'}
+substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
+                 'allegedly': 'kinda probably', 'new study': 'tumblr post',
+                 'rebuild': 'avenge', 'space': 'SPAAAAAACCCEEEEE',
+                 'google glass': 'virtual boy', 'smartphone': 'pokedex',
+                 'electric': 'atomic', 'senator': 'elf-lord', 'car': 'cat',
+                 'election': 'eating contest', 'congressional leaders':
+                 'river spirits', 'homeland security': 'homestar runner',
+                 'could not be reached for comment':
+                 'is guilty and everyone knows it'}
+
 
 @Hook(types=['pubmsg', 'action'], args=['nick', 'type'])
 def handle(send, msg, args):
     """ Implements several XKCD comics """
-    subbed=False
-    for key in substitutions.keys:
-        if key in msg:
-            msg = msg.replace(key, substitutions[key])
-	    subbed=True
+    subbed = False
+    for text, replacement in substitutions.items():
+        if text in msg:
+            msg = msg.replace(text, replacement)
+            subbed = True
     if not re.search('[\w]-ass ', msg) and not subbed:
         return
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', msg)

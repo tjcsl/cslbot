@@ -57,14 +57,6 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`hyphen` Module
---------------------
-
-.. automodule:: hooks.hyphen
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`reddit` Module
 --------------------
 
@@ -101,6 +93,14 @@ hooks Package
 -----------------
 
 .. automodule:: hooks.url
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`xkcd` Module
+------------------
+
+.. automodule:: hooks.xkcd
     :members:
     :undoc-members:
     :show-inheritance:

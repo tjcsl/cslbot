@@ -41,6 +41,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`misc` Module
+------------------
+
+.. automodule:: helpers.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`modutils` Module
 ----------------------
 
