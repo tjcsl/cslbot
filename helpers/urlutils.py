@@ -16,7 +16,8 @@
 
 import errno
 import json
-from lxml.html import fromstring
+from lxml.html import parse
+from urllib.request import Request, urlopen
 from requests import get, post
 from requests.exceptions import ConnectionError, Timeout
 
@@ -39,9 +40,9 @@ def get_title(url):
         shorturl = get_short(url)
         # Wikipedia doesn't like the default User-Agent, so we rip-off chrome
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36'}
-        req = get(url, headers=headers, timeout=4)
-        html = fromstring(req.text.encode())
-        t = html.find('.//title')
+        req = Request(url, headers=headers)
+        html = parse(urlopen(req))
+        t = html.find('.//title') if html.getroot() is not None else None
         if t is not None and t.text is not None:
             title = t.text.replace('\n', ' ').strip()
     except ConnectionError as ex:
