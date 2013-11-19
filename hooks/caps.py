@@ -20,7 +20,7 @@ import string
 _caps = []
 
 
-@Hook(types=['pubmsg'], args=['nick', 'do_kick', 'target'])
+@Hook(types=['pubmsg'], args=['nick', 'do_kick', 'target', 'config'])
 def handle(send, msg, args):
     """ Check for capslock abuse.
 
@@ -31,17 +31,18 @@ def handle(send, msg, args):
     # SHUT CAPS LOCK OFF, MORON
     global _caps
 
-    nick = args['nick']
-    THRESHOLD = 0.65
-    text = "shutting caps lock off"
-    upper = [i for i in msg if i in string.ascii_uppercase]
-    upper_ratio = len(upper) / len(msg)
-    if args['target'] != 'private':
-        if upper_ratio > THRESHOLD and len(msg) > 6:
-            if nick in _caps:
-                args['do_kick'](args['target'], nick, text)
+    if args['config']['feature']['capskick'] == 'True':
+        nick = args['nick']
+        THRESHOLD = 0.65
+        text = "shutting caps lock off"
+        upper = [i for i in msg if i in string.ascii_uppercase]
+        upper_ratio = len(upper) / len(msg)
+        if args['target'] != 'private':
+            if upper_ratio > THRESHOLD and len(msg) > 6:
+                if nick in _caps:
+                    args['do_kick'](args['target'], nick, text)
+                    _caps.remove(nick)
+                else:
+                    _caps.append(nick)
+            elif nick in _caps:
                 _caps.remove(nick)
-            else:
-                _caps.append(nick)
-        elif nick in _caps:
-            _caps.remove(nick)

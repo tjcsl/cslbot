@@ -19,6 +19,7 @@ stallmanmode = False
 clippy = False
 lazyregex = True
 hooks = True
+capskick = True
 [api]
 steamapikey:
 dictionaryapikey:
