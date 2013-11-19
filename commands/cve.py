@@ -16,8 +16,9 @@
 
 import re
 from requests import get
+from lxml.html import fromstring
 from helpers.command import Command
-from helpers.urlutils import get_title
+from helpers.urlutils import get_short
 
 
 @Command(['cve', 'cveid'])
@@ -31,11 +32,20 @@ def cmd(send, msg, args):
         return
     #If there are three fields, ignore the first (we don't actually need to send CVE-
     if len(elements) == 3:
+        if not elements[0].upper() == 'CVE':
+            send("Invalid CVE format")
+            return
         elements.pop(0)
     #The first digit field should be exactly four digits long, the second is 4+
-    if not re.search("^[\d]{4}$", elements[0]) or not re.search("^[\d]{4,}$"):
+    if not re.search("^[\d]{4}$", elements[0]) or not re.search("^[\d]{4,}$", elements[1]):
         send("Invalid CVE format")
         return
-    search = "%s-%s" (elements[0], elements[1])
-    req = get('http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search)
-    send(get_title(req.url))
+    search = "%s-%s" % (elements[0], elements[1])
+    url = 'http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search
+    html = fromstring(get(url).text)
+    title = html.find(".//title").text.splitlines()[2]
+    if title.startswith('ERROR'):
+        output = 'Invalid CVE Number'
+    else:
+        output = "%s -- %s" % (title, get_short(url))
+    send(output)
