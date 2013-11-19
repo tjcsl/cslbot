@@ -87,7 +87,7 @@ def get_weather(msg, send, apikey):
     return True
 
 
-@Command(['weather','bjones','`bjones'], ['nick', 'config', 'db'])
+@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
@@ -98,6 +98,7 @@ def cmd(send, msg, args):
     if match:
         set_default(args['nick'], match.group(1), cursor, send, apikey)
         return
+    nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not msg:
-        msg = get_default(args['nick'], cursor, send)
+        msg = get_default(nick, cursor, send)
     get_weather(msg, send, apikey)
