@@ -30,13 +30,15 @@ def gen_word():
 
 
 def gen_fwilson(x):
-    if x.startswith('fwil') or random() < 0.5:
+    if x.startswith('fwil') or random() < 0.3:
         output = "wheeeee %s" % x
         return output.upper()
-    else:
+    elif random() > 0.6:
         output = ['fwil%s' % q for q in x.split()]
         output = ' '.join(output)
         return output.lower()
+    else:
+        return ">_> <_<"
 
 
 def gen_creffett(msg):

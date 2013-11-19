@@ -25,4 +25,9 @@ def cmd(send, msg, args):
     """
     if not msg:
         msg = gen_word()
-    send(gen_fwilson(msg))
+    output = gen_fwilson(msg)
+    if output.startswith(">"):
+        send(">_>")
+        send("<_<")
+        return
+    send(output)
