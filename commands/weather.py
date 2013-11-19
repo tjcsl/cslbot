@@ -87,7 +87,7 @@ def get_weather(msg, send, apikey):
     return True
 
 
-@Command('weather', ['nick', 'config', 'db'])
+@Command(['weather','bjones','`bjones'], ['nick', 'config', 'db'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
