@@ -30,4 +30,4 @@ def cmd(send, msg, args):
     c = ["broke", "exploded", "corrupted", "melted", "froze", "died", "reset",
          "was seen by the godofskies", "burned", "corroded", "reversed polarity",
          "was accidentallied", "nuked"]
-    send("%s %s %s" % ((choice(a), choice(b), choice(c))))
+    send("because %s %s %s" % ((choice(a), choice(b), choice(c))))
