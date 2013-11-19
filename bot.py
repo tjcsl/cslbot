@@ -116,6 +116,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        for i in self.config['core']['extrachans']:
+            c.join(i)
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
