@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.hook import Hook
+from random import random
 import re
 
 substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
@@ -32,10 +33,11 @@ substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
 def handle(send, msg, args):
     """ Implements several XKCD comics """
     subbed = False
-    for text, replacement in substitutions.items():
-        if text in msg:
-            msg = msg.replace(text, replacement)
-            subbed = True
+    if random() < 0.1:
+        for text, replacement in substitutions.items():
+            if text in msg:
+                msg = msg.replace(text, replacement)
+                subbed = True
     if not re.search('[\w]-ass ', msg) and not subbed:
         return
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', msg)
