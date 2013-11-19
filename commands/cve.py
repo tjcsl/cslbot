@@ -18,15 +18,14 @@ import re
 from requests import get
 from helpers.command import Command
 from helpers.urlutils import get_title
-from helpers.misc import check_exists
 
 
-@Command(['cve'], ['cveid'])
+@Command(['cve', 'cveid'])
 def cmd(send, msg, args):
     """Gets info on a CVE id from MITRE's CVE database
     Syntax: !cve <cveid>
     """
-    elements = cveid.split('-')
+    elements = msg.split('-')
     if len(elements) > 3 or len(elements) < 2:
         send("Invalid CVE format")
         return
@@ -37,6 +36,6 @@ def cmd(send, msg, args):
     if not re.search("^[\d]{4}$", elements[0]) or not re.search("^[\d]{4,}$"):
         send("Invalid CVE format")
         return
-    search = elements[0] + "-" + elements[1]
-    req = get('http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search, headers={'User-Agent': 'CslBot/1.0'})
+    search = "%s-%s" (elements[0], elements[1])
+    req = get('http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search)
     send(get_title(req.url))

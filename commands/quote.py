@@ -58,7 +58,7 @@ def do_add_quote(cmd, cursor, isadmin, send, args):
         send("Added quote %d!" % qid)
     else:
         send("Quote submitted for approval.", target=args['nick'])
-        send("New Quote: #%d %s -- %s, submitted by %s" % (qid, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
+        send("New Quote: #%d %s -- %s, Submitted by %s" % (qid, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
 
 
 def do_update_quote(cursor, qid, msg):
