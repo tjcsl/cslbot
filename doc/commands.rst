@@ -153,6 +153,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`cve` Module
+-----------------
+
+.. automodule:: commands.cve
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`ddate` Module
 -------------------
 
