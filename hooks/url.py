@@ -19,7 +19,7 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(types=['pubmsg', 'action'], args=[])
+@Hook(types=['pubmsg', 'action'], args=['config'])
 def handle(send, msg, args):
     """ Get titles for urls.
 
@@ -31,5 +31,5 @@ def handle(send, msg, args):
                           [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
-    if match:
+    if match and args['config']['feature']['linkread'] == "True":
         send(get_title(match.group(1)))

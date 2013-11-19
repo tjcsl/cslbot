@@ -20,6 +20,7 @@ clippy = False
 lazyregex = True
 hooks = True
 capskick = True
+linkread = True
 [api]
 steamapikey:
 dictionaryapikey:
