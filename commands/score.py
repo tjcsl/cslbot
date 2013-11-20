@@ -43,7 +43,7 @@ def cmd(send, msg, args):
     matches = re.findall('(%s+)' % args['config']['core']['nickregex'], msg)
     if matches:
         for match in matches:
-            name = match.group(1).lower()
+            name = match.lower()
             if name == 'c':
                 send("We all know you love C better than anything else, so why rub it in?")
                 return
