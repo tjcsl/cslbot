@@ -15,9 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
+import re
 
 @Command('msg',['connection'])
 def cmd(send, msg, args):
-	if msg.startswith("#"):
+	msg = msg.split(" ", maxsplit=1)
+	if re.match("#[^ ,]{1,49}", msg[0]):
 		c = args['connection']
-		c.privmsg(msg.split(" ", maxsplit=1)[0], msg.split(" ", maxsplit=1)[1])
+		c.privmsg(msg[0], msg[1])
