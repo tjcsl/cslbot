@@ -17,9 +17,9 @@
 from helpers.command import Command
 import re
 
-@Command('msg',['connection'])
+@Command('msg',['connection', 'nick', 'is_admin'])
 def cmd(send, msg, args):
 	msg = msg.split(" ", maxsplit=1)
-	if re.match("#[^ ,]{1,49}", msg[0]):
+	if re.match("#[^ ,]{1,49}", msg[0]) and args['is_admin'](args['nick']):
 		c = args['connection']
 		c.privmsg(msg[0], msg[1])
