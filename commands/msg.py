@@ -17,14 +17,13 @@
 from helpers.command import Command
 import re
 
-@Command('msg',['connection', 'nick', 'is_admin'])
+@Command('msg',['nick', 'is_admin'])
 def cmd(send, msg, args):
 	msg = msg.split(maxsplit=1)
-	c = args['connection']
 	if re.match("#[^ ,]{1,49}", msg[0]):
 		if args['is_admin'](args['nick']):
-			c.privmsg(msg[0], msg[1])
+			send(msg[1], msg[0])
 		else:
-			c.privmsg(args['nick'], "You are not a admin. To prevent abuse I am not sending this message.")
+			send("You are not a admin.", target=args['nick'])
 	else:
-		c.privmsg(args['nick'], "That is not a vaild chan. To prevent abuse I am not sending this message.")
+		send("That is not a vaild chan.", target=args['nick'])
