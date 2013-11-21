@@ -17,15 +17,21 @@
 from helpers.command import Command
 import re
 
-@Command('msg',['nick', 'is_admin'])
+
+@Command('msg', ['nick', 'is_admin'])
 def cmd(send, msg, args):
-	"""Sends a message to a channel
-	Syntax: !msg <channel> <message>"""
-	msg = msg.split(maxsplit=1)
-	if re.match("#[^ ,]{1,49}", msg[0]):
-		if args['is_admin'](args['nick']):
-			send(msg[1], target=msg[0])
-		else:
-			send("You are not a admin.", target=args['nick'])
-	else:
-		send("That is not a vaild chan.", target=args['nick'])
+    """Sends a message to a channel
+    Syntax: !msg <channel> <message>
+    """
+    if not msg:
+        send("Message who?")
+    msg = msg.split(maxsplit=1)
+    if re.match("#[^ ,]{1,49}", msg[0]):
+        if len(msg) == 1:
+            send("What message?")
+        elif args['is_admin'](args['nick']):
+            send(msg[1], target=msg[0])
+        else:
+            send("You are not a admin.")
+    else:
+        send("That is not a valid channel.")

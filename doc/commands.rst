@@ -393,6 +393,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`msg` Module
+-----------------
+
+.. automodule:: commands.msg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`pester` Module
 --------------------
 
