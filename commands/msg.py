@@ -22,7 +22,7 @@ def cmd(send, msg, args):
 	msg = msg.split(maxsplit=1)
 	if re.match("#[^ ,]{1,49}", msg[0]):
 		if args['is_admin'](args['nick']):
-			send(msg[1], msg[0])
+			send(msg[1], target=msg[0])
 		else:
 			send("You are not a admin.", target=args['nick'])
 	else:
