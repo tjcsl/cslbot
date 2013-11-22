@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from helpers.command import Command
 from helpers.textutils import gen_fwilson, gen_word
 
@@ -21,8 +22,14 @@ from helpers.textutils import gen_fwilson, gen_word
 @Command(['fwilson'])
 def cmd(send, msg, args):
     """Imitates fwilson.
-    Syntax: !fwilson <message>
+    Syntax: !fwilson (-f|w) <message>
     """
     if not msg:
         msg = gen_word()
-    send(gen_fwilson(msg))
+    match = re.match('-([wf]) .+', msg)
+    if match:
+        mode = match.group(1)
+        msg = msg[3:]
+    else:
+        mode = None
+    send(gen_fwilson(msg, mode))

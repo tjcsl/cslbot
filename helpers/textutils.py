@@ -29,8 +29,12 @@ def gen_word():
     return html[3:].rstrip()
 
 
-def gen_fwilson(x):
-    if x.startswith('fwil') or random() < 0.5:
+def gen_fwilson(x, mode=None):
+    if x.lower().startswith('fwil'):
+        mode = 'w'
+    if mode is None:
+        mode = 'w' if random() < 0.5 else 'f'
+    if mode == 'w':
         output = "wheeeee %s" % x
         return output.upper()
     else:
