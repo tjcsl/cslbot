@@ -36,7 +36,10 @@ def cmd(send, msg, args):
     text = ["No output found."]
     for x in output:
         if 'primary' in x.keys():
-            text = x.find('./subpod/plaintext').text.split('\n')
-    for t in text:
-        send(t)
+            text = x.find('./subpod/plaintext').text
+    if text is None:
+        send("No Output parsable")
+    else:
+        for t in text.splitlines():
+            send(t)
     send("See %s for more info" % url)
