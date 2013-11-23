@@ -26,6 +26,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         send("What is your question?")
+        # let people !8ball again if they screw up and forget the part where you ask a question.
         args['handler'].abuselist[args['nick']]['8ball'].pop()
         return
     answers = {"It is certain": "yes", "It is decidedly so": "yes", "Without a doubt": "yes", "Yes, definitely": "yes", "You may rely on it": "yes", "As I see it, yes": "yes",
