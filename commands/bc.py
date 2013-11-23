@@ -37,6 +37,9 @@ def cmd(send, msg, args):
             msg = msg.replace(word, str(scores[word]))
     msg += '\n'
     proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = proc.communicate(msg.encode())[0].decode()
-    for line in output.splitlines():
-        send(line)
+    output = proc.communicate(msg.encode())[0].decode().splitlines()
+    if len(output) > 3:
+        send("Your output is too long, have you tried mental math?")
+    else:
+        for line in output:
+            send(line)
