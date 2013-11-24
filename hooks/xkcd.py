@@ -36,8 +36,10 @@ def handle(send, msg, args):
     if random() < 0.1:
         for text, replacement in substitutions.items():
             if text in msg:
-                msg = msg.replace(text, replacement)
-                subbed = True
+                msg = re.subn(r"\b%s\b" % text, replacement, msg)
+                if msg[1] > 0:
+                    subbed = True
+                msg = msg[0]
     if not re.search('[\w]-ass ', msg) and not subbed:
         return
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', msg)
