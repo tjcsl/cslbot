@@ -390,7 +390,7 @@ class BotHandler():
             target = nick
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
-        if self.config['feature']['hooks'] == "True":
+        if self.config['feature']['hooks'] == "True" and not nick in self.ignored:
             for hook in self.hooks:
                 realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
                 hook.run(send, msg, msgtype, realargs)
