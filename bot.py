@@ -20,6 +20,7 @@ import traceback
 import imp
 import sys
 import handler
+import argparse
 from helpers.server import init_server
 from helpers.config import do_setup
 from commands.pull import do_pull
@@ -208,14 +209,15 @@ class IrcBot(SingleServerIRCBot):
         c.join(e.target)
 
 
-def main():
+def main(args):
     """The bot's main entry point.
 
     | Setup logging.
     | When troubleshooting startup, it may help to change the INFO to DEBUG.
     | Initialize the bot and start processing messages.
     """
-    logging.basicConfig(level=logging.INFO)
+    loglevel = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(level=loglevel)
     config = ConfigParser()
     configfile = join(dirname(__file__), 'config.cfg')
     if not exists(configfile):
@@ -230,4 +232,7 @@ def main():
 if __name__ == '__main__':
     if sys.version_info < (3, 3):
         raise Exception("Need Python 3.3 or higher.")
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
+    args = parser.parse_args()
+    main(args)
