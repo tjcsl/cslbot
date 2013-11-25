@@ -24,8 +24,9 @@ def cmd(send, msg, args):
     """Shows the bot's uptime.
     Syntax: !uptime
     """
+    curr = time()
     uptime = args['handler'].uptime
-    starttime = time() - uptime['start']
-    reloaded = time() - uptime['reloaded']
+    starttime = curr - uptime['start']
+    reloaded = curr - uptime['reloaded']
     send("Time since start: %s" % timedelta(seconds=starttime))
     send("Time since reload: %s" % timedelta(seconds=reloaded))
