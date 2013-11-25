@@ -617,6 +617,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`uptime` Module
+--------------------
+
+.. automodule:: commands.uptime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`urban` Module
 -------------------
 

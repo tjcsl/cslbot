@@ -45,6 +45,8 @@ class BotHandler():
         | db - Is a db wrapper for data storage.
         """
         self.config = config
+        start = time.time()
+        self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
         self.outputfilter = [lambda x: x]
         self.kick_enabled = True
@@ -68,6 +70,7 @@ class BotHandler():
         data['ignored'] = list(self.ignored)
         data['issues'] = list(self.issues)
         data['channels'] = dict(self.channels)
+        data['uptime'] = dict(self.uptime)
         data['abuselist'] = dict(self.abuselist)
         data['guarded'] = list(self.guarded)
         return data
@@ -78,6 +81,7 @@ class BotHandler():
         self.ignored = data['ignored']
         self.issues = data['issues']
         self.channels = data['channels']
+        self.uptime = data['uptime']
         self.abuselist = data['abuselist']
         self.guarded = data['guarded']
 
@@ -441,6 +445,7 @@ class BotHandler():
                     send("Nope, not gonna do it.")
                 else:
                     found = True
+                    self.uptime['reloaded'] = time.time()
                     self.clean_sql_connection_pool()
                     imp.reload(sys.modules['helpers.command'])
                     imp.reload(sys.modules['helpers.control'])
