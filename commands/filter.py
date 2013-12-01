@@ -18,6 +18,11 @@ from helpers.command import Command
 from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse
 
 
+def removevowels(k):
+    for i in 'AEIOUYaeiouy':
+        k = k.replace(i, '')
+    return k
+
 @Command('filter', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Changes the output filter.
@@ -28,7 +33,8 @@ def cmd(send, msg, args):
         "creffett": gen_creffett,
         "slogan": gen_slogan,
         "insult": gen_insult,
-        "morse": gen_morse
+        "morse": gen_morse,
+        "removevowels": removevowels
         }
     if not msg:
         names = []
