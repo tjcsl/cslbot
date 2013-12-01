@@ -15,13 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse
+from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse, removevowels
 
-
-def removevowels(k):
-    for i in 'AEIOUYaeiouy':
-        k = k.replace(i, '')
-    return k
 
 @Command('filter', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):

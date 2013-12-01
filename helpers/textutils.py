@@ -23,6 +23,10 @@ from html.parser import HTMLParser
 from random import random, choice
 
 
+def removevowels(msg):
+    return re.sub('[aeiouy]', '', msg, flags=re.I)
+
+
 def gen_word():
     html = get('http://randomword.setgetgo.com/get.php').text
     # Strip BOM
