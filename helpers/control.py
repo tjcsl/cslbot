@@ -199,7 +199,9 @@ def accept_quote(handler, cmd):
     qid = int(cmd[1])
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
-    quote = db.execute('SELECT quote,nick,submitter FROM quotes WHERE id=?', (qid,)).fetchone()
+    quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+    if quote['approved'] == 1:
+        return "Quote already approved."
     db.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
@@ -246,7 +248,9 @@ def reject_quote(handler, cmd):
     qid = int(cmd[1])
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
-    quote = db.execute('SELECT quote,nick,submitter FROM quotes WHERE id=?', (qid,)).fetchone()
+    quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+    if quote['approved'] == 1:
+        return "Quote already approved."
     db.execute('DELETE FROM quotes WHERE id=?', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
