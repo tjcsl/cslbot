@@ -5,7 +5,7 @@ ircport: 6667
 nick: exampleBot
 channel: #channel
 ctrlchan: #channel-control
-extrachans: 
+extrachans: #chan1, #chan2
 cmdchar: !
 url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`\^-]
