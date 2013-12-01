@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     xml = etree.fromstring(xml.text.encode())
     output = xml.findall('./pod')
     url = get_short("http://www.wolframalpha.com/input/?i=%s" % msg)
-    text = ["No output found."]
+    text = "No output found."
     for x in output:
         if 'primary' in x.keys():
             text = x.find('./subpod/plaintext').text
