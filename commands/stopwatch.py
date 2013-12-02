@@ -32,6 +32,14 @@ def check_sw_valid(sw):
     return "OK"
 
 
+def get_status(cursor, sw):
+    ok = check_sw_valid(sw)
+    if ok != "OK":
+        return ok
+    query_result = cursor.execute("SELECT active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    return "Active" if query_result['active'] == 1 else "Paused"
+
+
 def get_elapsed(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
@@ -41,12 +49,10 @@ def get_elapsed(cursor, sw):
         return "No stopwatch exists with that ID!"
     elapsed = query_result[0]
     etime = 0
-    active = "Stopped at "
     if query_result[2] == 1:
         etime = time.time() - query_result[1]
-        active = "Active "
     etime += float(elapsed)
-    return active + str(timedelta(seconds=etime))
+    return str(timedelta(seconds=etime))
 
 
 def stop_stopwatch(cursor, sw):
@@ -110,9 +116,9 @@ def cmd(send, msg, args):
     if command == "start":
         send(create_sw(cursor))
     elif command == "get":
-        send(get_elapsed(cursor, msg))
+        send("%s %s" % (get_status(cursor, msg), get_elapsed(cursor, msg)))
     elif command == "stop":
-        send(stop_stopwatch(cursor, msg) + get_elapsed(cursor, msg))
+        send("%s Stopped at %s" % (stop_stopwatch(cursor, msg), get_elapsed(cursor, msg)))
     elif command == "resume":
         send(stopwatch_resume(cursor, msg))
     elif command == "list":
