@@ -41,7 +41,7 @@ def get_elapsed(cursor, sw):
         return "No stopwatch exists with that ID!"
     elapsed = query_result[0]
     etime = 0
-    active = "Paused "
+    active = "Stopped at "
     if query_result[2] == 1:
         etime = time.time() - query_result[1]
         active = "Active "
@@ -112,7 +112,7 @@ def cmd(send, msg, args):
     elif command == "get":
         send(get_elapsed(cursor, msg))
     elif command == "stop":
-        send(stop_stopwatch(cursor, msg))
+        send(stop_stopwatch(cursor, msg) + get_elapsed(cursor, msg))
     elif command == "resume":
         send(stopwatch_resume(cursor, msg))
     elif command == "list":
