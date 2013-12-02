@@ -21,7 +21,7 @@ from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult,
 @Command('filter', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Changes the output filter.
-    Syntax: !filter <filter|list|reset|chain filter>
+    Syntax: !filter <filter|show|list|reset|chain filter>
     """
     output_filters = {
         "fwilson": gen_fwilson,
@@ -31,7 +31,7 @@ def cmd(send, msg, args):
         "morse": gen_morse,
         "removevowels": removevowels
         }
-    if not msg:
+    if not msg or msg == 'show':
         names = []
         for i in args['handler'].outputfilter:
             name = i.__name__
