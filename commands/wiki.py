@@ -16,7 +16,7 @@
 
 from requests import get
 from helpers.command import Command
-
+from lxml import etree
 
 @Command(['wiki', 'wikipedia', 'livedoc'], ['name'])
 def cmd(send, msg, args):
@@ -39,8 +39,10 @@ def cmd(send, msg, args):
     except IndexError:
         send("%s isn't important enough to have a %s article." % (msg, name))
         return
-    article = article.replace(' ', '_')
-    # wikipedia uses /w for api and /wiki for articles
-    if 'livedoc' not in args['name']:
-        url += 'iki'
-    send('%s/%s' % (url, article))
+    article = article.replace(' ', '%20')
+    tree = etree.parse('%s/api.php?format=xml&action=query&titles=%s&prop=revisions&rvprop=content' % (url, article))
+    tree = tree.xpath('//rev')[0].text
+    output = tree.split("'''", maxsplit=1)[1].split("==", maxsplit=1)[0]   
+    if len(output) > 254:
+        output = output[:251] + "..."
+    send("'''%s" % output)

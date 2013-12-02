@@ -112,7 +112,7 @@ def cmd(send, msg, args):
     elif command == "get":
         send(get_elapsed(cursor, msg))
     elif command == "stop":
-        send(stop_stopwatch(cursor, msg))
+        send(stop_stopwatch(cursor, msg) + get_elapsed(cursor, msg).replace("Paused", " Stopped at"))
     elif command == "resume":
         send(stopwatch_resume(cursor, msg))
     elif command == "list":
