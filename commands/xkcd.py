@@ -23,10 +23,21 @@ def get_latest():
     return get('http://xkcd.com/info.0.json').json()['num']
 
 
-@Command('xkcd')
+def do_search(msg, key, searchid):
+    params = {'q': msg, 'key': key, 'cx': searchid}
+    data = get('https://www.googleapis.com/customsearch/v1', params=params).json()
+    if 'items' not in data:
+        output = "No Results found."
+    else:
+        data = data['items'][0]
+        output = "%s -- %s" % (data['title'], data['link'])
+    return output
+
+
+@Command('xkcd', ['config'])
 def cmd(send, msg, args):
     """Gets a xkcd comic.
-    Syntax: !xkcd <num|latest>
+    Syntax: !xkcd <num|latest|term>
     """
     latest = get_latest()
     if not msg:
@@ -39,7 +50,7 @@ def cmd(send, msg, args):
             send("Number out of range")
             return
     else:
-        send("Not A Valid Positive Integer")
+        send(do_search(msg, args['config']['api']['xkcdkey'], args['config']['api']['xkcdid']))
         return
     url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
     data = get(url).json()
