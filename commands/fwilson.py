@@ -19,7 +19,7 @@ from helpers.command import Command
 from helpers.textutils import gen_fwilson, gen_word
 
 
-@Command(['fwilson'])
+@Command(['fwilson', 'son'])
 def cmd(send, msg, args):
     """Imitates fwilson.
     Syntax: !fwilson (-f|w) <message>
