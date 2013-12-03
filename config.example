@@ -7,6 +7,7 @@ channel: #channel
 ctrlchan: #channel-control
 extrachans: #chan1, #chan2
 cmdchar: !
+altcmdchars: fwil, @, ~
 url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`\^-]
 [auth]

@@ -416,6 +416,10 @@ class BotHandler():
         botnick = '%s: ' % self.connection.real_nickname
         if msg.startswith(botnick):
             msg = msg.replace(botnick, self.config['core']['cmdchar'], 1)
+        
+        for i in self.config['core']['altcmdchars']:
+            if msg.startswith(i):
+                msg = msg.replace(i, self.config['core']['cmdchar'], 1)
 
         cmd = msg.split()[0]
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
