@@ -416,8 +416,9 @@ class BotHandler():
         botnick = '%s: ' % self.connection.real_nickname
         if msg.startswith(botnick):
             msg = msg.replace(botnick, self.config['core']['cmdchar'], 1)
-        
-        for i in self.config['core']['altcmdchars']:
+
+        altchars = [x.strip() for x in self.config['auth']['altcmdchars'].split(',')]
+        for i in altchars:
             if msg.startswith(i):
                 msg = msg.replace(i, self.config['core']['cmdchar'], 1)
 
