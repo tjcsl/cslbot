@@ -22,6 +22,12 @@ lazyregex = True
 hooks = True
 capskick = True
 linkread = True
+[wiki]
+list = wiki, livedoc
+api = http://en.wikipedia.org/w/api.php, http://www.tjhsst.edu/admin/livedoc/api.php
+article_url = http://en.wikipedia.org/wiki/, http://www.tjhsst.edu/admin/livedoc/
+names = Wikipedia, LiveDoc
+default = wiki
 [api]
 steamapikey:
 dictionaryapikey:
