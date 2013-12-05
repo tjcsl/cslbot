@@ -21,7 +21,8 @@ Python must be at least 3.3.
 Adding Modules
 --------------
 To add a module place a <mod>.py file in the commands dir.  
-The file must contain a def cmd(send, msg, args): method definition.  
+The file must contain a method that is decorated with the @Command decorator;
+this is used in the form ```@Command(['command_name_1', 'command_name_2'], ['arg_required_1', 'arg_required_2'])```.
 The file will only be run if it is marked executable.
 
 
