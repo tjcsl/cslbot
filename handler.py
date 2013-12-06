@@ -21,7 +21,7 @@ import re
 import imp
 import time
 import sys
-from helpers import control, sql, hook, command, textutils
+from helpers import control, sql, hook, command, textutils, admin
 from os.path import dirname
 from random import choice, random
 
@@ -136,8 +136,8 @@ class BotHandler():
 
     def get_admins(self, c):
         """Check verification for all admins."""
-        for admin in self.admins:
-            c.privmsg('NickServ', 'ACC %s' % admin)
+        for a in self.admins:
+            c.privmsg('NickServ', 'ACC %s' % a)
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -398,6 +398,10 @@ class BotHandler():
             for hook in self.hooks:
                 realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
                 hook.run(send, msg, msgtype, realargs)
+
+        if msgtype == 'privnotice' and nick == 'NickServ':
+            admin.set_admin(msg, self)
+            return
 
         # must come after set_admin to prevent spam
         self.do_log(target, nick, msg, msgtype)

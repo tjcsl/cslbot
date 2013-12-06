@@ -105,7 +105,7 @@ class IrcBot(SingleServerIRCBot):
         """Get the version."""
         return "cslbot - v0.4"
 
-    def on_welcome(self, c, e):
+    def do_welcome(self, c):
         """Do setup when connected to server.
 
         | Pass the connection to handler.
@@ -117,8 +117,10 @@ class IrcBot(SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
-        for i in self.config['core']['extrachans'].split(','):
-            c.join(i.strip())
+        extrachans = self.config['core']['extrachans']
+        if extrachans:
+            for i in extrachans.split(','):
+                c.join(i.strip())
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -134,6 +136,8 @@ class IrcBot(SingleServerIRCBot):
 
     def on_privnotice(self, c, e):
         """Pass private notices to :func:`handle_msg`."""
+        if not hasattr(self.handler, 'connection'):
+            self.do_welcome(c)
         self.handle_msg('privnotice', c, e)
 
     def on_pubnotice(self, c, e):
