@@ -9,14 +9,6 @@ hooks Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`admin` Module
--------------------
-
-.. automodule:: hooks.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`band` Module
 ------------------
 

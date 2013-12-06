@@ -56,7 +56,7 @@ class BotHandler():
         self.channels = {}
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
-        self.admins = {nick: None for nick in admins}
+        self.admins = {nick: -1 for nick in admins}
         self.loadmodules()
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
@@ -126,12 +126,16 @@ class BotHandler():
         """
         if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
             return False
-        self.connection.privmsg('NickServ', 'ACC %s' % nick)
-        if not self.admins[nick] and self.admins[nick] is not None:
+        # unauthed
+        if self.admins[nick] == -1:
+            self.connection.privmsg('NickServ', 'ACC %s' % nick)
             if complain:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
+            # reverify every 5min
+            if int(time.time()) - self.admins[nick] > 300:
+                self.connection.privmsg('NickServ', 'ACC %s' % nick)
             return True
 
     def get_admins(self, c):

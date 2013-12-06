@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+from time import time
 
 
 def set_admin(msg, handler):
@@ -26,4 +27,4 @@ def set_admin(msg, handler):
     if not match:
         return
     if int(match.group(2)) == 3:
-        handler.admins[match.group(1)] = True
+        handler.admins[match.group(1)] = int(time())
