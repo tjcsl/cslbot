@@ -345,6 +345,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`jargon` Module
+--------------------
+
+.. automodule:: commands.jargon
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`kill` Module
 ------------------
 

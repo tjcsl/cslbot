@@ -17,15 +17,14 @@
 from random import choice
 from helpers.command import Command
 
-# all the stuff to jargon-ify
-abbreviation = ["TCP", "HTTP", "SDD", "RAM", "GB", "CSS", "SSL", "AGP", "SQL",
-                "FTP", "PCI", "AI", "ADP", "RSS", "XML", "EXE", "COM", "HDD",
-                "THX", "SMTP", "SMS", "USB", "PNG"]
+abbrev = ["TCP", "HTTP", "SDD", "RAM", "GB", "CSS", "SSL", "AGP", "SQL",
+          "FTP", "PCI", "AI", "ADP", "RSS", "XML", "EXE", "COM", "HDD",
+          "THX", "SMTP", "SMS", "USB", "PNG"]
 
-adjective = ["auxiliary", "primary", "back-end", "digital", "open-source",
-             "virtual", "cross-platform", "redundant", "online", "haptic",
-             "multi-byte", "bluetooth", "wireless", "1080p", "neural",
-             "optical", "solid state", "mobile"]
+adj = ["auxiliary", "primary", "back-end", "digital", "open-source",
+       "virtual", "cross-platform", "redundant", "online", "haptic",
+       "multi-byte", "bluetooth", "wireless", "1080p", "neural",
+       "optical", "solid state", "mobile"]
 
 noun = ["driver", "protocol", "bandwidth", "panel", "microchip", "program",
         "port", "card", "array", "interface", "system", "sensor", "firewall",
@@ -47,12 +46,13 @@ def cmd(send, msg, args):
     """Causes the bot to generate some jargon.
     Syntax: !jargon
     """
-    msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbreviation), choice(noun), choice(adjective), choice(abbreviation), choice(noun)),
-           "We need to %s the %s %s %s!" % (choice(verb), choice(adjective), choice(abbreviation), choice(noun)),
-           "Try to %s the %s %s, maybe it will %s the %s %s!" % (choice(verb), choice(abbreviation), choice(noun), choice(verb), choice(adjective), choice(noun)),
-           "You can't %s the %s without %s the %s %s %s!" % (choice(verb), choice(noun), choice(ingverb), choice(adjective), choice(abbreviation), choice(noun)),
-           "Use the %s %s %s, then you can %s the %s %s!" % (choice(adjective), choice(abbreviation), choice(noun), choice(verb), choice(adjective), choice(noun)),
-           "The %s %s is down, %s the %s %s so we can %s the %s %s!" % (choice(abbreviation), choice(noun), choice(verb), choice(adjective), choice(noun), choice(verb), choice(abbreviation), choice(noun)),
-           "%s the %s won't do anything, we need to %s the %s %s %s!" % (choice(ingverb), choice(noun), choice(verb), choice(adjective), choice(abbreviation), choice(noun)),
-           "I'll %s the %s %s %s, that should %s the %s %s!" % (choice(verb), choice(adjective), choice(abbreviation), choice(noun), choice(verb), choice(abbreviation), choice(noun))]
+    msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbrev), choice(noun), choice(adj), choice(abbrev), choice(noun)),
+               "We need to %s the %s %s %s!" % (choice(verb), choice(adj), choice(abbrev), choice(noun)),
+               "Try to %s the %s %s, maybe it will %s the %s %s!" % (choice(verb), choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun)),
+               "You can't %s the %s without %s the %s %s %s!" % (choice(verb), choice(noun), choice(ingverb), choice(adj), choice(abbrev), choice(noun)),
+               "Use the %s %s %s, then you can %s the %s %s!" % (choice(adj), choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun)),
+               "The %s %s is down, %s the %s %s so we can %s the %s %s!" % (choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun), choice(verb), choice(abbrev), choice(noun)),
+               "%s the %s won't do anything, we need to %s the %s %s %s!" % (choice(ingverb), choice(noun), choice(verb), choice(adj), choice(abbrev), choice(noun)),
+               "I'll %s the %s %s %s, that should %s the %s %s!" % (choice(verb), choice(adj), choice(abbrev), choice(noun), choice(verb), choice(abbrev), choice(noun))]
+
     send(choice(msgtype))
