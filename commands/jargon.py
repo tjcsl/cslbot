@@ -41,7 +41,13 @@ ingverb = ["backing up", "bypassing", "hacking", "overriding", "compressing",
            "quantifying", "calculating", "synthesizing", "transmitting",
            "programming", "parsing"]
 
-msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbreviation), choice(noun), choice(adjective), choice(abbreviation), choice(noun)),
+
+@Command('jargon')
+def cmd(send, msg, args):
+    """Causes the bot to generate some jargon.
+    Syntax: !jargon
+    """
+    msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbreviation), choice(noun), choice(adjective), choice(abbreviation), choice(noun)),
            "We need to %s the %s %s %s!" % (choice(verb), choice(adjective), choice(abbreviation), choice(noun)),
            "Try to %s the %s %s, maybe it will %s the %s %s!" % (choice(verb), choice(abbreviation), choice(noun), choice(verb), choice(adjective), choice(noun)),
            "You can't %s the %s without %s the %s %s %s!" % (choice(verb), choice(noun), choice(ingverb), choice(adjective), choice(abbreviation), choice(noun)),
@@ -49,11 +55,4 @@ msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (c
            "The %s %s is down, %s the %s %s so we can %s the %s %s!" % (choice(abbreviation), choice(noun), choice(verb), choice(adjective), choice(noun), choice(verb), choice(abbreviation), choice(noun)),
            "%s the %s won't do anything, we need to %s the %s %s %s!" % (choice(ingverb), choice(noun), choice(verb), choice(adjective), choice(abbreviation), choice(noun)),
            "I'll %s the %s %s %s, that should %s the %s %s!" % (choice(verb), choice(adjective), choice(abbreviation), choice(noun), choice(verb), choice(abbreviation), choice(noun))]
-
-
-@Command('jargon')
-def cmd(send, msg, args):
-    """Causes the bot to generate some jargon.
-    Syntax: !jargon
-    """
     send(choice(msgtype))
