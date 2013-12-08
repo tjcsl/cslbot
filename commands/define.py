@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % msg, params={'key': args['config']['api']['dictionaryapikey']})
     xml = ElementTree.fromstring(req.text)
     word = xml.find('./entry/def/dt')
-    if not hasattr(word, 'text'):
+    if not hasattr(word, 'text') or word.text is None:
         send("Definition not found")
         return
     word = word.text.replace(' :', ', ')
