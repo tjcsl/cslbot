@@ -32,5 +32,7 @@ def handle(send, msg, args):
     if data['public_description']:
         for line in data['public_description'].splitlines():
             send(line)
-    else:
+    elif data['description']:
         send(data['description'].splitlines()[0])
+    else:
+        send(data['display_name'])
