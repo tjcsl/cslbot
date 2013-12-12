@@ -69,6 +69,7 @@ class BotHandler():
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
         data['issues'] = list(self.issues)
+        data['admins'] = dict(self.admins)
         data['channels'] = dict(self.channels)
         data['uptime'] = dict(self.uptime)
         data['abuselist'] = dict(self.abuselist)
@@ -77,13 +78,9 @@ class BotHandler():
 
     def set_data(self, data):
         """Called from :func:`bot.do_reload` to restore the handler's data."""
-        self.caps = data['caps']
-        self.ignored = data['ignored']
-        self.issues = data['issues']
-        self.channels = data['channels']
-        self.uptime = data['uptime']
-        self.abuselist = data['abuselist']
-        self.guarded = data['guarded']
+        for key, val in data.items():
+            setattr(self, key, val)
+        return
 
     def clean_sql_connection_pool(self):
         """ Cleans the sql connection pool."""
