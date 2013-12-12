@@ -27,7 +27,7 @@ def cmd(send, msg, args):
         send("Need a article.")
         return
     if 'livedoc' in args['name']:
-        url = 'http://www.tjhsst.edu/admin/livedoc'
+        url = 'http://www.tjhsst.edu/admin/livedoc/index.php'
         name = 'livedoc'
     else:
         url = 'http://en.wikipedia.org/w'
