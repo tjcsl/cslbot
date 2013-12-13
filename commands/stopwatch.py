@@ -112,7 +112,7 @@ def cmd(send, msg, args):
     msg = msg.split()
     command = msg[0]
     msg = " ".join(msg[1:])
-    cursor = args['db']
+    cursor = args['db'].get()
     if command == "start":
         send(create_sw(cursor))
     elif command == "get":

@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     match = re.match('--(.+)', msg)
     if match:
         if match.group(1) == 'high':

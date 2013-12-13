@@ -171,7 +171,7 @@ def cmd(send, msg, args):
     """Handles voting.
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     cmd = msg.split()
     msg = " ".join(cmd[1:])
     if not cmd:

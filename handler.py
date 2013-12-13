@@ -359,7 +359,7 @@ class BotHandler():
                 'issues': self.issues,
                 'abuselist': self.abuselist,
                 'handler': self,
-                'db': self.db.get(),
+                'db': self.db,
                 'kick_enabled': self.kick_enabled,
                 'guarded': self.guarded,
                 'config': self.config,

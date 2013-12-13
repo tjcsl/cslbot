@@ -54,6 +54,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Invalid Syntax.")
         return
+    cursor = args['db'].get()
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
@@ -70,7 +71,7 @@ def cmd(send, msg, args):
     replacement = msg[1]
     modifiers = get_modifiers(msg[2], args['nick'])
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(args['db'], args['target'], modifiers['nick'])
+    log = get_log(cursor, args['target'], modifiers['nick'])
 
     for line in log:
         # ignore previous !s calls.

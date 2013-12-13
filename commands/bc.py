@@ -31,7 +31,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
-    scores = get_scores(args['db'])
+    cursor = args['db'].get()
+    scores = get_scores(cursor)
     for word in msg.split():
         if word in scores:
             msg = msg.replace(word, str(scores[word]))

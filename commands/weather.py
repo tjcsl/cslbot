@@ -92,7 +92,7 @@ def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     apikey = args['config']['api']['weatherapikey']
     match = re.match("set (.*)", msg)
     if match:

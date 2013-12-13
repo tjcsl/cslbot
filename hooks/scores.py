@@ -45,7 +45,7 @@ def handle(send, msg, args):
         else:
             score = -1
         #TODO: maybe we can do this with INSERT OR REPLACE?
-        cursor = args['db']
+        cursor = args['db'].get()
         if cursor.execute("SELECT count(1) FROM scores WHERE nick=?", (name,)).fetchone()[0] == 1:
             cursor.execute("UPDATE scores SET score=score+? WHERE nick=?", (score, name))
         else:

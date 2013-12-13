@@ -137,7 +137,7 @@ def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (nick)
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     speaker = msg.split()[0] if msg else args['config']['core']['channel']
     messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'])
     starts, ends, markov = analyze_chat(messages, speaker)

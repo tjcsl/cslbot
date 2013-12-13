@@ -33,11 +33,12 @@ def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>
     """
+    cursor = args['db'].get()
     user = msg[2:] if re.search("^--", msg) else None
     if msg and not user:
         send(msg[::-1].strip())
         return
-    log = get_log(args['db'], user)
+    log = get_log(cursor, user)
     if user and not log:
         send("Couldn't find a message from %s :(" % user)
     else:

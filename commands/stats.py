@@ -49,7 +49,7 @@ def cmd(send, msg, args):
     """Gets stats.
     Syntax: !stats <--high|--low|command>
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     commands = get_commands(cursor)
     totals = get_command_totals(cursor, commands)
     if is_registered(msg):

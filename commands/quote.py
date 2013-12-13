@@ -96,7 +96,7 @@ def cmd(send, msg, args):
     """Handles quotes.
     Syntax: !quote (number|nick), !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
     """
-    cursor = args['db']
+    cursor = args['db'].get()
     cmd = msg.split()
     isadmin = args['is_admin'](args['nick'])
 

@@ -31,7 +31,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Seen who?")
         return
-    last = get_last(args['db'], msg)
+    cursor = args['db'].get()
+    last = get_last(cursor, msg)
     if last is None:
         send("%s has never shown his face." % msg)
         return
