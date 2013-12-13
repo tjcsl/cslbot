@@ -54,7 +54,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Invalid Syntax.")
         return
-    cursor = args['db'].get()
+    cursor = args['db'].get().cursor()
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
