@@ -18,6 +18,7 @@
 # USA.
 
 import sys
+from threading import Thread
 from inspect import getdoc
 from helpers.modutils import scan_and_reimport
 
@@ -80,6 +81,7 @@ def enable_command(command):
 
 def record_command(cursor, nick, command, channel):
     cursor.execute('INSERT INTO commands(nick,command,channel) VALUES(?,?,?)', (nick, command, channel))
+    cursor.commit()
 
 
 class Command():
@@ -105,7 +107,7 @@ class Command():
             send("Sorry, that command is disabled.")
         else:
             record_command(cursor, nick, command, target)
-            self.exe(send, msg, args)
+            Thread(target=self.exe, args=(send, msg, args)).start()
 
     def get_doc(self):
         return self.doc

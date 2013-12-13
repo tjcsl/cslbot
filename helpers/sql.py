@@ -71,7 +71,7 @@ class Sql():
         self.connection_pool.clear()
 
     def get(self):
-        return self.get_db_for_current_thread().cursor()
+        return self.get_db_for_current_thread()
 
     def setup_db(self):
         """ Sets up the database.
