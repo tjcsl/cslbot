@@ -32,7 +32,7 @@ def cmd(send, msg, args):
             send(msg, 'action')
         else:
             return
-    elif "at" in msg and msg != "at":
+    elif " at " in msg and msg != "at":
         match = re.match('(.*) at (.*)', msg)
         if match:
             msg = 'throws %s at %s' % (match.group(1), match.group(2))
