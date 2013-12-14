@@ -383,7 +383,7 @@ class BotHandler():
                 'is_admin': lambda nick: self.is_admin(send, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
                 'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd),
-                'defer': defer}
+                'defer': self.defer}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
