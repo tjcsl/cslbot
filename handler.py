@@ -352,12 +352,12 @@ class BotHandler():
             c.disconnect('Goodbye, Cruel World!')
             sys.exit(0)
     
-    def _defer(time, function):
+    def _defer(self, time, function):
         time.sleep(time)
         function()
 
-    def defer(time, function):
-        threading.Thread(target=_defer, args=(time, function)).start()
+    def defer(self, time, function):
+        threading.Thread(target=self._defer, args=(time, function)).start()
 
     def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
         """ Handle the various args that modules need."""
