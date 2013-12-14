@@ -19,6 +19,7 @@
 
 import re
 import imp
+import threading
 import time
 import sys
 from helpers import control, sql, hook, command, textutils, admin
@@ -350,6 +351,13 @@ class BotHandler():
         elif cmd == 'quit':
             c.disconnect('Goodbye, Cruel World!')
             sys.exit(0)
+    
+    def _defer(self, t, function):
+        time.sleep(t)
+        function()
+
+    def defer(self, time, function):
+        threading.Thread(target=self._defer, args=(time, function)).start()
 
     def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
         """ Handle the various args that modules need."""
@@ -374,7 +382,8 @@ class BotHandler():
                 'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(send, nick),
                 'ignore': lambda nick: self.ignore(send, nick),
-                'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
+                'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd),
+                'defer': self.defer}
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]
