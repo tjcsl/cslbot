@@ -89,6 +89,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`traceback` Module
+-----------------------
+
+.. automodule:: helpers.traceback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`urlutils` Module
 ----------------------
 

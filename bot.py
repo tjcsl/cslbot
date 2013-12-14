@@ -16,17 +16,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
-import traceback
 import imp
 import sys
 import handler
 import argparse
 from helpers.server import init_server
 from helpers.config import do_setup
+from helpers.traceback import handle_traceback
 from commands.pull import do_pull
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
-from os.path import basename, dirname, join, exists
+from os.path import dirname, join, exists
 from time import sleep
 
 
@@ -69,10 +69,7 @@ class IrcBot(SingleServerIRCBot):
                     self.do_reload(c, target, cmdargs, 'irc')
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
-            trace = traceback.extract_tb(ex.__traceback__)[-1]
-            trace = [basename(trace[0]), trace[1]]
-            name = type(ex).__name__
-            c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
+            handle_traceback(ex, c, target)
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.

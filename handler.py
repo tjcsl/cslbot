@@ -450,7 +450,7 @@ class BotHandler():
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
-                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self.db.get())
+                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self.connection, self.db.get())
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

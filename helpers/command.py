@@ -21,6 +21,7 @@ import sys
 from threading import Thread
 from inspect import getdoc
 from helpers.modutils import scan_and_reimport
+from helpers.traceback import handle_traceback
 
 _known_commands = {}
 _disabled_commands = []
@@ -97,15 +98,20 @@ class Command():
 
     def __call__(self, func):
         def wrapper(send, msg, args):
-            func(send, msg, args)
+            try:
+                func(send, msg, args)
+            except Exception as ex:
+                handle_traceback(ex, self.c, self.target)
         self.doc = getdoc(func)
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msg, args, command, nick, target, cursor):
+    def run(self, send, msg, args, command, nick, target, connection, cursor):
         if command in _disabled_commands:
             send("Sorry, that command is disabled.")
         else:
+            self.c = connection
+            self.target = target
             record_command(cursor, nick, command, target)
             Thread(target=self.exe, args=(send, msg, args), daemon=True).start()
 
