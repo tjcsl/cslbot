@@ -352,8 +352,8 @@ class BotHandler():
             c.disconnect('Goodbye, Cruel World!')
             sys.exit(0)
     
-    def _defer(self, time, function):
-        time.sleep(time)
+    def _defer(self, t, function):
+        time.sleep(t)
         function()
 
     def defer(self, time, function):
