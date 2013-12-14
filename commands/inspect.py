@@ -19,6 +19,7 @@ from helpers.command import Command
 
 @Command('inspect', ['handler', 'is_admin', 'nick'])
 def cmd(send, msg, args):
+    """'Inspect' a bot attribute."""
     nick, is_admin, handler = args['nick'], args['is_admin'], args['handler']
     if not is_admin(nick):
         send("The inspect command may only be used by admins.")
