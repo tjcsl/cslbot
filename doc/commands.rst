@@ -449,14 +449,6 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`quit` Module
-------------------
-
-.. automodule:: commands.quit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`quote` Module
 -------------------
 

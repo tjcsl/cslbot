@@ -42,8 +42,7 @@ def init_server(bot):
     port = bot.config.getint('core', 'serverport')
     server = BotNetServer(('', port), BotNetHandler)
     server.bot = bot
-    thread = threading.Thread(target=server.serve_forever)
-    thread.daemon = True
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     return server
 

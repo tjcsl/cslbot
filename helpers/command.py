@@ -107,7 +107,7 @@ class Command():
             send("Sorry, that command is disabled.")
         else:
             record_command(cursor, nick, command, target)
-            Thread(target=self.exe, args=(send, msg, args)).start()
+            Thread(target=self.exe, args=(send, msg, args), daemon=True).start()
 
     def get_doc(self):
         return self.doc

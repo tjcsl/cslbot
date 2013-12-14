@@ -347,6 +347,9 @@ class BotHandler():
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
+        elif cmd == 'quit':
+            c.disconnect('Goodbye, Cruel World!')
+            sys.exit(0)
 
     def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
         """ Handle the various args that modules need."""
