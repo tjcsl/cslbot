@@ -27,4 +27,4 @@ def cmd(send, msg, args):
     if not hasattr(handler, msg):
         send("That attribute was not found in the handler.")
         return
-    send(getattr(handler, msg))
+    send(repr(getattr(handler, msg)))
