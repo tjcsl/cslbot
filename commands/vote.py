@@ -183,7 +183,7 @@ def cmd(send, msg, args):
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
-            send(start_poll(cursor, msg))
+            send(start_poll(cursor.cursor(), msg))
     elif cmd == 'end' or cmd == 'close':
         if args['is_admin'](args['nick']):
             send(end_poll(cursor, msg))
