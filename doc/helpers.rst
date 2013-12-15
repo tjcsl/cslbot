@@ -41,6 +41,14 @@ helpers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`defer` Module
+-------------------
+
+.. automodule:: helpers.defer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`hook` Module
 ------------------
 

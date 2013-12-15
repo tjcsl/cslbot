@@ -15,17 +15,28 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
+from helpers.defer import defer
 
 
-@Command('defersay', ['defer'])
+@Command('defersay', ['nick', 'is_admin'])
 def cmd(send, msg, args):
+    """Says something at a later time.
+    Syntax: !defersay <delay> <msg>
+    """
+    if not args['is_admin'](args['nick']):
+        send("Admins only")
+        return
     msg = msg.split(maxsplit=1)
     if len(msg) != 2:
         send("Not enough arguments")
         return
-
-    def _send():
-        send(msg[1])
-
-    args['defer'](int(msg[0]), _send)
-    send("Message deferred.")
+    try:
+        t = int(msg[0])
+    except ValueError:
+        send("Invalid time to delay")
+        return
+    if t < 0:
+        send("Time travel not yet implemented, sorry.")
+    else:
+        defer(msg[0], lambda: send(msg[1]))
+        send("Message deferred.")

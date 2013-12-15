@@ -169,6 +169,14 @@ commands Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`defersay` Module
+----------------------
+
+.. automodule:: commands.defersay
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`define` Module
 --------------------
 
@@ -309,6 +317,14 @@ commands Package
 ------------------
 
 .. automodule:: commands.imdb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`inspect` Module
+---------------------
+
+.. automodule:: commands.inspect
     :members:
     :undoc-members:
     :show-inheritance:
