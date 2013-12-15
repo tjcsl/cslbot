@@ -38,5 +38,5 @@ def cmd(send, msg, args):
     if t < 0:
         send("Time travel not yet implemented, sorry.")
     else:
-        defer(msg[0], lambda: send(msg[1]))
+        defer(msg[0], send, msg[1])
         send("Message deferred.")

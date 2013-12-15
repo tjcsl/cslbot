@@ -22,6 +22,7 @@ import handler
 import argparse
 from helpers.server import init_server
 from helpers.config import do_setup
+from helpers.defer import defer
 from helpers.traceback import handle_traceback
 from commands.pull import do_pull
 from configparser import ConfigParser
@@ -116,8 +117,9 @@ class IrcBot(SingleServerIRCBot):
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         extrachans = self.config['core']['extrachans']
         if extrachans:
-            for i in extrachans.split(','):
-                c.join(i.strip())
+            extrachans = [x.strip() for x in extrachans.split(',')]
+            for i in range(len(extrachans)):
+                defer(i, c.join, extrachans[i])
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
