@@ -18,17 +18,17 @@ import re
 from helpers.command import Command
 
 
-def get_log(cursor, user):
+def get_log(cursor, user, target):
     if user is None:
-        cursor.execute("SELECT msg FROM log WHERE type='pubmsg' ORDER BY time DESC")
+        cursor.execute("SELECT msg FROM log WHERE (target=? AND type='pubmsg') ORDER BY time DESC", (target,))
         # Don't parrot back the !reverse call.
         cursor.fetchone()
     else:
-        cursor.execute("SELECT msg FROM log WHERE (source=? AND type='pubmsg') ORDER BY time DESC", (user,))
+        cursor.execute("SELECT msg FROM log WHERE (source=? AND target=? AND type='pubmsg') ORDER BY time DESC", (user, target))
     return cursor.fetchone()
 
 
-@Command(['reverse', 'sdamashek'], ['db'])
+@Command(['reverse', 'sdamashek'], ['db', 'target'])
 def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>
@@ -38,7 +38,7 @@ def cmd(send, msg, args):
     if msg and not user:
         send(msg[::-1].strip())
         return
-    log = get_log(cursor.cursor(), user)
+    log = get_log(cursor.cursor(), user, args['target'])
     if user and not log:
         send("Couldn't find a message from %s :(" % user)
     else:
