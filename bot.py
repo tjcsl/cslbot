@@ -101,7 +101,7 @@ class IrcBot(SingleServerIRCBot):
 
     def get_version(self):
         """Get the version."""
-        return "cslbot - v0.4"
+        return "cslbot - v0.5"
 
     def do_welcome(self, c):
         """Do setup when connected to server.
