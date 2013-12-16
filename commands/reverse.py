@@ -38,7 +38,7 @@ def cmd(send, msg, args):
     if msg and not user:
         send(msg[::-1].strip())
         return
-    log = get_log(cursor, user)
+    log = get_log(cursor.cursor(), user)
     if user and not log:
         send("Couldn't find a message from %s :(" % user)
     else:
