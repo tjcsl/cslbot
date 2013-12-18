@@ -454,9 +454,7 @@ class BotHandler():
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':
-                if nick not in admins:
-                    send("Nope, not gonna do it.")
-                else:
+                if nick in admins:
                     found = True
                     self.uptime['reloaded'] = time.time()
                     self.clean_sql_connection_pool()
