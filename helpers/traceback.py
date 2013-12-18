@@ -26,4 +26,5 @@ def handle_traceback(ex, c, target):
     trace = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
-    c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], str(ex)))
+    output = str(ex).replace('\n', ' ')
+    c.privmsg(target, '%s in %s on line %s: %s' % (name, trace[0], trace[1], output))
