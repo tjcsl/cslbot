@@ -1,739 +1,750 @@
-commands Package
+commands package
 ================
 
-:mod:`8ball` Module
--------------------
+Submodules
+----------
+
+commands.8ball module
+---------------------
 
 .. automodule:: commands.8ball
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`about` Module
--------------------
+commands.about module
+---------------------
 
 .. automodule:: commands.about
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`acronym` Module
----------------------
+commands.acronym module
+-----------------------
 
 .. automodule:: commands.acronym
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`admins` Module
---------------------
+commands.admins module
+----------------------
 
 .. automodule:: commands.admins
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ahamilto` Module
-----------------------
+commands.ahamilto module
+------------------------
 
 .. automodule:: commands.ahamilto
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`award` Module
--------------------
+commands.award module
+---------------------
 
 .. automodule:: commands.award
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`babble` Module
---------------------
+commands.babble module
+----------------------
 
 .. automodule:: commands.babble
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`badble` Module
---------------------
+commands.badble module
+----------------------
 
 .. automodule:: commands.badble
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`bc` Module
-----------------
+commands.bc module
+------------------
 
 .. automodule:: commands.bc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`bike` Module
-------------------
+commands.bike module
+--------------------
 
 .. automodule:: commands.bike
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`bingo` Module
--------------------
+commands.bingo module
+---------------------
 
 .. automodule:: commands.bingo
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`blame` Module
--------------------
+commands.blame module
+---------------------
 
 .. automodule:: commands.blame
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`botsnack` Module
-----------------------
+commands.botsnack module
+------------------------
 
 .. automodule:: commands.botsnack
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`channels` Module
-----------------------
+commands.channels module
+------------------------
 
 .. automodule:: commands.channels
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`choose` Module
---------------------
+commands.choose module
+----------------------
 
 .. automodule:: commands.choose
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`cidr` Module
-------------------
+commands.cidr module
+--------------------
 
 .. automodule:: commands.cidr
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`clippy` Module
---------------------
+commands.clippy module
+----------------------
 
 .. automodule:: commands.clippy
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`coin` Module
-------------------
+commands.coin module
+--------------------
 
 .. automodule:: commands.coin
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`creffett` Module
-----------------------
+commands.creffett module
+------------------------
 
 .. automodule:: commands.creffett
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`cve` Module
------------------
+commands.cve module
+-------------------
 
 .. automodule:: commands.cve
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ddate` Module
--------------------
+commands.ddate module
+---------------------
 
 .. automodule:: commands.ddate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`defersay` Module
-----------------------
+commands.defersay module
+------------------------
 
 .. automodule:: commands.defersay
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`define` Module
---------------------
+commands.define module
+----------------------
 
 .. automodule:: commands.define
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`demorse` Module
----------------------
+commands.demorse module
+-----------------------
 
 .. automodule:: commands.demorse
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`dialup` Module
---------------------
+commands.dialup module
+----------------------
 
 .. automodule:: commands.dialup
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`distro` Module
---------------------
+commands.distro module
+----------------------
 
 .. automodule:: commands.distro
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ebay` Module
-------------------
+commands.ebay module
+--------------------
 
 .. automodule:: commands.ebay
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`eix` Module
------------------
+commands.eix module
+-------------------
 
 .. automodule:: commands.eix
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`errno` Module
--------------------
+commands.errno module
+---------------------
 
 .. automodule:: commands.errno
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`filter` Module
---------------------
+commands.filter module
+----------------------
 
 .. automodule:: commands.filter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`fml` Module
------------------
+commands.fml module
+-------------------
 
 .. automodule:: commands.fml
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`fortune` Module
----------------------
+commands.fortune module
+-----------------------
 
 .. automodule:: commands.fortune
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`fweather` Module
-----------------------
+commands.fweather module
+------------------------
 
 .. automodule:: commands.fweather
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`fwilson` Module
----------------------
+commands.fwilson module
+-----------------------
 
 .. automodule:: commands.fwilson
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`gcc` Module
------------------
+commands.gcc module
+-------------------
 
 .. automodule:: commands.gcc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`google` Module
---------------------
+commands.google module
+----------------------
 
 .. automodule:: commands.google
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`guarded` Module
----------------------
+commands.guarded module
+-----------------------
 
 .. automodule:: commands.guarded
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`help` Module
-------------------
+commands.help module
+--------------------
 
 .. automodule:: commands.help
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`hooks` Module
--------------------
+commands.hooks module
+---------------------
 
 .. automodule:: commands.hooks
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`imdb` Module
-------------------
+commands.imdb module
+--------------------
 
 .. automodule:: commands.imdb
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`inspect` Module
----------------------
+commands.inspect module
+-----------------------
 
 .. automodule:: commands.inspect
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`insult` Module
---------------------
+commands.insult module
+----------------------
 
 .. automodule:: commands.insult
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ipa` Module
------------------
+commands.ipa module
+-------------------
 
 .. automodule:: commands.ipa
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`issue` Module
--------------------
+commands.issue module
+---------------------
 
 .. automodule:: commands.issue
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`isup` Module
-------------------
+commands.isup module
+--------------------
 
 .. automodule:: commands.isup
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jargon` Module
---------------------
+commands.jargon module
+----------------------
 
 .. automodule:: commands.jargon
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`kill` Module
-------------------
+commands.kill module
+--------------------
 
 .. automodule:: commands.kill
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lmgtfy` Module
---------------------
+commands.lmgtfy module
+----------------------
 
 .. automodule:: commands.lmgtfy
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`meme` Module
-------------------
+commands.meme module
+--------------------
 
 .. automodule:: commands.meme
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`microwave` Module
------------------------
+commands.microwave module
+-------------------------
 
 .. automodule:: commands.microwave
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`mission` Module
----------------------
+commands.mission module
+-----------------------
 
 .. automodule:: commands.mission
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`morse` Module
--------------------
+commands.morse module
+---------------------
 
 .. automodule:: commands.morse
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`msg` Module
------------------
+commands.msg module
+-------------------
 
 .. automodule:: commands.msg
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pester` Module
---------------------
+commands.pester module
+----------------------
 
 .. automodule:: commands.pester
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pfoley` Module
---------------------
+commands.pfoley module
+----------------------
 
 .. automodule:: commands.pfoley
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ping` Module
-------------------
+commands.ping module
+--------------------
 
 .. automodule:: commands.ping
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`praise` Module
---------------------
+commands.praise module
+----------------------
 
 .. automodule:: commands.praise
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pull` Module
-------------------
+commands.pull module
+--------------------
 
 .. automodule:: commands.pull
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`quote` Module
--------------------
+commands.quote module
+---------------------
 
 .. automodule:: commands.quote
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`random` Module
---------------------
+commands.random module
+----------------------
 
 .. automodule:: commands.random
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`reddit` Module
---------------------
+commands.reddit module
+----------------------
 
 .. automodule:: commands.reddit
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`reverse` Module
----------------------
+commands.reverse module
+-----------------------
 
 .. automodule:: commands.reverse
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`roman` Module
--------------------
+commands.roman module
+---------------------
 
 .. automodule:: commands.roman
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`s` Module
----------------
+commands.s module
+-----------------
 
 .. automodule:: commands.s
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`score` Module
--------------------
+commands.score module
+---------------------
 
 .. automodule:: commands.score
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`seen` Module
-------------------
+commands.seen module
+--------------------
 
 .. automodule:: commands.seen
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`sha512` Module
---------------------
+commands.sha512 module
+----------------------
 
 .. automodule:: commands.sha512
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`shibe` Module
--------------------
+commands.shibe module
+---------------------
 
 .. automodule:: commands.shibe
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`skasturi` Module
-----------------------
+commands.skasturi module
+------------------------
 
 .. automodule:: commands.skasturi
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`slap` Module
-------------------
+commands.slap module
+--------------------
 
 .. automodule:: commands.slap
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`slogan` Module
---------------------
+commands.slogan module
+----------------------
 
 .. automodule:: commands.slogan
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ssearch` Module
----------------------
+commands.ssearch module
+-----------------------
 
 .. automodule:: commands.ssearch
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stats` Module
--------------------
+commands.stats module
+---------------------
 
 .. automodule:: commands.stats
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`steam` Module
--------------------
+commands.steam module
+---------------------
 
 .. automodule:: commands.steam
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stock` Module
--------------------
+commands.stock module
+---------------------
 
 .. automodule:: commands.stock
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stopwatch` Module
------------------------
+commands.stopwatch module
+-------------------------
 
 .. automodule:: commands.stopwatch
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`throw` Module
--------------------
+commands.throw module
+---------------------
 
 .. automodule:: commands.throw
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`time` Module
-------------------
+commands.time module
+--------------------
 
 .. automodule:: commands.time
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`translate` Module
------------------------
+commands.translate module
+-------------------------
 
 .. automodule:: commands.translate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`uptime` Module
---------------------
+commands.uptime module
+----------------------
 
 .. automodule:: commands.uptime
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`urban` Module
--------------------
+commands.urban module
+---------------------
 
 .. automodule:: commands.urban
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`version` Module
----------------------
+commands.version module
+-----------------------
 
 .. automodule:: commands.version
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`vote` Module
-------------------
+commands.vote module
+--------------------
 
 .. automodule:: commands.vote
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wai` Module
------------------
+commands.wai module
+-------------------
 
 .. automodule:: commands.wai
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`weather` Module
----------------------
+commands.weather module
+-----------------------
 
 .. automodule:: commands.weather
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wiki` Module
-------------------
+commands.wiki module
+--------------------
 
 .. automodule:: commands.wiki
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wikipath` Module
-----------------------
+commands.wikipath module
+------------------------
 
 .. automodule:: commands.wikipath
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wolf` Module
-------------------
+commands.wolf module
+--------------------
 
 .. automodule:: commands.wolf
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`word` Module
-------------------
+commands.word module
+--------------------
 
 .. automodule:: commands.word
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wtf` Module
------------------
+commands.wtf module
+-------------------
 
 .. automodule:: commands.wtf
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`xkcd` Module
-------------------
+commands.xkcd module
+--------------------
 
 .. automodule:: commands.xkcd
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`yoda` Module
-------------------
+commands.yoda module
+--------------------
 
 .. automodule:: commands.yoda
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: commands
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,4 +1,4 @@
-handler Module
+handler module
 ==============
 
 .. automodule:: handler

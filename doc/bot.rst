@@ -1,4 +1,4 @@
-bot Module
+bot module
 ==========
 
 .. automodule:: bot

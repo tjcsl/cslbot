@@ -1,115 +1,118 @@
-helpers Package
+helpers package
 ===============
 
-:mod:`helpers` Package
-----------------------
+Submodules
+----------
 
-.. automodule:: helpers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`admin` Module
--------------------
+helpers.admin module
+--------------------
 
 .. automodule:: helpers.admin
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`command` Module
----------------------
+helpers.command module
+----------------------
 
 .. automodule:: helpers.command
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`config` Module
---------------------
+helpers.config module
+---------------------
 
 .. automodule:: helpers.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`control` Module
----------------------
+helpers.control module
+----------------------
 
 .. automodule:: helpers.control
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`defer` Module
--------------------
+helpers.defer module
+--------------------
 
 .. automodule:: helpers.defer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`hook` Module
-------------------
+helpers.hook module
+-------------------
 
 .. automodule:: helpers.hook
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`misc` Module
-------------------
+helpers.misc module
+-------------------
 
 .. automodule:: helpers.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`modutils` Module
-----------------------
+helpers.modutils module
+-----------------------
 
 .. automodule:: helpers.modutils
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`server` Module
---------------------
+helpers.server module
+---------------------
 
 .. automodule:: helpers.server
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`sql` Module
------------------
+helpers.sql module
+------------------
 
 .. automodule:: helpers.sql
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`textutils` Module
------------------------
+helpers.textutils module
+------------------------
 
 .. automodule:: helpers.textutils
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`traceback` Module
------------------------
+helpers.traceback module
+------------------------
 
 .. automodule:: helpers.traceback
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`urlutils` Module
-----------------------
+helpers.urlutils module
+-----------------------
 
 .. automodule:: helpers.urlutils
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: helpers
+    :members:
+    :undoc-members:
+    :show-inheritance:

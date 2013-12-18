@@ -1,99 +1,102 @@
-hooks Package
+hooks package
 =============
 
-:mod:`hooks` Package
---------------------
+Submodules
+----------
 
-.. automodule:: hooks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`band` Module
-------------------
+hooks.band module
+-----------------
 
 .. automodule:: hooks.band
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`bob` Module
------------------
+hooks.bob module
+----------------
 
 .. automodule:: hooks.bob
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`butt` Module
-------------------
+hooks.butt module
+-----------------
 
 .. automodule:: hooks.butt
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`caps` Module
-------------------
+hooks.caps module
+-----------------
 
 .. automodule:: hooks.caps
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`clippy` Module
---------------------
+hooks.clippy module
+-------------------
 
 .. automodule:: hooks.clippy
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`reddit` Module
---------------------
+hooks.reddit module
+-------------------
 
 .. automodule:: hooks.reddit
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`scores` Module
---------------------
+hooks.scores module
+-------------------
 
 .. automodule:: hooks.scores
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stallman` Module
-----------------------
+hooks.stallman module
+---------------------
 
 .. automodule:: hooks.stallman
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`understanding` Module
----------------------------
+hooks.understanding module
+--------------------------
 
 .. automodule:: hooks.understanding
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`url` Module
------------------
+hooks.url module
+----------------
 
 .. automodule:: hooks.url
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`xkcd` Module
-------------------
+hooks.xkcd module
+-----------------
 
 .. automodule:: hooks.xkcd
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: hooks
+    :members:
+    :undoc-members:
+    :show-inheritance:
