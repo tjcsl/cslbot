@@ -38,7 +38,7 @@ def handle(send, msg, args):
         upper = [i for i in msg if i in string.ascii_uppercase]
         upper_ratio = len(upper) / len(msg)
         if args['target'] != 'private':
-            if upper_ratio > THRESHOLD and len(msg) > 6:
+            if upper_ratio > THRESHOLD and len(msg) > 20:
                 if nick in _caps:
                     args['do_kick'](args['target'], nick, text)
                     _caps.remove(nick)
