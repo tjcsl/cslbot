@@ -139,7 +139,7 @@ def char_to_bin(c):
     for j in range(n):
         ret += str(i & 1)
         i >>= 1
-    return ret
+    return ret[::-1]
 
 
 def gen_binary(string):
