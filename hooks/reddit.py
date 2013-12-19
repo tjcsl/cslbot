@@ -38,5 +38,5 @@ def handle(send, msg, args):
         output += data['description'].splitlines()[0]
     else:
         output += data['display_name']
-    output += get_short('http://reddit.com/r/%s' % (subreddit))
+    output += " -- " + get_short('http://reddit.com/r/%s' % (subreddit))
     send(output)
