@@ -28,3 +28,23 @@ def check_quote_exists_by_id(cursor, qid):
 def check_exists(subreddit):
     req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
     return req.status_code == 200
+
+
+def do_nuke(c, nick, target, channel):
+    c.privmsg(channel, "Please Stand By, Nuking " + target)
+    c.privmsg_many([nick, target], "        ____________________         ")
+    c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:      ")
+    c.privmsg_many([nick, target], "    /    (          /   /      \\    ")
+    c.privmsg_many([nick, target], "   /  ;'  \\   , .  /        )   \\  ")
+    c.privmsg_many([nick, target], "  (  ( .   ., ;        ;  '    ; )   ")
+    c.privmsg_many([nick, target], "   \\    ,---:----------:---,    /   ")
+    c.privmsg_many([nick, target], "    '--'     \\ \\     / /    '--'   ")
+    c.privmsg_many([nick, target], "              \\ \\   / /            ")
+    c.privmsg_many([nick, target], "               \\     /              ")
+    c.privmsg_many([nick, target], "               |  .  |               ")
+    c.privmsg_many([nick, target], "               |, '; |               ")
+    c.privmsg_many([nick, target], "               |  ,. |               ")
+    c.privmsg_many([nick, target], "               | ., ;|               ")
+    c.privmsg_many([nick, target], "               |:; ; |               ")
+    c.privmsg_many([nick, target], "      ________/;';,.',\\ ________    ")
+    c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")

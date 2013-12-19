@@ -16,28 +16,7 @@
 
 import re
 from helpers.command import Command
-
-
-def do_nuke(args, target, channel):
-    c = args['connection']
-    nick = args['nick']
-    c.privmsg(channel, "Please Stand By, Nuking " + target)
-    c.privmsg_many([nick, target], "        ____________________          ")
-    c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:       ")
-    c.privmsg_many([nick, target], "    /    (          /   /      \\      ")
-    c.privmsg_many([nick, target], "   /  ;'  \\   , .  /        )   \\    ")
-    c.privmsg_many([nick, target], "  (  ( .   ., ;        ;  '    ; )    ")
-    c.privmsg_many([nick, target], "   \\    ,---:----------:---,    /    ")
-    c.privmsg_many([nick, target], "    '--'     \\ \\     / /    '--'     ")
-    c.privmsg_many([nick, target], "              \\ \\   / /              ")
-    c.privmsg_many([nick, target], "               \\     /                ")
-    c.privmsg_many([nick, target], "               |  .  |               ")
-    c.privmsg_many([nick, target], "               |, '; |               ")
-    c.privmsg_many([nick, target], "               |  ,. |               ")
-    c.privmsg_many([nick, target], "               | ., ;|               ")
-    c.privmsg_many([nick, target], "               |:; ; |               ")
-    c.privmsg_many([nick, target], "      ________/;';,.',\\ ________     ")
-    c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
+from helpers.misc import do_nuke
 
 
 @Command('microwave', ['nick', 'channels', 'connection', 'is_admin', 'target', 'config'], limit=5)
@@ -56,7 +35,7 @@ def cmd(send, msg, args):
               7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
               8: 'Nuke',
               9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
-              10: 'ssh root@remote.tjhsst.edu rm -rf ~' + nick}
+              10: 'ssh root@remote.tjhsst.edu rm -rf ~%s'}
     if not msg:
         send('What to microwave?')
         return
@@ -86,9 +65,9 @@ def cmd(send, msg, args):
                 msg += ' ' + levels[i]
         send(msg)
         if level >= 8:
-            do_nuke(args, target, channel)
+            do_nuke(args['connection'], nick, target, channel)
         if level >= 9:
             send(levels[9])
         if level == 10:
-            send(levels[10])
+            send(levels[10] % target)
         send('Ding, your %s is ready.' % target)
