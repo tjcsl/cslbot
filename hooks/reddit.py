@@ -18,6 +18,7 @@ import re
 from requests import get
 from helpers.hook import Hook
 from helpers.misc import check_exists
+from helpers.urlutils import get_short
 
 
 @Hook(types=['pubmsg', 'action'], args=[])
@@ -29,10 +30,13 @@ def handle(send, msg, args):
     if not check_exists(subreddit):
         return
     data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
+    output = ''
     if data['public_description']:
         for line in data['public_description'].splitlines():
-            send(line)
+            output += line + " "
     elif data['description']:
-        send(data['description'].splitlines()[0])
+        output += data['description'].splitlines()[0]
     else:
-        send(data['display_name'])
+        output += data['display_name']
+    output += get_short('http://reddit.com/r/%s' % (subreddit))
+    send(output)
