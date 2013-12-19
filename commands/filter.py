@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse, removevowels
+from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse, removevowels, gen_binary
 
 
 @Command('filter', ['handler', 'is_admin', 'nick', 'type'])
@@ -29,7 +29,8 @@ def cmd(send, msg, args):
         "slogan": gen_slogan,
         "insult": gen_insult,
         "morse": gen_morse,
-        "removevowels": removevowels
+        "removevowels": removevowels,
+        "binary" : gen_binary
         }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')

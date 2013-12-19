@@ -125,3 +125,21 @@ def gen_insult(user):
         "anal warts"]
     msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
     return msg
+
+def _get_char_as_binary(c):
+    i = ord(c)
+    n = 8
+    #We need to be able to handle wchars
+    if i > 1 << 8 : n = 16
+    if i > 1 << 16: n = 32
+    ret = ""
+    for j in range(n):
+        ret += str(i & 1)
+        i >>= 1
+    return ret
+
+def gen_binary(string):
+    ret = ""
+    for c in string:
+        ret += _get_char_as_binary(c)
+    return ret
