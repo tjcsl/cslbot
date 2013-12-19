@@ -382,6 +382,15 @@ class BotHandler():
                 raise Exception("Invalid Argument: " + arg)
         return realargs
 
+    def do_reload(self):
+        self.uptime['reloaded'] = time.time()
+        self.clean_sql_connection_pool()
+        modules = ['admin', 'config', 'control', 'defer', 'hook', 'misc', 'modutils', 'server', 'sql', 'textutils', 'traceback', 'urlutils']
+        for x in modules:
+            imp.reload(sys.modules['helpers.%s' % x])
+        self.loadmodules()
+        self.loadhooks()
+
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
         if msgtype == 'action':
@@ -456,16 +465,7 @@ class BotHandler():
             if cmd[len(cmdchar):] == 'reload':
                 if nick in admins:
                     found = True
-                    self.uptime['reloaded'] = time.time()
-                    self.clean_sql_connection_pool()
-                    imp.reload(sys.modules['helpers.command'])
-                    imp.reload(sys.modules['helpers.control'])
-                    imp.reload(sys.modules['helpers.hook'])
-                    imp.reload(sys.modules['helpers.sql'])
-                    imp.reload(sys.modules['helpers.textutils'])
-                    imp.reload(sys.modules['helpers.urlutils'])
-                    self.loadmodules()
-                    self.loadhooks()
+                    self.do_reload()
                     send("Aye Aye Capt'n")
                     self.get_admins(c)
             # everything below this point requires admin
