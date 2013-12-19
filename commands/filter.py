@@ -30,7 +30,7 @@ def cmd(send, msg, args):
         "insult": gen_insult,
         "morse": gen_morse,
         "removevowels": removevowels,
-        "binary" : gen_binary
+        "binary": gen_binary
         }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')

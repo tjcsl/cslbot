@@ -18,7 +18,6 @@
 # USA.
 
 import re
-import imp
 import time
 import sys
 from helpers import control, sql, hook, command, textutils, admin
@@ -385,9 +384,6 @@ class BotHandler():
     def do_reload(self):
         self.uptime['reloaded'] = time.time()
         self.clean_sql_connection_pool()
-        modules = ['admin', 'config', 'control', 'defer', 'hook', 'misc', 'modutils', 'server', 'sql', 'textutils', 'traceback', 'urlutils']
-        for x in modules:
-            imp.reload(sys.modules['helpers.%s' % x])
         self.loadmodules()
         self.loadhooks()
 
