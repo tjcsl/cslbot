@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Urls Page{% endblock %}
 {% block content %}
-<ol>
+<ol class="list-group">
     {% for x in urls %}
         {% set url = x.url|trim %}
-        <li>
+        <li class="list-group-item">
             <a href="{{ url }}">
                 {# Assume image if we couldn't parse a title. #}
                 {% if x.title == 'No Title Found' %}
-                    <img src="{{ url }}" />
+                    <img class="img-responsive" src="{{ url }}" />
                 {% else %}
                     {{ x.title|trim }}
                 {% endif %}
