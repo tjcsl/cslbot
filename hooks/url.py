@@ -14,12 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from helpers.urlutils import get_title
+from time import time
+from helpers.urlutils import get_title, get_short
 from helpers.hook import Hook
 import re
 
 
-@Hook(types=['pubmsg', 'action'], args=['config'])
+@Hook(types=['pubmsg', 'action'], args=['config', 'db'])
 def handle(send, msg, args):
     """ Get titles for urls.
 
@@ -31,5 +32,10 @@ def handle(send, msg, args):
                           [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
-    if match and args['config']['feature']['linkread'] == "True":
-        send(get_title(match.group(1)))
+    if match:
+        url = match.group(1)
+        cursor = args['db'].get()
+        title = get_title(url)
+        cursor.execute('INSERT INTO urls VALUES(?,?,?)', (url, title, time()))
+        if args['config']['feature']['linkread'] == "True":
+            send('** %s - %s' % (title, get_short(url)))

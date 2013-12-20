@@ -8,12 +8,12 @@
         <th>Author</th>
         <th>Submitter</th>
     </tr>
-    {% for i in quotes %}
+    {% for quote in quotes %}
     <tr>
-        <td>{{ i[0]|trim }}</td>
-        <td>{{ i[1]|trim }}</td>
-        <td>{{ i[2]|trim }}</td>
-        <td>{{ i[3]|trim }}</td>
+        <td>{{ quote.id|trim }}</td>
+        <td>{{ quote.quote|trim }}</td>
+        <td>{{ quote.nick|trim }}</td>
+        <td>{{ quote.submitter|trim }}</td>
     </tr>
     {% endfor %}
 </table>

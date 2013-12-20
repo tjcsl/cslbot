@@ -8,8 +8,8 @@
     </tr>
     {% for i in scores %}
     <tr>
-        <td>{{ i[0]|trim }}</td>
-        <td>{{ i[1]|trim }}</td>
+        <td>{{ i.nick|trim }}</td>
+        <td>{{ i.score|trim }}</td>
     </tr>
     {% endfor %}
 </table>

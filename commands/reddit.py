@@ -16,7 +16,7 @@
 
 from requests import get
 from helpers.command import Command
-from helpers.urlutils import get_title
+from helpers.urlutils import get_title, get_short
 from helpers.misc import check_exists
 
 
@@ -31,5 +31,5 @@ def cmd(send, msg, args):
         send("Non-existant subreddit.")
         return
     subreddit = '/r/%s' % msg if msg else ''
-    req = get('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    send(get_title(req.url))
+    url = get('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).url
+    send('** %s - %s' % (get_title(url), get_short(url)))

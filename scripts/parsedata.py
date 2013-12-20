@@ -24,17 +24,22 @@ from os.path import dirname
 
 def get_quotes(cursor):
     rows = cursor.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=1').fetchall()
-    return [list(row) for row in rows]
+    return [dict(row) for row in rows]
 
 
 def get_scores(cursor):
     rows = cursor.execute('SELECT nick,score FROM scores').fetchall()
-    return [list(row) for row in rows]
+    return [dict(row) for row in rows]
 
 
 def get_polls(cursor):
     rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1').fetchall()
     return {row['pid']: row['question'] for row in rows}
+
+
+def get_urls(cursor):
+    rows = cursor.execute('SELECT url,title FROM urls ORDER BY time DESC').fetchall()
+    return [dict(row) for row in rows]
 
 
 def get_responses(cursor, polls):
@@ -68,6 +73,13 @@ def output_polls(env, cursor, outdir, time):
     open(outdir + '/polls.html', 'w', encoding='utf8').write(output)
 
 
+def output_urls(env, cursor, outdir, time):
+    urls = get_urls(cursor)
+    args = {'urls': urls, 'time': time}
+    output = env.get_template('urls.html').render(**args)
+    open(outdir + '/urls.html', 'w', encoding='utf8').write(output)
+
+
 def main(outdir):
     filename = dirname(__file__) + "/../db.sqlite"
     conn = sqlite3.connect(filename)
@@ -79,6 +91,7 @@ def main(outdir):
     output_quotes(env, cursor, outdir, time)
     output_scores(env, cursor, outdir, time)
     output_polls(env, cursor, outdir, time)
+    output_urls(env, cursor, outdir, time)
 
 
 if __name__ == '__main__':

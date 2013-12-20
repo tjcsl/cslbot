@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Urls Page{% endblock %}
+{% block content %}
+<ol>
+    {% for x in urls %}
+        {% set url = x.url|trim %}
+        <li>
+            <a href="{{ url }}">
+                {# Assume image if we couldn't parse a title. #}
+                {% if x.title == 'No Title Found' %}
+                    <img src="{{ url }}" />
+                {% else %}
+                    {{ x.title|trim }}
+                {% endif %}
+            </a>
+        </li>
+    {% endfor %}
+</ol>
+{% endblock %}
