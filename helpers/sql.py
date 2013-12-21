@@ -86,3 +86,4 @@ class Sql():
         db.execute('CREATE TABLE IF NOT EXISTS commands(nick TEXT, command TEXT, channel TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS stopwatches (id INTEGER PRIMARY KEY AUTOINCREMENT, active INTEGER DEFAULT 1, time INTEGER, elapsed INTEGER DEFAULT 0)')
         db.execute('CREATE TABLE IF NOT EXISTS urls (url TEXT, title TEXT, time INTEGER)')
+        db.execute('CREATE TABLE IF NOT EXISTS issues (title TEXT, source TEXT, accepted INTEGER DEFAULT 0, id INTEGER PRIMARY KEY AUTOINCREMENT)')

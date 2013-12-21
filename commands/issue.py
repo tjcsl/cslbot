@@ -32,7 +32,7 @@ def create_issue(msg, nick, repo, apikey):
     return data['html_url']
 
 
-@Command(['issue', 'bug'], ['source', 'issues', 'config', 'type', 'is_admin', 'nick'])
+@Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Files a github issue or gets a open one.
     Syntax: !issue (description)
@@ -47,6 +47,7 @@ def cmd(send, msg, args):
         url = create_issue(msg, args['source'], repo, args['config']['api']['githubapikey'])
         send("Issue created -- %s -- %s" % (url, msg))
     else:
-        args['issues'].append([msg, args['source']])
-        send("New Issue: #%d -- %s" % (len(args['issues']) - 1, msg), target=args['config']['core']['ctrlchan'])
+        cursor = args['db'].get().cursor()
+        cursor.execute('INSERT INTO issues(title, source) VALUES(?,?)', (msg, args['source']))
+        send("New Issue: #%d -- %s, Submitted by %s" % (cursor.lastrowid, msg, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])

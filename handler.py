@@ -34,7 +34,6 @@ class BotHandler():
         | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for
         |   bot abuse.
-        | issues is a list keeping track of pending issues.
         | channels is a dict containing the objects for each channel the bot
         |   is connected to.
         | abuselist is a dict keeping track of how many times nicks have used
@@ -51,7 +50,6 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
-        self.issues = []
         self.channels = {}
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
@@ -67,7 +65,6 @@ class BotHandler():
         data = {}
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
-        data['issues'] = list(self.issues)
         data['admins'] = dict(self.admins)
         data['channels'] = dict(self.channels)
         data['uptime'] = dict(self.uptime)
@@ -358,7 +355,6 @@ class BotHandler():
                 'connection': self.connection,
                 'srcdir': self.srcdir,
                 'admins': self.admins,
-                'issues': self.issues,
                 'abuselist': self.abuselist,
                 'handler': self,
                 'db': self.db,

@@ -142,10 +142,12 @@ def handle_show(handler, cmd, send):
         else:
             send("Nobody is guarded.")
     elif cmd[1] == "issues":
-        if handler.issues:
-            for index, issue in enumerate(handler.issues):
-                msg = "#%d %s -- by %s" % (index, issue[0], issue[1])
-                send(msg)
+        db = handler.db.get()
+        issues = db.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
+        if issues:
+            for issue in issues:
+                nick = issue['source'].split('!')[0]
+                send("#%d %s -- by %s" % (issue['id'], issue['title'], nick))
         else:
             send("No outstanding issues.")
     elif cmd[1] == "quotes":
@@ -173,22 +175,22 @@ def handle_accept(handler, cmd):
 def accept_issue(handler, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    elif not handler.issues or len(handler.issues) <= int(cmd[1]):
+    db = handler.db.get()
+    num = int(cmd[1])
+    issue = db.execute('SELECT title,source FROM issues WHERE id=?', (num,)).fetchone()
+    if not issue:
         return "Not a valid issue"
-    else:
-        num = int(cmd[1])
-        msg, source = handler.issues[num]
-        repo = handler.config['api']['githubrepo']
-        apikey = handler.config['api']['githubapikey']
-        issue = create_issue(msg, source, repo, apikey)
-        handler.issues.pop(num)
-        ctrlchan = handler.config['core']['ctrlchan']
-        channel = handler.config['core']['channel']
-        botnick = handler.config['core']['nick']
-        nick = source.split('!')[0]
-        msg = "Issue Created -- %s -- %s" % (issue, msg)
-        handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-        handler.do_log('private', botnick, msg, 'privmsg')
+    repo = handler.config['api']['githubrepo']
+    apikey = handler.config['api']['githubapikey']
+    msg = create_issue(issue['title'], issue['source'], repo, apikey)
+    db.execute('UPDATE issues SET accepted=1 WHERE id=?', (num,))
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = issue['source'].split('!')[0]
+    msg = "Issue Created -- %s -- %s" % (msg, issue['title'])
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
     return ""
 
 
@@ -200,8 +202,6 @@ def accept_quote(handler, cmd):
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
     quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=?', (qid,)).fetchone()
-    if quote['approved'] == 1:
-        return "Quote already approved."
     db.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
@@ -227,17 +227,19 @@ def handle_reject(handler, cmd):
 def reject_issue(handler, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    elif not handler.issues or len(handler.issues) < int(cmd[1]):
+    db = handler.db.get()
+    num = int(cmd[1])
+    issue = db.execute('SELECT title,source FROM issues WHERE id=?', (num,)).fetchone()
+    if not issue:
         return "Not a valid issue"
-    else:
-        msg, source = handler.issues.pop(int(cmd[1]))
-        ctrlchan = handler.config['core']['ctrlchan']
-        channel = handler.config['core']['channel']
-        botnick = handler.config['core']['nick']
-        nick = source.split('!')[0]
-        msg = "Issue Rejected -- %s" % msg
-        handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-        handler.do_log('private', botnick, msg, 'privmsg')
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = issue['source'].split('!')[0]
+    msg = "Issue Rejected -- %s" % issue['title']
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
+    db.execute('DELETE FROM issues WHERE id=?', (num,))
     return ""
 
 
