@@ -15,8 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
-from requests import post
+from requests import post, get
+from random import choice
 from helpers.command import Command
+
+
+def get_issues(repo):
+    return get('https://api.github.com/repos/%s/issues' % repo).json()
 
 
 def create_issue(msg, nick, repo, apikey):
@@ -29,18 +34,19 @@ def create_issue(msg, nick, repo, apikey):
 
 @Command(['issue', 'bug'], ['source', 'issues', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
-    """Files a github issue.
-    Syntax: !issue <description>
+    """Files a github issue or gets a open one.
+    Syntax: !issue (description)
     """
+    repo = args['config']['api']['githubrepo']
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif not msg:
-        send("Issue needs a description.")
+        issue = choice(get_issues(repo))
+        send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
+    elif args['is_admin'](args['nick']):
+        url = create_issue(msg, args['source'], repo, args['config']['api']['githubapikey'])
+        send("Issue created -- %s -- %s" % (url, msg))
     else:
-        if not args['is_admin'](args['nick']):
-            args['issues'].append([msg, args['source']])
-            send("New Issue: #%d -- %s" % (len(args['issues']) - 1, msg), target=args['config']['core']['ctrlchan'])
-            send("Issue submitted for approval.", target=args['nick'])
-        else:
-            url = create_issue(msg, args['source'], args['config']['api']['githubrepo'], args['config']['api']['githubapikey'])
-            send("Issue created -- %s -- %s" % (url, msg))
+        args['issues'].append([msg, args['source']])
+        send("New Issue: #%d -- %s" % (len(args['issues']) - 1, msg), target=args['config']['core']['ctrlchan'])
+        send("Issue submitted for approval.", target=args['nick'])
