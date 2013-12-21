@@ -40,8 +40,14 @@ def cmd(send, msg, args):
     repo = args['config']['api']['githubrepo']
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
+    elif msg.isdigit():
+        issue = get('https://api.github.com/repos/%s/issues/%d' % (repo, int(msg))).json()
+        if 'message' in issue:
+            send("Invalid Issue Number")
+        else:
+            send("%s -- %s" % (issue['title'], issue['html_url']))
     elif not msg:
-        issue = choice(get_issues(repo))
+        issue = choice(get('https://api.github.com/repos/%s/issues' % repo).json())
         send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif args['is_admin'](args['nick']):
         url = create_issue(msg, args['source'], repo, args['config']['api']['githubapikey'])
