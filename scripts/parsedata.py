@@ -38,7 +38,7 @@ def get_polls(cursor):
 
 
 def get_urls(cursor):
-    rows = cursor.execute('SELECT url,title FROM urls ORDER BY time DESC').fetchall()
+    rows = cursor.execute('SELECT url,title,time FROM urls ORDER BY time DESC').fetchall()
     return [dict(row) for row in rows]
 
 
