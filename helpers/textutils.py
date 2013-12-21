@@ -148,5 +148,3 @@ def gen_binary(string):
 
 def gen_clippy(nick, msg):
     return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
-
-
