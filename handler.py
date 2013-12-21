@@ -428,7 +428,7 @@ class BotHandler():
 
         altchars = [x.strip() for x in self.config['core']['altcmdchars'].split(',')]
         for i in altchars:
-            if msg.startswith(i):
+            if len(i) > 0 and msg.startswith(i):
                 msg = msg.replace(i, self.config['core']['cmdchar'], 1)
 
         cmd = msg.split()[0]
