@@ -144,3 +144,9 @@ def char_to_bin(c):
 
 def gen_binary(string):
     return "".join(map(char_to_bin, string))
+
+
+def gen_clippy(nick, msg):
+    return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
+
+

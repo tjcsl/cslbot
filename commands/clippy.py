@@ -16,10 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-
-
-def gen_clippy(nick, msg):
-    return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
+from helpers.textutils import gen_clippy
 
 
 @Command('clippy', ['nick'])
