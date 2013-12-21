@@ -8,6 +8,8 @@
             <a href="{{ url }}">
                 {% if x.title == 'Image' %}
                     <img class="img-responsive" src="{{ url }}" />
+                {% elif x.title == 'No Title Found' %}
+                    {{ url }}
                 {% else %}
                     {{ x.title|trim }}
                 {% endif %}
