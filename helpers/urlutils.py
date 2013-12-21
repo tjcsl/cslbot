@@ -38,7 +38,7 @@ def get_title(url):
         if not url.startswith('http'):
             url = "http://%s" % url
         # User-Agent is really hard to get right :(
-        headers = {'User-Agent': 'Mozilla/5.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         req = Request(url, headers=headers)
         html = parse(urlopen(req, timeout=5))
         t = html.find('.//title') if html.getroot() is not None else None
