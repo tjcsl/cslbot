@@ -14,7 +14,7 @@
                     {{ x.title|trim }}
                 {% endif %}
             </a>
-          {{ x.time.strftime('%I:%M %p, %a, %b %d, %Y') }}
+          {{ strftime('%I:%M %p, %a, %b %d, %Y', x.time) }}
         </li>
     {% endfor %}
 </ol>
