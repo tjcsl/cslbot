@@ -11,7 +11,7 @@
     {% for quote in quotes %}
     <tr>
         <td>{{ quote.id|trim }}</td>
-        <td>{{ quote.quote|trim }}</td>
+        <td>{{ quote.quote|escape|trim }}</td>
         <td>{{ quote.nick|trim }}</td>
         <td>{{ quote.submitter|trim }}</td>
     </tr>
