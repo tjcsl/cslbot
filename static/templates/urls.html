@@ -6,8 +6,7 @@
         {% set url = x.url|trim %}
         <li class="list-group-item">
             <a href="{{ url }}">
-                {# Assume image if we couldn't parse a title. #}
-                {% if x.title == 'No Title Found' %}
+                {% if x.title == 'Image' %}
                     <img class="img-responsive" src="{{ url }}" />
                 {% else %}
                     {{ x.title|trim }}
