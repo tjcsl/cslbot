@@ -18,6 +18,7 @@
 import sqlite3
 import argparse
 from time import strftime
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname
 
@@ -39,7 +40,10 @@ def get_polls(cursor):
 
 def get_urls(cursor):
     rows = cursor.execute('SELECT url,title,time FROM urls ORDER BY time DESC').fetchall()
-    return [dict(row) for row in rows]
+    urls = []
+    for row in rows:
+        urls.append({'time': datetime.fromtimestamp(row['time']), 'title': row['title'], 'url': row['url']})
+    return urls
 
 
 def get_responses(cursor, polls):
