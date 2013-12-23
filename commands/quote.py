@@ -59,7 +59,6 @@ def do_add_quote(cmd, cursor, isadmin, send, args):
     else:
         send("Quote submitted for approval.", target=args['nick'])
         send("New Quote: #%d %s -- %s, Submitted by %s" % (qid, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
-    cursor.commit()
 
 
 def do_update_quote(cursor, qid, msg):
@@ -111,6 +110,7 @@ def cmd(send, msg, args):
         else:
             msg = " ".join(cmd[1:])
             do_add_quote(msg, cursor.cursor(), isadmin, send, args)
+            #cursor.commit()
     elif cmd[0] == 'list':
         send(do_list_quotes(cursor, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':

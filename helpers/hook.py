@@ -18,6 +18,7 @@
 # USA.
 
 from helpers.modutils import scan_and_reimport
+from threading import Thread
 
 _known_hooks = []
 
@@ -57,4 +58,4 @@ class Hook():
         return self.name
 
     def run(self, send, msg, msgtype, args):
-        self.exe(send, msg, msgtype, args)
+        Thread(target=self.exe, args=(send, msg, msgtype, args), daemon=True).start()

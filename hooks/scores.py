@@ -50,3 +50,4 @@ def handle(send, msg, args):
             cursor.execute("UPDATE scores SET score=score+? WHERE nick=?", (score, name))
         else:
             cursor.execute("INSERT INTO scores(score,nick) VALUES(?,?)", (score, name))
+        cursor.commit()
