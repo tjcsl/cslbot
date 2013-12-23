@@ -40,13 +40,16 @@ def get_title(url):
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         req = urlopen(Request(url, headers=headers), timeout=5)
-        if req.getheader('Content-Type').startswith('image/'):
+        ctype = req.getheader('Content-Type')
+        if ctype.startswith('image/'):
             title = 'Image'
         else:
             html = parse(req)
             t = html.find('.//title') if html.getroot() is not None else None
             if t is not None and t.text is not None:
                 title = t.text.replace('\n', ' ').strip()
+            else:
+                title = ctype
     except ConnectionError as ex:
         if ex.args[0].reason.errno != -errno.ENOENT:
             raise ex
