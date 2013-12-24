@@ -20,12 +20,7 @@ import imp
 import sys
 import handler
 import argparse
-from helpers.workers import start_workers
-from helpers.server import init_server
-from helpers.config import do_setup
-from helpers.defer import defer
-from helpers.traceback import handle_traceback
-from commands.pull import do_pull
+from helpers import workers, server, config, defer, traceback, misc
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
@@ -34,17 +29,17 @@ from time import sleep
 
 class IrcBot(SingleServerIRCBot):
 
-    def __init__(self, config):
+    def __init__(self, botconfig):
         """Setup everything.
 
         | Setup the handler.
         | Setup the server.
         | Connect to the server.
         """
-        self.handler = handler.BotHandler(config)
-        self.config = config
-        serverinfo = ServerSpec(config['core']['host'], int(config['core']['ircport']), config['auth']['nickpass'])
-        nick = config['core']['nick']
+        self.handler = handler.BotHandler(botconfig)
+        self.config = botconfig
+        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['nickpass'])
+        nick = botconfig['core']['nick']
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
@@ -71,7 +66,7 @@ class IrcBot(SingleServerIRCBot):
                     self.do_reload(c, target, cmdargs, 'irc')
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
-            handle_traceback(ex, c, target)
+            traceback.handle_traceback(ex, c, target)
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -82,7 +77,7 @@ class IrcBot(SingleServerIRCBot):
         """
         output = None
         if cmdargs == 'pull':
-            output = do_pull(dirname(__file__), c.real_nickname)
+            output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
         modules = ['admin', 'config', 'control', 'defer', 'hook', 'misc', 'modutils', 'server', 'sql', 'textutils', 'traceback', 'urlutils']
         for x in modules:
@@ -93,13 +88,13 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         self.server.shutdown()
         self.server.socket.close()
-        self.server = init_server(self)
+        self.server = server.init_server(self)
         # preserve data
         data = self.handler.get_data()
         self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
-        start_workers(self.handler)
+        workers.start_workers(self.handler)
         if output:
             return output
 
@@ -119,12 +114,12 @@ class IrcBot(SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
-        start_workers(self.handler)
+        workers.start_workers(self.handler)
         extrachans = self.config['core']['extrachans']
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]
             for i in range(len(extrachans)):
-                defer(i, c.join, extrachans[i])
+                defer.defer(i, c.join, extrachans[i])
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -226,15 +221,15 @@ def main(args):
     """
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel)
-    config = ConfigParser()
+    botconfig = ConfigParser()
     configfile = join(dirname(__file__), 'config.cfg')
     if not exists(configfile):
         print("Setting up config file")
-        do_setup(configfile)
+        config.do_setup(configfile)
         return
-    config.read_file(open(configfile))
-    bot = IrcBot(config)
-    bot.server = init_server(bot)
+    botconfig.read_file(open(configfile))
+    bot = IrcBot(botconfig)
+    bot.server = server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':

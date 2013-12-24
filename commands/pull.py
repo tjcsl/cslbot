@@ -16,13 +16,7 @@
 
 import subprocess
 from helpers.command import Command
-
-
-def do_pull(srcdir, nick):
-    # FIXME: Permissions hack.
-    if nick == "msbobBot":
-        subprocess.check_output(["sudo", "-n", "/home/peter/ircbot/scripts/fixperms.sh"], stderr=subprocess.STDOUT)
-    return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
+from helpers.misc import do_pull
 
 
 @Command('pull', ['srcdir', 'is_admin', 'nick', 'botnick'])

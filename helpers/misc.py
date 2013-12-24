@@ -18,6 +18,7 @@
 # USA.
 
 from requests import get
+import subprocess
 
 
 def check_quote_exists_by_id(cursor, qid):
@@ -28,6 +29,13 @@ def check_quote_exists_by_id(cursor, qid):
 def check_exists(subreddit):
     req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
     return req.status_code == 200
+
+
+def do_pull(srcdir, nick):
+    # FIXME: Permissions hack.
+    if nick == "msbobBot":
+        subprocess.check_output(["sudo", "-n", "/home/peter/ircbot/scripts/fixperms.sh"], stderr=subprocess.STDOUT)
+    return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
 def do_nuke(c, nick, target, channel):
