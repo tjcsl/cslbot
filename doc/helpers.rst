@@ -108,6 +108,14 @@ helpers.urlutils module
     :undoc-members:
     :show-inheritance:
 
+helpers.workers module
+----------------------
+
+.. automodule:: helpers.workers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

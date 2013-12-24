@@ -41,7 +41,7 @@ def handle_pending(handler, send):
     global event
     admins = ": ".join(handler.admins)
     cursor = handler.db.get()
-    while not event.wait(60):
+    while not event.wait(3600):
         issues = cursor.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
         quotes = cursor.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
         if issues or quotes:
