@@ -20,6 +20,7 @@ import imp
 import sys
 import handler
 import argparse
+from helpers.workers import start_workers
 from helpers.server import init_server
 from helpers.config import do_setup
 from helpers.defer import defer
@@ -98,6 +99,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
+        start_workers(self.handler)
         if output:
             return output
 
@@ -117,6 +119,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        start_workers(self.handler)
         extrachans = self.config['core']['extrachans']
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]

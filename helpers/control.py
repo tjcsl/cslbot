@@ -145,20 +145,29 @@ def handle_show(handler, cmd, send):
         db = handler.db.get()
         issues = db.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
         if issues:
-            for issue in issues:
-                nick = issue['source'].split('!')[0]
-                send("#%d %s -- by %s" % (issue['id'], issue['title'], nick))
+            show_issues(issues, send)
         else:
             send("No outstanding issues.")
     elif cmd[1] == "quotes":
         db = handler.db.get()
         quotes = db.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
-        if not quotes:
+        if quotes:
+            show_quotes(quotes, send)
+        else:
             send("No quotes pending.")
-        for x in quotes:
-            send("#%d %s -- %s, Submitted by %s" % tuple(x))
     else:
         send("Invalid Argument.")
+
+
+def show_quotes(quotes, send):
+    for x in quotes:
+        send("#%d %s -- %s, Submitted by %s" % tuple(x))
+
+
+def show_issues(issues, send):
+    for issue in issues:
+        nick = issue['source'].split('!')[0]
+        send("#%d %s, Submitted by %s" % (issue['id'], issue['title'], nick))
 
 
 def handle_accept(handler, cmd):

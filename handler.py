@@ -78,10 +78,6 @@ class BotHandler():
             setattr(self, key, val)
         return
 
-    def clean_sql_connection_pool(self):
-        """ Cleans the sql connection pool."""
-        self.db.clean_connection_pool()
-
     @staticmethod
     def loadmodules():
         """Load all the commands.
@@ -379,7 +375,8 @@ class BotHandler():
 
     def do_reload(self):
         self.uptime['reloaded'] = time.time()
-        self.clean_sql_connection_pool()
+        # FIXME: This doesn't work.
+        #self.db.clean_connection_pool()
         self.loadmodules()
         self.loadhooks()
 
