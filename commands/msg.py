@@ -25,6 +25,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         send("Message who?")
+        return
     msg = msg.split(maxsplit=1)
     if re.match("#[^ ,]{1,49}", msg[0]):
         if len(msg) == 1:
