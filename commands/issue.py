@@ -38,6 +38,7 @@ def cmd(send, msg, args):
     Syntax: !issue (description)
     """
     repo = args['config']['api']['githubrepo']
+    apikey = args['config']['api']['githubapikey']
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif msg.isdigit():
@@ -50,7 +51,8 @@ def cmd(send, msg, args):
         issues = []
         n = 1
         while True:
-            page = get('https://api.github.com/repos/%s/issues' % repo, params={'per_page': '100', 'page': n}).json()
+            headers = {'Authorization': 'token %s' % apikey}
+            page = get('https://api.github.com/repos/%s/issues' % repo, params={'per_page': '100', 'page': n}, headers=headers).json()
             n += 1
             if page:
                 issues += page
@@ -60,7 +62,7 @@ def cmd(send, msg, args):
         send("There are %d open issues, here's one." % len(issues))
         send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif args['is_admin'](args['nick']):
-        url = create_issue(msg, args['source'], repo, args['config']['api']['githubapikey'])
+        url = create_issue(msg, args['source'], repo, apikey)
         send("Issue created -- %s -- %s" % (url, msg))
     else:
         cursor = args['db'].get().cursor()
