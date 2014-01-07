@@ -47,7 +47,17 @@ def cmd(send, msg, args):
         else:
             send("%s -- %s" % (issue['title'], issue['html_url']))
     elif not msg:
-        issue = choice(get('https://api.github.com/repos/%s/issues' % repo).json())
+        issues = []
+        n = 1
+        while True:
+            page = get('https://api.github.com/repos/%s/issues' % repo, params={'per_page': '100', 'page': n}).json()
+            n += 1
+            if page:
+                issues += page
+            else:
+                break
+        issue = choice(issues)
+        send("There are %d open issues, here's one." % len(issues))
         send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif args['is_admin'](args['nick']):
         url = create_issue(msg, args['source'], repo, args['config']['api']['githubapikey'])
