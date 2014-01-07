@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     Syntax: !timeout timespec nickname
     timespec is in the format: {number}{unit}, where unit is s, m, or h.
     """
-    setmode = handler.connection.mode
+    setmode = args['handler'].connection.mode
     if not args['is_admin'](args['nick']):
         send("Admins only")
         return
