@@ -34,7 +34,7 @@ def get_scores(cursor):
 
 
 def get_polls(cursor):
-    rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1').fetchall()
+    rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1 ORDER BY pid').fetchall()
     return {row['pid']: row['question'] for row in rows}
 
 
