@@ -19,6 +19,7 @@ import sqlite3
 import argparse
 from time import strftime
 from datetime import datetime
+from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname
 
@@ -35,7 +36,10 @@ def get_scores(cursor):
 
 def get_polls(cursor):
     rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1 ORDER BY pid').fetchall()
-    return {row['pid']: row['question'] for row in rows}
+    polls = OrderedDict()
+    for row in rows:
+        polls[row['pid']] = row['question']
+    return polls
 
 
 def get_urls(cursor):
