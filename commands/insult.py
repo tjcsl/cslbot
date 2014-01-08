@@ -19,14 +19,14 @@ from helpers.command import Command
 from helpers.textutils import gen_insult
 
 
-@Command('insult', ['channels', 'target', 'nick', 'config'])
+@Command('insult', ['handler', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Insults a user.
     Syntax: !insult (nick)
     """
 
     if not msg:
-        users = list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you']
+        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
         user = choice(users)
     else:
         user = msg

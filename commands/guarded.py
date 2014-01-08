@@ -17,12 +17,13 @@
 from helpers.command import Command
 
 
-@Command('guarded', ['guarded'])
+@Command('guarded', ['handler'])
 def cmd(send, msg, args):
     """Shows the currently guarded nicks.
     Syntax: !guarded
     """
-    if not args['guarded']:
+    guarded = args['handler'].guarded
+    if not guarded:
         send("Nobody is guarded.")
     else:
-        send(", ".join(args['guarded']))
+        send(", ".join(guarded))

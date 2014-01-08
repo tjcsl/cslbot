@@ -17,10 +17,10 @@
 from helpers.command import Command
 
 
-@Command('channels', ['channels'])
+@Command('channels', ['handler'])
 def cmd(send, msg, args):
     """Returns a listing of the current channels.
     Syntax: !channels
     """
-    channels = ", ".join(sorted(args['channels']))
+    channels = ", ".join(sorted(args['handler'].channels))
     send(channels)

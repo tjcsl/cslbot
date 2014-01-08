@@ -18,7 +18,7 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('slap', ['channels', 'target', 'config'])
+@Command('slap', ['handler', 'target', 'config'])
 def cmd(send, msg, args):
     """Slap somebody.
     Syntax: !slap <nick> for <reason>
@@ -27,7 +27,7 @@ def cmd(send, msg, args):
     methods = ['around a bit', 'upside the head']
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
-        users = list(args['channels'][channel].users())
+        users = list(args['handler'].channels[channel].users())
         slap = 'slaps %s %s with %s'
         send(slap % (choice(users), choice(methods), choice(implements)), 'action')
     else:
@@ -36,7 +36,7 @@ def cmd(send, msg, args):
         implement = ''
         msg = msg.split()
         slapee = msg[0]
-        #Basic and stupid NLP!
+        # Basic and stupid NLP!
         i = 1
         while i < len(msg):
             if msg[i] == 'for':

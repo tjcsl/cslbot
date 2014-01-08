@@ -19,12 +19,12 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('throw', ['channels', 'target'])
+@Command('throw', ['handler', 'target'])
 def cmd(send, msg, args):
     """Throw something.
     Syntax: !throw <object> at <target>
     """
-    users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
+    users = (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
     if "into" in msg and msg != "into":
         match = re.match('(.*) into (.*)', msg)
         if match:

@@ -18,12 +18,12 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('blame', ['channels', 'target', 'nick', 'config'])
+@Command('blame', ['handler', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Blames a random user for something.
     Syntax: !blame <reason>
     """
-    users = (list(args['channels'][args['target']].users()) if args['target'] != 'private' else ['you'])
+    users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
     user = choice(users)
     if msg:
         msg = " for " + msg

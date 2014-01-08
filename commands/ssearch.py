@@ -18,12 +18,12 @@ import pickle
 from helpers.command import Command
 
 
-@Command('ssearch', ['srcdir'])
+@Command('ssearch', ['handler'])
 def cmd(send, msg, args):
     """Searches steam.
     Syntax: !ssearch <text>
     """
-    picklefile = open(args['srcdir'] + '/static/steamids.pickle', 'rb')
+    picklefile = open(args['handler'].srcdir + '/static/steamids.pickle', 'rb')
     idlist = pickle.load(picklefile)
     for i in idlist.keys():
         if i.lower().find(msg) != -1:

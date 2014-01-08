@@ -347,15 +347,8 @@ class BotHandler():
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
-                'channels': self.channels,
-                'connection': self.connection,
-                'srcdir': self.srcdir,
-                'admins': self.admins,
-                'abuselist': self.abuselist,
                 'handler': self,
                 'db': self.db,
-                'kick_enabled': self.kick_enabled,
-                'guarded': self.guarded,
                 'config': self.config,
                 'source': source,
                 'name': name,

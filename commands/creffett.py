@@ -18,7 +18,7 @@ from helpers.command import Command
 from helpers.textutils import gen_creffett
 
 
-@Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'connection', 'do_kick', 'kick_enabled', 'botnick', 'name'])
+@Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'do_kick', 'botnick', 'name'])
 def cmd(send, msg, args):
     """RAGE!!!
     Syntax: !rage <text>

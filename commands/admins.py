@@ -17,16 +17,17 @@
 from helpers.command import Command
 
 
-@Command('admins', ['admins', 'nick'])
+@Command('admins', ['handler', 'nick'])
 def cmd(send, msg, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
     Syntax: !admins
     """
-    admins = ""
-    for admin in sorted(args['admins']):
-        if args['admins'][admin] != -1:
-            admins += admin + " (V), "
+    admins = args['handler'].admins
+    adminlist = []
+    for admin in sorted(admins):
+        if admins[admin] != -1:
+            adminlist.append("%s (V)" % admin)
         else:
-            admins += admin + " (U), "
-    send(admins[:-2], target=args['nick'])
+            adminlist.append("%s (U)" % admin)
+    send(", ".join(adminlist), target=args['nick'])

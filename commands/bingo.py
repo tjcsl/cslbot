@@ -18,7 +18,7 @@ from random import choice
 from helpers.command import Command
 
 
-@Command('bingo', ['nick', 'connection'], limit=2)
+@Command('bingo', ['nick'], limit=2)
 def cmd(send, msg, args):
     """Creates a bingo board.
     Syntax: !bingo
