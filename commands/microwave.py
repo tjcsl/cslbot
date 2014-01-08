@@ -19,7 +19,7 @@ from helpers.command import Command
 from helpers.misc import do_nuke
 
 
-@Command('microwave', ['nick', 'channels', 'connection', 'is_admin', 'target', 'config'], limit=5)
+@Command('microwave', ['nick', 'botnick', 'channels', 'connection', 'is_admin', 'target', 'config'], limit=5)
 def cmd(send, msg, args):
     """Microwaves something.
     Syntax: !microvave <level> <target>
@@ -55,6 +55,8 @@ def cmd(send, msg, args):
             if not args['is_admin'](nick):
                 send("I'm sorry. Nukes are a admin-only feature")
                 return
+            elif msg == args['botnick']:
+                send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
             elif target not in args['channels'][channel].users():
                 send("I'm sorry. Anonymous Nuking is not allowed")
                 return
