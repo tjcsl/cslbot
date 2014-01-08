@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.textutils import gen_morse
+from helpers.textutils import gen_morse, gen_word
 
 
 @Command('morse')
@@ -24,8 +24,7 @@ def cmd(send, msg, args):
     Syntax: !morse <text>
     """
     if not msg:
-        send("Morse what?")
-        return
+        msg = gen_word()
     morse = gen_morse(msg)
     if len(morse) > 100:
         send("Your morse is too long. Have you considered Western Union?")
