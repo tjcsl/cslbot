@@ -18,18 +18,22 @@ from helpers.command import Command
 from helpers.defer import defer
 
 
-@Command('timeout', ['nick', 'is_admin', 'handler', 'target'])
+@Command('timeout', ['nick', 'is_admin', 'handler', 'target', 'botnick'])
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
     timespec is in the format: {number}{unit}, where unit is s, m, or h.
     """
     setmode = args['handler'].connection.mode
+    channel = args['target']
+    ops = list(args['handler'].channels[channel].opers())
     if not args['is_admin'](args['nick']):
         send("Admins only")
         return
+    if args['botnick'] not in ops:
+        send("Bot must be an op.")
+        return
     time, user = msg.split(maxsplit=1)
-    channel = args['target']
     defer_args = [channel, " -q %s!*@*" % user]
 
     time_unit = time[-1].lower()

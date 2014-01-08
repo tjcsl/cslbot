@@ -636,6 +636,14 @@ commands.time module
     :undoc-members:
     :show-inheritance:
 
+commands.timeout module
+-----------------------
+
+.. automodule:: commands.timeout
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.translate module
 -------------------------
 
