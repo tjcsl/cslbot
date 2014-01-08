@@ -28,9 +28,7 @@ def cmd(send, msg, args):
     if not args['is_admin'](args['nick']):
         send("Admins only")
         return
-    msg = msg.split(maxsplit=1)
-    time = msg[0]
-    user = msg[1]
+    time, user = msg.split(maxsplit=1)
     channel = args['target']
     defer_args = [channel, " -q %s!*@*" % user]
 
