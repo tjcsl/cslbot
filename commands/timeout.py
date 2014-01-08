@@ -47,4 +47,7 @@ def cmd(send, msg, args):
 
     setmode(channel, " +q %s!*@*" % user)
 
-    defer(time, setmode, *defer_args)
+    t = defer(time, setmode, *defer_args)
+    t.name = "timeout-%s-%d" % (user, t.ident)
+    args['handler'].threads.append(t)
+    send("%s has been put in timeout. defer id: %s" % t.name)

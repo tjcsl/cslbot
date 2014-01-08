@@ -15,29 +15,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.defer import defer
 
 
-@Command('defersay', ['nick', 'is_admin', 'handler'])
+@Command('cancel', ['nick', 'is_admin', 'handler', 'target'])
 def cmd(send, msg, args):
-    """Says something at a later time.
-    Syntax: !defersay <delay> <msg>
+    """Cancels a deferred action (i.e. kills a thread) with the given name.
+    Syntax: !cancel thread-name
     """
     if not args['is_admin'](args['nick']):
-        send("Admins only")
+        send("Only admins can cancel threads.")
         return
-    msg = msg.split(maxsplit=1)
-    if len(msg) != 2:
-        send("Not enough arguments")
+
+    t = [i for i in args['handler'].threads if msg in i.name]
+
+    if len(t) == 0:
+        send("I couldn't find any thread matching that name.")
         return
-    try:
-        t = int(msg[0])
-    except ValueError:
-        send("Invalid time to delay")
+
+    if len(t) > 1:
+        send("I found multiple threads matching that name: %s" % ", ".join(t))
         return
-    if t < 0:
-        send("Time travel not yet implemented, sorry.")
-    else:
-        t = defer(msg[0], send, msg[1])
-        t.name = "say-%s-%d" % (msg[1], t.ident)
-        send("Message deferred. defer id: %s" % t.name)
+
+    # FIXME: actually make the thread stop
