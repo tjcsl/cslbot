@@ -31,6 +31,15 @@ def check_exists(subreddit):
     return req.status_code == 200
 
 
+def parse_time(time):
+    time, unit = int(time[:-1]), time[-1].lower()
+    conv = {'m': 60, 'h': 3600, 'd': 86400}
+    if unit in conv.keys():
+        return time * conv[unit]
+    else:
+        return None if unit else time
+
+
 def do_pull(srcdir, nick):
     # FIXME: Permissions hack.
     if nick == "msbobBot":

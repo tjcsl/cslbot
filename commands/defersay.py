@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
+from helpers.misc import parse_time
 from helpers.defer import defer
 
 
@@ -30,13 +31,11 @@ def cmd(send, msg, args):
     if len(msg) != 2:
         send("Not enough arguments")
         return
-    try:
-        t = int(msg[0])
-    except ValueError:
-        send("Invalid time to delay")
-        return
-    if t < 0:
+    t = parse_time(msg[0])
+    if t is None:
+        send("Invalid unit.")
+    elif t < 0:
         send("Time travel not yet implemented, sorry.")
     else:
-        ident = defer(msg[0], send, msg[1])
+        ident = defer(t, send, msg[1])
         send("Message deferred, ident: %s" % ident)

@@ -16,13 +16,14 @@
 
 from helpers.command import Command
 from helpers.defer import defer
+from helpers.misc import parse_time
 
 
 @Command('timeout', ['nick', 'is_admin', 'handler', 'target', 'botnick'])
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
-    timespec is in the format: {number}{unit}, where unit is s, m, or h.
+    timespec is in the format: {number}{unit}, where unit is m, h, or d.
     """
     setmode = args['handler'].connection.mode
     channel = args['target']
@@ -36,16 +37,10 @@ def cmd(send, msg, args):
     time, user = msg.split(maxsplit=1)
     defer_args = [channel, " -q %s!*@*" % user]
 
-    time_unit = time[-1].lower()
-    time = int(time[:-1])
-    if time_unit == "m":
-        time *= 60
-    if time_unit == "h":
-        time *= 3600
-    if time_unit == "d":
-        time *= 86400
-
     setmode(channel, " +q %s!*@*" % user)
-
-    ident = defer(time, setmode, *defer_args)
-    send("%s has been put in timeout, ident: %d" % (user, ident))
+    time = parse_time(time)
+    if time is None:
+        send("Invalid unit.")
+    else:
+        ident = defer(time, setmode, *defer_args)
+        send("%s has been put in timeout, ident: %d" % (user, ident))
