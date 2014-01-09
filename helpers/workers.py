@@ -22,21 +22,32 @@ _threads = {}
 lock = Lock()
 
 
-def start_workers(handler):
+def stop_workers():
     for thread, event in _threads.values():
         event.set()
         thread.join()
-        event.clear()
     _threads.clear()
+
+
+def start_workers(handler):
+    stop_workers()
 
     # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    thread = Thread(target=handle_pending, args=(handler, send), daemon=True).start()
+    Thread(target=handle_pending, args=(handler, send), daemon=True).start()
 
 
 def add_thread(thread):
     global _threads
     _threads[thread.ident] = (thread, Event())
+
+
+def get_thread(ident):
+    return _threads[ident]
+
+
+def get_threads():
+    return _threads
 
 
 def handle_pending(handler, send):

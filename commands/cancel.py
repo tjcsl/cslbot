@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
+from helpers.workers import get_threads
 
 
 @Command('cancel', ['nick', 'is_admin', 'handler', 'target'])
@@ -26,6 +27,8 @@ def cmd(send, msg, args):
         send("Only admins can cancel threads.")
         return
 
+    send(str(get_threads()))
+    return
     t = [i for i in args['handler'].threads if msg in i.name]
 
     if len(t) == 0:

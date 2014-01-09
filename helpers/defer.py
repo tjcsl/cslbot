@@ -17,13 +17,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from time import sleep
-import threading
+from helpers.workers import add_thread, get_thread
+from threading import Thread, current_thread, get_ident
 
 
 def _defer(t, function, args):
-    sleep(float(t))
-    function(*args)
+    add_thread(current_thread())
+    if not get_thread(get_ident())[1].wait(int(t)):
+        function(*args)
 
 
 def defer(t, function, *args):
@@ -31,6 +32,4 @@ def defer(t, function, *args):
     Defers an function with args for t seconds. Returns a Thread representing
     the function to be deferred (i.e. it can be killed to cancel defer).
     """
-    t = threading.Thread(target=_defer, args=(t, function, args))
-    t.start()
-    return t
+    Thread(target=_defer, args=(t, function, args)).start()

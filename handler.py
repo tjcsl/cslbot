@@ -50,7 +50,6 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
-        self.threads = []
         self.channels = {}
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
