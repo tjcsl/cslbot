@@ -108,6 +108,14 @@ commands.botsnack module
     :undoc-members:
     :show-inheritance:
 
+commands.cancel module
+----------------------
+
+.. automodule:: commands.cancel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.channels module
 ------------------------
 
