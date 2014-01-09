@@ -29,7 +29,9 @@ def _defer(t, function, args):
 
 def defer(t, function, *args):
     """
-    Defers an function with args for t seconds. Returns a Thread representing
+    Defers an function with args for t seconds. Returns a unique identifier representing
     the function to be deferred (i.e. it can be killed to cancel defer).
     """
-    Thread(target=_defer, args=(t, function, args)).start()
+    thread = Thread(target=_defer, args=(t, function, args))
+    thread.start()
+    return thread.ident

@@ -43,11 +43,7 @@ def add_thread(thread):
 
 
 def get_thread(ident):
-    return _threads[ident]
-
-
-def get_threads():
-    return _threads
+    return _threads[ident] if ident in _threads.keys() else None
 
 
 def handle_pending(handler, send):

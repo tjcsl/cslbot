@@ -47,5 +47,5 @@ def cmd(send, msg, args):
 
     setmode(channel, " +q %s!*@*" % user)
 
-    defer(time, setmode, *defer_args)
-    send("%s has been put in timeout.")
+    ident = defer(time, setmode, *defer_args)
+    send("%s has been put in timeout, ident: %d" % (user, ident))

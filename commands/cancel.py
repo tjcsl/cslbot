@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.workers import get_threads
+from helpers.workers import get_thread
 
 
 @Command('cancel', ['nick', 'is_admin', 'handler', 'target'])
@@ -27,16 +27,10 @@ def cmd(send, msg, args):
         send("Only admins can cancel threads.")
         return
 
-    send(str(get_threads()))
-    return
-    t = [i for i in args['handler'].threads if msg in i.name]
-
-    if len(t) == 0:
+    thread = get_thread(int(msg))
+    if thread is None:
         send("I couldn't find any thread matching that name.")
         return
-
-    if len(t) > 1:
-        send("I found multiple threads matching that name: %s" % ", ".join(t))
-        return
-
-    # FIXME: actually make the thread stop
+    thread[1].set()
+    thread[0].join()
+    send("Thread canceled.")
