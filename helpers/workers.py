@@ -15,33 +15,35 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import Thread, Event
+from threading import Thread, Event, Lock, current_thread, get_ident
 from helpers.control import show_issues, show_quotes
 
-_threads = []
-event = Event()
+_threads = {}
+lock = Lock()
 
 
 def start_workers(handler):
-    global _threads, event
-
-    event.set()
-    for thread in _threads:
+    for thread, event in _threads.values():
+        event.set()
         thread.join()
-    event.clear()
+        event.clear()
     _threads.clear()
 
+    # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    _threads.append(Thread(target=handle_pending, args=(handler, send), daemon=True))
-    for thread in _threads:
-        thread.start()
+    thread = Thread(target=handle_pending, args=(handler, send), daemon=True).start()
+
+
+def add_thread(thread):
+    global _threads
+    _threads[thread.ident] = (thread, Event())
 
 
 def handle_pending(handler, send):
-    global event
     admins = ": ".join(handler.admins)
     cursor = handler.db.get()
-    while not event.wait(3600):
+    add_thread(current_thread())
+    while not _threads[get_ident()][1].wait(3600):
         issues = cursor.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
         quotes = cursor.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
         if issues or quotes:
