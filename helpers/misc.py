@@ -32,7 +32,11 @@ def check_exists(subreddit):
 
 
 def parse_time(time):
-    time, unit = int(time[:-1]), time[-1].lower()
+    time, unit = time[:-1], time[-1].lower()
+    if time.isdigit():
+        time = int(time)
+    else:
+        return None
     conv = {'m': 60, 'h': 3600, 'd': 86400}
     if unit in conv.keys():
         return time * conv[unit]
