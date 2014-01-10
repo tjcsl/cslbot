@@ -158,7 +158,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_quit(self, c, e):
         """Log quits."""
-        for channel in self.get_channels(e.source.split('!')):
+        for channel in self.get_channels(e.source.split('!')[0]):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
