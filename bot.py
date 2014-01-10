@@ -145,8 +145,8 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nick(self, c, e):
         """Log nick changes."""
-        # Nick changes don't have a associated channel, so we just use the default channel.
-        self.handler.do_log(self.config['core']['channel'], e.source.nick, e.target, 'nick')
+        for channel in self.get_channels(e.target):
+            self.handler.do_log(channel, e.source.nick, e.target, 'nick')
 
     def on_mode(self, c, e):
         """Pass mode changes to :func:`handle_msg`."""
@@ -158,8 +158,8 @@ class IrcBot(SingleServerIRCBot):
 
     def on_quit(self, c, e):
         """Log quits."""
-        # Quits don't have a associated channel, so we just use the default channel.
-        self.handler.do_log(self.config['core']['channel'], e.source, e.arguments[0], 'quit')
+        for channel in self.get_channels(e.source.split('!')):
+            self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
         """Handle joins.
@@ -210,6 +210,13 @@ class IrcBot(SingleServerIRCBot):
         self.kick = [e.source.nick, e.arguments[1]]
         sleep(5)
         c.join(e.target)
+
+    def get_channels(self, nick):
+        channels = []
+        for name, channel in self.channels.items():
+            if nick in channel.users():
+                channels.append(name)
+        return channels
 
 
 def main(args):
