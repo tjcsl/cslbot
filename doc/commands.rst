@@ -60,14 +60,6 @@ commands.babble module
     :undoc-members:
     :show-inheritance:
 
-commands.badble module
-----------------------
-
-.. automodule:: commands.badble
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.bc module
 ------------------
 
