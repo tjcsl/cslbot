@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     Syntax: !channels
     """
     if args['type'] == 'privmsg':
-        send('Channels should remain public knowledge')
+        send('Channels should remain public knowledge!')
     else:
         channels = ", ".join(sorted(args['handler'].channels))
         send(channels)
