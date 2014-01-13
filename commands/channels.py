@@ -17,10 +17,13 @@
 from helpers.command import Command
 
 
-@Command('channels', ['handler'])
+@Command('channels', ['handler', 'type'])
 def cmd(send, msg, args):
     """Returns a listing of the current channels.
     Syntax: !channels
     """
-    channels = ", ".join(sorted(args['handler'].channels))
-    send(channels)
+    if args['type'] == 'privmsg':
+        send('Channels should remain public knowledge')
+    else:
+        channels = ", ".join(sorted(args['handler'].channels))
+        send(channels)
