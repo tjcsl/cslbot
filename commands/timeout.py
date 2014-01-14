@@ -37,10 +37,10 @@ def cmd(send, msg, args):
     time, user = msg.split(maxsplit=1)
     defer_args = [channel, " -q %s!*@*" % user]
 
-    setmode(channel, " +q %s!*@*" % user)
     time = parse_time(time)
     if time is None:
         send("Invalid unit.")
     else:
+        setmode(channel, " +q %s!*@*" % user)
         ident = defer(time, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))
