@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     setmode = args['handler'].connection.mode
     channel = args['target']
     ops = list(args['handler'].channels[channel].opers())
-    if args['nick'] not in ops:
+    if not args['is_admin'](args['nick']):
         send("Ops only")
         return
     if args['botnick'] not in ops:
