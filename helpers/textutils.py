@@ -20,7 +20,7 @@
 import re
 from requests import get
 from html.parser import HTMLParser
-from random import random, choice
+from random import random, choice, randrange
 
 
 def removevowels(msg):
@@ -39,7 +39,7 @@ def gen_fwilson(x, mode=None):
     if mode is None:
         mode = 'w' if random() < 0.5 else 'f'
     if mode == 'w':
-        output = "wheeeee %s" % x
+        output = "wh%s %s" % ('e' * randrange(3, 20), x)
         return output.upper()
     else:
         output = ['fwil%s' % q for q in x.split()]
