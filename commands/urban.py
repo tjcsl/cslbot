@@ -18,7 +18,7 @@ from requests import get
 from helpers.command import Command
 
 
-@Command('urban', limit=5)
+@Command('urban')
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
     Syntax: !urban (#<num>) <term>
