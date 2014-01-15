@@ -238,14 +238,14 @@ def reject_issue(handler, cmd):
         return "Not A Valid Positive Integer"
     db = handler.db.get()
     num = int(cmd[1])
-    issue = db.execute('SELECT title,source FROM issues WHERE id=?', (num,)).fetchone()
+    issue = db.execute('SELECT title,source,submitter FROM issues WHERE id=?', (num,)).fetchone()
     if not issue:
         return "Not a valid issue"
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = issue['source'].split('!')[0]
-    msg = "Issue Rejected -- %s" % issue['title']
+    msg = "Issue Rejected -- %s, Submitted by %s" % (issue['title'], issue['submitter'])
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     db.execute('DELETE FROM issues WHERE id=?', (num,))
