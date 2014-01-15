@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # IrcBot documentation build configuration file, created by
-# sphinx-quickstart on Tue Jun 25 16:16:59 2013.
+# sphinx-quickstart on Tue Jun 25 16:16:59 2013-2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'IrcBot'
-copyright = '2013, Peter Foley'
+copyright = '2013-2014, Peter Foley'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -250,7 +250,7 @@ texinfo_documents = [
 epub_title = 'IrcBot'
 epub_author = 'Peter Foley'
 epub_publisher = 'Peter Foley'
-epub_copyright = '2013, Peter Foley'
+epub_copyright = '2013-2014, Peter Foley'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

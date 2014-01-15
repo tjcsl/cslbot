@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, Reed Koser, and James Forcier
+# Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, Reed Koser, and James Forcier
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

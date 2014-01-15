@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
+# Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ from os.path import basename
 
 WELCOME = """
 Welcome to the IRCbot console.
-Copyright (c) 2013 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
+Copyright (c) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
 Licensed under the GNU GPL version 2.
 
 Type "help" for a list of commands.
