@@ -103,6 +103,8 @@ class Command():
             except Exception as ex:
                 handle_traceback(ex, self.c, self.target)
         self.doc = getdoc(func)
+        if self.doc is None or len(self.doc) < 5:
+            print("Warning:", self.names[0], "has no or very little documentation")
         self.exe = wrapper
         return wrapper
 
