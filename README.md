@@ -1,7 +1,7 @@
-ircbot
+cslbot
 ======
 
-The bot that inhabits the #tjhsst channel on freenode.
+A bot written by the TJHSST CSL for IRC. 
 
 
 
