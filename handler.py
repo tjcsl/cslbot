@@ -116,6 +116,8 @@ class BotHandler():
         if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
             return False
         # unauthed
+        if nick not in self.admins:
+            self.admins[nick] = -1
         if self.admins[nick] == -1:
             self.connection.privmsg('NickServ', 'ACC %s' % nick)
             if complain:
