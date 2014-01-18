@@ -25,6 +25,7 @@ from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
 from time import time
+from random import getrandbits
 
 
 class IrcBot(SingleServerIRCBot):
@@ -196,6 +197,11 @@ class IrcBot(SingleServerIRCBot):
 
     def on_ctcpreply(self, c, e):
         misc.ping(c, e, time())
+
+    def on_nicknameinuse(self, c, e):
+        self.connection.nick('Guest%d' % getrandbits(20))
+        self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
+        defer.defer(5, self.do_welcome, c)
 
     def on_kick(self, c, e):
         """Handle kicks.

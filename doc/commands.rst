@@ -44,14 +44,6 @@ commands.ahamilto module
     :undoc-members:
     :show-inheritance:
 
-commands.award module
----------------------
-
-.. automodule:: commands.award
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.babble module
 ----------------------
 
