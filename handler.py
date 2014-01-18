@@ -452,7 +452,6 @@ class BotHandler():
                     found = True
                     self.do_reload()
                     send("Aye Aye Capt'n")
-                    self.get_admins(c)
             # everything below this point requires admin
             if not found and self.is_admin(send, nick):
                 self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
