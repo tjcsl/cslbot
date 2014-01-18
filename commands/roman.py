@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from random import randrange
 from helpers.command import Command
 
 
@@ -41,9 +42,8 @@ def cmd(send, msg, args):
     Syntax: !roman <number>
     """
     if not msg:
-        send("What number?")
-        return
-    if not msg.isdigit():
+        msg = randrange(5000)
+    elif not msg.isdigit():
         send("Invalid Number.")
-        return
-    send(gen_roman(int(msg)))
+    else:
+        send(gen_roman(int(msg)))
