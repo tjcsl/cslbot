@@ -15,16 +15,24 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from time import time
+from helpers.misc import recordping
 from helpers.command import Command
 
 
-@Command('ping')
+@Command('ping', ['handler', 'target', 'config'])
 def cmd(send, msg, args):
     """Ping something.
     Syntax: !ping <target>
     """
     if not msg:
         send("Ping what?")
+        return
+    channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
+    # CTCP PING
+    if msg in args['handler'].channels[channel].users():
+        args['handler'].connection.ctcp("PING", msg, " ".join(str(time()).split('.')))
+        recordping(msg, channel)
         return
     try:
         answer = subprocess.check_output(['ping', '-q', '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)

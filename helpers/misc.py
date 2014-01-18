@@ -18,7 +18,10 @@
 # USA.
 
 from requests import get
+from datetime import timedelta
 import subprocess
+
+_pinglist = {}
 
 
 def check_quote_exists_by_id(cursor, qid):
@@ -69,3 +72,21 @@ def do_nuke(c, nick, target, channel):
     c.privmsg_many([nick, target], "               |:; ; |               ")
     c.privmsg_many([nick, target], "      ________/;';,.',\\ ________    ")
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
+
+
+#FIXME: there has to be a better way to do this.
+def recordping(nick, channel):
+    global _pinglist
+    _pinglist[nick] = channel
+
+
+def ping(c, e, pongtime):
+    global _pinglist
+    pingtime = float(e.arguments[1].replace(' ', '.'))
+    delta = timedelta(seconds=pongtime-pingtime)
+    nick = e.source.split('!')[0]
+    elapsed = "%s.%s" % (delta.seconds, delta.microseconds)
+    if nick in _pinglist:
+        c.privmsg(_pinglist.pop(nick), "CTCP reply from %s: %s seconds" % (nick, elapsed))
+    else:
+        c.privmsg(nick, "CTCP reply from %s: %s seconds" % (nick, elapsed))

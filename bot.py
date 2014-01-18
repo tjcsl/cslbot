@@ -24,7 +24,7 @@ from helpers import workers, server, config, defer, traceback, misc
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
-from time import sleep
+from time import time
 
 
 class IrcBot(SingleServerIRCBot):
@@ -192,8 +192,10 @@ class IrcBot(SingleServerIRCBot):
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
-        sleep(5)
-        c.join(e.arguments[0])
+        defer.defer(5, c.join, e.arguments[0])
+
+    def on_ctcpreply(self, c, e):
+        misc.ping(c, e, time())
 
     def on_kick(self, c, e):
         """Handle kicks.
@@ -208,8 +210,7 @@ class IrcBot(SingleServerIRCBot):
             return
         logging.info("Kicked from channel %s" % e.target)
         self.kick = [e.source.nick, e.arguments[1]]
-        sleep(5)
-        c.join(e.target)
+        defer.defer(5, c.join, e.target)
 
     def get_channels(self, nick):
         channels = []
