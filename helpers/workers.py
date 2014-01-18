@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from threading import Thread, Event, Lock, current_thread, get_ident
-from helpers.control import show_issues, show_quotes
+from helpers.control import show_pending
 
 _threads = {}
 lock = Lock()
@@ -51,13 +51,4 @@ def handle_pending(handler, send):
     cursor = handler.db.get()
     add_thread(current_thread())
     while not _threads[get_ident()][1].wait(3600):
-        issues = cursor.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
-        quotes = cursor.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
-        if issues or quotes:
-            send("%s: Items are Pending Approval" % admins)
-        if issues:
-            send("Issues:")
-            show_issues(issues, send)
-        if quotes:
-            send("Quotes:")
-            show_quotes(quotes, send)
+        show_pending(cursor, admins, send, True)

@@ -133,6 +133,7 @@ def handle_unguard(handler, cmd):
 
 
 def handle_show(handler, cmd, send):
+    db = handler.db.get()
     if len(cmd) < 2:
         send("Missing argument.")
         return
@@ -142,26 +143,26 @@ def handle_show(handler, cmd, send):
         else:
             send("Nobody is guarded.")
     elif cmd[1] == "issues":
-        db = handler.db.get()
         issues = db.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
         if issues:
             show_issues(issues, send)
         else:
             send("No outstanding issues.")
     elif cmd[1] == "quotes":
-        db = handler.db.get()
         quotes = db.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
         if quotes:
             show_quotes(quotes, send)
         else:
             send("No quotes pending.")
     elif cmd[1] == "polls":
-        db = handler.db.get()
         polls = db.execute('SELECT pid,question,submitter FROM polls WHERE accepted=0').fetchall()
         if polls:
             show_polls(polls, send)
         else:
             send("No polls pending.")
+    elif cmd[1] == "pending":
+        admins = ": ".join(handler.admins)
+        show_pending(db, admins, send)
     else:
         send("Invalid Argument.")
 
@@ -180,6 +181,23 @@ def show_issues(issues, send):
 def show_polls(polls, send):
     for x in polls:
         send("#%d -- %s, Submitted by %s" % tuple(x))
+
+
+def show_pending(db, admins, send, ping=False):
+        issues = db.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
+        quotes = db.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
+        polls = db.execute('SELECT pid,question,submitter FROM polls WHERE accepted=0').fetchall()
+        if ping and (issues or quotes or polls):
+            send("%s: Items are Pending Approval" % admins)
+        if issues:
+            send("Issues:")
+            show_issues(issues, send)
+        if quotes:
+            send("Quotes:")
+            show_quotes(quotes, send)
+        if polls:
+            send("Polls:")
+            show_polls(polls, send)
 
 
 def handle_accept(handler, cmd):
