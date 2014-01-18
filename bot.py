@@ -173,7 +173,9 @@ class IrcBot(SingleServerIRCBot):
         if e.source.nick != c.real_nickname:
             return
         self.handler.channels[e.target] = self.channels[e.target]
-        logging.info("Joined channel %s" % e.target)
+        msg = "Joined channel %s" % e.target
+        logging.info(msg)
+        c.privmsg(self.config['core']['ctrlchan'], msg)
         if hasattr(self, 'kick'):
             #slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             #c.privmsg(e.target, slogan)
@@ -189,7 +191,9 @@ class IrcBot(SingleServerIRCBot):
         if e.source.nick != c.real_nickname:
             return
         del self.handler.channels[e.target]
-        logging.info("Parted channel %s" % e.target)
+        msg = "Parted channel %s" % e.target
+        logging.info(msg)
+        c.privmsg(self.config['core']['ctrlchan'], msg)
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
