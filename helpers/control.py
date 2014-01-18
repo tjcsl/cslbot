@@ -155,6 +155,13 @@ def handle_show(handler, cmd, send):
             show_quotes(quotes, send)
         else:
             send("No quotes pending.")
+    elif cmd[1] == "polls":
+        db = handler.db.get()
+        polls = db.execute('SELECT pid,question,submitter FROM polls WHERE accepted=0').fetchall()
+        if polls:
+            show_polls(polls, send)
+        else:
+            send("No polls pending.")
     else:
         send("Invalid Argument.")
 
@@ -170,6 +177,11 @@ def show_issues(issues, send):
         send("#%d %s, Submitted by %s" % (issue['id'], issue['title'], nick))
 
 
+def show_polls(polls, send):
+    for x in polls:
+        send("#%d -- %s, Submitted by %s" % tuple(x))
+
+
 def handle_accept(handler, cmd):
     if len(cmd) < 3:
         return "Missing argument."
@@ -177,6 +189,8 @@ def handle_accept(handler, cmd):
         return accept_issue(handler, cmd[1:])
     elif cmd[1] == 'quote':
         return accept_quote(handler, cmd[1:])
+    elif cmd[1] == 'poll':
+        return accept_poll(handler, cmd[1:])
     else:
         return "Valid arguments are issue and quote"
 
@@ -210,13 +224,32 @@ def accept_quote(handler, cmd):
     qid = int(cmd[1])
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
-    quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+    quote = db.execute('SELECT quote,nick,submitter FROM quotes WHERE id=?', (qid,)).fetchone()
     db.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = quote['submitter']
     msg = "Quote #%d accepted: %s -- %s, Submitted by %s" % (qid, quote['quote'], quote['nick'], nick)
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
+    return ""
+
+
+def accept_poll(handler, cmd):
+    if not cmd[1].isdigit():
+        return "Not A Valid Positive Integer"
+    db = handler.db.get()
+    pid = int(cmd[1])
+    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=?', (pid,)).fetchone()
+    if not poll:
+        return "Not a valid poll"
+    db.execute('UPDATE polls SET accepted=1 WHERE pid=?', (pid,))
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = poll['submitter']
+    msg = "Poll #%d accepted: %s , Submitted by %s" % (pid, poll['question'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     return ""
@@ -229,6 +262,8 @@ def handle_reject(handler, cmd):
         return reject_issue(handler, cmd[1:])
     elif cmd[1] == 'quote':
         return reject_quote(handler, cmd[1:])
+    elif cmd[1] == 'poll':
+        return reject_poll(handler, cmd[1:])
     else:
         return "Valid arguments are issue and quote"
 
@@ -273,6 +308,25 @@ def reject_quote(handler, cmd):
     return ""
 
 
+def reject_poll(handler, cmd):
+    if not cmd[1].isdigit():
+        return "Not A Valid Positive Integer"
+    db = handler.db.get()
+    pid = int(cmd[1])
+    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=?', (pid,)).fetchone()
+    if not poll:
+        return "Not a valid poll"
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = poll['submitter']
+    msg = "Poll #%d rejected: %s, Submitted by %s" % (pid, poll['question'], nick)
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
+    db.execute('DELETE FROM polls WHERE pid=?', (pid,))
+    return ""
+
+
 def handle_quote(handler, cmd):
     if len(cmd) == 1:
         return "quote needs arguments."
@@ -300,8 +354,8 @@ def handle_ctrlchan(handler, msg, c, send):
         send("cs|chanserv <chanserv command>")
         send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
         send("get <disabled|enabled> modules")
-        send("show <guarded|issues|quotes>")
-        send("accept|reject <issue|quote> <num>")
+        send("show <guarded|issues|quotes|polls>")
+        send("accept|reject <issue|quote|poll> <num>")
         send("guard|unguard <nick>")
     elif cmd[0] == "guard":
         send(handle_guard(handler, cmd))

@@ -17,12 +17,19 @@
 from helpers.command import Command
 
 
-def start_poll(cursor, msg):
+def start_poll(cursor, msg, isadmin, send, nick, ctrlchan):
     """ Starts a poll """
     if not msg:
         return "Polls need a question."
-    cursor.execute("INSERT INTO polls(question) VALUES(?)", (msg,))
-    return "Poll #%d created!" % cursor.lastrowid
+    cursor.execute("INSERT INTO polls(question,submitter) VALUES(?,?)", (msg, nick))
+    num = cursor.lastrowid
+    if isadmin:
+        cursor.execute('UPDATE polls SET accepted=1 WHERE pid=?', (num,))
+        return "Poll #%d created!" % num
+    else:
+        send("Poll submitted for approval.", target=nick)
+        send("New Poll: #%d -- %s, Submitted by %s" % (num, msg, nick), target=ctrlchan)
+        return ""
 
 
 def delete_poll(cursor, poll):
@@ -32,7 +39,9 @@ def delete_poll(cursor, poll):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     pid = int(poll)
-    query_result = cursor.execute("SELECT active,deleted FROM polls WHERE pid=?", (pid,)).fetchone()
+    query_result = cursor.execute("SELECT active,deleted FROM polls WHERE pid=? AND accepted=1", (pid,)).fetchone()
+    if not query_result:
+        return "Poll does not exist."
     if query_result['active'] == 1:
         return "You can't delete an active poll!"
     elif query_result['deleted'] == 1:
@@ -49,7 +58,7 @@ def edit_poll(cursor, msg):
     if not cmd[0].isdigit():
         return "Not A Valid Positive Integer."
     pid = int(cmd[0])
-    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
         return "That poll was deleted or does not exist!"
     newq = " ".join(cmd[1:])
     cursor.execute("UPDATE polls SET question=? WHERE pid=?", (newq, pid))
@@ -64,7 +73,7 @@ def reopen(cursor, msg):
     if not cmd[0].isdigit():
         return "Not a valid positve integer."
     pid = int(cmd[0])
-    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or has been deleted!"
     cursor.execute("UPDATE polls SET active=1 WHERE pid=?", (pid,))
     return "Poll %d reopened!" % pid
@@ -77,7 +86,7 @@ def end_poll(cursor, poll):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     pid = int(poll)
-    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or has already been deleted!"
     cursor.execute("UPDATE polls SET active=0 WHERE pid=?", (pid,))
     return "Poll ended!"
@@ -92,7 +101,7 @@ def tally_poll(cursor, poll, send, target):
         send("Not A Valid Positive Integer.")
         return
     pid = int(poll)
-    query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND pid=?", (pid,)).fetchone()
+    query_result = cursor.execute("SELECT question,active FROM polls WHERE deleted=0 AND pid=? AND accepted=1", (pid,)).fetchone()
     if query_result is None:
         send("That poll doesn't exist or was deleted. Use !poll list to see valid polls")
         return
@@ -133,7 +142,7 @@ def vote(cursor, nick, pid, vote):
         vote = "no"
     elif vote == "y" or vote == "aye":
         vote = "yes"
-    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND active=1 AND deleted=0", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT count(1) FROM polls WHERE pid=? AND active=1 AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
     old_vote = cursor.execute("SELECT response FROM poll_responses WHERE pid=? AND voter=?", (pid, nick)).fetchone()
     if old_vote is None:
@@ -161,7 +170,7 @@ def retract(cursor, poll, nick):
 
 
 def list_polls(cursor, poll_url):
-    num = cursor.execute("SELECT COUNT() FROM polls WHERE active=1").fetchone()[0]
+    num = cursor.execute("SELECT COUNT() FROM polls WHERE active=1 AND accepted=1").fetchone()[0]
     return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
 
@@ -178,41 +187,42 @@ def cmd(send, msg, args):
         return
     else:
         cmd = cmd[0]
+    isadmin = args['is_admin'](args['nick'])
     if cmd == 'start' or cmd == 'open' or cmd == 'add' or cmd == 'create':
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
-            send(start_poll(cursor.cursor(), msg))
-    elif cmd == 'end' or cmd == 'close':
-        if args['is_admin'](args['nick']):
-            send(end_poll(cursor, msg))
-        else:
-            send("Nope, not gonna do it.")
-    elif cmd == 'delete':
-        if args['is_admin'](args['nick']):
-            send(delete_poll(cursor, msg))
-        else:
-            send("Nope, not gonna do it.")
-    elif cmd == 'edit':
-        if args['is_admin'](args['nick']):
-            send(edit_poll(cursor, msg))
-        else:
-            send("Nope, not gonna do it.")
+            send(start_poll(cursor.cursor(), msg, isadmin, send, args['nick'], args['config']['core']['ctrlchan']))
     elif cmd == 'tally':
         tally_poll(cursor, msg, send, args['nick'])
     elif cmd == 'list':
         send(list_polls(cursor, args['config']['core']['url']))
     elif cmd == 'retract':
         send(retract(cursor, msg, args['nick']))
-    elif cmd == 'reopen':
-        if args['is_admin'](args['nick']):
-            send(reopen(cursor, msg))
-        else:
-            send("Nope, not gonna do it.")
     elif cmd.isdigit():
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
             send(vote(cursor, args['nick'], int(cmd), msg))
+    elif cmd == 'end' or cmd == 'close':
+        if isadmin:
+            send(end_poll(cursor, msg))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd == 'delete':
+        if isadmin:
+            send(delete_poll(cursor, msg))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd == 'edit':
+        if isadmin:
+            send(edit_poll(cursor, msg))
+        else:
+            send("Nope, not gonna do it.")
+    elif cmd == 'reopen':
+        if isadmin:
+            send(reopen(cursor, msg))
+        else:
+            send("Nope, not gonna do it.")
     else:
         send('Invalid Syntax.')

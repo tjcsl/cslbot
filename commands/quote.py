@@ -110,7 +110,6 @@ def cmd(send, msg, args):
         else:
             msg = " ".join(cmd[1:])
             do_add_quote(msg, cursor.cursor(), isadmin, send, args)
-            #cursor.commit()
     elif cmd[0] == 'list':
         send(do_list_quotes(cursor, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':

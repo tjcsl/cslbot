@@ -78,12 +78,16 @@ class Sql():
         """
         db = self.get_db_for_current_thread()
         db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
-        db.execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, submitter TEXT, approved INTEGER DEFAULT 0, id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS polls(question TEXT, active INTEGER DEFAULT 1, deleted INTEGER DEFAULT 0, pid INTEGER PRIMARY KEY AUTOINCREMENT)')
+        db.execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, submitter TEXT, approved INTEGER DEFAULT 0,\
+                   id INTEGER PRIMARY KEY AUTOINCREMENT)')
+        db.execute('CREATE TABLE IF NOT EXISTS polls(question TEXT, active INTEGER DEFAULT 1, deleted INTEGER DEFAULT 0,\
+                   accepted INTEGER DEFAULT 0, submitter TEXT, pid INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS poll_responses(pid INTEGER, response TEXT, voter TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS weather_prefs(nick TEXT UNIQUE, location TEXT)')
         db.execute('CREATE TABLE IF NOT EXISTS scores(nick TEXT UNIQUE, score INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS commands(nick TEXT, command TEXT, channel TEXT)')
-        db.execute('CREATE TABLE IF NOT EXISTS stopwatches (id INTEGER PRIMARY KEY AUTOINCREMENT, active INTEGER DEFAULT 1, time INTEGER, elapsed INTEGER DEFAULT 0)')
+        db.execute('CREATE TABLE IF NOT EXISTS stopwatches (id INTEGER PRIMARY KEY AUTOINCREMENT, active INTEGER DEFAULT 1,\
+                   time INTEGER, elapsed INTEGER DEFAULT 0)')
         db.execute('CREATE TABLE IF NOT EXISTS urls (url TEXT, title TEXT, time INTEGER)')
-        db.execute('CREATE TABLE IF NOT EXISTS issues (title TEXT, source TEXT, accepted INTEGER DEFAULT 0, id INTEGER PRIMARY KEY AUTOINCREMENT)')
+        db.execute('CREATE TABLE IF NOT EXISTS issues (title TEXT, source TEXT, accepted INTEGER DEFAULT 0,\
+                   id INTEGER PRIMARY KEY AUTOINCREMENT)')
