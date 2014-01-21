@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import time
+from time import time, strftime, localtime
 from helpers.urlutils import get_title, get_short
 from helpers.hook import Hook
 import re
@@ -37,5 +37,9 @@ def handle(send, msg, args):
         cursor = args['db'].get()
         title = get_title(url)
         cursor.execute('INSERT INTO urls VALUES(?,?,?)', (url, title, time()))
+        last = cursor.execute('SELECT time FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
+        if last:
+            lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last['time']))
+            send("Url %s previously posted %s" % (url, lasttime))
         if args['config']['feature']['linkread'] == "True":
             send('** %s - %s' % (title, get_short(url)))
