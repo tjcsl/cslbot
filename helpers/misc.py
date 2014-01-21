@@ -82,11 +82,15 @@ def recordping(nick, channel):
 
 def ping(c, e, pongtime):
     global _pinglist
-    pingtime = float(e.arguments[1].replace(' ', '.'))
-    delta = timedelta(seconds=pongtime-pingtime)
+    response = e.arguments[1].replace(' ', '.')
     nick = e.source.split('!')[0]
-    elapsed = "%s.%s" % (delta.seconds, delta.microseconds)
+    try:
+        pingtime = float(response)
+        delta = timedelta(seconds=pongtime-pingtime)
+        elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
+    except ValueError:
+        elapsed = response
     if nick in _pinglist:
-        c.privmsg(_pinglist.pop(nick), "CTCP reply from %s: %s seconds" % (nick, elapsed))
+        c.privmsg(_pinglist.pop(nick), "CTCP reply from %s: %s" % (nick, elapsed))
     else:
-        c.privmsg(nick, "CTCP reply from %s: %s seconds" % (nick, elapsed))
+        c.privmsg(nick, "CTCP reply from %s: %s" % (nick, elapsed))
