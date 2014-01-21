@@ -20,7 +20,7 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(types=['pubmsg', 'action'], args=['config', 'db'])
+@Hook(types=['pubmsg', 'action'], args=['config', 'db', 'nick'])
 def handle(send, msg, args):
     """ Get titles for urls.
 
@@ -37,12 +37,12 @@ def handle(send, msg, args):
         cursor = args['db'].get()
         title = get_title(url)
         short = get_short(url)
-        last = cursor.execute('SELECT time FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
+        last = cursor.execute('SELECT time,nick FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
         if args['config']['feature']['linkread'] == "True":
             if last:
                 lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last['time']))
-                send("Url %s previously posted %s -- %s" % (short, lasttime, title))
+                send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last['nick'], title))
             else:
                 send('** %s - %s' % (title, short))
-        cursor.execute('INSERT INTO urls VALUES(?,?,?)', (url, title, time()))
+        cursor.execute('INSERT INTO urls(url,title,nick,time) VALUES(?,?,?,?)', (url, title, args['nick'], time()))
         cursor.commit()

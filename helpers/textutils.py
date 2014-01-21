@@ -165,7 +165,7 @@ def do_xkcd_sub(msg, hook=False):
         if text in output:
             output = re.sub(r"\b%s\b" % text, replacement, output)
 
-    output = re.subn(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', output)
+    output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', output)
     if msg == output:
         return None if hook else msg
     else:
