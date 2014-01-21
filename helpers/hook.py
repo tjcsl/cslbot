@@ -18,6 +18,7 @@
 # USA.
 
 from helpers.modutils import scan_and_reimport
+from helpers.traceback import handle_traceback
 from threading import Thread
 
 _known_hooks = []
@@ -46,7 +47,10 @@ class Hook():
     def __call__(self, func):
         def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:
-                func(send, msg, args)
+                try:
+                    func(send, msg, args)
+                except Exception as ex:
+                    handle_traceback(ex, self.c, self.target)
         self.exe = wrapper
         self.name = func.__module__.split('.')[1]
         return wrapper
@@ -57,5 +61,7 @@ class Hook():
     def __repr__(self):
         return self.name
 
-    def run(self, send, msg, msgtype, args):
+    def run(self, send, msg, msgtype, connection, target, args):
+        self.c = connection
+        self.target = target
         Thread(target=self.exe, args=(send, msg, msgtype, args), daemon=True).start()

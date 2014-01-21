@@ -394,7 +394,7 @@ class BotHandler():
         if self.config['feature']['hooks'] == "True" and not nick in self.ignored:
             for hook in self.hooks:
                 realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
-                hook.run(send, msg, msgtype, realargs)
+                hook.run(send, msg, msgtype, self.connection, target, realargs)
 
         if msgtype == 'privnotice' and nick == 'NickServ':
             admin.set_admin(msg, self)
