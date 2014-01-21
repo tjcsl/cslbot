@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.textutils import gen_fwilson, gen_creffett, gen_slogan, gen_insult, gen_morse, removevowels, gen_binary
+from helpers import textutils
 
 
 @Command('filter', ['handler', 'is_admin', 'nick', 'type'])
@@ -24,13 +24,14 @@ def cmd(send, msg, args):
     Syntax: !filter <filter|show|list|reset|chain filter>
     """
     output_filters = {
-        "fwilson": gen_fwilson,
-        "creffett": gen_creffett,
-        "slogan": gen_slogan,
-        "insult": gen_insult,
-        "morse": gen_morse,
-        "removevowels": removevowels,
-        "binary": gen_binary
+        "fwilson": textutils.gen_fwilson,
+        "creffett": textutils.gen_creffett,
+        "slogan": textutils.gen_slogan,
+        "insult": textutils.gen_insult,
+        "morse": textutils.gen_morse,
+        "removevowels": textutils.removevowels,
+        "binary": textutils.gen_binary,
+        "xkcd": textutils.gen_xkcd
         }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')

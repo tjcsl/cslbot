@@ -15,35 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.hook import Hook
-from random import random
-import re
-
-substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
-                 'allegedly': 'kinda probably', 'new study': 'tumblr post',
-                 'rebuild': 'avenge', 'space': 'SPAAAAAACCCEEEEE',
-                 'google glass': 'virtual boy', 'smartphone': 'pokedex',
-                 'electric': 'atomic', 'senator': 'elf-lord', 'car': 'cat',
-                 'election': 'eating contest', 'congressional leaders':
-                 'river spirits', 'homeland security': 'homestar runner',
-                 'could not be reached for comment':
-                 'is guilty and everyone knows it'}
+from helpers.textutils import do_xkcd_sub
 
 
 @Hook(types=['pubmsg', 'action'], args=['nick', 'type'])
 def handle(send, msg, args):
     """ Implements several XKCD comics """
-    subbed = False
-    if random() < 0.1:
-        for text, replacement in substitutions.items():
-            if text in msg:
-                msg = re.subn(r"\b%s\b" % text, replacement, msg)
-                if msg[1] > 0:
-                    subbed = True
-                msg = msg[0]
-    if not re.search('[\w]-ass ', msg) and not subbed:
+    output = do_xkcd_sub(msg, True)
+    if output is None:
         return
-    output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', msg)
-    if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], output))
-    else:
+    if args['type'] == 'action':
         send("correction: * %s %s" % (args['nick'], output))
+    else:
+        send("%s actually meant: %s" % (args['nick'], output))

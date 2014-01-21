@@ -148,3 +148,25 @@ def gen_binary(string):
 
 def gen_clippy(nick, msg):
     return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
+
+
+def do_xkcd_sub(msg, hook=False):
+    substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
+                     'allegedly': 'kinda probably', 'new study': 'tumblr post',
+                     'rebuild': 'avenge', 'space': 'SPAAAAAACCCEEEEE',
+                     'google glass': 'virtual boy', 'smartphone': 'pokedex',
+                     'electric': 'atomic', 'senator': 'elf-lord', 'car': 'cat',
+                     'election': 'eating contest', 'congressional leaders':
+                     'river spirits', 'homeland security': 'homestar runner',
+                     'could not be reached for comment':
+                     'is guilty and everyone knows it'}
+    output = msg
+    for text, replacement in substitutions.items():
+        if text in output:
+            output = re.sub(r"\b%s\b" % text, replacement, output)
+
+    output = re.subn(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', output)
+    if msg == output:
+        return None if hook else msg
+    else:
+        return output
