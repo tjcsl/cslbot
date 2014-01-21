@@ -36,10 +36,10 @@ def handle(send, msg, args):
         url = match.group(1)
         cursor = args['db'].get()
         title = get_title(url)
-        cursor.execute('INSERT INTO urls VALUES(?,?,?)', (url, title, time()))
         last = cursor.execute('SELECT time FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
         if last:
             lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last['time']))
             send("Url %s previously posted %s" % (url, lasttime))
+        cursor.execute('INSERT INTO urls VALUES(?,?,?)', (url, title, time()))
         if args['config']['feature']['linkread'] == "True":
             send('** %s - %s' % (title, get_short(url)))
