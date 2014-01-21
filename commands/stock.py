@@ -23,7 +23,6 @@ def get_quote(symbol):
     params = {'q': "select BidRealtime,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
               'format': 'json', 'env': 'store://datatables.org/alltableswithkeys'}
     data = get("http://query.yahooapis.com/v1/public/yql", params=params).json()
-    print(data)
     return data['query']['results']
 
 
