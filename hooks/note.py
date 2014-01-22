@@ -22,9 +22,9 @@ from helpers.hook import Hook
 def handle(send, msg, args):
     cursor = args['db'].get()
     nick = args['nick']
-    notes = cursor.execute('SELECT note,submitter,time,id FROM notes where nick=? ORDER BY time ASC', (nick,)).fetchall()
+    notes = cursor.execute('SELECT note,submitter,time,id FROM notes WHERE nick=? AND pending=1 ORDER BY time ASC', (nick,)).fetchall()
     for note in notes:
         time = strftime('at %H:%M:%S on %Y-%m-%d', localtime(note['time']))
         send("%s: A note from %s was left for you %s -- %s" % (nick, note['submitter'], time, note['note']))
-        cursor.execute('DELETE FROM notes WHERE id=?', (note['id'],))
+        cursor.execute('UPDATE notes SET pending=0 WHERE id=?', (note['id'],))
     cursor.commit()
