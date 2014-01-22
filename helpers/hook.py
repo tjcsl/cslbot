@@ -38,7 +38,7 @@ def get_known_hooks():
 
 class Hook():
 
-    def __init__(self, types, args):
+    def __init__(self, types, args=[]):
         global _known_hooks
         self.types = types
         self.args = args

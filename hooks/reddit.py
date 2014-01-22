@@ -21,7 +21,7 @@ from helpers.misc import check_exists
 from helpers.urlutils import get_short
 
 
-@Hook(types=['pubmsg', 'action'], args=[])
+@Hook(types=['pubmsg', 'action'])
 def handle(send, msg, args):
     match = re.search(r'(?:^|\s)/r/([\w|^/]*)\b', msg)
     if not match:
@@ -38,5 +38,5 @@ def handle(send, msg, args):
         output += data['description'].splitlines()[0]
     else:
         output += data['display_name']
-    output = "%s -- %s" (output.strip(), get_short('http://reddit.com/r/%s' % (subreddit)))
+    output = "%s -- %s" % (output.strip(), get_short('http://reddit.com/r/%s' % (subreddit)))
     send(output)
