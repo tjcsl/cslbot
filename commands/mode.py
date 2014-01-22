@@ -20,7 +20,7 @@ from helpers.command import Command
 def set_mode(args, mode):
     if not args['is_admin'](args['nick']):
         return "Admins only"
-    if args['botnick'] not in args['handler'].channels[args['target']].opers():
+    if args['botnick'] not in list(args['handler'].channels[args['target']].opers()):
         return "Bot must be opped"
     args['handler'].connection.mode(args['target'], " %s" % mode)
     return "Mode set."
