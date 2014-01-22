@@ -23,11 +23,9 @@ def set_mode(args, mode):
     if args['botnick'] not in list(args['handler'].channels[args['target']].opers()):
         return "Bot must be opped"
     args['handler'].connection.mode(args['target'], " %s" % mode)
-    return None
+    return ""
 
 
 @Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target'])
 def cmd(send, msg, args):
-    x = set_mode(args, msg)
-    if x:
-        send(x)
+    send(set_mode(args, msg))

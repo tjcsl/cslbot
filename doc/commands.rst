@@ -404,6 +404,14 @@ commands.mission module
     :undoc-members:
     :show-inheritance:
 
+commands.mode module
+--------------------
+
+.. automodule:: commands.mode
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.morse module
 ---------------------
 
