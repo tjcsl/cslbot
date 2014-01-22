@@ -20,7 +20,7 @@
 import re
 import time
 import sys
-from helpers import control, sql, hook, command, textutils, admin
+from helpers import control, sql, hook, command, textutils, admin, identity
 from os.path import dirname
 from random import choice, random
 
@@ -377,27 +377,38 @@ class BotHandler():
 
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
+
+        # actions don't have the nick attr for some reason
         if msgtype == 'action':
             nick = e.source.split('!')[0]
         else:
             nick = e.source.nick
-        if msgtype == 'mode':
+
+        # modes have separate arguments, everything else just one
+        if msgtype == 'mode' or msgtype == 'nick':
             msg = " ".join(e.arguments)
         else:
             msg = e.arguments[0].strip()
-        if msgtype == 'pubmsg' or msgtype == 'pubnotice' or msgtype == 'action' or msgtype == 'mode':
-            target = e.target
-        else:
+
+        # Send the response to private messages to the sending nick.
+        if msgtype == 'privmsg' or msgtype == 'privnotice':
             target = nick
+        else:
+            target = e.target
+
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
-        if self.config['feature']['hooks'] == "True" and not nick in self.ignored:
+        if bool(self.config['feature']['hooks']) and nick not in self.ignored:
             for hook in self.hooks:
                 realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
                 hook.run(send, msg, msgtype, self.connection, target, realargs)
 
         if msgtype == 'privnotice' and nick == 'NickServ':
             admin.set_admin(msg, self)
+            return
+
+        if msgtype == 'nick':
+            identity.handle_nick(self, e)
             return
 
         # must come after set_admin to prevent spam
@@ -416,13 +427,13 @@ class BotHandler():
         cmdchar = self.config['core']['cmdchar']
         botnick = '%s: ' % self.connection.real_nickname
         if msg.startswith(botnick):
-            msg = msg.replace(botnick, self.config['core']['cmdchar'], 1)
+            msg = msg.replace(botnick, cmdchar, 1)
 
         altchars = [x.strip() for x in self.config['core']['altcmdchars'].split(',')]
         if altchars:
             for i in altchars:
                 if msg.startswith(i):
-                    msg = msg.replace(i, self.config['core']['cmdchar'], 1)
+                    msg = msg.replace(i, cmdchar, 1)
 
         cmd = msg.split()[0]
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]

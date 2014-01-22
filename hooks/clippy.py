@@ -21,7 +21,7 @@ from random import random
 
 @Hook('pubmsg', ['nick', 'config'])
 def handle(send, msg, args):
-    if args['config']['feature']['clippy'] == 'False':
+    if not bool(args['config']['feature']['clippy']):
         return
     if msg and len(msg.split()) == 1 and random() < 0.001:
         output = gen_clippy(args['nick'], msg)

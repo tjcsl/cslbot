@@ -92,3 +92,4 @@ class Sql():
         db.execute('CREATE TABLE IF NOT EXISTS issues (title TEXT, source TEXT, accepted INTEGER DEFAULT 0,\
                    id INTEGER PRIMARY KEY AUTOINCREMENT)')
         db.execute('CREATE TABLE IF NOT EXISTS notes (note TEXT, submitter TEXT, nick TEXT, time INTEGER, pending INTEGER DEFAULT 1, id INTEGER PRIMARY KEY AUTOINCREMENT)')
+        db.execute('CREATE TABLE IF NOT EXISTS nicks (curr TEXT, new TEXT, time INTEGER)')

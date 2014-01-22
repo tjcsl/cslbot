@@ -56,20 +56,24 @@ class IrcBot(SingleServerIRCBot):
         """
         target = e.target if e.target[0] == '#' else e.source.nick
         try:
-            cmd = e.arguments[0].strip()
-            if not cmd:
-                return
-            cmdchar = self.config['core']['cmdchar']
-            if cmd.split()[0] == '%sreload' % cmdchar:
-                admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
-                if e.source.nick not in admins:
-                    c.privmsg(target, "Nope, not gonna do it.")
-                else:
-                    cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
-                    self.do_reload(c, target, cmdargs, 'irc')
+            if msgtype != 'mode' and msgtype != 'nick':
+                self.check_reload(target, c, e)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
             traceback.handle_traceback(ex, c, target)
+
+    def check_reload(self, target, c, e):
+        cmd = e.arguments[0].strip()
+        if not cmd:
+            return
+        cmdchar = self.config['core']['cmdchar']
+        if cmd.split()[0] == '%sreload' % cmdchar:
+            admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
+            if e.source.nick not in admins:
+                c.privmsg(target, "Nope, not gonna do it.")
+            else:
+                cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
+                self.do_reload(c, target, cmdargs, 'irc')
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -148,6 +152,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nick(self, c, e):
         """Log nick changes."""
+        self.handle_msg('nick', c, e)
         for channel in self.get_channels(e.target):
             self.handler.do_log(channel, e.source.nick, e.target, 'nick')
 
@@ -180,10 +185,10 @@ class IrcBot(SingleServerIRCBot):
         msg = "Joined channel %s" % e.target
         logging.info(msg)
         c.privmsg(self.config['core']['ctrlchan'], msg)
-        if hasattr(self, 'kick'):
+        #if hasattr(self, 'kick'):
             #slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
             #c.privmsg(e.target, slogan)
-            del self.kick
+            #del self.kick
 
     def on_part(self, c, e):
         """Handle parts.
@@ -223,7 +228,7 @@ class IrcBot(SingleServerIRCBot):
         if e.arguments[0] != c.real_nickname:
             return
         logging.info("Kicked from channel %s" % e.target)
-        self.kick = [e.source.nick, e.arguments[1]]
+        #self.kick = [e.source.nick, e.arguments[1]]
         defer.defer(5, c.join, e.target)
 
     def get_channels(self, nick):

@@ -52,6 +52,14 @@ helpers.hook module
     :undoc-members:
     :show-inheritance:
 
+helpers.identity module
+-----------------------
+
+.. automodule:: helpers.identity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.misc module
 -------------------
 

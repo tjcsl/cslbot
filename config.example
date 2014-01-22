@@ -21,6 +21,7 @@ clippy = False
 lazyregex = True
 hooks = True
 capskick = True
+nickkick = True
 linkread = True
 [api]
 steamapikey:
