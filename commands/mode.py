@@ -18,6 +18,8 @@ from helpers.command import Command
 
 
 def set_mode(args, mode):
+    if not mode:
+        return "What mode?"
     if not args['is_admin'](args['nick']):
         return "Admins only"
     if args['botnick'] not in list(args['handler'].channels[args['target']].opers()):
@@ -28,4 +30,7 @@ def set_mode(args, mode):
 
 @Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target'])
 def cmd(send, msg, args):
+    """Sets a mode.
+    Syntax: !mode <mode>
+    """
     send(set_mode(args, msg))
