@@ -44,6 +44,14 @@ hooks.clippy module
     :undoc-members:
     :show-inheritance:
 
+hooks.note module
+-----------------
+
+.. automodule:: hooks.note
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 hooks.reddit module
 -------------------
 

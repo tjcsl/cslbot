@@ -14,22 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import random
+from time import localtime, strftime
 from helpers.hook import Hook
 
 
-@Hook('pubmsg', ['type', 'nick'])
+@Hook(['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
-    if "the cloud" in msg:
-        msg = msg.replace("the cloud", "my butt")
-    elif "cloud" in msg:
-        msg = msg.replace("cloud", "butt")
-    else:
-        return
-    # make it more random.
-    if random() > 0.005:
-        return
-    if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], msg))
-    else:
-        send("correction: * %s %s" % (args['nick'], msg))
+    cursor = args['db'].get()
+    nick = args['nick']
+    notes = cursor.execute('SELECT note,submitter,time,id FROM notes where nick=? ORDER BY time ASC', (nick,)).fetchall()
+    for note in notes:
+        time = strftime('at %H:%M:%S on %Y-%m-%d', localtime(note['time']))
+        send("%s: A note from %s was left for you %s -- %s" % (nick, note['submitter'], time, note['note']))
+        cursor.execute('DELETE FROM notes WHERE id=?', (note['id'],))
+    cursor.commit()

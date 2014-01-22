@@ -20,7 +20,7 @@ import string
 _caps = []
 
 
-@Hook(types=['pubmsg'], args=['nick', 'do_kick', 'target', 'config'])
+@Hook('pubmsg', ['nick', 'do_kick', 'target', 'config'])
 def handle(send, msg, args):
     """ Check for capslock abuse.
 

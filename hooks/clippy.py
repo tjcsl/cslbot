@@ -19,7 +19,7 @@ from commands.clippy import gen_clippy
 from random import random
 
 
-@Hook(types=['pubmsg'], args=['nick', 'config'])
+@Hook('pubmsg', ['nick', 'config'])
 def handle(send, msg, args):
     if args['config']['feature']['clippy'] == 'False':
         return

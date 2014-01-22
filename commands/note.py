@@ -14,22 +14,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import random
-from helpers.hook import Hook
+from time import time
+from helpers.command import Command
 
 
-@Hook('pubmsg', ['type', 'nick'])
-def handle(send, msg, args):
-    if "the cloud" in msg:
-        msg = msg.replace("the cloud", "my butt")
-    elif "cloud" in msg:
-        msg = msg.replace("cloud", "butt")
-    else:
+@Command('note', ['db', 'nick'])
+def cmd(send, msg, args):
+    """Leaves a note for a user.
+    Syntax: !note <nick> <note>
+    """
+    try:
+        nick, note = msg.split(maxsplit=1)
+    except ValueError:
+        send("Not enough arguments.")
         return
-    # make it more random.
-    if random() > 0.005:
-        return
-    if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], msg))
-    else:
-        send("correction: * %s %s" % (args['nick'], msg))
+    cursor = args['db'].get()
+    cursor.execute("INSERT INTO notes(note,submitter,nick,time) VALUES(?,?,?,?)", (note, args['nick'], nick, time()))
+    cursor.commit()
+    send("Note left for %s." % nick)

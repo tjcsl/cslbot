@@ -40,7 +40,7 @@ class Hook():
 
     def __init__(self, types, args=[]):
         global _known_hooks
-        self.types = types
+        self.types = [types] if type(types) == str else types
         self.args = args
         _known_hooks.append(self)
 

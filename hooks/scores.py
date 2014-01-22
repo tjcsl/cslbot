@@ -18,7 +18,7 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(types=['pubmsg', 'privmsg'], args=['nick', 'config', 'type', 'db', 'abuse'])
+@Hook(['pubmsg', 'privmsg'], ['nick', 'config', 'type', 'db', 'abuse'])
 def handle(send, msg, args):
     """ Handles scores
 

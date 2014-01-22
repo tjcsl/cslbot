@@ -20,7 +20,7 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(types=['pubmsg', 'action'], args=['config', 'db', 'nick'])
+@Hook(['pubmsg', 'action'], ['config', 'db', 'nick'])
 def handle(send, msg, args):
     """ Get titles for urls.
 

@@ -18,7 +18,7 @@ from helpers.hook import Hook
 from helpers.textutils import do_xkcd_sub
 
 
-@Hook(types=['pubmsg', 'action'], args=['nick', 'type'])
+@Hook(['pubmsg', 'action'], ['nick', 'type'])
 def handle(send, msg, args):
     """ Implements several XKCD comics """
     output = do_xkcd_sub(msg, True)
