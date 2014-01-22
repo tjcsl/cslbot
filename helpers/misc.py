@@ -94,3 +94,11 @@ def ping(c, e, pongtime):
         c.privmsg(_pinglist.pop(nick), "CTCP reply from %s: %s" % (nick, elapsed))
     else:
         c.privmsg(nick, "CTCP reply from %s: %s" % (nick, elapsed))
+
+
+def get_channels(chanlist, nick):
+    channels = []
+    for name, channel in chanlist.items():
+        if nick in channel.users():
+            channels.append(name)
+    return channels

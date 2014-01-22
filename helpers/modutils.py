@@ -25,11 +25,13 @@ import imp
 from glob import glob
 
 
-def get_enabled(moddir):
+def get_enabled(moddir, executable=False):
     mods = []
     for f in glob(moddir + '/*.py'):
-        if os.access(f, os.X_OK):
+        if executable or os.access(f, os.X_OK):
             mods.append(basename(f).split('.')[0])
+    if executable:
+        mods.remove('__init__')
     return mods
 
 

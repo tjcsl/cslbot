@@ -16,6 +16,7 @@
 
 from time import time
 from datetime import datetime, timedelta
+from operator import itemgetter
 
 
 def handle_nick(handler, e):
@@ -24,7 +25,9 @@ def handle_nick(handler, e):
     cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (old, new, time()))
     cursor.commit()
     if bool(handler.config['feature']['nickkick']):
-        do_kick(handler, cursor, new)
+        return do_kick(handler, cursor, new)
+    else:
+        return False
 
 
 def get_mapping(cursor, nick, limit):
@@ -45,14 +48,20 @@ def get_mapping(cursor, nick, limit):
 def get_chain(cursor, nick, limit=0):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
     mapping = get_mapping(cursor, nick, limit)
-    chain = {}
-    return chain
+    chain = [nick]
+    curr = mapping[nick]
+    while curr:
+        last = sorted(curr, key=itemgetter('time'))
+        if last:
+            last = last[0]['old']
+            curr = None if last in chain else mapping[last]
+            chain.append(last)
+    return list(reversed(chain))
 
 
 def do_kick(handler, cursor, nick):
-    # only go 5 minutes back.
+    # only go 5 minutes back for identity crisis detection.
     limit = datetime.now() - timedelta(minutes=5)
     chain = get_chain(cursor, nick, limit.timestamp())
-    if len(chain) > 1:
-    #FIXME: handler.do_kick()
-        print("kicking")
+    # more than 2 nick changes in 5 minutes.
+    return True if len(chain) > 3 else False

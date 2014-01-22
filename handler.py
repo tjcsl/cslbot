@@ -20,7 +20,7 @@
 import re
 import time
 import sys
-from helpers import control, sql, hook, command, textutils, admin, identity
+from helpers import control, sql, hook, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
 
@@ -34,8 +34,6 @@ class BotHandler():
         | caps is a array of the nicks who have abused capslock.
         | ignored is a array of the nicks who are currently ignored for
         |   bot abuse.
-        | channels is a dict containing the objects for each channel the bot
-        |   is connected to.
         | abuselist is a dict keeping track of how many times nicks have used
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
@@ -50,7 +48,6 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.ignored = []
-        self.channels = {}
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
@@ -66,7 +63,6 @@ class BotHandler():
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
         data['admins'] = dict(self.admins)
-        data['channels'] = dict(self.channels)
         data['uptime'] = dict(self.uptime)
         data['abuselist'] = dict(self.abuselist)
         data['guarded'] = list(self.guarded)
@@ -408,7 +404,9 @@ class BotHandler():
             return
 
         if msgtype == 'nick':
-            identity.handle_nick(self, e)
+            if identity.handle_nick(self, e):
+                for x in misc.get_channels(self.channels, e.target):
+                    self.do_kick(send, x, e.target, "identity crisis")
             return
 
         # must come after set_admin to prevent spam

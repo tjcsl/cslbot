@@ -86,7 +86,7 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
-        for x in modutils.get_enabled(dirname(__file__) + '/helpers'):
+        for x in modutils.get_enabled(dirname(__file__) + '/helpers', True):
             imp.reload(sys.modules['helpers.%s' % x])
         imp.reload(handler)
         self.config = ConfigParser()
@@ -100,6 +100,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
+        self.handler.channels = self.channels
         workers.start_workers(self.handler)
         if output:
             return output
@@ -117,6 +118,7 @@ class IrcBot(SingleServerIRCBot):
         """
         logging.info("Connected to server %s" % self.config['core']['host'])
         self.handler.connection = c
+        self.handler.channels = self.channels
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
@@ -151,9 +153,9 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nick(self, c, e):
         """Log nick changes."""
-        self.handle_msg('nick', c, e)
-        for channel in self.get_channels(e.target):
+        for channel in misc.get_channels(self.channels, e.target):
             self.handler.do_log(channel, e.source.nick, e.target, 'nick')
+        self.handle_msg('nick', c, e)
 
     def on_mode(self, c, e):
         """Pass mode changes to :func:`handle_msg`."""
@@ -167,20 +169,18 @@ class IrcBot(SingleServerIRCBot):
 
     def handle_quit(self, c, e):
         """Log quits."""
-        for channel in self.get_channels(e.source.split('!')[0]):
+        for channel in misc.get_channels(self.channels, e.source.split('!')[0]):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_join(self, c, e):
         """Handle joins.
 
         | If another user has joined, just log it.
-        | Add the joined channel to the channel list.
         | If we've been kicked, yell at the kicker.
         """
         self.handler.do_log(e.target, e.source, e.target, 'join')
         if e.source.nick != c.real_nickname:
             return
-        self.handler.channels[e.target] = self.channels[e.target]
         msg = "Joined channel %s" % e.target
         logging.info(msg)
         c.privmsg(self.config['core']['ctrlchan'], msg)
@@ -193,12 +193,10 @@ class IrcBot(SingleServerIRCBot):
         """Handle parts.
 
         | If another user is parting, just log it.
-        | Remove the channel from the list of channels.
         """
         self.handler.do_log(e.target, e.source, e.target, 'part')
         if e.source.nick != c.real_nickname:
             return
-        del self.handler.channels[e.target]
         msg = "Parted channel %s" % e.target
         logging.info(msg)
         c.privmsg(self.config['core']['ctrlchan'], msg)
@@ -229,13 +227,6 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Kicked from channel %s" % e.target)
         #self.kick = [e.source.nick, e.arguments[1]]
         defer.defer(5, c.join, e.target)
-
-    def get_channels(self, nick):
-        channels = []
-        for name, channel in self.channels.items():
-            if nick in channel.users():
-                channels.append(name)
-        return channels
 
 
 def main(args):
