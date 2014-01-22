@@ -42,6 +42,8 @@ class IrcBot(SingleServerIRCBot):
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['nickpass'])
         nick = botconfig['core']['nick']
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
+        # properly log quits.
+        self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
 
@@ -159,7 +161,7 @@ class IrcBot(SingleServerIRCBot):
         # trigger channel joining, etc. on reconnection.
         delattr(self.handler, 'connection')
 
-    def on_quit(self, c, e):
+    def handle_quit(self, c, e):
         """Log quits."""
         for channel in self.get_channels(e.source.split('!')[0]):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
