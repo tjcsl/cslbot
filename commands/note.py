@@ -18,7 +18,7 @@ from time import time
 from helpers.command import Command
 
 
-@Command('note', ['db', 'nick', 'type'])
+@Command('note', ['db', 'nick', 'type'], limit=5)
 def cmd(send, msg, args):
     """Leaves a note for a user.
     Syntax: !note <nick> <note>
