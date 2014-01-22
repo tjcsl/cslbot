@@ -16,28 +16,36 @@
 
 from time import time
 from datetime import datetime, timedelta
-from collections import OrderedDict
 
 
 def handle_nick(handler, e):
-    curr, new = e.source.nick, e.target
+    old, new = e.source.nick, e.target
     cursor = handler.db.get()
-    cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (curr, new, time()))
+    cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (old, new, time()))
     cursor.commit()
     if bool(handler.config['feature']['nickkick']):
         do_kick(handler, cursor, new)
 
 
-def get_chain(cursor, nick, limit=None):
+def get_mapping(cursor, nick, limit):
+    mapping = {}
+    done = set()
+    todo = set([nick])
+    while todo:
+        curr = todo.pop()
+        prev = cursor.execute('SELECT old,time FROM nicks WHERE new=? AND time>=? ORDER BY time', (curr, limit)).fetchall()
+        done.add(curr)
+        for x in prev:
+            if x['old'] not in done:
+                todo.add(x['old'])
+        mapping[curr] = [dict(x) for x in prev]
+    return mapping
+
+
+def get_chain(cursor, nick, limit=0):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
-    chain = OrderedDict()
-    while nick is not None:
-        prev = cursor.execute('SELECT curr,time FROM nicks WHERE new=? AND time>=? ORDER BY time ASC LIMIT 1', (nick, limit)).fetchone()
-        if prev:
-            nick = prev['curr']
-            chain[nick] = prev['time']
-        else:
-            nick = None
+    mapping = get_mapping(cursor, nick, limit)
+    chain = {}
     return chain
 
 
@@ -45,7 +53,6 @@ def do_kick(handler, cursor, nick):
     # only go 5 minutes back.
     limit = datetime.now() - timedelta(minutes=5)
     chain = get_chain(cursor, nick, limit.timestamp())
-    print(chain)
     if len(chain) > 1:
     #FIXME: handler.do_kick()
         print("kicking")

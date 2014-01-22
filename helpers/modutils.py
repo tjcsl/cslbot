@@ -29,7 +29,7 @@ def get_enabled(moddir):
     mods = []
     for f in glob(moddir + '/*.py'):
         if os.access(f, os.X_OK):
-            mods += basename(f).split('.')[0]
+            mods.append(basename(f).split('.')[0])
     return mods
 
 
