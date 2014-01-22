@@ -25,13 +25,19 @@ import imp
 from glob import glob
 
 
+def get_enabled(moddir):
+    mods = []
+    for f in glob(moddir + '/*.py'):
+        if os.access(f, os.X_OK):
+            mods += basename(f).split('.')[0]
+    return mods
+
+
 def scan_and_reimport(folder, mod_pkg):
     """ Scans folder for hooks """
-    for f in glob(folder + '/*.py'):
-        if os.access(f, os.X_OK):
-            mod = basename(f).split('.')[0]
-            mod_name = mod_pkg + "." + mod
-            if mod_name in sys.modules:
-                imp.reload(sys.modules[mod_name])
-            else:
-                importlib.import_module(mod_name)
+    for mod in get_enabled(folder):
+        mod_name = mod_pkg + "." + mod
+        if mod_name in sys.modules:
+            imp.reload(sys.modules[mod_name])
+        else:
+            importlib.import_module(mod_name)

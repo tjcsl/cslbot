@@ -20,7 +20,7 @@ import imp
 import sys
 import handler
 import argparse
-from helpers import workers, server, config, defer, traceback, misc
+from helpers import workers, server, config, defer, traceback, misc, modutils
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
@@ -86,8 +86,7 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
-        modules = ['admin', 'config', 'control', 'defer', 'hook', 'misc', 'modutils', 'server', 'sql', 'textutils', 'traceback', 'urlutils']
-        for x in modules:
+        for x in modutils.get_enabled(dirname(__file__) + '/helpers'):
             imp.reload(sys.modules['helpers.%s' % x])
         imp.reload(handler)
         self.config = ConfigParser()

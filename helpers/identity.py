@@ -32,7 +32,7 @@ def get_chain(cursor, nick, limit=None):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
     chain = OrderedDict()
     while nick is not None:
-        prev = cursor.execute('SELECT curr, time FROM nicks WHERE new=? AND time >= ? ORDER BY time ASC LIMIT 1', (nick, limit)).fetchall()
+        prev = cursor.execute('SELECT curr,time FROM nicks WHERE new=? AND time>=? ORDER BY time ASC LIMIT 1', (nick, limit)).fetchone()
         if prev:
             nick = prev['curr']
             chain[nick] = prev['time']
