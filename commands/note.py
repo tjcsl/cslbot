@@ -18,11 +18,14 @@ from time import time
 from helpers.command import Command
 
 
-@Command('note', ['db', 'nick'])
+@Command('note', ['db', 'nick', 'type'])
 def cmd(send, msg, args):
     """Leaves a note for a user.
     Syntax: !note <nick> <note>
     """
+    if args['type'] == 'privmsg':
+        send("Note-passing should be done in public.")
+        return
     try:
         nick, note = msg.split(maxsplit=1)
     except ValueError:
