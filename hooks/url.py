@@ -38,7 +38,7 @@ def handle(send, msg, args):
         title = get_title(url)
         short = get_short(url)
         last = cursor.execute('SELECT time,nick FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
-        if bool(args['config']['feature']['linkread']):
+        if args['config']['feature'].getboolean('linkread'):
             if last:
                 lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last['time']))
                 send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last['nick'], title))

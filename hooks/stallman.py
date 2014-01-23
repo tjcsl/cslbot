@@ -20,7 +20,7 @@ from helpers.hook import Hook
 @Hook('pubmsg', ['config', 'nick'])
 def handle(send, msg, args):
         msg = msg.lower()
-        if not bool(args['config']['feature']['stallmanmode']):
+        if not args['config']['feature'].getboolean('stallmanmode'):
             return
         if "linux" in msg and "gnu/linux" not in msg:
             send(args['nick'] + ": I'd just like to interject for a moment. What you're referring to as Linux, is in fact, GNU/Linux,\

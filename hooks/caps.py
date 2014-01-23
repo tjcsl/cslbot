@@ -31,7 +31,7 @@ def handle(send, msg, args):
     # SHUT CAPS LOCK OFF, MORON
     global _caps
 
-    if bool(args['config']['feature']['capskick']):
+    if args['config']['feature'].getboolean('capskick'):
         nick = args['nick']
         THRESHOLD = 0.65
         text = "shutting caps lock off"

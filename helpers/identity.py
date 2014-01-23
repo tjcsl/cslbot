@@ -24,7 +24,7 @@ def handle_nick(handler, e):
     cursor = handler.db.get()
     cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (old, new, time()))
     cursor.commit()
-    if bool(handler.config['feature']['nickkick']):
+    if handler.config['feature'].getboolean('nickkick'):
         return do_kick(handler, cursor, new)
     else:
         return False
