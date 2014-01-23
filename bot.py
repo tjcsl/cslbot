@@ -75,6 +75,14 @@ class IrcBot(SingleServerIRCBot):
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
 
+    def do_shutdown(self):
+        self.server.shutdown()
+        self.server.socket.close()
+        # blocks on the message processing otherwise.
+        self.handler.executor.shutdown(False)
+        # threading cleanup
+        workers.stop_workers()
+
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
 
@@ -92,14 +100,9 @@ class IrcBot(SingleServerIRCBot):
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
         self.config.read_file(open(configfile))
-        self.server.shutdown()
-        self.server.socket.close()
         # preserve data
         data = self.handler.get_data()
-        # threading cleanup
-        workers.stop_workers()
-        # blocks on the reload message processing otherwise.
-        self.handler.executor.shutdown(False)
+        self.do_shutdown()
         self.handler = handler.BotHandler(self.config)
         self.server = server.init_server(self)
         self.handler.set_data(data)
@@ -175,6 +178,9 @@ class IrcBot(SingleServerIRCBot):
         """Log quits."""
         for channel in misc.get_channels(self.channels, e.source.split('!')[0]):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
+
+    def on_disconnect(self, c, e):
+        self.do_shutdown()
 
     def on_join(self, c, e):
         """Handle joins.

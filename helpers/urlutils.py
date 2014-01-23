@@ -14,12 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import errno
 import json
 from lxml.html import parse
 from urllib.request import Request, urlopen
 from requests import post
-from requests.exceptions import ConnectionError, Timeout
+from requests.exceptions import Timeout
 
 
 def get_short(msg):
@@ -50,9 +49,6 @@ def get_title(url):
                 title = t.text.replace('\n', ' ').strip()
             else:
                 title = ctype
-    except ConnectionError as ex:
-        if ex.args[0].reason.errno != -errno.ENOENT:
-            raise ex
     except Timeout:
         title = 'Request Timed Out'
     return title
