@@ -156,7 +156,7 @@ class BotHandler():
             msg = textutils.gen_creffett(text % nick)
             send(msg, target=target)
             self.ignore(send, nick)
-            self.do_kick(send, target, nick, text % msg)
+            self.do_kick(send, target, nick, msg, False)
             return True
 
     def send(self, target, nick, msg, msgtype):
@@ -275,7 +275,7 @@ class BotHandler():
         if match:
             self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
 
-    def do_kick(self, send, target, nick, msg):
+    def do_kick(self, send, target, nick, msg, slogan=True):
         """ Kick users.
 
         | If kick is disabled, don't do anything.
@@ -296,7 +296,8 @@ class BotHandler():
             elif random() < 0.01 and msg == "shutting caps lock off":
                 self.connection.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
             else:
-                self.connection.kick(target, nick, textutils.gen_slogan(msg).upper())
+                msg = textutils.gen_slogan(msg).upper() if slogan else msg
+                self.connection.kick(target, nick, msg)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
         if cmd == 'abuse':
