@@ -84,6 +84,12 @@ def record_command(cursor, nick, command, channel):
     cursor.commit()
 
 
+def check_command(cursor, msg, target):
+    # the last one is the command we're current executing, so get the penultimate one.
+    last = cursor.execute('SELECT msg FROM log WHERE target=? AND type="pubmsg" ORDER BY time DESC LIMIT 2', (target,)).fetchall()[1]
+    return last['msg'] == msg
+
+
 class Command():
     def __init__(self, names, args=[], limit=0):
         global _known_commands

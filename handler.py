@@ -455,6 +455,9 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
+                # Duplicate command
+                if command.check_command(self.db.get(), msg, target):
+                    return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
         # special commands
