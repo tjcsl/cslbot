@@ -27,14 +27,8 @@ def handle(send, msg, args):
     | Otherwise substract one point.
     """
     matches = re.findall(r"(%s{2,})(\+\+|--)" % args['config']['core']['nickregex'], msg)
-    if matches:
-        pre = False
-    else:
-        matches = re.findall(r"(\+\+|--)(%s{2,})" % args['config']['core']['nickregex'], msg)
-        if matches:
-            pre = True
-        else:
-            return
+    if not matches:
+        return
     if args['type'] == 'privmsg':
         send('Hey, no points in private messages!')
         return
@@ -42,10 +36,7 @@ def handle(send, msg, args):
         # limit to 5 score changes per minute
         if args['abuse'](args['nick'], 5, 'scores'):
             return
-        if pre:
-            name, direction = match[1].lower(), match[0]
-        else:
-            name, direction = match[0].lower(), match[1]
+        name, direction = match[0].lower(), match[1]
         if direction == "++":
             score = 1
             if name == args['nick'].lower():
