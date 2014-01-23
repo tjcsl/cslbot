@@ -428,6 +428,14 @@ commands.msg module
     :undoc-members:
     :show-inheritance:
 
+commands.nicks module
+---------------------
+
+.. automodule:: commands.nicks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.note module
 --------------------
 
