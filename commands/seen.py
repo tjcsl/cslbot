@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 def get_last(cursor, nick):
-    return cursor.execute('SELECT msg,time,type FROM log WHERE source=? ORDER BY time DESC LIMIT 1', (nick,)).fetchone()
+    return cursor.execute('SELECT msg,time,type FROM log WHERE UPPER(source)=UPPER(?) ORDER BY time DESC LIMIT 1', (nick,)).fetchone()
 
 
 @Command('seen', ['db'])
