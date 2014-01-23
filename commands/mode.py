@@ -20,6 +20,8 @@ from helpers.command import Command
 def set_mode(args, mode):
     if not mode:
         return "What mode?"
+    if args['target'] == 'private':
+        return "Modes don't work in a PM!"
     if not args['is_admin'](args['nick']):
         return "Admins only"
     if args['botnick'] not in list(args['handler'].channels[args['target']].opers()):
