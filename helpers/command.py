@@ -18,7 +18,6 @@
 # USA.
 
 import sys
-from threading import Thread
 from inspect import getdoc
 from helpers.modutils import scan_and_reimport
 from helpers.traceback import handle_traceback
@@ -108,14 +107,14 @@ class Command():
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msg, args, command, nick, target, connection, cursor):
+    def run(self, send, msg, args, command, nick, target, handler):
         if command in _disabled_commands:
             send("Sorry, that command is disabled.")
         else:
-            self.c = connection
+            self.c = handler.connection
             self.target = target
-            record_command(cursor, nick, command, target)
-            Thread(target=self.exe, args=(send, msg, args), daemon=True).start()
+            record_command(handler.db.get(), nick, command, target)
+            handler.executor.submit(self.exe, send, msg, args)
 
     def get_doc(self):
         return self.doc

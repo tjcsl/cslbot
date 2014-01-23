@@ -15,11 +15,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import Thread, Event, Lock, current_thread, get_ident
+from threading import Event, current_thread, get_ident
 from helpers.control import show_pending
 
 _threads = {}
-lock = Lock()
 
 
 def stop_workers():
@@ -34,7 +33,7 @@ def start_workers(handler):
 
     # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    Thread(target=handle_pending, args=(handler, send), daemon=True).start()
+    handler.executor.submit(handle_pending, handler, send)
 
 
 def add_thread(thread):

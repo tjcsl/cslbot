@@ -23,6 +23,7 @@ import sys
 from helpers import control, sql, hook, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
+from concurrent.futures import ThreadPoolExecutor
 
 
 class BotHandler():
@@ -41,6 +42,7 @@ class BotHandler():
         | db - Is a db wrapper for data storage.
         """
         self.config = config
+        self.executor = ThreadPoolExecutor(5)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
@@ -397,7 +399,7 @@ class BotHandler():
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
             for hook in self.hooks:
                 realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
-                hook.run(send, msg, msgtype, self.connection, target, realargs)
+                hook.run(send, msg, msgtype, self, target, realargs)
 
         if msgtype == 'privnotice' and nick == 'NickServ':
             admin.set_admin(msg, self)
@@ -453,7 +455,7 @@ class BotHandler():
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
-                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self.connection, self.db.get())
+                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

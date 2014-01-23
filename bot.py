@@ -94,10 +94,14 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         self.server.shutdown()
         self.server.socket.close()
-        self.server = server.init_server(self)
         # preserve data
         data = self.handler.get_data()
+        # threading cleanup
+        workers.stop_workers()
+        # blocks on the reload message processing otherwise.
+        self.handler.executor.shutdown(False)
         self.handler = handler.BotHandler(self.config)
+        self.server = server.init_server(self)
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels

@@ -19,7 +19,6 @@
 
 from helpers.modutils import scan_and_reimport
 from helpers.traceback import handle_traceback
-from threading import Thread
 
 _known_hooks = []
 
@@ -61,7 +60,7 @@ class Hook():
     def __repr__(self):
         return self.name
 
-    def run(self, send, msg, msgtype, connection, target, args):
-        self.c = connection
+    def run(self, send, msg, msgtype, handler, target, args):
+        self.c = handler.connection
         self.target = target
-        Thread(target=self.exe, args=(send, msg, msgtype, args), daemon=True).start()
+        handler.executor.submit(self.exe, send, msg, msgtype, args)

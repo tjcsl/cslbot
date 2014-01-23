@@ -26,8 +26,11 @@ def cmd(send, msg, args):
     if not args['is_admin'](args['nick']):
         send("Only admins can cancel threads.")
         return
-
-    thread = get_thread(int(msg))
+    try:
+        thread = get_thread(int(msg))
+    except ValueError:
+        send("Thread ident must be a number.")
+        return
     if thread is None:
         send("I couldn't find any thread matching that name.")
         return

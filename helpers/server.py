@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-import threading
 import traceback
 from os.path import basename
 
@@ -40,8 +39,7 @@ def init_server(bot):
     port = bot.config.getint('core', 'serverport')
     server = BotNetServer(('', port), BotNetHandler)
     server.bot = bot
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
+    bot.handler.executor.submit(server.serve_forever)
     return server
 
 
