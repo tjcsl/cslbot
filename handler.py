@@ -408,6 +408,8 @@ class BotHandler():
             return
 
         if msgtype == 'nick':
+            if e.target in self.admins:
+                c.privmsg('NickServ', 'ACC %s' % e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
