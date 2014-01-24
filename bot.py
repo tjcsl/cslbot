@@ -20,6 +20,7 @@ import imp
 import sys
 import handler
 import argparse
+import atexit
 from helpers import workers, server, config, defer, traceback, misc, modutils
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
@@ -37,6 +38,7 @@ class IrcBot(SingleServerIRCBot):
         | Setup the server.
         | Connect to the server.
         """
+        atexit.register(self.do_shutdown)
         self.handler = handler.BotHandler(botconfig)
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['nickpass'])
