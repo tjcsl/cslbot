@@ -437,6 +437,10 @@ class BotHandler():
                 if msg.startswith(i):
                     msg = msg.replace(i, cmdchar, 1)
 
+        # Don't require cmdchar in PMs.
+        if msgtype == 'privmsg' and not msg.startswith(cmdchar):
+            msg = cmdchar + msg
+
         cmd = msg.split()[0]
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
 
