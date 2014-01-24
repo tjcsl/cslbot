@@ -19,6 +19,7 @@
 
 import sys
 from inspect import getdoc
+from datetime import datetime, timedelta
 from helpers.modutils import scan_and_reimport
 from helpers.traceback import handle_traceback
 
@@ -85,8 +86,10 @@ def record_command(cursor, nick, command, channel):
 
 
 def check_command(cursor, nick, msg, target):
+    # only care about the last 10 seconds.
+    limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're current executing, so get the penultimate one.
-    last = cursor.execute('SELECT msg,source FROM log WHERE target=? AND type="pubmsg" ORDER BY time DESC LIMIT 2', (target,)).fetchall()
+    last = cursor.execute('SELECT msg,source FROM log WHERE target=? AND type="pubmsg" AND time>=? ORDER BY time DESC LIMIT 2', (target, limit.timestamp())).fetchall()
     if last:
         last = last[1]
         return last['msg'] == msg and last['source'] != nick
