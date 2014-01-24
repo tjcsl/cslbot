@@ -86,7 +86,7 @@ def record_command(cursor, nick, command, channel):
 
 def check_command(cursor, nick, msg, target):
     # the last one is the command we're current executing, so get the penultimate one.
-    last = cursor.execute('SELECT msg,source FROM log WHERE target=? AND type="pubmsg" ORDER BY time DESC LIMIT 2', (target, nick)).fetchall()
+    last = cursor.execute('SELECT msg,source FROM log WHERE target=? AND type="pubmsg" ORDER BY time DESC LIMIT 2', (target,)).fetchall()
     if last:
         last = last[1]
         return last['msg'] == msg and last['source'] != nick
