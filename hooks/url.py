@@ -27,6 +27,10 @@ def handle(send, msg, args):
     | Generate a short url.
     | Get the page title.
     """
+
+    #FIXME: don't hardcode.
+    if "http://git.io" in msg:
+        return
     # crazy regex to match urls
     match = re.search(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.]
                           [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
