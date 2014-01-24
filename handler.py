@@ -288,10 +288,11 @@ class BotHandler():
             send("%s: you're lucky, private message kicking hasn't been implemented yet." % nick)
             return
         ops = list(self.channels[target].opers())
+        botnick = self.config['core']['nick']
         if not ops:
             ops = ['someone']
         if nick not in ops:
-            if self.config['core']['nick'] not in ops:
+            if botnick not in ops and botnick != 'someone':
                 send(textutils.gen_creffett("%s: /op the bot" % choice(ops)), target=target)
             elif random() < 0.01 and msg == "shutting caps lock off":
                 self.connection.kick(target, nick, "HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U")
