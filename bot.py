@@ -152,9 +152,10 @@ class IrcBot(SingleServerIRCBot):
 
     def on_privnotice(self, c, e):
         """Pass private notices to :func:`handle_msg`."""
-        if not hasattr(self.handler, 'connection'):
-            self.do_welcome(c)
         self.handle_msg('privnotice', c, e)
+
+    def on_welcome(self, c, e):
+        self.do_welcome(c)
 
     def on_pubnotice(self, c, e):
         """Pass public notices to :func:`handle_msg`."""
