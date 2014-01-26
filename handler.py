@@ -385,7 +385,7 @@ class BotHandler():
             nick = e.source.nick
 
         # modes have separate arguments, everything else just one
-        if msgtype == 'mode' or msgtype == 'nick':
+        if msgtype == 'mode' or msgtype == 'nick' or msgtype == 'join':
             msg = " ".join(e.arguments)
         else:
             msg = e.arguments[0].strip()
@@ -423,6 +423,11 @@ class BotHandler():
 
         if msgtype == 'mode':
             self.do_mode(target, msg, nick, send)
+            return
+
+        if msgtype == 'join':
+            if nick == c.real_nickname:
+                send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
             return
 
         if e.target == self.config['core']['ctrlchan']:

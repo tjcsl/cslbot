@@ -58,7 +58,7 @@ class IrcBot(SingleServerIRCBot):
         """
         target = e.target if e.target[0] == '#' else e.source.nick
         try:
-            if msgtype != 'mode' and msgtype != 'nick':
+            if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
                 self.check_reload(target, c, e)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
@@ -186,21 +186,8 @@ class IrcBot(SingleServerIRCBot):
         self.do_shutdown()
 
     def on_join(self, c, e):
-        """Handle joins.
-
-        | If another user has joined, just log it.
-        | If we've been kicked, yell at the kicker.
-        """
-        self.handler.do_log(e.target, e.source, e.target, 'join')
-        if e.source.nick != c.real_nickname:
-            return
-        msg = "Joined channel %s" % e.target
-        logging.info(msg)
-        c.privmsg(self.config['core']['ctrlchan'], msg)
-        #if hasattr(self, 'kick'):
-            #slogan = self.handler.modules['slogan'].gen_slogan("power abuse")
-            #c.privmsg(e.target, slogan)
-            #del self.kick
+        """Handle joins."""
+        self.handle_msg('join', c, e)
 
     def on_part(self, c, e):
         """Handle parts.
@@ -238,7 +225,6 @@ class IrcBot(SingleServerIRCBot):
         if e.arguments[0] != c.real_nickname:
             return
         logging.info("Kicked from channel %s" % e.target)
-        #self.kick = [e.source.nick, e.arguments[1]]
         defer.defer(5, c.join, e.target)
 
 
