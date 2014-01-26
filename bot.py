@@ -96,7 +96,7 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
-        for x in modutils.get_enabled(dirname(__file__) + '/helpers', True):
+        for x in modutils.get_enabled(dirname(__file__) + '/helpers'):
             imp.reload(sys.modules['helpers.%s' % x])
         imp.reload(handler)
         self.config = ConfigParser()
