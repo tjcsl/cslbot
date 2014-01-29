@@ -56,7 +56,10 @@ class IrcBot(SingleServerIRCBot):
         | If we receive a !reload command, do the reloading magic.
         | Call the appropriate handler method for processing.
         """
-        target = e.target if e.target[0] == '#' else e.source.nick
+        if e.target[0] == '#' or e.target[0] == '@' or e.target[0] == '+':
+            target = e.target
+        else:
+            target = e.source.nick
         try:
             if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
                 self.check_reload(target, c, e, msgtype)
