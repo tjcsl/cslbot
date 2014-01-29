@@ -59,15 +59,16 @@ class IrcBot(SingleServerIRCBot):
         target = e.target if e.target[0] == '#' else e.source.nick
         try:
             if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
-                self.check_reload(target, c, e)
+                self.check_reload(target, c, e, msgtype)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
             traceback.handle_traceback(ex, c, target)
 
-    def check_reload(self, target, c, e):
+    def check_reload(self, target, c, e, msgtype):
         cmd = e.arguments[0].strip()
         if not cmd:
             return
+        cmd = misc.get_cmdchar(self.config, c, cmd, msgtype)
         cmdchar = self.config['core']['cmdchar']
         if cmd.split()[0] == '%sreload' % cmdchar:
             admins = [x.strip() for x in self.config['auth']['admins'].split(',')]

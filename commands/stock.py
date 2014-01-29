@@ -28,7 +28,11 @@ def get_quote(symbol):
 
 def gen_stock(msg):
     quote = None
+    num = 0
     while quote is None:
+        if num > 5:
+            break
+        num += 1
         quote = get_quote(msg)
     quote = quote['quote']
     if quote['BidRealtime'] is None:

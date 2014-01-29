@@ -436,22 +436,9 @@ class BotHandler():
         if not self.is_admin(send, nick, False) and nick in self.ignored:
             return
 
-        cmdchar = self.config['core']['cmdchar']
-        botnick = '%s: ' % self.connection.real_nickname
-        if msg.startswith(botnick):
-            msg = msg.replace(botnick, cmdchar, 1)
-
-        altchars = [x.strip() for x in self.config['core']['altcmdchars'].split(',')]
-        if altchars:
-            for i in altchars:
-                if msg.startswith(i):
-                    msg = msg.replace(i, cmdchar, 1)
-
-        # Don't require cmdchar in PMs.
-        if msgtype == 'privmsg' and not msg.startswith(cmdchar):
-            msg = cmdchar + msg
-
+        msg = misc.get_cmdchar(self.config, c, msg, msgtype)
         cmd = msg.split()[0]
+        cmdchar = self.config['core']['cmdchar']
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
 
         # handle !s
