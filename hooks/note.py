@@ -27,4 +27,3 @@ def handle(send, msg, args):
         time = strftime('at %H:%M:%S on %Y-%m-%d', localtime(note['time']))
         send("%s: A note from %s was left for you %s -- %s" % (nick, note['submitter'], time, note['note']))
         cursor.execute('UPDATE notes SET pending=0 WHERE id=?', (note['id'],))
-    cursor.commit()

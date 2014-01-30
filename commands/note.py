@@ -33,5 +33,4 @@ def cmd(send, msg, args):
         return
     cursor = args['db'].get()
     cursor.execute("INSERT INTO notes(note,submitter,nick,time) VALUES(?,?,?,?)", (note, args['nick'], nick, time()))
-    cursor.commit()
     send("Note left for %s." % nick)

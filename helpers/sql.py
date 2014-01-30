@@ -17,8 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import sqlite3
-from threading import current_thread
+from sqlalchemy import MetaData, Table, Column, String, Float, Integer, create_engine
 from time import time
 from os.path import dirname
 
@@ -31,8 +30,8 @@ class Sql():
         | dbfile is the filename of the database
         | connection_pool is a dictionary of threadid->dbconnection.
         """
-        self.dbfile = dirname(__file__) + '/../db.sqlite'
-        self.connection_pool = {}
+        dbfile = dirname(__file__) + '/../db.sqlite'
+        self.engine = create_engine('sqlite:///%s' % dbfile)
         self.setup_db()
 
     def log(self, source, target, flags, msg, msg_type):
@@ -45,51 +44,76 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        db = self.get_db_for_current_thread()
+        db = self.get()
         db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
                    (source, target, flags, msg, msg_type, time()))
-        db.commit()
-
-    def get_db_for_current_thread(self):
-        """ Gets a database connection unique to the current thread
-        """
-        tid = current_thread().ident
-        if tid in self.connection_pool.keys():
-            return self.connection_pool[tid]
-        else:
-            dbconn = sqlite3.connect(self.dbfile)
-            dbconn.row_factory = sqlite3.Row
-            self.connection_pool[tid] = dbconn
-            return dbconn
-
-    def clean_connection_pool(self):
-        """ Cleans out the connection pool.
-        """
-        for conn in self.connection_pool.values():
-            conn.commit()
-            conn.close()
-        self.connection_pool.clear()
 
     def get(self):
-        return self.get_db_for_current_thread()
+        return self.engine.connect()
 
     def setup_db(self):
         """ Sets up the database.
         """
-        db = self.get_db_for_current_thread()
-        db.execute('CREATE TABLE IF NOT EXISTS log(source TEXT, target TEXT, operator INTEGER, msg TEXT, type TEXT, time INTEGER)')
-        db.execute('CREATE TABLE IF NOT EXISTS quotes(quote TEXT, nick TEXT, submitter TEXT, approved INTEGER DEFAULT 0,\
-                   id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS polls(question TEXT, active INTEGER DEFAULT 1, deleted INTEGER DEFAULT 0,\
-                   accepted INTEGER DEFAULT 0, submitter TEXT, pid INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS poll_responses(pid INTEGER, response TEXT, voter TEXT)')
-        db.execute('CREATE TABLE IF NOT EXISTS weather_prefs(nick TEXT UNIQUE, location TEXT)')
-        db.execute('CREATE TABLE IF NOT EXISTS scores(nick TEXT UNIQUE, score INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS commands(nick TEXT, command TEXT, channel TEXT)')
-        db.execute('CREATE TABLE IF NOT EXISTS stopwatches (id INTEGER PRIMARY KEY AUTOINCREMENT, active INTEGER DEFAULT 1,\
-                   time INTEGER, elapsed INTEGER DEFAULT 0)')
-        db.execute('CREATE TABLE IF NOT EXISTS urls (url TEXT, title TEXT, nick TEXT, time INTEGER)')
-        db.execute('CREATE TABLE IF NOT EXISTS issues (title TEXT, source TEXT, accepted INTEGER DEFAULT 0,\
-                   id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS notes (note TEXT, submitter TEXT, nick TEXT, time INTEGER, pending INTEGER DEFAULT 1, id INTEGER PRIMARY KEY AUTOINCREMENT)')
-        db.execute('CREATE TABLE IF NOT EXISTS nicks (old TEXT, new TEXT, time INTEGER)')
+        metadata = MetaData()
+        Table('log', metadata,
+              Column('source', String),
+              Column('target', String),
+              Column('operator', Integer),
+              Column('msg', String),
+              Column('type', String),
+              Column('time', Float))
+        Table('quotes', metadata,
+              Column('quote', String),
+              Column('nick', String),
+              Column('submitter', String),
+              Column('approved', Integer, default=0),
+              Column('id', Integer, primary_key=True))
+        Table('polls', metadata,
+              Column('question', String),
+              Column('active', Integer, default=1),
+              Column('deleted', Integer, default=0),
+              Column('accepted', Integer, default=0),
+              Column('submitter', String),
+              Column('pid', Integer, primary_key=True))
+        Table('poll_responses', metadata,
+              Column('pid', Integer),
+              Column('response', String),
+              Column('voter', String))
+        Table('weather_prefs', metadata,
+              Column('nick', String, unique=True),
+              Column('location', String))
+        Table('scores', metadata,
+              Column('nick', String, unique=True),
+              Column('score', Integer),
+              Column('id', Integer, primary_key=True))
+        Table('commands', metadata,
+              Column('nick', String),
+              Column('command', String),
+              Column('channel', String))
+        Table('stopwatches', metadata,
+              Column('id', Integer, primary_key=True),
+              Column('active', Integer, default=1),
+              Column('time', Integer),
+              Column('elapsed', Float, default=0))
+        Table('urls', metadata,
+              Column('url', String),
+              Column('title', String),
+              Column('nick', String),
+              Column('time', Float))
+        Table('issues', metadata,
+              Column('title', String),
+              Column('source', String),
+              Column('accepted', Integer, default=0),
+              Column('id', Integer, primary_key=True))
+        Table('notes', metadata,
+              Column('note', String),
+              Column('submitter', String),
+              Column('nick', String),
+              Column('time', Float),
+              Column('pending', Integer, default=1),
+              Column('id', Integer, primary_key=True))
+        Table('nicks', metadata,
+              Column('old', String),
+              Column('new', String),
+              Column('time', Float))
+        metadata.create_all(self.engine)

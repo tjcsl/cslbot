@@ -23,7 +23,6 @@ def handle_nick(handler, e):
     old, new = e.source.nick, e.target
     cursor = handler.db.get()
     cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (old, new, time()))
-    cursor.commit()
     if handler.config['feature'].getboolean('nickkick'):
         return do_kick(handler, cursor, new)
     else:

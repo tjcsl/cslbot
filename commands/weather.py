@@ -35,7 +35,6 @@ def set_default(nick, location, cursor, send, apikey):
     if get_weather(location, send, apikey):
         send("Setting default location")
         cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(?,?)', (nick, location))
-        cursor.commit()
 
 
 def get_weather(msg, send, apikey):

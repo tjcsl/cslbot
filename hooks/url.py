@@ -49,4 +49,3 @@ def handle(send, msg, args):
             else:
                 send('** %s - %s' % (title, short))
         cursor.execute('INSERT INTO urls(url,title,nick,time) VALUES(?,?,?,?)', (url, title, args['nick'], time()))
-        cursor.commit()

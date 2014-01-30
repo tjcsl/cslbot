@@ -82,7 +82,6 @@ def enable_command(command):
 
 def record_command(cursor, nick, command, channel):
     cursor.execute('INSERT INTO commands(nick,command,channel) VALUES(?,?,?)', (nick, command, channel))
-    cursor.commit()
 
 
 def check_command(cursor, nick, msg, target):
