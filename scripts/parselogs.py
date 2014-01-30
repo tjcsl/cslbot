@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import sqlite3
+from sqlalchemy import create_engine
 from configparser import ConfigParser
 from time import strftime, localtime
 from os.path import dirname, exists
@@ -82,11 +82,9 @@ def gen_log(row):
 
 def main(config, outdir):
     dbname = dirname(__file__) + "/../db.sqlite"
-    db = sqlite3.connect(dbname)
-    db.row_factory = sqlite3.Row
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM log")
-    rows = cursor.fetchall()
+    conn = create_engine('sqlite:///%s' % dbname)
+    cursor = conn.connect()
+    rows = cursor.execute("SELECT * FROM log").fetchall()
     for row in rows:
         check_day(row, outdir, config['core']['channel'])
         write_log(row['target'], outdir, gen_log(row))

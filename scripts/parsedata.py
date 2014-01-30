@@ -15,8 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import sqlite3
 import argparse
+from sqlalchemy import create_engine
 from time import strftime
 from datetime import datetime
 from collections import OrderedDict
@@ -111,9 +111,8 @@ def output_urls(env, cursor, outdir, time):
 
 def main(outdir):
     filename = dirname(__file__) + "/../db.sqlite"
-    conn = sqlite3.connect(filename)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = create_engine('sqlite:///%s' % filename)
+    cursor = conn.connect()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
