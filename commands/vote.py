@@ -192,7 +192,7 @@ def cmd(send, msg, args):
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
-            send(start_poll(cursor.cursor(), msg, isadmin, send, args['nick'], args['config']['core']['ctrlchan']))
+            send(start_poll(cursor, msg, isadmin, send, args['nick'], args['config']['core']['ctrlchan']))
     elif cmd == 'tally':
         tally_poll(cursor, msg, send, args['nick'])
     elif cmd == 'list':

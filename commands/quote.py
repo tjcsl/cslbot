@@ -108,7 +108,7 @@ def cmd(send, msg, args):
             send("You want everybody to know about your witty sayings, right?")
         else:
             msg = " ".join(cmd[1:])
-            do_add_quote(msg, cursor.cursor(), isadmin, send, args)
+            do_add_quote(msg, cursor, isadmin, send, args)
     elif cmd[0] == 'list':
         send(do_list_quotes(cursor, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':

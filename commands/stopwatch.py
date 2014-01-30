@@ -114,7 +114,7 @@ def cmd(send, msg, args):
     msg = " ".join(msg[1:])
     cursor = args['db'].get()
     if command == "start":
-        send(create_sw(cursor.cursor()))
+        send(create_sw(cursor))
     elif command == "get":
         send("%s %s" % (get_status(cursor, msg), get_elapsed(cursor, msg)))
     elif command == "stop":

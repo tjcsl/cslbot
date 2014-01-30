@@ -18,13 +18,14 @@ import re
 from helpers.command import Command
 
 
-def get_log(cursor, target, user):
+#FIXME: combine w/ reverse.py
+def get_log(conn, target, user):
     if user is None:
-        cursor.execute('SELECT msg,type,source FROM log WHERE target=? ORDER BY time DESC LIMIT 50', (target,))
+        cursor = conn.execute('SELECT msg,type,source FROM log WHERE target=? ORDER BY time DESC LIMIT 50', (target,))
         # Don't parrot back the !s call.
         cursor.fetchone()
     else:
-        cursor.execute('SELECT msg,type,source FROM log WHERE source=? AND target=? ORDER BY time DESC LIMIT 50', (user, target))
+        cursor = conn.execute('SELECT msg,type,source FROM log WHERE source=? AND target=? ORDER BY time DESC LIMIT 50', (user, target))
     return cursor.fetchall()
 
 
@@ -54,7 +55,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Invalid Syntax.")
         return
-    cursor = args['db'].get().cursor()
+    conn = args['db'].get()
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
@@ -71,7 +72,7 @@ def cmd(send, msg, args):
     replacement = msg[1]
     modifiers = get_modifiers(msg[2], args['nick'])
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(cursor, args['target'], modifiers['nick'])
+    log = get_log(conn, args['target'], modifiers['nick'])
 
     for line in log:
         # ignore previous !s calls.
