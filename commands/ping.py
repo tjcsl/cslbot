@@ -20,14 +20,13 @@ from helpers.misc import recordping
 from helpers.command import Command
 
 
-@Command('ping', ['handler', 'target', 'config'])
+@Command('ping', ['handler', 'target', 'config', 'nick'])
 def cmd(send, msg, args):
     """Ping something.
     Syntax: !ping <target>
     """
     if not msg:
-        send("Ping what?")
-        return
+        msg = args['nick']
     channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
     # CTCP PING
     if msg in args['handler'].channels[channel].users():
