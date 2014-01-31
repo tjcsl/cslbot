@@ -164,7 +164,7 @@ def do_xkcd_sub(msg, hook=False):
     if not hook or random() < 0.1:
         for text, replacement in substitutions.items():
             if text in output:
-                output = re.sub(r"(?=\s)%s(?=\s)" % text, replacement, output)
+                output = re.sub(r"\b%s\b" % text, replacement, output)
 
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', output)
     if msg == output:

@@ -65,7 +65,7 @@ def cmd(send, msg, args):
         url = create_issue(msg, args['source'], repo, apikey)
         send("Issue created -- %s -- %s" % (url, msg))
     else:
-        cursor = args['db'].get()
-        cursor.execute('INSERT INTO issues(title, source) VALUES(?,?)', (msg, args['source']))
+        conn = args['db'].get()
+        cursor = conn.execute('INSERT INTO issues(title, source) VALUES(?,?)', (msg, args['source']))
         send("New Issue: #%d -- %s, Submitted by %s" % (cursor.lastrowid, msg, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
