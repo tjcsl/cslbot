@@ -248,7 +248,7 @@ def accept_quote(handler, cmd):
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = quote['submitter']
-    msg = "Quote #%d accepted: %s -- %s, Submitted by %s" % (qid, quote['quote'], quote['nick'], nick)
+    msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (qid, quote['quote'], quote['nick'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     return ""
