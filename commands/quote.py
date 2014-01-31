@@ -54,7 +54,7 @@ def do_add_quote(cmd, conn, isadmin, send, args):
     cursor = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(?,?,?)', (quote[0], quote[1], args['nick']))
     qid = cursor.lastrowid
     if isadmin:
-        cursor.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
+        conn.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
         send("Added quote %d!" % qid)
     else:
         send("Quote submitted for approval.", target=args['nick'])
