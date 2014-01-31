@@ -44,14 +44,14 @@ def get_quotes_nick(cursor, nick):
     return "%s -- %s" % (choice(quotes), nick)
 
 
-def do_add_quote(cmd, cursor, isadmin, send, args):
+def do_add_quote(cmd, conn, isadmin, send, args):
     if '--' not in cmd:
         send("To add a quote, it must be in the format <quote> -- <nick>")
         return
     quote = cmd.split('--')
     #strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
-    cursor.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(?,?,?)', (quote[0], quote[1], args['nick']))
+    cursor = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(?,?,?)', (quote[0], quote[1], args['nick']))
     qid = cursor.lastrowid
     if isadmin:
         cursor.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
