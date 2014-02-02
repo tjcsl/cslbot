@@ -428,6 +428,10 @@ class BotHandler():
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
             return
 
+        # ignore empty messages
+        if not msg:
+            return
+
         if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)
 
