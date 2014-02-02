@@ -81,8 +81,7 @@ def gen_log(row):
 
 
 def main(config, outdir):
-    dbname = dirname(__file__) + "/../db.sqlite"
-    conn = create_engine('sqlite:///%s' % dbname)
+    conn = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
     cursor = conn.connect()
     rows = cursor.execute("SELECT * FROM log").fetchall()
     for row in rows:

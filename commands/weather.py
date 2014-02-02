@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 def get_default(nick, cursor, send):
-    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=?', (nick,)).fetchone()
+    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=%s', (nick,)).fetchone()
     if location is not None:
         location = location[0]
     else:
@@ -34,7 +34,7 @@ def set_default(nick, location, cursor, send, apikey):
     """Sets nick's default location to location."""
     if get_weather(location, send, apikey):
         send("Setting default location")
-        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(?,?)', (nick, location))
+        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(%s,%s)', (nick, location))
 
 
 def get_weather(msg, send, apikey):

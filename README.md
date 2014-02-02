@@ -16,6 +16,7 @@ Install irc (https://pypi.python.org/pypi/irc),
 beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
 lxml (https://pypi.python.org/pypi/lxml),
 requests (https://pypi.python.org/pypi/requests),
+psycopg2 (https://pypi.python.org/pypi/psycopg2),
 and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
 Python must be at least 3.3.
 

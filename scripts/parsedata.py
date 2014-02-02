@@ -22,6 +22,7 @@ from datetime import datetime
 from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname
+from configparser import ConfigParser
 
 
 def get_quotes(cursor):
@@ -54,7 +55,7 @@ def get_responses(cursor, polls):
     responses = {}
     for pid in polls.keys():
         responses[pid] = {}
-        rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE pid=?', (pid,)).fetchall()
+        rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE pid=%s', (pid,)).fetchall()
         for row in rows:
             if row['response'] not in responses[pid]:
                 responses[pid][row['response']] = []
@@ -109,9 +110,8 @@ def output_urls(env, cursor, outdir, time):
     open(outdir + '/urls.html', 'w', encoding='utf8').write(output)
 
 
-def main(outdir):
-    filename = dirname(__file__) + "/../db.sqlite"
-    conn = create_engine('sqlite:///%s' % filename)
+def main(config, outdir):
+    conn = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
     cursor = conn.connect()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
@@ -123,7 +123,9 @@ def main(outdir):
 
 
 if __name__ == '__main__':
+    config = ConfigParser()
+    config.read_file(open(dirname(__file__) + '/../config.cfg'))
     parser = argparse.ArgumentParser()
     parser.add_argument('output', help='The output dir.')
     args = parser.parse_args()
-    main(args.output)
+    main(config, args.output)

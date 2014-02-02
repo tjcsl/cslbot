@@ -25,14 +25,14 @@ def get_commands(cursor):
 
 
 def get_nicks(cursor, command):
-    rows = cursor.execute('SELECT DISTINCT nick FROM commands WHERE command=?', (command,)).fetchall()
+    rows = cursor.execute('SELECT DISTINCT nick FROM commands WHERE command=%s', (command,)).fetchall()
     return [row['nick'] for row in rows]
 
 
 def get_command_totals(cursor, commands):
     totals = {}
     for cmd in commands:
-        totals[cmd] = cursor.execute('SELECT COUNT() FROM commands WHERE command=?', (cmd,)).fetchone()[0]
+        totals[cmd] = cursor.execute('SELECT COUNT() FROM commands WHERE command=%s', (cmd,)).fetchone()[0]
     return totals
 
 
@@ -40,7 +40,7 @@ def get_nick_totals(cursor, commands, name=None):
     totals = {}
     if name is not None:
         for nick in get_nicks(cursor, name):
-            totals[nick] = cursor.execute('SELECT COUNT() FROM commands WHERE command=? AND nick=?', (name, nick)).fetchone()[0]
+            totals[nick] = cursor.execute('SELECT COUNT() FROM commands WHERE command=%s AND nick=%s', (name, nick)).fetchone()[0]
     return totals
 
 

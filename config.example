@@ -3,6 +3,7 @@ host: irc.freenode.net
 serverport: 2688
 ircport: 6667
 nick: exampleBot
+dbname:
 channel: #channel
 ctrlchan: #channel-control
 extrachans: #chan1, #chan2
@@ -13,6 +14,7 @@ nickregex: [a-zA-Z0-9_\|`\^-]
 [auth]
 ctrlpass:
 nickpass:
+dbpass:
 ctrlkey:
 admins: admin1, admin2
 [feature]

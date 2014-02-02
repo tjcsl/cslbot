@@ -57,7 +57,7 @@ class BotHandler():
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.db = sql.Sql()
+        self.db = sql.Sql(config)
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.do_reload`"""
@@ -190,7 +190,7 @@ class BotHandler():
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
 
-        | Logs to a sqlite db.
+        | Logs to a sql db.
         """
         # We don't log NickServ auth calls.
         if msgtype == 'privnotice':

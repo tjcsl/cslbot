@@ -218,13 +218,13 @@ def accept_issue(handler, cmd):
         return "Not A Valid Positive Integer"
     db = handler.db.get()
     num = int(cmd[1])
-    issue = db.execute('SELECT title,source FROM issues WHERE id=?', (num,)).fetchone()
+    issue = db.execute('SELECT title,source FROM issues WHERE id=%s', (num,)).fetchone()
     if not issue:
         return "Not a valid issue"
     repo = handler.config['api']['githubrepo']
     apikey = handler.config['api']['githubapikey']
     msg = create_issue(issue['title'], issue['source'], repo, apikey)
-    db.execute('UPDATE issues SET accepted=1 WHERE id=?', (num,))
+    db.execute('UPDATE issues SET accepted=1 WHERE id=%s', (num,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -242,8 +242,8 @@ def accept_quote(handler, cmd):
     qid = int(cmd[1])
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
-    quote = db.execute('SELECT quote,nick,submitter FROM quotes WHERE id=?', (qid,)).fetchone()
-    db.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
+    quote = db.execute('SELECT quote,nick,submitter FROM quotes WHERE id=%s', (qid,)).fetchone()
+    db.execute('UPDATE quotes SET approved=1 WHERE id=%s', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -259,10 +259,10 @@ def accept_poll(handler, cmd):
         return "Not A Valid Positive Integer"
     db = handler.db.get()
     pid = int(cmd[1])
-    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=?', (pid,)).fetchone()
+    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=%s', (pid,)).fetchone()
     if not poll:
         return "Not a valid poll"
-    db.execute('UPDATE polls SET accepted=1 WHERE pid=?', (pid,))
+    db.execute('UPDATE polls SET accepted=1 WHERE pid=%s', (pid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -291,7 +291,7 @@ def reject_issue(handler, cmd):
         return "Not A Valid Positive Integer"
     db = handler.db.get()
     num = int(cmd[1])
-    issue = db.execute('SELECT title,source FROM issues WHERE id=?', (num,)).fetchone()
+    issue = db.execute('SELECT title,source FROM issues WHERE id=%s', (num,)).fetchone()
     if not issue:
         return "Not a valid issue"
     ctrlchan = handler.config['core']['ctrlchan']
@@ -301,7 +301,7 @@ def reject_issue(handler, cmd):
     msg = "Issue Rejected -- %s, Submitted by %s" % (issue['title'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
-    db.execute('DELETE FROM issues WHERE id=?', (num,))
+    db.execute('DELETE FROM issues WHERE id=%s', (num,))
     return ""
 
 
@@ -312,10 +312,10 @@ def reject_quote(handler, cmd):
     qid = int(cmd[1])
     if not check_quote_exists_by_id(db, qid):
         return "Not a valid quote"
-    quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+    quote = db.execute('SELECT quote,nick,submitter,approved FROM quotes WHERE id=%s', (qid,)).fetchone()
     if quote['approved'] == 1:
         return "Quote already approved."
-    db.execute('DELETE FROM quotes WHERE id=?', (qid,))
+    db.execute('DELETE FROM quotes WHERE id=%s', (qid,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -331,7 +331,7 @@ def reject_poll(handler, cmd):
         return "Not A Valid Positive Integer"
     db = handler.db.get()
     pid = int(cmd[1])
-    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=?', (pid,)).fetchone()
+    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=%s', (pid,)).fetchone()
     if not poll:
         return "Not a valid poll"
     ctrlchan = handler.config['core']['ctrlchan']
@@ -341,7 +341,7 @@ def reject_poll(handler, cmd):
     msg = "Poll #%d rejected: %s, Submitted by %s" % (pid, poll['question'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
-    db.execute('DELETE FROM polls WHERE pid=?', (pid,))
+    db.execute('DELETE FROM polls WHERE pid=%s', (pid,))
     return ""
 
 

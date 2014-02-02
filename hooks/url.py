@@ -41,11 +41,11 @@ def handle(send, msg, args):
         cursor = args['db'].get()
         title = get_title(url)
         short = get_short(url)
-        last = cursor.execute('SELECT time,nick FROM urls WHERE url=? ORDER BY time DESC LIMIT 1', (url,)).fetchone()
+        last = cursor.execute('SELECT time,nick FROM urls WHERE url=%s ORDER BY time DESC LIMIT 1', (url,)).fetchone()
         if args['config']['feature'].getboolean('linkread'):
             if last:
                 lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last['time']))
                 send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last['nick'], title))
             else:
                 send('** %s - %s' % (title, short))
-        cursor.execute('INSERT INTO urls(url,title,nick,time) VALUES(?,?,?,?)', (url, title, args['nick'], time()))
+        cursor.execute('INSERT INTO urls(url,title,nick,time) VALUES(%s,%s,%s,%s)', (url, title, args['nick'], time()))

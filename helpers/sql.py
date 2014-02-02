@@ -19,19 +19,16 @@
 
 from sqlalchemy import MetaData, Table, Column, String, Float, Integer, create_engine
 from time import time
-from os.path import dirname
 
 
 class Sql():
 
-    def __init__(self):
+    def __init__(self, config):
         """ Set everything up
 
-        | dbfile is the filename of the database
         | connection_pool is a dictionary of threadid->dbconnection.
         """
-        dbfile = dirname(__file__) + '/../db.sqlite'
-        self.engine = create_engine('sqlite:///%s' % dbfile)
+        self.engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
         self.setup_db()
 
     def log(self, source, target, flags, msg, msg_type):
@@ -45,7 +42,7 @@ class Sql():
         | time: The current time (Unix Epoch).
         """
         db = self.get()
-        db.execute('INSERT INTO log VALUES(?,?,?,?,?,?)',
+        db.execute('INSERT INTO log VALUES(%s,%s,%s,%s,%s,%s)',
                    (source, target, flags, msg, msg_type, time()))
 
     def get(self):

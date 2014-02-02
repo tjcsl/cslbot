@@ -32,5 +32,5 @@ def cmd(send, msg, args):
         send("Not enough arguments.")
         return
     cursor = args['db'].get()
-    cursor.execute("INSERT INTO notes(note,submitter,nick,time) VALUES(?,?,?,?)", (note, args['nick'], nick, time()))
+    cursor.execute("INSERT INTO notes(note,submitter,nick,time) VALUES(%s,%s,%s,%s)", (note, args['nick'], nick, time()))
     send("Note left for %s." % nick)

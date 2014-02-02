@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 def create_sw(cursor):
-    cursor.execute("INSERT INTO stopwatches(time) VALUES(?)", (time.time(),))
+    cursor.execute("INSERT INTO stopwatches(time) VALUES(%s)", (time.time(),))
     return "Created new stopwatch with ID %d" % cursor.lastrowid
 
 
@@ -36,7 +36,7 @@ def get_status(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    query_result = cursor.execute("SELECT active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
     return "Active" if query_result['active'] == 1 else "Paused"
 
 
@@ -44,7 +44,7 @@ def get_elapsed(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
     if query_result is None:
         return "No stopwatch exists with that ID!"
     elapsed = query_result[0]
@@ -59,7 +59,7 @@ def stop_stopwatch(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
     if query_result is None:
         return "No stopwatch exists with that ID!"
     if query_result[2] != 1:
@@ -67,7 +67,7 @@ def stop_stopwatch(cursor, sw):
     elapsed = query_result[0]
     etime = time.time() - query_result[1]
     etime += float(elapsed)
-    cursor.execute("UPDATE stopwatches SET elapsed=?,active=0 WHERE id=?", (etime, int(sw[0])))
+    cursor.execute("UPDATE stopwatches SET elapsed=%s,active=0 WHERE id=%s", (etime, int(sw[0])))
     return "Stopwatch stopped!"
 
 
@@ -75,12 +75,12 @@ def stopwatch_resume(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=?", (int(sw[0]),)).fetchone()
+    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
     if query_result is None:
         return "No stopwatch exists with that ID!"
     if query_result[2] != 0:
         return "That stopwatch is not paused!"
-    cursor.execute("UPDATE stopwatches SET active=1,time=? WHERE id=?", (time.time(), int(sw[0])))
+    cursor.execute("UPDATE stopwatches SET active=1,time=%s WHERE id=%s", (time.time(), int(sw[0])))
     return "Stopwatch resumed!"
 
 

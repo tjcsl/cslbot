@@ -27,7 +27,7 @@ def do_get_quote(cursor, qid=None):
         quote = choice(quotes)
         return "%s -- %s" % (quote['quote'], quote['nick'])
     elif check_quote_exists_by_id(cursor, qid):
-        quote = cursor.execute('SELECT nick,quote,approved FROM quotes WHERE id=?', (qid,)).fetchone()
+        quote = cursor.execute('SELECT nick,quote,approved FROM quotes WHERE id=%s', (qid,)).fetchone()
         if int(quote['approved']) == 0:
             return "That quote hasn't been approved yet."
         else:
@@ -37,7 +37,7 @@ def do_get_quote(cursor, qid=None):
 
 
 def get_quotes_nick(cursor, nick):
-    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=? AND approved=1', (nick,)).fetchall()
+    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=%s AND approved=1', (nick,)).fetchall()
     if not rows:
         return "No quotes for %s" % nick
     quotes = [row['quote'] for row in rows]
@@ -51,10 +51,10 @@ def do_add_quote(cmd, conn, isadmin, send, args):
     quote = cmd.split('--')
     #strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
-    cursor = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(?,?,?)', (quote[0], quote[1], args['nick']))
+    cursor = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(%s,%s,%s)', (quote[0], quote[1], args['nick']))
     qid = cursor.lastrowid
     if isadmin:
-        conn.execute('UPDATE quotes SET approved=1 WHERE id=?', (qid,))
+        conn.execute('UPDATE quotes SET approved=1 WHERE id=%s', (qid,))
         send("Added quote %d!" % qid)
     else:
         send("Quote submitted for approval.", target=args['nick'])
@@ -71,7 +71,7 @@ def do_update_quote(cursor, qid, msg):
     quote = [x.strip() for x in quote]
     if not check_quote_exists_by_id(cursor, qid):
         return "That quote doesn't exist!"
-    cursor.execute('UPDATE quotes SET quote=?,nick=? WHERE id=?', (quote[0], quote[1], qid))
+    cursor.execute('UPDATE quotes SET quote=%s,nick=%s WHERE id=%s', (quote[0], quote[1], qid))
     return "Updated quote!"
 
 
@@ -86,7 +86,7 @@ def do_delete_quote(cursor, qid):
     qid = int(qid)
     if not check_quote_exists_by_id(cursor, qid):
         return "That quote doesn't exist!"
-    cursor.execute("DELETE FROM quotes WHERE id=?", (qid,))
+    cursor.execute("DELETE FROM quotes WHERE id=%s", (qid,))
     return 'Deleted quote with ID %d' % qid
 
 

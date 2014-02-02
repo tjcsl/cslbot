@@ -6,5 +6,3 @@ gh-pages
 *.*~
 scripts/fixperms.sh
 static/templates/analytics.html
-db.sqlite
-db.sqlite-journal

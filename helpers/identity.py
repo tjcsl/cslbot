@@ -22,7 +22,7 @@ from operator import itemgetter
 def handle_nick(handler, e):
     old, new = e.source.nick, e.target
     cursor = handler.db.get()
-    cursor.execute('INSERT INTO nicks VALUES(?,?,?)', (old, new, time()))
+    cursor.execute('INSERT INTO nicks VALUES(%s,%s,%s)', (old, new, time()))
     if handler.config['feature'].getboolean('nickkick'):
         return do_kick(handler, cursor, new)
     else:
@@ -35,7 +35,7 @@ def get_mapping(cursor, nick, limit):
     todo = set([nick])
     while todo:
         curr = todo.pop()
-        prev = cursor.execute('SELECT old,time FROM nicks WHERE new=? AND time>=? ORDER BY time', (curr, limit)).fetchall()
+        prev = cursor.execute('SELECT old,time FROM nicks WHERE new=%s AND time>=%s ORDER BY time', (curr, limit)).fetchall()
         done.add(curr)
         for x in prev:
             if x['old'] not in done:
