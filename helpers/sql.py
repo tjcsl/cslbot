@@ -46,7 +46,7 @@ class Sql():
                    (source, target, flags, msg, msg_type, time()))
 
     def get(self):
-        return self.engine
+        return self.engine.connect()
 
     def setup_db(self):
         """ Sets up the database.

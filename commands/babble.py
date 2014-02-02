@@ -44,8 +44,8 @@ def weighted_rand(d):
 
 def get_messages(cursor, speaker, cmdchar):
     location = 'target' if speaker.startswith('#') else 'source'
-    query = "SELECT msg FROM log WHERE (type='pubmsg' OR type='privmsg') AND UPPER(%s)=UPPER(?) AND msg NOT LIKE '%s%%' AND msg NOT LIKE'%%:%%' ORDER BY RANDOM()" % (location, cmdchar)
-    return cursor.execute(query, (speaker,)).fetchall()
+    return cursor.execute("SELECT msg FROM log WHERE (type='pubmsg' OR type='privmsg') AND UPPER(" + location + ")=UPPER(%s) AND msg NOT LIKE %s||'%%' AND msg NOT LIKE '%%:%%' ORDER BY RANDOM()",
+                          (speaker, cmdchar)).fetchall()
 
 
 #FIXME: make sphinx happy
