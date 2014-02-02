@@ -370,8 +370,6 @@ class BotHandler():
 
     def do_reload(self):
         self.uptime['reloaded'] = time.time()
-        # FIXME: This doesn't work.
-        #self.db.clean_connection_pool()
         self.loadmodules()
         self.loadhooks()
 

@@ -19,17 +19,17 @@
 
 from sqlalchemy import MetaData, Table, Column, String, Float, Integer, create_engine
 from time import time
+from atexit import register
 
 
 class Sql():
 
     def __init__(self, config):
-        """ Set everything up
-
-        | connection_pool is a dictionary of threadid->dbconnection.
-        """
+        """ Set everything up"""
         self.engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+        self.conn = self.engine.connect()
         self.setup_db()
+        register(self.shutdown)
 
     def log(self, source, target, flags, msg, msg_type):
         """ Logs a message to the database
@@ -46,7 +46,10 @@ class Sql():
                    (source, target, flags, msg, msg_type, time()))
 
     def get(self):
-        return self.engine.connect()
+        return self.conn
+
+    def shutdown(self):
+        self.conn.close()
 
     def setup_db(self):
         """ Sets up the database.
