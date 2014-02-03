@@ -49,4 +49,4 @@ def handle(send, msg, args):
         if cursor.execute("SELECT count(1) FROM scores WHERE nick=%s", (name,)).fetchone()[0] == 1:
             cursor.execute("UPDATE scores SET score=score+%s WHERE nick=%s", (score, name))
         else:
-            cursor.execute("INSERT INTO scores(score,nick) VALUES(%s,%s)", (score, name))
+            cursor.execute("INSERT INTO scores VALUES(%s,%s)", (name, score))
