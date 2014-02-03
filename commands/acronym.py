@@ -18,12 +18,13 @@ import string
 from helpers.command import Command
 from random import choice
 from itertools import groupby
+from os.path import dirname
 
 
 def get_list():
-    # wordlist (massaged COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
-    listfile = '/usr/share/dict/words'
-    rawlist = open(listfile).read()
+    # wordlist (COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
+    wordlist = dirname(__file__) + '/../static/wordlist'
+    rawlist = open(wordlist).read()
     rawlist = sorted(rawlist.splitlines())
     words = {}
     for key, group in groupby(rawlist, key=lambda word: word[0].lower()):
