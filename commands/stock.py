@@ -34,7 +34,10 @@ def gen_stock(msg):
             break
         num += 1
         quote = get_quote(msg)
-    quote = quote['quote']
+    if quote is not None:
+        quote = quote['quote']
+    else:
+        return "No Results"
     if quote['BidRealtime'] is None:
         return "Invalid Symbol."
     else:
