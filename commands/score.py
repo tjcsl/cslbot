@@ -60,7 +60,7 @@ def cmd(send, msg, args):
     elif msg:
         send("Invalid nick")
     else:
-        count = cursor.execute("SELECT count(*) FROM scores").fetchone()
+        count = cursor.execute("SELECT COUNT(1) FROM scores").fetchone()
         if count is None or count[0] == 0:
             send("Nobody cares about anything =(")
         else:

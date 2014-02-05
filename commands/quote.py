@@ -76,7 +76,7 @@ def do_update_quote(cursor, qid, msg):
 
 
 def do_list_quotes(cursor, quote_url):
-    num = cursor.execute("SELECT count(id) FROM quotes WHERE approved=1").fetchone()[0]
+    num = cursor.execute("SELECT COUNT(1) FROM quotes WHERE approved=1").fetchone()[0]
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 

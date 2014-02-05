@@ -32,7 +32,7 @@ def get_nicks(cursor, command):
 def get_command_totals(cursor, commands):
     totals = {}
     for cmd in commands:
-        totals[cmd] = cursor.execute('SELECT COUNT() FROM commands WHERE command=%s', (cmd,)).fetchone()[0]
+        totals[cmd] = cursor.execute('SELECT COUNT(1) FROM commands WHERE command=%s', (cmd,)).fetchone()[0]
     return totals
 
 
@@ -40,7 +40,7 @@ def get_nick_totals(cursor, commands, name=None):
     totals = {}
     if name is not None:
         for nick in get_nicks(cursor, name):
-            totals[nick] = cursor.execute('SELECT COUNT() FROM commands WHERE command=%s AND nick=%s', (name, nick)).fetchone()[0]
+            totals[nick] = cursor.execute('SELECT COUNT(1) FROM commands WHERE command=%s AND nick=%s', (name, nick)).fetchone()[0]
     return totals
 
 
