@@ -25,5 +25,5 @@ def handle(send, msg, args):
     notes = cursor.execute('SELECT note,submitter,time,id FROM notes WHERE nick=%s AND pending=1 ORDER BY time ASC', (nick,)).fetchall()
     for note in notes:
         time = strftime('at %H:%M:%S on %Y-%m-%d', localtime(note['time']))
-        send("%s: A note from %s was left for you %s -- %s" % (nick, note['submitter'], time, note['note']))
+        send("%s: Note from %s: <%s> %s" % (nick, note['submitter'], time, note['note']))
         cursor.execute('UPDATE notes SET pending=0 WHERE id=%s', (note['id'],))
