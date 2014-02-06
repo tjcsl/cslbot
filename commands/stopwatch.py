@@ -20,8 +20,8 @@ from helpers.command import Command
 
 
 def create_sw(cursor):
-    cursor.execute("INSERT INTO stopwatches(time) VALUES(%s)", (time.time(),))
-    return "Created new stopwatch with ID %d" % cursor.lastrowid
+    rowid = cursor.execute("INSERT INTO stopwatches(time) VALUES(%s) RETURNING id", (time.time(),)).scalar()
+    return "Created new stopwatch with ID %d" % rowid
 
 
 def check_sw_valid(sw):

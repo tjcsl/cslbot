@@ -51,8 +51,7 @@ def do_add_quote(cmd, conn, isadmin, send, args):
     quote = cmd.split('--')
     #strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
-    cursor = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(%s,%s,%s)', (quote[0], quote[1], args['nick']))
-    qid = cursor.lastrowid
+    qid = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(%s,%s,%s) RETURNING id', (quote[0], quote[1], args['nick'])).scalar()
     if isadmin:
         conn.execute('UPDATE quotes SET approved=1 WHERE id=%s', (qid,))
         send("Added quote %d!" % qid)
@@ -76,7 +75,7 @@ def do_update_quote(cursor, qid, msg):
 
 
 def do_list_quotes(cursor, quote_url):
-    num = cursor.execute("SELECT COUNT(1) FROM quotes WHERE approved=1").fetchone()[0]
+    num = cursor.execute("SELECT COUNT(1) FROM quotes WHERE approved=1").scalar()
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 

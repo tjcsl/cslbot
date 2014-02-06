@@ -21,8 +21,7 @@ def start_poll(cursor, msg, isadmin, send, nick, ctrlchan):
     """ Starts a poll """
     if not msg:
         return "Polls need a question."
-    cursor.execute("INSERT INTO polls(question,submitter) VALUES(%s,%s)", (msg, nick))
-    num = cursor.lastrowid
+    num = cursor.execute("INSERT INTO polls(question,submitter) VALUES(%s,%s) RETURNING pid", (msg, nick)).scalar()
     if isadmin:
         cursor.execute('UPDATE polls SET accepted=1 WHERE pid=%s', (num,))
         return "Poll #%d created!" % num

@@ -66,6 +66,6 @@ def cmd(send, msg, args):
         send("Issue created -- %s -- %s" % (url, msg))
     else:
         conn = args['db'].get()
-        cursor = conn.execute('INSERT INTO issues(title, source) VALUES(%s,%s)', (msg, args['source']))
-        send("New Issue: #%d -- %s, Submitted by %s" % (cursor.lastrowid, msg, args['nick']), target=args['config']['core']['ctrlchan'])
+        key = conn.execute('INSERT INTO issues(title, source) VALUES(%s,%s) RETURNING id', (msg, args['source'])).scalar()
+        send("New Issue: #%d -- %s, Submitted by %s" % (key, msg, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
