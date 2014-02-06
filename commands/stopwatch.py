@@ -36,8 +36,8 @@ def get_status(cursor, sw):
     ok = check_sw_valid(sw)
     if ok != "OK":
         return ok
-    query_result = cursor.execute("SELECT active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
-    return "Active" if query_result['active'] == 1 else "Paused"
+    active = cursor.execute("SELECT active FROM stopwatches WHERE id=%s", (int(sw[0]),)).scalar()
+    return "Active" if active == 1 else "Paused"
 
 
 def get_elapsed(cursor, sw):
@@ -47,8 +47,8 @@ def get_elapsed(cursor, sw):
     query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
     if query_result is None:
         return "No stopwatch exists with that ID!"
-    elapsed = query_result[0]
     etime = 0
+    elapsed = query_result['elapsed']
     if query_result[2] == 1:
         etime = time.time() - query_result[1]
     etime += float(elapsed)

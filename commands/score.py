@@ -47,7 +47,7 @@ def cmd(send, msg, args):
             if name == 'c':
                 send("We all know you love C better than anything else, so why rub it in?")
                 return
-            score = cursor.execute("SELECT score FROM scores WHERE nick=%s", (name,)).fetchone()
+            score = cursor.execute("SELECT score FROM scores WHERE nick=%s", (name,)).scalar()
             if score is not None:
                 score = score[0]
                 if name == args['botnick'].lower():
@@ -60,13 +60,10 @@ def cmd(send, msg, args):
     elif msg:
         send("Invalid nick")
     else:
-        count = cursor.execute("SELECT COUNT(1) FROM scores").fetchone()
-        if count is None or count[0] == 0:
+        count = cursor.execute("SELECT COUNT(1) FROM scores").scalar()
+        if count is None:
             send("Nobody cares about anything =(")
         else:
-            if count[0] == 1:
-                randid = 1
-            else:
-                randid = randint(1, count[0])
+            randid = randint(1, count)
             query = cursor.execute("SELECT nick,score FROM scores WHERE id=%s", (randid,)).fetchone()
-            send("%s has %i points!" % (query[0], query[1]))
+            send("%s has %i points!" % tuple(query))

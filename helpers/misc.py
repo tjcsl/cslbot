@@ -25,8 +25,8 @@ _pinglist = {}
 
 
 def check_quote_exists_by_id(cursor, qid):
-    quote = cursor.execute("SELECT COUNT(1) FROM quotes WHERE id=%s", (qid,)).fetchone()
-    return False if quote[0] == 0 else True
+    quote = cursor.execute("SELECT COUNT(1) FROM quotes WHERE id=%s", (qid,)).scalar()
+    return quote is not None
 
 
 def check_exists(subreddit):

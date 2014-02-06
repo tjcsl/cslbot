@@ -57,7 +57,7 @@ def edit_poll(cursor, msg):
     if not cmd[0].isdigit():
         return "Not A Valid Positive Integer."
     pid = int(cmd[0])
-    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).scalar() is None:
         return "That poll was deleted or does not exist!"
     newq = " ".join(cmd[1:])
     cursor.execute("UPDATE polls SET question=%s WHERE pid=%s", (newq, pid))
@@ -72,7 +72,7 @@ def reopen(cursor, msg):
     if not cmd[0].isdigit():
         return "Not a valid positve integer."
     pid = int(cmd[0])
-    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).scalar() is None:
         return "That poll doesn't exist or has been deleted!"
     cursor.execute("UPDATE polls SET active=1 WHERE pid=%s", (pid,))
     return "Poll %d reopened!" % pid
@@ -85,7 +85,7 @@ def end_poll(cursor, poll):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     pid = int(poll)
-    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND deleted=0 AND accepted=1", (pid,)).scalar() is None:
         return "That poll doesn't exist or has already been deleted!"
     cursor.execute("UPDATE polls SET active=0 WHERE pid=%s", (pid,))
     return "Poll ended!"
@@ -141,18 +141,18 @@ def vote(cursor, nick, pid, vote):
         vote = "no"
     elif vote == "y" or vote == "aye":
         vote = "yes"
-    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND active=1 AND deleted=0 AND accepted=1", (pid,)).fetchone()[0] == 0:
+    if cursor.execute("SELECT COUNT(1) FROM polls WHERE pid=%s AND active=1 AND deleted=0 AND accepted=1", (pid,)).scalar() is None:
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
-    old_vote = cursor.execute("SELECT response FROM poll_responses WHERE pid=%s AND voter=%s", (pid, nick)).fetchone()
+    old_vote = cursor.execute("SELECT response FROM poll_responses WHERE pid=%s AND voter=%s", (pid, nick)).scalar()
     if old_vote is None:
         cursor.execute("INSERT INTO poll_responses(pid, response, voter) VALUES(%s,%s,%s)", (pid, vote, nick))
         return "%s voted %s." % (nick, vote)
     else:
-        if vote == old_vote['response']:
+        if vote == old_vote:
             return "You've already voted %s." % vote
         else:
             cursor.execute("UPDATE poll_responses SET response=%s WHERE pid=%s AND voter=%s", (vote, pid, nick))
-            return "%s changed his/her vote from %s to %s." % (nick, old_vote['response'], vote)
+            return "%s changed his/her vote from %s to %s." % (nick, old_vote, vote)
 
 
 def retract(cursor, poll, nick):
@@ -162,14 +162,14 @@ def retract(cursor, poll, nick):
     if not poll.isdigit():
         return "Not A Valid Positive Integer."
     poll = int(poll)
-    if cursor.execute("SELECT COUNT(1) FROM poll_responses WHERE voter=%s AND pid=%s", (nick, poll)).fetchone()[0] == 0:
+    if cursor.execute("SELECT COUNT(1) FROM poll_responses WHERE voter=%s AND pid=%s", (nick, poll)).scalar() is None:
         return "You haven't voted on that poll yet!"
     cursor.execute("DELETE FROM poll_responses WHERE voter=%s AND pid=%s", (nick, poll))
     return "Vote retracted"
 
 
 def list_polls(cursor, poll_url):
-    num = cursor.execute("SELECT COUNT(1) FROM polls WHERE active=1 AND accepted=1").fetchone()[0]
+    num = cursor.execute("SELECT COUNT(1) FROM polls WHERE active=1 AND accepted=1").scalar()
     return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
 

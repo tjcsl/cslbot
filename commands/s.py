@@ -21,9 +21,7 @@ from helpers.command import Command
 #FIXME: combine w/ reverse.py
 def get_log(conn, target, user):
     if user is None:
-        cursor = conn.execute('SELECT msg,type,source FROM log WHERE target=%s ORDER BY time DESC LIMIT 50', (target,))
-        # Don't parrot back the !s call.
-        cursor.fetchone()
+        cursor = conn.execute('SELECT msg,type,source FROM log WHERE target=%s ORDER BY time DESC LIMIT 50 OFFSET 1', (target,))
     else:
         cursor = conn.execute('SELECT msg,type,source FROM log WHERE source=%s AND target=%s ORDER BY time DESC LIMIT 50', (user, target))
     return cursor.fetchall()

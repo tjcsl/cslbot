@@ -20,12 +20,10 @@ from helpers.command import Command
 
 def get_log(conn, user, target):
     if user is None:
-        cursor = conn.execute("SELECT msg FROM log WHERE (target=%s AND type='pubmsg') ORDER BY time DESC", (target,))
-        # Don't parrot back the !reverse call.
-        cursor.fetchone()
+        cursor = conn.execute("SELECT msg FROM log WHERE (target=%s AND type='pubmsg') ORDER BY time DESC OFFSET 1", (target,))
     else:
         cursor = conn.execute("SELECT msg FROM log WHERE (source=%s AND target=%s AND type='pubmsg') ORDER BY time DESC", (user, target))
-    return cursor.fetchone()
+    return cursor.scalar()
 
 
 @Command(['reverse', 'sdamashek'], ['db', 'target'])

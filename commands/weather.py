@@ -20,13 +20,11 @@ from helpers.command import Command
 
 
 def get_default(nick, cursor, send):
-    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=%s', (nick,)).fetchone()
-    if location is not None:
-        location = location[0]
-    else:
-        send("No default location for %s, defaulting to TJ." % nick)
+    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=%s', (nick,)).scalar()
+    if location is None:
         # default to TJHSST
         location = '22312'
+        send("No default location for %s, defaulting to TJ (%s)." % (nick, location))
     return location
 
 
