@@ -16,13 +16,22 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-from sqlalchemy import create_engine
 from time import strftime
 from datetime import datetime
 from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
-from os.path import dirname
+from os.path import dirname, exists
+from os import mkdir
 from configparser import ConfigParser
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+
+#FIXME: don't duplicate helpers/sql.py
+def get_session(config):
+    #FIXME: add support for sqlite connection string
+    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+    return Session(bind=engine)
 
 
 def get_quotes(cursor):
@@ -111,10 +120,12 @@ def output_urls(env, cursor, outdir, time):
 
 
 def main(config, outdir):
-    conn = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
-    cursor = conn.connect()
+    cursor = get_session(config).connection()
     env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
+
+    if not exists(outdir):
+        mkdir(outdir)
 
     output_quotes(env, cursor, outdir, time)
     output_scores(env, cursor, outdir, time)

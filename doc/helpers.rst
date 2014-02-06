@@ -76,6 +76,14 @@ helpers.modutils module
     :undoc-members:
     :show-inheritance:
 
+helpers.orm module
+------------------
+
+.. automodule:: helpers.orm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.server module
 ---------------------
 

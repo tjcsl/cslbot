@@ -17,18 +17,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import MetaData, Table, Column, String, Float, Integer, create_engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 from time import time
 from atexit import register
+from .orm import setup_db
+
+
+def get_session(config):
+    #FIXME: add support for sqlite connection string
+    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+    return Session(bind=engine)
 
 
 class Sql():
 
     def __init__(self, config):
         """ Set everything up"""
-        self.engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
-        self.conn = self.engine.connect()
-        self.setup_db()
+        self.session = get_session(config)
+        setup_db(self.session)
         register(self.shutdown)
 
     def log(self, source, target, flags, msg, msg_type):
@@ -46,74 +53,8 @@ class Sql():
                    (source, target, flags, msg, msg_type, time()))
 
     def get(self):
-        return self.conn
+        #FIXME: don't use raw sql.
+        return self.session.connection()
 
     def shutdown(self):
-        self.conn.close()
-
-    def setup_db(self):
-        """ Sets up the database.
-        """
-        metadata = MetaData()
-        Table('log', metadata,
-              Column('source', String),
-              Column('target', String),
-              Column('operator', Integer),
-              Column('msg', String),
-              Column('type', String),
-              Column('time', Float))
-        Table('quotes', metadata,
-              Column('quote', String),
-              Column('nick', String),
-              Column('submitter', String),
-              Column('approved', Integer, default=0),
-              Column('id', Integer, primary_key=True))
-        Table('polls', metadata,
-              Column('question', String),
-              Column('active', Integer, default=1),
-              Column('deleted', Integer, default=0),
-              Column('accepted', Integer, default=0),
-              Column('submitter', String),
-              Column('pid', Integer, primary_key=True))
-        Table('poll_responses', metadata,
-              Column('pid', Integer),
-              Column('response', String),
-              Column('voter', String))
-        Table('weather_prefs', metadata,
-              Column('nick', String, unique=True),
-              Column('location', String))
-        Table('scores', metadata,
-              Column('nick', String, unique=True),
-              Column('score', Integer),
-              Column('id', Integer, primary_key=True))
-        Table('commands', metadata,
-              Column('nick', String),
-              Column('command', String),
-              Column('channel', String))
-        Table('stopwatches', metadata,
-              Column('id', Integer, primary_key=True),
-              Column('active', Integer, default=1),
-              Column('time', Integer),
-              Column('elapsed', Float, default=0))
-        Table('urls', metadata,
-              Column('url', String),
-              Column('title', String),
-              Column('nick', String),
-              Column('time', Float))
-        Table('issues', metadata,
-              Column('title', String),
-              Column('source', String),
-              Column('accepted', Integer, default=0),
-              Column('id', Integer, primary_key=True))
-        Table('notes', metadata,
-              Column('note', String),
-              Column('submitter', String),
-              Column('nick', String),
-              Column('time', Float),
-              Column('pending', Integer, default=1),
-              Column('id', Integer, primary_key=True))
-        Table('nicks', metadata,
-              Column('old', String),
-              Column('new', String),
-              Column('time', Float))
-        metadata.create_all(self.engine)
+        self.session.close()

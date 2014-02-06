@@ -16,18 +16,27 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-from sqlalchemy import create_engine
 from configparser import ConfigParser
 from time import strftime, localtime
 from os.path import dirname, exists
 from os import mkdir
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 logs = {}
 
 day = False
 
 
+#FIXME: don't duplicate helpers/sql.py
+def get_session(config):
+    #FIXME: add support for sqlite connection string
+    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+    return Session(bind=engine)
+
+
 def write_log(name, outdir, msg):
+    global logs
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
         if not exists(outdir):
@@ -81,8 +90,7 @@ def gen_log(row):
 
 
 def main(config, outdir):
-    conn = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
-    cursor = conn.connect()
+    cursor = get_session(config)
     rows = cursor.execute("SELECT * FROM log").fetchall()
     for row in rows:
         check_day(row, outdir, config['core']['channel'])
