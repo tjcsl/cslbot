@@ -12,13 +12,18 @@ See http://tjcsl.github.io/cslbot for api docs.
 Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
-Install irc (https://pypi.python.org/pypi/irc),
-beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
-lxml (https://pypi.python.org/pypi/lxml),
-requests (https://pypi.python.org/pypi/requests),
-psycopg2 (https://pypi.python.org/pypi/psycopg2),
-and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
 Python must be at least 3.3.
+You will need a working PostgreSQL database.
+Hard mode:
+1. Install irc (https://pypi.python.org/pypi/irc),
+2. beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
+3. lxml (https://pypi.python.org/pypi/lxml),
+4. requests (https://pypi.python.org/pypi/requests),
+5. psycopg2 (https://pypi.python.org/pypi/psycopg2),
+6. IRC (http://pypi.python.org/pypi/irc)
+6. and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
+Easy mode:
+If you have Pip installed, you can simply run `pip install -r requirements.txt`
 
 Adding Modules
 --------------
