@@ -21,7 +21,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from time import time
 from atexit import register
-from .orm import setup_db
+from .orm import setup_db, Log
 
 
 def get_session(config):
@@ -38,7 +38,7 @@ class Sql():
         setup_db(self.session)
         register(self.shutdown)
 
-    def log(self, source, target, flags, msg, msg_type):
+    def log(self, source, target, flags, msg, type):
         """ Logs a message to the database
 
         | source: The source of the message.
@@ -48,13 +48,12 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        db = self.get()
-        db.execute('INSERT INTO log VALUES(%s,%s,%s,%s,%s,%s)',
-                   (source, target, flags, msg, msg_type, time()))
+        entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
+        self.session.add(entry)
+        self.session.commit()
 
     def get(self):
-        #FIXME: don't use raw sql.
-        return self.session.connection()
+        return self.session
 
     def shutdown(self):
         self.session.close()

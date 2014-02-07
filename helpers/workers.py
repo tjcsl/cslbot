@@ -24,7 +24,8 @@ _threads = {}
 def stop_workers():
     for thread, event in _threads.values():
         event.set()
-        thread.join()
+        # Doesn't exit cleanly
+        #thread.join()
     _threads.clear()
 
 

@@ -350,7 +350,7 @@ class BotHandler():
         realargs = {}
         args = {'nick': nick,
                 'handler': self,
-                'db': self.db,
+                'db': self.db.get(),
                 'config': self.config,
                 'source': source,
                 'name': name,

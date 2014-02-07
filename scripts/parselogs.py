@@ -79,9 +79,9 @@ def gen_log(row):
     elif row['type'] == 'pubnotice':
         log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
     elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':
-        if bool(row['operator'] & 1):
+        if bool(row['flags'] & 1):
             nick = '@' + nick
-        if bool(row['operator'] & 2):
+        if bool(row['flags'] & 2):
             nick = '+' + nick
         log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
     else:

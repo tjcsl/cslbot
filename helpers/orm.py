@@ -41,7 +41,7 @@ def setup_db(session):
 class Log(Base):
     source = Column(String)
     target = Column(String)
-    operator = Column(Integer)
+    flags = Column(Integer)
     msg = Column(String)
     type = Column(String)
     time = Column(Float)

@@ -22,6 +22,7 @@ from inspect import getdoc
 from datetime import datetime, timedelta
 from helpers.modutils import scan_and_reimport
 from helpers.traceback import handle_traceback
+from helpers.orm import Commands, Log
 
 _known_commands = {}
 _disabled_commands = []
@@ -81,17 +82,17 @@ def enable_command(command):
 
 
 def record_command(cursor, nick, command, channel):
-    cursor.execute('INSERT INTO commands(nick,command,channel) VALUES(%s,%s,%s)', (nick, command, channel))
+    record = Commands(nick=nick, command=command, channel=channel)
+    cursor.add(record)
 
 
 def check_command(cursor, nick, msg, target):
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
-    # the last one is the command we're current executing, so get the penultimate one.
-    last = cursor.execute("SELECT msg,source FROM log WHERE target=%s AND type='pubmsg' AND time>=%s ORDER BY time DESC LIMIT 2", (target, limit.timestamp())).fetchall()
-    if len(last) == 2:
-        last = last[1]
-        return last['msg'] == msg and last['source'] != nick
+    # the last one is the command we're currently executing, so get the penultimate one.
+    last = cursor.query(Log).filter(Log.target == target).filter(Log.type == 'pubmsg').filter(Log.time >= limit.timestamp()).order_by(Log.time.desc()).offset(1).first()
+    if last:
+        return last.msg == msg and last.source != nick
     else:
         return False
 

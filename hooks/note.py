@@ -16,14 +16,15 @@
 
 from time import localtime, strftime
 from helpers.hook import Hook
+from helpers.orm import Notes
 
 
 @Hook(['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
-    cursor = args['db'].get()
+    cursor = args['db']
     nick = args['nick']
-    notes = cursor.execute('SELECT note,submitter,time,id FROM notes WHERE nick=%s AND pending=1 ORDER BY time ASC', (nick,)).fetchall()
+    notes = cursor.query(Notes).filter(Notes.nick == nick).filter(Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:
         time = strftime('%Y-%m-%d %H:%M:%S', localtime(note['time']))
         send("%s: Note from %s: <%s> %s" % (nick, note['submitter'], time, note['note']))
-        cursor.execute('UPDATE notes SET pending=0 WHERE id=%s', (note['id'],))
+        note.pending = 0
