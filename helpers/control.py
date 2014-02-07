@@ -155,7 +155,7 @@ def handle_show(handler, cmd, send):
         else:
             send("No quotes pending.")
     elif cmd[1] == "polls":
-        polls = db.execute('SELECT pid,question,submitter FROM polls WHERE accepted=0').fetchall()
+        polls = db.execute('SELECT id,question,submitter FROM polls WHERE accepted=0').fetchall()
         if polls:
             show_polls(polls, send)
         else:
@@ -186,7 +186,7 @@ def show_polls(polls, send):
 def show_pending(db, admins, send, ping=False):
         issues = db.execute('SELECT title,source,id FROM issues WHERE accepted=0').fetchall()
         quotes = db.execute('SELECT id,quote,nick,submitter FROM quotes WHERE approved=0').fetchall()
-        polls = db.execute('SELECT pid,question,submitter FROM polls WHERE accepted=0').fetchall()
+        polls = db.execute('SELECT id,question,submitter FROM polls WHERE accepted=0').fetchall()
         if ping and (issues or quotes or polls):
             send("%s: Items are Pending Approval" % admins)
         if issues:
@@ -258,16 +258,16 @@ def accept_poll(handler, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
     db = handler.db.get()
-    pid = int(cmd[1])
-    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=%s', (pid,)).fetchone()
+    id = int(cmd[1])
+    poll = db.execute('SELECT question,submitter FROM polls WHERE id=%s', (id,)).fetchone()
     if not poll:
         return "Not a valid poll"
-    db.execute('UPDATE polls SET accepted=1 WHERE pid=%s', (pid,))
+    db.execute('UPDATE polls SET accepted=1 WHERE id=%s', (id,))
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = poll['submitter']
-    msg = "Poll #%d accepted: %s , Submitted by %s" % (pid, poll['question'], nick)
+    msg = "Poll #%d accepted: %s , Submitted by %s" % (id, poll['question'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     return ""
@@ -330,18 +330,18 @@ def reject_poll(handler, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
     db = handler.db.get()
-    pid = int(cmd[1])
-    poll = db.execute('SELECT question,submitter FROM polls WHERE pid=%s', (pid,)).fetchone()
+    id = int(cmd[1])
+    poll = db.execute('SELECT question,submitter FROM polls WHERE id=%s', (id,)).fetchone()
     if not poll:
         return "Not a valid poll"
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = poll['submitter']
-    msg = "Poll #%d rejected: %s, Submitted by %s" % (pid, poll['question'], nick)
+    msg = "Poll #%d rejected: %s, Submitted by %s" % (id, poll['question'], nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
-    db.execute('DELETE FROM polls WHERE pid=%s', (pid,))
+    db.execute('DELETE FROM polls WHERE id=%s', (id,))
     return ""
 
 

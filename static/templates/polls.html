@@ -7,20 +7,20 @@
         <th>Question</th>
         <th>Responses</th>
     </tr>
-    {% for pid,question in polls.items() %}
+    {% for id,question in polls.items() %}
     <tr>
-        <td>{{ pid|trim }}</td>
+        <td>{{ id|trim }}</td>
         <td>{{ question|trim }}</td>
         <td>
             <table>
-                {% for response,votes in responses[pid].items() %}
+                {% for response,votes in responses[id].items() %}
                 <tr>
                     <td>{{ response|trim }}</td>
                     <td>{{ votes|join(', ') }}</td>
                 </tr>
                 {% endfor %}
             </table>
-            {{ winners[pid]|trim }}
+            {{ winners[id]|trim }}
         </td>
     </tr>
     {% endfor %}

@@ -53,30 +53,30 @@ def get_urls(cursor):
 
 
 def get_polls(cursor):
-    rows = cursor.execute('SELECT pid,question FROM polls WHERE deleted=0 AND active=1 ORDER BY pid').fetchall()
+    rows = cursor.execute('SELECT id,question FROM polls WHERE deleted=0 AND active=1 ORDER BY id').fetchall()
     polls = OrderedDict()
     for row in rows:
-        polls[row['pid']] = row['question']
+        polls[row['id']] = row['question']
     return polls
 
 
 def get_responses(cursor, polls):
     responses = {}
-    for pid in polls.keys():
-        responses[pid] = {}
-        rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE pid=%s', (pid,)).fetchall()
+    for id in polls.keys():
+        responses[id] = {}
+        rows = cursor.execute('SELECT response,voter FROM poll_responses WHERE id=%s', (id,)).fetchall()
         for row in rows:
-            if row['response'] not in responses[pid]:
-                responses[pid][row['response']] = []
-            responses[pid][row['response']].append(row['voter'])
+            if row['response'] not in responses[id]:
+                responses[id][row['response']] = []
+            responses[id][row['response']].append(row['voter'])
     return responses
 
 
 def get_winners(polls, responses):
     winners = {}
-    for pid in polls.keys():
+    for id in polls.keys():
         ranking = {}
-        for response, voters in responses[pid].items():
+        for response, voters in responses[id].items():
             num = len(voters)
             if num not in ranking:
                 ranking[num] = []
@@ -84,11 +84,11 @@ def get_winners(polls, responses):
         if ranking:
             high = max(ranking)
             if len(ranking[high]) == 1:
-                winners[pid] = "The winner is %s with %d votes." % (ranking[high][0], high)
+                winners[id] = "The winner is %s with %d votes." % (ranking[high][0], high)
             else:
-                winners[pid] = "Tie between %s with %d votes." % (", ".join(ranking[high]), high)
+                winners[id] = "Tie between %s with %d votes." % (", ".join(ranking[high]), high)
         else:
-            winners[pid] = ""
+            winners[id] = ""
     return winners
 
 

@@ -17,87 +17,100 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import MetaData, Table, Column, String, Float, Integer
+from sqlalchemy import Column, String, Float, Integer
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 
 class Base(object):
+    id = Column(Integer, primary_key=True)
+
     @declared_attr
     def __tablename__(self):
         return self.__name__.lower()
 
+
 Base = declarative_base(cls=Base)
-
-
-class Log(Base):
-    id = Column(Integer, primary_key=True)
 
 
 def setup_db(session):
     """ Sets up the database.
     """
+    Base.metadata.create_all(session.connection())
 
-    #Base.metadata.create_all(session.connection())
-    metadata = MetaData()
-    Table('log', metadata,
-          Column('source', String),
-          Column('target', String),
-          Column('operator', Integer),
-          Column('msg', String),
-          Column('type', String),
-          Column('time', Float))
-    Table('quotes', metadata,
-          Column('quote', String),
-          Column('nick', String),
-          Column('submitter', String),
-          Column('approved', Integer, default=0),
-          Column('id', Integer, primary_key=True))
-    Table('polls', metadata,
-          Column('question', String),
-          Column('active', Integer, default=1),
-          Column('deleted', Integer, default=0),
-          Column('accepted', Integer, default=0),
-          Column('submitter', String),
-          Column('pid', Integer, primary_key=True))
-    Table('poll_responses', metadata,
-          Column('pid', Integer),
-          Column('response', String),
-          Column('voter', String))
-    Table('weather_prefs', metadata,
-          Column('nick', String, unique=True),
-          Column('location', String))
-    Table('scores', metadata,
-          Column('nick', String, unique=True),
-          Column('score', Integer),
-          Column('id', Integer, primary_key=True))
-    Table('commands', metadata,
-          Column('nick', String),
-          Column('command', String),
-          Column('channel', String))
-    Table('stopwatches', metadata,
-          Column('id', Integer, primary_key=True),
-          Column('active', Integer, default=1),
-          Column('time', Integer),
-          Column('elapsed', Float, default=0))
-    Table('urls', metadata,
-          Column('url', String),
-          Column('title', String),
-          Column('nick', String),
-          Column('time', Float))
-    Table('issues', metadata,
-          Column('title', String),
-          Column('source', String),
-          Column('accepted', Integer, default=0),
-          Column('id', Integer, primary_key=True))
-    Table('notes', metadata,
-          Column('note', String),
-          Column('submitter', String),
-          Column('nick', String),
-          Column('time', Float),
-          Column('pending', Integer, default=1),
-          Column('id', Integer, primary_key=True))
-    Table('nicks', metadata,
-          Column('old', String),
-          Column('new', String),
-          Column('time', Float))
-    metadata.create_all(session.connection())
+
+class Log(Base):
+    source = Column(String)
+    target = Column(String)
+    operator = Column(Integer)
+    msg = Column(String)
+    type = Column(String)
+    time = Column(Float)
+
+
+class Quotes(Base):
+    quote = Column(String)
+    nick = Column(String)
+    submitter = Column(String)
+    approved = Column(Integer, default=0)
+
+
+class Polls(Base):
+    question = Column(String)
+    active = Column(Integer, default=1)
+    deleted = Column(Integer, default=0)
+    accepted = Column(Integer, default=0)
+    submitter = Column(String)
+
+
+class Poll_responses(Base):
+    response = Column(String)
+    voter = Column(String)
+
+
+class Weather_prefs(Base):
+    nick = Column(String, unique=True)
+    location = Column(String)
+
+
+class Scores(Base):
+    nick = Column(String, unique=True)
+    score = Column(Integer)
+
+
+class Commands(Base):
+    nick = Column(String)
+    command = Column(String)
+    channel = Column(String)
+
+
+class Stopwatches(Base):
+    active = Column(Integer, default=1)
+    time = Column(Integer)
+    elapsed = Column(Float, default=0)
+
+
+class Urls(Base):
+    url = Column(String)
+    title = Column(String)
+    nick = Column(String)
+    time = Column(Float)
+
+
+class Issues(Base):
+    title = Column(String)
+    source = Column(String)
+    accepted = Column(Integer, default=0)
+
+
+class Notes(Base):
+    note = Column(String)
+    submitter = Column(String)
+    nick = Column(String)
+    time = Column(Float)
+    pending = Column(Integer, default=1)
+
+
+class Nicks(Base):
+    old = Column(String)
+    new = Column(String)
+    time = Column(Float)
