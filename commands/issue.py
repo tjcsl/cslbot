@@ -17,6 +17,7 @@
 import json
 from requests import post, get
 from random import choice
+from helpers.orm import Issues
 from helpers.command import Command
 
 
@@ -65,7 +66,8 @@ def cmd(send, msg, args):
         url = create_issue(msg, args['source'], repo, apikey)
         send("Issue created -- %s -- %s" % (url, msg))
     else:
-        conn = args['db'].get()
-        key = conn.execute('INSERT INTO issues(title, source) VALUES(%s,%s) RETURNING id', (msg, args['source'])).scalar()
-        send("New Issue: #%d -- %s, Submitted by %s" % (key, msg, args['nick']), target=args['config']['core']['ctrlchan'])
+        row = Issues(title=msg, source=args['source'])
+        args['db'].add(row)
+        args['db'].flush()
+        send("New Issue: #%d -- %s, Submitted by %s" % (row.id, msg, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])

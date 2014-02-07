@@ -15,12 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from helpers.orm import Scores
 from helpers.command import Command
 
 
 def get_scores(cursor):
-    rows = cursor.execute('SELECT nick,score FROM scores').fetchall()
-    return {row['nick']: row['score'] for row in rows}
+    rows = cursor.query(Scores).all()
+    return {row.nick: row.score for row in rows}
 
 
 @Command(['bc', 'math'], ['db'])
@@ -31,7 +32,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
-    cursor = args['db'].get()
+    cursor = args['db']
     scores = get_scores(cursor)
     for word in msg.split():
         if word in scores:

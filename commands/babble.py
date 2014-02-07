@@ -16,7 +16,10 @@
 
 import re
 from random import choice
+from sqlalchemy import or_
+from sqlalchemy.sql.expression import func
 from helpers.command import Command
+from helpers.orm import Log
 
 
 # Make the generated messages look better.
@@ -44,8 +47,9 @@ def weighted_rand(d):
 
 def get_messages(cursor, speaker, cmdchar):
     location = 'target' if speaker.startswith('#') else 'source'
-    return cursor.execute("SELECT msg FROM log WHERE (type='pubmsg' OR type='privmsg') AND UPPER(" + location + ")=UPPER(%s) AND msg NOT LIKE %s||'%%' AND msg NOT LIKE '%%:%%' ORDER BY RANDOM()",
-                          (speaker, cmdchar)).fetchall()
+    #FIXME: is python random sort faster?
+    return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg')).filter(getattr(Log, location).ilike(speaker)) \
+        .filter(~Log.msg.startswith(cmdchar)).filter(~Log.msg.like('%:%')).order_by(func.random()).all()
 
 
 #FIXME: make sphinx happy
@@ -63,7 +67,7 @@ def build_markov(messages, speaker):
     if messages is None or len(messages) == 0:
         return markov
     for msg in messages:
-        msg = clean_msg(msg['msg'])
+        msg = clean_msg(msg.msg)
         for i in range(1, len(msg)):
             if msg[i - 1] not in markov:
                 markov[msg[i - 1]] = {}
@@ -93,7 +97,7 @@ def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (nick)
     """
-    cursor = args['db'].get()
+    cursor = args['db']
     speaker = msg.split()[0] if msg else args['config']['core']['channel']
     messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'])
     markov = build_markov(messages, speaker)
