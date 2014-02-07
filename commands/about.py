@@ -22,4 +22,4 @@ def cmd(send, msg, args):
     """Returns info about the bot.
     Syntax: !about
     """
-    send("See https://github.com/%s Developed by fwilson, pfoley, csssuf, sdamashek, bob_twinkles, and skasturi. Type %shelp for a list of commands." % (args['config']['api']['githubrepo'], args['config']['core']['cmdchar']))
+    send("See https://github.com/%s Developed by the TJHSST CSL. Type %shelp for a list of commands." % (args['config']['api']['githubrepo'], args['config']['core']['cmdchar']))
