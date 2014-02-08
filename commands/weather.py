@@ -16,11 +16,12 @@
 
 import re
 from requests import get
+from helpers.orm import Weather_prefs
 from helpers.command import Command
 
 
-def get_default(nick, cursor, send):
-    location = cursor.execute('SELECT location FROM weather_prefs WHERE nick=%s', (nick,)).scalar()
+def get_default(nick, session, send):
+    location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
     if location is None:
         # default to TJHSST
         location = '22312'
@@ -28,40 +29,35 @@ def get_default(nick, cursor, send):
     return location
 
 
-def set_default(nick, location, cursor, send, apikey):
+def valid_location(location, apikey):
+    data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, location)).json()
+    return 'current_observation' in data
+
+
+def set_default(nick, location, session, send, apikey):
     """Sets nick's default location to location."""
-    if get_weather(location, send, apikey):
+    if valid_location(location, apikey):
         send("Setting default location")
-        #TEMP HACK
-        cursor.execute("DELETE FROM weather_prefs WHERE nick=%s", (nick,))
-        cursor.execute('INSERT INTO weather_prefs(nick,location) VALUES(%s,%s)', (nick, location))
+        default = session.query(Weather_prefs).filter(Weather_prefs.nick == nick).first()
+        if default is None:
+            default = Weather_prefs(nick=nick, location=location)
+            session.add(default)
+        else:
+            default.location = location
+    else:
+        send("Invalid or Ambiguous Location")
 
 
 def get_weather(msg, send, apikey):
-    if msg[0] == "-":
+    if msg.startswith("-"):
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg[1:])).json()
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
             return False
-        data = {
-            'display_location': {
-                'full': msg[1:]
-            },
-            'weather': 'Sunny',
-            'temp_f': '94.8',
-            'relative_humidity': '60%',
-            'pressure_in': '29.98',
-            'wind_string': 'Calm'
-        }
-        forecastdata = {
-            'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
-            'high': {
-                'fahrenheit': '-3841'
-            },
-            'low': {
-                'fahrenheit': '-6666'
-            }
-        }
+        data = {'display_location': {'full': msg[1:]},
+                'weather': 'Sunny', 'temp_f': '94.8', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
+        forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
+                        'high': {'fahrenheit': '-3841'}, 'low': {'fahrenheit': '-6666'}}
     else:
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg)).json()
         forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, msg)).json()
@@ -92,13 +88,12 @@ def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
     """
-    cursor = args['db'].get()
     apikey = args['config']['api']['weatherapikey']
     match = re.match("set (.*)", msg)
     if match:
-        set_default(args['nick'], match.group(1), cursor, send, apikey)
+        set_default(args['nick'], match.group(1), args['db'], send, apikey)
         return
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not msg:
-        msg = get_default(nick, cursor, send)
+        msg = get_default(nick, args['db'], send)
     get_weather(msg, send, apikey)
