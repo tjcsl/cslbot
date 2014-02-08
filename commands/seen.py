@@ -16,11 +16,12 @@
 
 import time
 from datetime import timedelta
+from helpers.orm import Log
 from helpers.command import Command
 
 
 def get_last(cursor, nick):
-    return cursor.execute('SELECT msg,time,type FROM log WHERE UPPER(source)=UPPER(%s) ORDER BY time DESC LIMIT 1', (nick,)).fetchone()
+    return cursor.query(Log).filter(Log.source.ilike(nick)).filter(Log.type != 'join').order_by(Log.time.desc()).first()
 
 
 @Command('seen', ['db'])
@@ -31,28 +32,25 @@ def cmd(send, msg, args):
     if not msg:
         send("Seen who?")
         return
-    cursor = args['db'].get()
-    last = get_last(cursor, msg)
+    last = get_last(args['db'], msg)
     if last is None:
         send("%s has never shown his face." % msg)
         return
-    elapsed = time.time() - last['time']
+    elapsed = time.time() - last.time
     delta = timedelta(seconds=int(elapsed))
     output = "%s was last seen %s ago " % (msg, delta)
-    if last['type'] == 'pubmsg' or last['type'] == 'privmsg':
-        output += 'saying "%s"' % last['msg']
-    elif last['type'] == 'action':
-        output += 'doing "%s"' % last['msg']
-    elif last['type'] == 'part':
-        output += 'leaving and saying "%s"' % last['msg']
-    elif last['type'] == 'join':
-        output += 'joining'
-    elif last['type'] == 'nick':
-        output += 'nicking to %s' % last['msg']
-    elif last['type'] == 'quit':
-        output += 'quiting and saying "%s"' % last['msg']
-    elif last['type'] == 'kick':
-        output += 'kicking %s for "%s"' % last['msg'].split(',')
+    if last.type == 'pubmsg' or last.type == 'privmsg':
+        output += 'saying "%s"' % last.msg
+    elif last.type == 'action':
+        output += 'doing "%s"' % last.msg
+    elif last.type == 'part':
+        output += 'leaving and saying "%s"' % last.msg
+    elif last.type == 'nick':
+        output += 'nicking to %s' % last.msg
+    elif last.type == 'quit':
+        output += 'quiting and saying "%s"' % last.msg
+    elif last.type == 'kick':
+        output += 'kicking %s for "%s"' % last.msg.split(',')
     else:
         raise Exception("Invalid type.")
     send(output)

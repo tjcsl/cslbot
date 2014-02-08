@@ -15,15 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+from helpers.orm import Log
 from helpers.command import Command
 
 
 def get_log(conn, user, target):
+    query = conn.query(Log.msg).filter(Log.type == 'pubmsg').filter(Log.target == target).order_by(Log.time.desc())
     if user is None:
-        cursor = conn.execute("SELECT msg FROM log WHERE (target=%s AND type='pubmsg') ORDER BY time DESC OFFSET 1", (target,))
+        return query.offset(1).limit(1).scalar()
     else:
-        cursor = conn.execute("SELECT msg FROM log WHERE (source=%s AND target=%s AND type='pubmsg') ORDER BY time DESC", (user, target))
-    return cursor.scalar()
+        return query.filter(Log.source == user).limit(1).scalar()
 
 
 @Command(['reverse', 'sdamashek'], ['db', 'target'])
@@ -31,7 +32,7 @@ def cmd(send, msg, args):
     """Reverses a message.
     Syntax: !reverse --<nick>
     """
-    conn = args['db'].get()
+    conn = args['db']
     user = msg[2:] if re.search("^--", msg) else None
     if msg and not user:
         send(msg[::-1].strip())
@@ -40,4 +41,4 @@ def cmd(send, msg, args):
     if user and not log:
         send("Couldn't find a message from %s :(" % user)
     else:
-        send(log['msg'][::-1])
+        send(log[::-1])
