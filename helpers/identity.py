@@ -16,51 +16,51 @@
 
 from time import time
 from datetime import datetime, timedelta
-from operator import itemgetter
+from .orm import Nicks
 
 
 def handle_nick(handler, e):
     old, new = e.source.nick, e.target
-    cursor = handler.db.get()
-    cursor.execute('INSERT INTO nicks VALUES(%s,%s,%s)', (old, new, time()))
+    session = handler.db.get()
+    session.add(Nicks(old=old, new=new, time=time()))
     if handler.config['feature'].getboolean('nickkick'):
-        return do_kick(handler, cursor, new)
+        return do_kick(handler, session, new)
     else:
         return False
 
 
-def get_mapping(cursor, nick, limit):
+def get_mapping(session, nick, limit):
     mapping = {}
     done = set()
     todo = set([nick])
     while todo:
         curr = todo.pop()
-        prev = cursor.execute('SELECT old,time FROM nicks WHERE new=%s AND time>=%s ORDER BY time', (curr, limit)).fetchall()
+        prev = session.query(Nicks).filter(Nicks.new == curr, Nicks.time >= limit).order_by(Nicks.time).all()
         done.add(curr)
         for x in prev:
-            if x['old'] not in done:
-                todo.add(x['old'])
-        mapping[curr] = [dict(x) for x in prev]
+            if x.old not in done:
+                todo.add(x.old)
+        mapping[curr] = prev
     return mapping
 
 
-def get_chain(cursor, nick, limit=0):
+def get_chain(session, nick, limit=0):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
-    mapping = get_mapping(cursor, nick, limit)
+    mapping = get_mapping(session, nick, limit)
     chain = [nick]
     curr = mapping[nick]
     while curr:
-        last = sorted(curr, key=itemgetter('time'))
+        last = sorted(curr, key=lambda x: x.time)
         if last:
-            last = last[0]['old']
+            last = last[0].old
             curr = None if last in chain else mapping[last]
             chain.append(last)
     return list(reversed(chain))
 
 
-def do_kick(handler, cursor, nick):
+def do_kick(handler, session, nick):
     # only go 5 minutes back for identity crisis detection.
     limit = datetime.now() - timedelta(minutes=5)
-    chain = get_chain(cursor, nick, limit.timestamp())
+    chain = get_chain(session, nick, limit.timestamp())
     # more than 2 nick changes in 5 minutes.
     return True if len(chain) > 3 else False

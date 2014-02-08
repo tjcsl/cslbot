@@ -26,6 +26,5 @@ def cmd(send, msg, args):
     if not msg:
         send("Which nick?")
         return
-    cursor = args['db'].get()
-    chain = get_chain(cursor, msg)
+    chain = get_chain(args['db'], msg)
     send(" -> ".join(chain))
