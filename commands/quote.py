@@ -16,76 +16,81 @@
 
 from random import choice
 from helpers.command import Command
-from helpers.misc import check_quote_exists_by_id
+from helpers.orm import Quotes
 
 
-def do_get_quote(cursor, qid=None):
+def do_get_quote(session, qid=None):
     if qid is None:
-        quotes = cursor.execute('SELECT quote,nick FROM quotes WHERE approved=1').fetchall()
+        quotes = session.query(Quotes).filter(Quotes.approved == 1).all()
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
-        return "%s -- %s" % (quote['quote'], quote['nick'])
-    elif check_quote_exists_by_id(cursor, qid):
-        quote = cursor.execute('SELECT nick,quote,approved FROM quotes WHERE id=%s', (qid,)).fetchone()
-        if int(quote['approved']) == 0:
+        return "%s -- %s" % (quote.quote, quote.nick)
+    else:
+        quote = session.query(Quotes).get(qid)
+        if quote is None:
+            return "That quote doesn't exist!"
+        if quote.approved == 0:
             return "That quote hasn't been approved yet."
         else:
-            return "%s -- %s" % (quote['quote'], quote['nick'])
-    else:
-        return "That quote doesn't exist!"
+            return "%s -- %s" % (quote.quote, quote.nick)
 
 
-def get_quotes_nick(cursor, nick):
-    rows = cursor.execute('SELECT quote FROM quotes WHERE nick=%s AND approved=1', (nick,)).fetchall()
-    if not rows:
+def get_quotes_nick(session, nick):
+    rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.approved == 1).all()
+    if rows is None:
         return "No quotes for %s" % nick
-    quotes = [row['quote'] for row in rows]
-    return "%s -- %s" % (choice(quotes), nick)
+    return "%s -- %s" % (choice(rows).quote, nick)
 
 
-def do_add_quote(cmd, conn, isadmin, send, args):
+def do_add_quote(cmd, session, isadmin, send, args):
+    #FIXME: have better parsing.
     if '--' not in cmd:
         send("To add a quote, it must be in the format <quote> -- <nick>")
         return
     quote = cmd.split('--')
-    #strip off excess leading/ending spaces
+    # strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
-    qid = conn.execute('INSERT INTO quotes(quote, nick, submitter) VALUES(%s,%s,%s) RETURNING id', (quote[0], quote[1], args['nick'])).scalar()
+    row = Quotes(quote=quote[0], nick=quote[1], submitter=args['nick'])
+    session.add(row)
+    session.flush()
     if isadmin:
-        conn.execute('UPDATE quotes SET approved=1 WHERE id=%s', (qid,))
-        send("Added quote %d!" % qid)
+        row.approved = 1
+        send("Added quote %d!" % row.id)
     else:
         send("Quote submitted for approval.", target=args['nick'])
-        send("New Quote: #%d %s -- %s, Submitted by %s" % (qid, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
+        send("New Quote: #%d %s -- %s, Submitted by %s" % (row.id, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
 
 
-def do_update_quote(cursor, qid, msg):
+def do_update_quote(session, qid, msg):
     if not qid.isdigit():
         return "The first argument to !quote edit must be a number!"
     if '--' not in msg:
         return "To add a quote, it must be in the format <quote> -- <nick>"
     quote = msg.split('--')
-    #strip off excess leading/trailing spaces
+    # strip off excess leading/trailing spaces
     quote = [x.strip() for x in quote]
-    if not check_quote_exists_by_id(cursor, qid):
+    row = session.query(Quotes).get(qid)
+    if row is None:
         return "That quote doesn't exist!"
-    cursor.execute('UPDATE quotes SET quote=%s,nick=%s WHERE id=%s', (quote[0], quote[1], qid))
+    row.update(quote=quote[0], nick=quote[1])
     return "Updated quote!"
 
 
-def do_list_quotes(cursor, quote_url):
-    num = cursor.execute("SELECT COUNT(1) FROM quotes WHERE approved=1").scalar()
+def do_list_quotes(session, quote_url):
+    num = session.query(Quotes).filter(Quotes.approved == 1).count()
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 
-def do_delete_quote(cursor, qid):
+def do_delete_quote(session, qid):
     if not qid.isdigit():
         return "Second argument to !quote remove must be a number!"
     qid = int(qid)
-    if not check_quote_exists_by_id(cursor, qid):
+    quote = session.query(Quotes).get(qid)
+    if quote is None:
         return "That quote doesn't exist!"
-    cursor.execute("DELETE FROM quotes WHERE id=%s", (qid,))
+    del quote
+    #session.flush()
     return 'Deleted quote with ID %d' % qid
 
 
@@ -94,28 +99,28 @@ def cmd(send, msg, args):
     """Handles quotes.
     Syntax: !quote (number|nick), !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
     """
-    cursor = args['db'].get()
+    session = args['db']
     cmd = msg.split()
     isadmin = args['is_admin'](args['nick'])
 
     if not cmd:
-        send(do_get_quote(cursor))
+        send(do_get_quote(session))
     elif cmd[0].isdigit():
-        send(do_get_quote(cursor, int(cmd[0])))
+        send(do_get_quote(session, int(cmd[0])))
     elif cmd[0] == 'add':
         if args['type'] == 'privmsg':
             send("You want everybody to know about your witty sayings, right?")
         else:
             msg = " ".join(cmd[1:])
-            do_add_quote(msg, cursor, isadmin, send, args)
+            do_add_quote(msg, session, isadmin, send, args)
     elif cmd[0] == 'list':
-        send(do_list_quotes(cursor, args['config']['core']['url']))
+        send(do_list_quotes(session, args['config']['core']['url']))
     elif cmd[0] == 'remove' or cmd[0] == 'delete':
         if isadmin:
             if len(cmd) == 1:
                 send("Which quote?")
             else:
-                send(do_delete_quote(cursor, cmd[1]))
+                send(do_delete_quote(session, cmd[1]))
         else:
             send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
     elif cmd[0] == 'edit':
@@ -123,8 +128,8 @@ def cmd(send, msg, args):
             send("Which quote?")
         elif isadmin:
             msg = " ".join(cmd[2:])
-            send(do_update_quote(cursor, cmd[1], msg))
+            send(do_update_quote(session, cmd[1], msg))
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:
-        send(get_quotes_nick(cursor, msg))
+        send(get_quotes_nick(session, msg))

@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 def get_log(conn, user, target):
-    query = conn.query(Log.msg).filter(Log.type == 'pubmsg').filter(Log.target == target).order_by(Log.time.desc())
+    query = conn.query(Log.msg).filter(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc())
     if user is None:
         return query.offset(1).limit(1).scalar()
     else:

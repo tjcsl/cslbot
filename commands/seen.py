@@ -21,7 +21,7 @@ from helpers.command import Command
 
 
 def get_last(cursor, nick):
-    return cursor.query(Log).filter(Log.source.ilike(nick)).filter(Log.type != 'join').order_by(Log.time.desc()).first()
+    return cursor.query(Log).filter(Log.source.ilike(nick), Log.type != 'join').order_by(Log.time.desc()).first()
 
 
 @Command('seen', ['db'])

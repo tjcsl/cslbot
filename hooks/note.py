@@ -22,7 +22,7 @@ from helpers.orm import Notes
 @Hook(['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
     nick = args['nick']
-    notes = args['db'].query(Notes).filter(Notes.nick == nick).filter(Notes.pending == 1).order_by(Notes.time.asc()).all()
+    notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:
         time = strftime('%Y-%m-%d %H:%M:%S', localtime(note.time))
         send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))

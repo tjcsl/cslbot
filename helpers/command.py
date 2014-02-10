@@ -90,7 +90,7 @@ def check_command(cursor, nick, msg, target):
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're currently executing, so get the penultimate one.
-    last = cursor.query(Log).filter(Log.target == target).filter(Log.type == 'pubmsg').filter(Log.time >= limit.timestamp()).order_by(Log.time.desc()).offset(1).first()
+    last = cursor.query(Log).filter(Log.target == target, Log.type == 'pubmsg', Log.time >= limit.timestamp()).order_by(Log.time.desc()).offset(1).first()
     if last:
         return last.msg == msg and last.source != nick
     else:

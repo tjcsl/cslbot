@@ -24,11 +24,6 @@ import subprocess
 _pinglist = {}
 
 
-def check_quote_exists_by_id(cursor, qid):
-    quote = cursor.execute("SELECT COUNT(1) FROM quotes WHERE id=%s", (qid,)).scalar()
-    return quote is not None
-
-
 def check_exists(subreddit):
     req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
     return req.status_code == 200
