@@ -36,6 +36,8 @@ def handle(send, msg, args):
         THRESHOLD = 0.65
         text = "shutting caps lock off"
         upper = [i for i in msg if i in string.ascii_uppercase]
+        if len(msg) == 0:
+            return
         upper_ratio = len(upper) / len(msg)
         if args['target'] != 'private':
             if upper_ratio > THRESHOLD and len(msg) > 20:
