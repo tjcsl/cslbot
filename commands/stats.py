@@ -16,31 +16,32 @@
 
 import re
 from random import choice
+from helpers.orm import Commands
 from helpers.command import Command, is_registered
 
 
-def get_commands(cursor):
-    rows = cursor.execute('SELECT DISTINCT command FROM commands').fetchall()
-    return [row['command'] for row in rows]
+def get_commands(session):
+    rows = session.query(Commands.command).distinct().all()
+    return [row.command for row in rows]
 
 
-def get_nicks(cursor, command):
-    rows = cursor.execute('SELECT DISTINCT nick FROM commands WHERE command=%s', (command,)).fetchall()
-    return [row['nick'] for row in rows]
+def get_nicks(session, command):
+    rows = session.query(Commands.nick).filter(Commands.command == command).distinct().all()
+    return [row.nick for row in rows]
 
 
-def get_command_totals(cursor, commands):
+def get_command_totals(session, commands):
     totals = {}
     for cmd in commands:
-        totals[cmd] = cursor.execute('SELECT COUNT(1) FROM commands WHERE command=%s', (cmd,)).scalar()
+        totals[cmd] = session.query(Commands).filter(Commands.command == cmd).count()
     return totals
 
 
-def get_nick_totals(cursor, commands, name=None):
+def get_nick_totals(session, commands, name=None):
     totals = {}
     if name is not None:
-        for nick in get_nicks(cursor, name):
-            totals[nick] = cursor.execute('SELECT COUNT(1) FROM commands WHERE command=%s AND nick=%s', (name, nick)).scalar()
+        for nick in get_nicks(session, name):
+            totals[nick] = session.query(Commands).filter(Commands.command == name, Commands.nick == nick).count()
     return totals
 
 
@@ -49,11 +50,11 @@ def cmd(send, msg, args):
     """Gets stats.
     Syntax: !stats <--high|--low|command>
     """
-    cursor = args['db'].get()
-    commands = get_commands(cursor)
-    totals = get_command_totals(cursor, commands)
+    session = args['db']
+    commands = get_commands(session)
+    totals = get_command_totals(session, commands)
     if is_registered(msg):
-        nicktotals = get_nick_totals(cursor, commands, msg)
+        nicktotals = get_nick_totals(session, commands, msg)
         maxuser = sorted(nicktotals, key=nicktotals.get)
         if not maxuser:
             send("Nobody has used that command.")
