@@ -18,7 +18,7 @@
 # USA.
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker, scoped_session
 from time import time
 from atexit import register
 from .orm import setup_db, Log
@@ -27,7 +27,7 @@ from .orm import setup_db, Log
 def get_session(config):
     #FIXME: add support for sqlite connection string
     engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
-    return Session(bind=engine)
+    return scoped_session(sessionmaker(bind=engine))
 
 
 class Sql():
@@ -56,4 +56,4 @@ class Sql():
         return self.session
 
     def shutdown(self):
-        self.session.close()
+        self.session.remove()
