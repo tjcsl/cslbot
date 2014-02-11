@@ -20,19 +20,17 @@ from configparser import ConfigParser
 from time import strftime, localtime
 from os.path import dirname, exists
 from os import mkdir
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sys import path
+
+#HACK: allow sibling imports
+path.append(dirname(__file__) + '/..')
+
+from helpers.orm import Log
+from helpers.sql import get_session
 
 logs = {}
 
 day = False
-
-
-#FIXME: don't duplicate helpers/sql.py
-def get_session(config):
-    #FIXME: add support for sqlite connection string
-    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
-    return Session(bind=engine)
 
 
 def write_log(name, outdir, msg):
@@ -47,7 +45,7 @@ def write_log(name, outdir, msg):
 
 def check_day(row, outdir, name):
     global day
-    time = localtime(row['time'])
+    time = localtime(row.time)
     rowday = strftime('%d', time)
     if not day:
         day = rowday
@@ -59,42 +57,41 @@ def check_day(row, outdir, name):
 
 
 def gen_log(row):
-    logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row['time']))
-    nick = row['source'].split('!')[0]
-    if row['type'] == 'join':
-        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row['source'], row['msg'])
-    elif row['type'] == 'part':
-        log = '%s <-- %s (%s) has left %s\n' % (logtime, nick, row['source'], row['msg'])
-    elif row['type'] == 'quit':
-        log = '%s <-- %s (%s) has quit (%s)\n' % (logtime, nick, row['source'], row['msg'])
-    elif row['type'] == 'kick':
-        args = row['msg'].split(',')
+    logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
+    nick = row.source.split('!')[0]
+    if row.type == 'join':
+        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row.source, row.msg)
+    elif row.type == 'part':
+        log = '%s <-- %s (%s) has left %s\n' % (logtime, nick, row.source, row.msg)
+    elif row.type == 'quit':
+        log = '%s <-- %s (%s) has quit (%s)\n' % (logtime, nick, row.source, row.msg)
+    elif row.type == 'kick':
+        args = row.msg.split(',')
         log = '%s <-- %s has kicked %s (%s)\n' % (logtime, nick, args[0], args[1])
-    elif row['type'] == 'action':
-        log = '%s * %s %s\n' % (logtime, nick, row['msg'])
-    elif row['type'] == 'mode':
-        log = '%s Mode %s [%s] by %s\n' % (logtime, row['target'], row['msg'], nick)
-    elif row['type'] == 'nick':
-        log = '%s -- %s is now know as %s\n' % (logtime, nick, row['msg'])
-    elif row['type'] == 'pubnotice':
-        log = '%s Notice(%s): %s\n' % (logtime, nick, row['msg'])
-    elif row['type'] == 'privmsg' or row['type'] == 'pubmsg':
-        if bool(row['flags'] & 1):
+    elif row.type == 'action':
+        log = '%s * %s %s\n' % (logtime, nick, row.msg)
+    elif row.type == 'mode':
+        log = '%s Mode %s [%s] by %s\n' % (logtime, row.target, row.msg, nick)
+    elif row.type == 'nick':
+        log = '%s -- %s is now know as %s\n' % (logtime, nick, row.msg)
+    elif row.type == 'pubnotice':
+        log = '%s Notice(%s): %s\n' % (logtime, nick, row.msg)
+    elif row.type == 'privmsg' or row.type == 'pubmsg':
+        if bool(row.flags & 1):
             nick = '@' + nick
-        if bool(row['flags'] & 2):
+        if bool(row.flags & 2):
             nick = '+' + nick
-        log = '%s <%s> %s\n' % (logtime, nick, row['msg'])
+        log = '%s <%s> %s\n' % (logtime, nick, row.msg)
     else:
         raise Exception("Invalid type.")
     return log
 
 
 def main(config, outdir):
-    cursor = get_session(config)
-    rows = cursor.execute("SELECT * FROM log").fetchall()
-    for row in rows:
+    session = get_session(config)
+    for row in session.query(Log).all():
         check_day(row, outdir, config['core']['channel'])
-        write_log(row['target'], outdir, gen_log(row))
+        write_log(row.target, outdir, gen_log(row))
 
 
 if __name__ == '__main__':

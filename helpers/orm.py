@@ -65,6 +65,7 @@ class Polls(Base):
 class Poll_responses(Base):
     response = Column(String)
     voter = Column(String)
+    pid = Column(Integer)
 
 
 class Weather_prefs(Base):
