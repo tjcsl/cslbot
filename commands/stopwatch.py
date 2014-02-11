@@ -14,90 +14,68 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import time
+from time import time
 from datetime import timedelta
+from helpers.orm import Stopwatches
 from helpers.command import Command
 
 
-def create_sw(cursor):
-    rowid = cursor.execute("INSERT INTO stopwatches(time) VALUES(%s) RETURNING id", (time.time(),)).scalar()
-    return "Created new stopwatch with ID %d" % rowid
+def create_sw(session):
+    row = Stopwatches(time=time())
+    session.add(row)
+    session.flush()
+    return "Created new stopwatch with ID %d" % row.id
 
 
-def check_sw_valid(sw):
-    if not sw:
-        return "You need to pass a stopwatch ID"
-    if not sw.isdigit():
+def get_status(session, sw):
+    active = session.query(Stopwatches.active).get(sw).scalar()
+    if active is None:
         return "Invalid ID!"
-    return "OK"
-
-
-def get_status(cursor, sw):
-    ok = check_sw_valid(sw)
-    if ok != "OK":
-        return ok
-    active = cursor.execute("SELECT active FROM stopwatches WHERE id=%s", (int(sw[0]),)).scalar()
     return "Active" if active == 1 else "Paused"
 
 
-def get_elapsed(cursor, sw):
-    ok = check_sw_valid(sw)
-    if ok != "OK":
-        return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
-    if query_result is None:
+def get_elapsed(session, sw):
+    stopwatch = session.query(Stopwatches).get(sw)
+    if stopwatch is None:
         return "No stopwatch exists with that ID!"
-    etime = 0
-    elapsed = query_result['elapsed']
-    if query_result[2] == 1:
-        etime = time.time() - query_result[1]
-    etime += float(elapsed)
+    etime = stopwatch.elapsed
+    if stopwatch.active == 1:
+        etime = time() - stopwatch.time
     return str(timedelta(seconds=etime))
 
 
-def stop_stopwatch(cursor, sw):
-    ok = check_sw_valid(sw)
-    if ok != "OK":
-        return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
-    if query_result is None:
+def stop_stopwatch(session, sw):
+    stopwatch = session.query(Stopwatches).get(sw)
+    if stopwatch is None:
         return "No stopwatch exists with that ID!"
-    if query_result[2] != 1:
+    if stopwatch.active == 0:
         return "That stopwatch is already disabled!"
-    elapsed = query_result[0]
-    etime = time.time() - query_result[1]
-    etime += float(elapsed)
-    cursor.execute("UPDATE stopwatches SET elapsed=%s,active=0 WHERE id=%s", (etime, int(sw[0])))
+    etime = stopwatch.elapsed
+    etime = time.time() - stopwatch.time
+    stopwatch.elapsed = etime
+    stopwatch.active = 0
     return "Stopwatch stopped!"
 
 
-def stopwatch_resume(cursor, sw):
-    ok = check_sw_valid(sw)
-    if ok != "OK":
-        return ok
-    query_result = cursor.execute("SELECT elapsed,time,active FROM stopwatches WHERE id=%s", (int(sw[0]),)).fetchone()
-    if query_result is None:
+def stopwatch_resume(session, sw):
+    stopwatch = session.query(Stopwatches).get(sw)
+    if stopwatch is None:
         return "No stopwatch exists with that ID!"
-    if query_result[2] != 0:
+    if stopwatch.active == 1:
         return "That stopwatch is not paused!"
-    cursor.execute("UPDATE stopwatches SET active=1,time=%s WHERE id=%s", (time.time(), int(sw[0])))
+    stopwatch.active = 1
+    stopwatch.time = time()
     return "Stopwatch resumed!"
 
 
-def stopwatch_list(cursor, send, nick):
-    rows = cursor.execute("SELECT id,elapsed,time,active FROM stopwatches").fetchall()
-    active = []
-    paused = []
-    for row in rows:
-        if int(row['active']) == 1:
-            active.append({'elapsed': row['elapsed'], 'time': row['time'], 'id': row['id']})
-        else:
-            paused.append({'elapsed': row['elapsed'], 'time': row['time'], 'id': row['id']})
+def stopwatch_list(session, send, nick):
+    active = session.query(Stopwatches).filter(Stopwatches.active == 1).all()
+    paused = session.query(Stopwatches).filter(Stopwatches.active == 0).all()
     send("%d active and %d paused stopwatches." % (len(active), len(paused)))
     for x in active:
-        send('Active stopwatch #%d started at %d' % (x['id'], x['time']), target=nick)
+        send('Active stopwatch #%d started at %d' % (x.id, x.time), target=nick)
     for x in paused:
-        send('Paused stopwatch #%d started at %d time elapsed %d' % (x['id'], x['time'], x['elapsed']), target=nick)
+        send('Paused stopwatch #%d started at %d time elapsed %d' % (x.id, x.time, x.elapsed), target=nick)
 
 
 @Command(['stopwatch', 'sw'], ['db', 'nick'])
@@ -112,16 +90,16 @@ def cmd(send, msg, args):
     msg = msg.split()
     command = msg[0]
     msg = " ".join(msg[1:])
-    cursor = args['db'].get()
+    session = args['db']
     if command == "start":
-        send(create_sw(cursor))
+        send(create_sw(session))
     elif command == "get":
-        send("%s %s" % (get_status(cursor, msg), get_elapsed(cursor, msg)))
+        send("%s %s" % (get_status(session, msg), get_elapsed(session, msg)))
     elif command == "stop":
-        send("%s Stopped at %s" % (stop_stopwatch(cursor, msg), get_elapsed(cursor, msg)))
+        send("%s Stopped at %s" % (stop_stopwatch(session, msg), get_elapsed(session, msg)))
     elif command == "resume":
-        send(stopwatch_resume(cursor, msg))
+        send(stopwatch_resume(session, msg))
     elif command == "list":
-        stopwatch_list(cursor, send, args['nick'])
+        stopwatch_list(session, send, args['nick'])
     else:
         send("Invalid Syntax.")
