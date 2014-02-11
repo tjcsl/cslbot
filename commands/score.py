@@ -16,6 +16,7 @@
 
 import re
 from random import randint
+from helpers.orm import Scores
 from helpers.command import Command
 
 
@@ -24,19 +25,19 @@ def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
     """
-    cursor = args['db'].get()
+    session = args['db']
     match = re.match('--(.+)', msg)
     if match:
         if match.group(1) == 'high':
-            data = cursor.execute("SELECT nick,score FROM scores ORDER BY score DESC LIMIT 3").fetchall()
+            data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
             send('High Scores:')
             for x in data:
-                send("%s: %s" % (x['nick'], x['score']))
+                send("%s: %s" % (x.nick, x.score))
         elif match.group(1) == 'low':
-            data = cursor.execute("SELECT nick,score FROM scores ORDER BY score LIMIT 3").fetchall()
+            data = session.query(Scores).order_by(Scores.score).limit(3).all()
             send('Low Scores:')
             for x in data:
-                send("%s: %s" % (x['nick'], x['score']))
+                send("%s: %s" % (x.nick, x.score))
         else:
             send("%s is not a valid flag" % match.group(1))
         return
@@ -47,7 +48,7 @@ def cmd(send, msg, args):
             if name == 'c':
                 send("We all know you love C better than anything else, so why rub it in?")
                 return
-            score = cursor.execute("SELECT score FROM scores WHERE nick=%s", (name,)).scalar()
+            score = session.query(Scores).filter(Scores.nick == name).scalar()
             if score is not None:
                 if name == args['botnick'].lower():
                     output = 'has %s points! :)' % score
@@ -59,10 +60,10 @@ def cmd(send, msg, args):
     elif msg:
         send("Invalid nick")
     else:
-        count = cursor.execute("SELECT COUNT(1) FROM scores").scalar()
-        if count is None:
+        count = session.query(Scores).count()
+        if count == 0:
             send("Nobody cares about anything =(")
         else:
             randid = randint(1, count)
-            query = cursor.execute("SELECT nick,score FROM scores WHERE id=%s", (randid,)).fetchone()
-            send("%s has %i points!" % tuple(query))
+            query = session.query(Scores).get(randid)
+            send("%s has %i points!" % (query.nick, query.score))
