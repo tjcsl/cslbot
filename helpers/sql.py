@@ -51,7 +51,6 @@ class Sql():
         db = self.get()
         db.execute('INSERT INTO log VALUES(%s,%s,%s,%s,%s,%s)',
                    (source, target, flags, msg, msg_type, time()))
-        db.commit()
 
     def get(self):
         #FIXME: don't use raw sql.
