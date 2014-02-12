@@ -49,7 +49,6 @@ def cmd(send, msg, args):
                 return
             score = cursor.execute("SELECT score FROM scores WHERE nick=%s", (name,)).scalar()
             if score is not None:
-                score = score[0]
                 if name == args['botnick'].lower():
                     output = 'has %s points! :)' % score
                     send(output, 'action')
