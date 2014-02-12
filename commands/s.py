@@ -72,7 +72,6 @@ def cmd(send, msg, args):
     log = get_log(args['db'], args['target'], modifiers['nick'])
 
     for line in log:
-        print(line)
         # ignore previous !s calls.
         if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
             continue

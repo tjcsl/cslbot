@@ -54,7 +54,7 @@ def cmd(send, msg, args):
                     output = 'has %s points! :)' % score
                     send(output, 'action')
                 else:
-                    send("%s has %i points!" % (name, score))
+                    send("%s has %i points!" % (name, score.score))
             else:
                 send("Nobody cares about %s" % name)
     elif msg:

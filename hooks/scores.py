@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.hook import Hook
+from helpers.orm import Scores
 import re
 
 
@@ -26,6 +27,7 @@ def handle(send, msg, args):
     | themselves.
     | Otherwise substract one point.
     """
+    session = args['db']
     matches = re.findall(r"(%s{2,})(\+\+|--)" % args['config']['core']['nickregex'], msg)
     if not matches:
         return
@@ -44,9 +46,9 @@ def handle(send, msg, args):
                 score = -10
         else:
             score = -1
-        #TODO: maybe we can do this with INSERT OR REPLACE?
-        cursor = args['db'].get()
-        if cursor.execute("SELECT COUNT(1) FROM scores WHERE nick=%s", (name,)).scalar() is None:
-            cursor.execute("INSERT INTO scores VALUES(%s,%s)", (name, score))
+        row = session.query(Scores).filter(Scores.nick == name).first()
+        if row is None:
+            session.add(Scores(score=score, nick=name))
         else:
-            cursor.execute("UPDATE scores SET score=score+%s WHERE nick=%s", (score, name))
+            row.score += score
+            session.flush()
