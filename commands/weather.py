@@ -32,7 +32,9 @@ def set_default(nick, location, cursor, send, apikey):
     """Sets nick's default location to location."""
     if get_weather(location, send, apikey):
         send("Setting default location")
-        cursor.execute('INSERT OR REPLACE INTO weather_prefs(nick,location) VALUES(%s,%s)', (nick, location))
+        #TEMP HACK
+        cursor.execute("DELETE FROM weather_prefs WHERE nick=%s", (nick,))
+        cursor.execute('INSERT INTO weather_prefs(nick,location) VALUES(%s,%s)', (nick, location))
 
 
 def get_weather(msg, send, apikey):
