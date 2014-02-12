@@ -15,16 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+from helpers.orm import Log
 from helpers.command import Command
 
 
-#FIXME: combine w/ reverse.py
 def get_log(conn, target, user):
+    query = conn.query(Log).filter(Log.target == target).order_by(Log.time.desc())
     if user is None:
-        cursor = conn.execute('SELECT msg,type,source FROM log WHERE target=%s ORDER BY time DESC LIMIT 50 OFFSET 1', (target,))
+        return query.offset(1).limit(50).all()
     else:
-        cursor = conn.execute('SELECT msg,type,source FROM log WHERE source=%s AND target=%s ORDER BY time DESC LIMIT 50', (user, target))
-    return cursor.fetchall()
+        return query.filter(Log.source == user).limit(50).all()
 
 
 def get_modifiers(msg, nick):
@@ -53,7 +53,6 @@ def cmd(send, msg, args):
     if not msg:
         send("Invalid Syntax.")
         return
-    conn = args['db'].get()
     char = msg[0]
     msg = msg[1:].split(char)
     #fix for people who forget a trailing slash
@@ -70,21 +69,22 @@ def cmd(send, msg, args):
     replacement = msg[1]
     modifiers = get_modifiers(msg[2], args['nick'])
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(conn, args['target'], modifiers['nick'])
+    log = get_log(args['db'], args['target'], modifiers['nick'])
 
     for line in log:
+        print(line)
         # ignore previous !s calls.
-        if line['msg'].startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
+        if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
             continue
-        if line['msg'].startswith('%s: s%s' % (args['config']['core']['nick'], char)):
+        if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
             continue
-        if regex.search(line['msg']):
-            output = regex.sub(replacement, line['msg'])
+        if regex.search(line.msg):
+            output = regex.sub(replacement, line.msg)
             if len(output) > 256:
                 output = output[:253] + "..."
-            if line['type'] == 'action':
-                send("correction: * %s %s" % (line['source'], output))
-            elif line['type'] != 'mode':
-                send("%s actually meant: %s" % (line['source'], output))
+            if line.type == 'action':
+                send("correction: * %s %s" % (line.source, output))
+            elif line.type != 'mode':
+                send("%s actually meant: %s" % (line.source, output))
             return
     send("No match found.")
