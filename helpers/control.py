@@ -187,11 +187,11 @@ def show_pending(db, admins, send, ping=False):
         issues = db.query(Issues).filter(Issues.accepted == 0).all()
         quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
         polls = db.query(Polls).filter(Polls.accepted == 0).all()
-        if ping:
-            if issues or quotes or polls:
+        if issues or quotes or polls:
+            if ping:
                 send("%s: Items are Pending Approval" % admins)
-            else:
-                send("No items are Pending")
+        elif not ping:
+            send("No items are Pending")
         if issues:
             send("Issues:")
             show_issues(issues, send)
