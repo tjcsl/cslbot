@@ -27,3 +27,4 @@ def handle(send, msg, args):
         time = strftime('%Y-%m-%d %H:%M:%S', localtime(note.time))
         send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))
         note.pending = 0
+    args['db'].commit()
