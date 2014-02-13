@@ -144,10 +144,10 @@ def handle_show(handler, cmd, send):
             send("Nobody is guarded.")
     elif cmd[1] == "issues":
         issues = db.query(Issues).filter(Issues.accepted == 0).all()
-        if issues is None:
-            send("No outstanding issues.")
-        else:
+        if issues:
             show_issues(issues, send)
+        else:
+            send("No outstanding issues.")
     elif cmd[1] == "quotes":
         quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
         if quotes:
@@ -187,8 +187,11 @@ def show_pending(db, admins, send, ping=False):
         issues = db.query(Issues).filter(Issues.accepted == 0).all()
         quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
         polls = db.query(Polls).filter(Polls.accepted == 0).all()
-        if ping and (issues or quotes or polls):
-            send("%s: Items are Pending Approval" % admins)
+        if issues or quotes or polls:
+            if ping:
+                send("%s: Items are Pending Approval" % admins)
+        else:
+            send("No items are Pending")
         if issues:
             send("Issues:")
             show_issues(issues, send)
