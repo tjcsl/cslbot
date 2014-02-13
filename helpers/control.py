@@ -301,8 +301,7 @@ def reject_issue(handler, cmd):
     msg = "Issue Rejected -- %s, Submitted by %s" % (issue.title, nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
-    del issue
-    db.flush()
+    db.delete(issue)
     return ""
 
 
@@ -321,8 +320,7 @@ def reject_quote(handler, cmd):
     botnick = handler.config['core']['nick']
     nick = quote.submitter
     msg = "Quote #%d Rejected: %s -- %s, Submitted by %s" % (qid, quote.quote, quote.nick, nick)
-    del quote
-    db.flush()
+    db.delete(quote)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     return ""
@@ -343,8 +341,7 @@ def reject_poll(handler, cmd):
     msg = "Poll #%d rejected: %s, Submitted by %s" % (pid, poll.question, nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
-    del poll
-    db.flush()
+    db.delete(poll)
     return ""
 
 

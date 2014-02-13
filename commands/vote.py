@@ -166,8 +166,7 @@ def retract(session, pid, nick):
     response = session.query(Poll_responses).filter(Poll_responses.pid == pid, Poll_responses.voter == nick).first()
     if response is None:
         return "You haven't voted on that poll yet!"
-    del response
-    session.flush()
+    session.delete(response)
     return "Vote retracted"
 
 

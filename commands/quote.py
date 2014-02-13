@@ -89,8 +89,7 @@ def do_delete_quote(session, qid):
     quote = session.query(Quotes).get(qid)
     if quote is None:
         return "That quote doesn't exist!"
-    del quote
-    #session.flush()
+    session.delete(quote)
     return 'Deleted quote with ID %d' % qid
 
 
