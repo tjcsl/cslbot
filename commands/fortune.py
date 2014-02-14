@@ -32,8 +32,8 @@ def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|module>
     """
-    fortunes = get_list()
     try:
+        fortunes = get_list()
         if msg == 'list':
             send(" ".join(fortunes))
         else:
@@ -43,12 +43,14 @@ def cmd(send, msg, args):
                     send("You don't exist, go away!")
                     return
                 mod = 'bofh-excuses'
-            elif msg in fortunes or not msg:
+            elif msg in fortunes:
+                mod = msg
+            elif not msg or msg == '-o' or msg == '-a':
                 mod = msg
             else:
                 send("%s is not a valid fortune module" % msg)
                 return
-            output = subprocess.check_output(['fortune', '-s', '-a', mod]).decode()
+            output = subprocess.check_output(['fortune', '-s', mod]).decode()
             for line in output.splitlines():
                 send(line)
     except subprocess.CalledProcessError:
