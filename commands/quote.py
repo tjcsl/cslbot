@@ -38,7 +38,7 @@ def do_get_quote(session, qid=None):
 
 def get_quotes_nick(session, nick):
     rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.approved == 1).all()
-    if rows is None:
+    if not rows:
         return "No quotes for %s" % nick
     return "%s -- %s" % (choice(rows).quote, nick)
 
