@@ -89,7 +89,7 @@ def gen_log(row):
 
 def main(config, outdir):
     session = get_session(config)
-    for row in session.query(Log).all():
+    for row in session.query(Log).order_by(Log.id).all():
         check_day(row, outdir, config['core']['channel'])
         write_log(row.target, outdir, gen_log(row))
 
