@@ -30,7 +30,7 @@ def get_list():
 @Command(['fortune', 'bofh', 'excuse'], ['name'])
 def cmd(send, msg, args):
     """Returns a fortune.
-    Syntax: !fortune <list|module>
+    Syntax: !fortune <list|module|-a|-o>
     """
     try:
         fortunes = get_list()
