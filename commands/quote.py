@@ -25,7 +25,7 @@ def do_get_quote(session, qid=None):
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
-        return "%s -- %s" % (quote.quote, quote.nick)
+        return "#%d %s -- %s" % (quote.id, quote.quote, quote.nick)
     else:
         quote = session.query(Quotes).get(qid)
         if quote is None:
@@ -40,7 +40,8 @@ def get_quotes_nick(session, nick):
     rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.approved == 1).all()
     if not rows:
         return "No quotes for %s" % nick
-    return "%s -- %s" % (choice(rows).quote, nick)
+    row = choice(rows)
+    return "#%d %s -- %s" % (row.id, row.quote, nick)
 
 
 def do_add_quote(cmd, session, isadmin, send, args):
