@@ -49,6 +49,7 @@ def handle(send, msg, args):
         row = session.query(Scores).filter(Scores.nick == name).first()
         if row is None:
             session.add(Scores(score=score, nick=name))
+            session.flush()
         else:
             row.score += score
             session.flush()
