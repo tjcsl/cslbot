@@ -51,4 +51,6 @@ def get_title(url):
                 title = ctype
     except Timeout:
         title = 'Request Timed Out'
+    if len(title) > 256:
+        title = title[:253] + "..."
     return title
