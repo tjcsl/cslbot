@@ -113,7 +113,7 @@ class Command():
             try:
                 func(send, msg, args)
             except Exception as ex:
-                handle_traceback(ex, self.c, self.target)
+                handle_traceback(ex, self.handler.connection, self.target, self.handler.config['core']['ctrlchan'])
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")
@@ -124,8 +124,8 @@ class Command():
         if command in _disabled_commands:
             send("Sorry, that command is disabled.")
         else:
-            self.c = handler.connection
             self.target = target
+            self.handler = handler
             record_command(handler.db.get(), nick, command, target)
             handler.executor.submit(self.exe, send, msg, args)
 
