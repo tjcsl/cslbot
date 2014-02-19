@@ -21,12 +21,12 @@ import traceback
 from os.path import basename
 
 
-def handle_traceback(ex, c, target, ctrlchan):
+def handle_traceback(ex, c, target, ctrlchan, source="the bot"):
     #Dump full traceback to console.
     traceback.print_exc()
     trace = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
-    c.privmsg(target, "An error has occured. See the control channel for details.")
-    c.privmsg(ctrlchan, '%s in %s on line %s: %s' % (name, trace[0], trace[1], output))
+    c.privmsg(target, "An error has occured in %s. See the control channel for details." % source)
+    c.privmsg(ctrlchan, '%s -- %s in %s on line %s: %s' % (source, name, trace[0], trace[1], output))
