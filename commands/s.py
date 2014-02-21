@@ -27,7 +27,7 @@ def get_log(conn, target, user):
         return query.filter(Log.source == user).limit(50).all()
 
 
-def get_modifiers(msg, nick):
+def get_modifiers(msg, nick, nickregex):
     mods = {'ignorecase': False, 'allnicks': False, 'nick': nick}
     if not msg:
         return mods
@@ -40,8 +40,10 @@ def get_modifiers(msg, nick):
         mods['allnicks'] = True
         mods['ignorecase'] = True
         mods['nick'] = None
-    else:
+    elif re.match(nickregex, msg):
         mods['nick'] = msg
+    else:
+        return None
     return mods
 
 
@@ -54,7 +56,7 @@ def cmd(send, msg, args):
         send("Invalid Syntax.")
         return
     char = msg[0]
-    msg = msg[1:].split(char)
+    msg = msg[1:].split(char, maxsplit=2)
     #fix for people who forget a trailing slash
     if len(msg) == 2 and args['config']['feature'].getboolean('lazyregex'):
         msg.append('')
@@ -67,7 +69,10 @@ def cmd(send, msg, args):
         return
     string = msg[0]
     replacement = msg[1]
-    modifiers = get_modifiers(msg[2], args['nick'])
+    modifiers = get_modifiers(msg[2], args['nick'], args['config']['core']['nickregex'])
+    if modifiers is None:
+        send("Invalid modifiers.")
+        return
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
     log = get_log(args['db'], args['target'], modifiers['nick'])
 
