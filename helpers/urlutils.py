@@ -34,8 +34,11 @@ def get_short(msg):
 def get_title(url):
     title = 'No Title Found'
     try:
-        if not url.startswith('http'):
-            url = "http://%s" % url
+        url = url.split('://', maxsplit=1)
+        if len(url) == 1:
+            url = ['http', url[0]]
+        url[1] = url[1].encode('idna').decode()
+        url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         req = urlopen(Request(url, headers=headers), timeout=5)
