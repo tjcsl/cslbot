@@ -85,7 +85,7 @@ class IrcBot(SingleServerIRCBot):
         self.server.shutdown()
         self.server.socket.close()
         # blocks on the message processing otherwise.
-        self.handler.executor.shutdown(False)
+        #self.handler.executor.shutdown(False)
         # threading cleanup
         workers.stop_workers()
 
@@ -187,9 +187,7 @@ class IrcBot(SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_disconnect(self, c, e):
-        #FIXME: do something sane.
-        #self.do_shutdown()
-        pass
+        self.do_shutdown()
 
     def on_join(self, c, e):
         """Handle joins."""
