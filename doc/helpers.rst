@@ -44,6 +44,14 @@ helpers.defer module
     :undoc-members:
     :show-inheritance:
 
+helpers.exception module
+------------------------
+
+.. automodule:: helpers.exception
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.hook module
 -------------------
 
