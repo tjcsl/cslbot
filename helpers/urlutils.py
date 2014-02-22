@@ -17,7 +17,9 @@
 import json
 from lxml.html import parse
 from urllib.request import Request, urlopen
+from urllib.error import URLError
 from requests import post
+from .exception import CSLException
 from requests.exceptions import Timeout
 
 
@@ -37,7 +39,8 @@ def get_title(url):
         url = url.split('://', maxsplit=1)
         if len(url) == 1:
             url = ['http', url[0]]
-        url[1] = url[1].encode('idna').decode()
+        #FIXME: dies on urls > 64 chars
+        #url[1] = url[1].encode('idna').decode()
         url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
@@ -54,6 +57,11 @@ def get_title(url):
                 title = ctype
     except Timeout:
         title = 'Request Timed Out'
+    except URLError as e:
+        if e.reason.errno == -2:
+            raise CSLException("Name not found.")
+        else:
+            raise e
     if len(title) > 256:
         title = title[:253] + "..."
     return title

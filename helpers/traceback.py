@@ -28,5 +28,8 @@ def handle_traceback(ex, c, target, ctrlchan, source="the bot"):
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
-    c.privmsg(target, "An error has occured in %s. See the control channel for details." % source)
+    if name == 'CSLException':
+        c.privmsg(target, output)
+    else:
+        c.privmsg(target, "An error has occured in %s. See the control channel for details." % source)
     c.privmsg(ctrlchan, '%s -- %s in %s on line %s: %s' % (source, name, trace[0], trace[1], output))
