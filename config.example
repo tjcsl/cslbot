@@ -18,13 +18,14 @@ dbpass:
 ctrlkey:
 admins: admin1, admin2
 [feature]
-stallmanmode = False
-clippy = False
-lazyregex = True
-hooks = True
-capskick = True
-nickkick = True
-linkread = True
+prettyerrors: True
+stallmanmode: False
+clippy: False
+lazyregex: True
+hooks: True
+capskick: True
+nickkick: True
+linkread: True
 [api]
 steamapikey:
 dictionaryapikey:
