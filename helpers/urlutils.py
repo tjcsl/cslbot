@@ -17,7 +17,7 @@
 import json
 from lxml.html import parse
 from urllib.request import Request, urlopen
-from urllib.error import URLError
+from urllib.error import URLError, HTTPError
 from requests import post
 from .exception import CSLException
 from requests.exceptions import Timeout
@@ -55,13 +55,10 @@ def get_title(url):
                 title = t.text.replace('\n', ' ').strip()
             else:
                 title = ctype
-    except Timeout:
-        title = 'Request Timed Out'
+    except (Timeout, HTTPError) as e:
+        raise CSLException(e)
     except URLError as e:
-        if e.reason.errno == -2:
-            raise CSLException("Name not found.")
-        else:
-            raise e
+            raise CSLException(e.reason.strerror)
     if len(title) > 256:
         title = title[:253] + "..."
     return title
