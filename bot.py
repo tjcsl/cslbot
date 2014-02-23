@@ -65,7 +65,7 @@ class IrcBot(SingleServerIRCBot):
                 self.check_reload(target, c, e, msgtype)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
-            traceback.handle_traceback(ex, c, target, self.config['core']['ctrlchan'])
+            traceback.handle_traceback(ex, c, target, self.config)
 
     def check_reload(self, target, c, e, msgtype):
         cmd = e.arguments[0].strip()

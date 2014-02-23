@@ -49,7 +49,7 @@ class Hook():
                 try:
                     func(send, msg, args)
                 except Exception as ex:
-                    handle_traceback(ex, self.handler.connection, self.target, self.handler.config['core']['ctrlchan'], func.__module__)
+                    handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
         self.exe = wrapper
         self.name = func.__module__.split('.')[1]
         return wrapper

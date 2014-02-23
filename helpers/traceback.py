@@ -21,13 +21,14 @@ import traceback
 from os.path import basename
 
 
-def handle_traceback(ex, c, target, ctrlchan, source="the bot"):
+def handle_traceback(ex, c, target, config, source="the bot"):
     #Dump full traceback to console.
     traceback.print_exc()
     trace = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
+    ctrlchan = config['core']['ctrlchan']
     if name == 'CSLException':
         c.privmsg(target, output)
     else:

@@ -113,7 +113,7 @@ class Command():
             try:
                 func(send, msg, args)
             except Exception as ex:
-                handle_traceback(ex, self.handler.connection, self.target, self.handler.config['core']['ctrlchan'], "commands.%s" % self.names[0])
+                handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")
