@@ -300,6 +300,14 @@ commands.help module
     :undoc-members:
     :show-inheritance:
 
+commands.highlight module
+-------------------------
+
+.. automodule:: commands.highlight
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.hooks module
 ---------------------
 
