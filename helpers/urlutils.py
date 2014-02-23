@@ -58,6 +58,9 @@ def get_title(url):
     except (Timeout, HTTPError) as e:
         raise CSLException(e)
     except URLError as e:
+        if e.reason.strerror is None:
+            raise CSLException(e.reason)
+        else:
             raise CSLException(e.reason.strerror)
     if len(title) > 256:
         title = title[:253] + "..."

@@ -29,8 +29,11 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
     ctrlchan = config['core']['ctrlchan']
-    if name == 'CSLException':
-        c.privmsg(target, output)
-    else:
-        c.privmsg(target, "An %s has occured in %s. See the control channel for details." % (name, source))
-    c.privmsg(ctrlchan, '%s -- %s in %s on line %s: %s' % (source, name, trace[0], trace[1], output))
+    prettyerrors = config['feature'].getboolean('prettyerrors')
+    errtarget = ctrlchan if prettyerrors else target
+    if prettyerrors:
+        if name == 'CSLException':
+            c.privmsg(target, "%s -- %s" % (name, output))
+        else:
+            c.privmsg(target, "An %s has occured in %s. See the control channel for details." % (name, source))
+    c.privmsg(errtarget, '%s -- %s in %s on line %s: %s' % (source, name, trace[0], trace[1], output))
