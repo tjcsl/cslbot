@@ -19,8 +19,8 @@ from lxml.html import parse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from requests import post
+from socket import timeout
 from .exception import CSLException
-from requests.exceptions import Timeout
 
 
 def get_short(msg):
@@ -55,7 +55,7 @@ def get_title(url):
                 title = t.text.replace('\n', ' ').strip()
             else:
                 title = ctype
-    except (Timeout, HTTPError) as e:
+    except (timeout, HTTPError) as e:
         raise CSLException(e)
     except URLError as e:
         if e.reason.strerror is None:
