@@ -17,8 +17,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from helpers.modutils import scan_and_reimport
-from helpers.traceback import handle_traceback
+from .modutils import scan_and_reimport
+from .traceback import handle_traceback
+from .thread import start
 
 _known_hooks = []
 
@@ -63,4 +64,4 @@ class Hook():
     def run(self, send, msg, msgtype, handler, target, args):
         self.handler = handler
         self.target = target
-        handler.executor.submit(self.exe, send, msg, msgtype, args)
+        start(self.exe, send, msg, msgtype, args)

@@ -15,7 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from threading import Event, current_thread, get_ident
-from helpers.control import show_pending
+from .control import show_pending
+from .thread import start
 
 _threads = {}
 
@@ -23,8 +24,7 @@ _threads = {}
 def stop_workers():
     for thread, event in _threads.values():
         event.set()
-        # Doesn't exit cleanly
-        #thread.join()
+        thread.join()
     _threads.clear()
 
 
@@ -33,7 +33,7 @@ def start_workers(handler):
 
     # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    handler.executor.submit(handle_pending, handler, send)
+    start(handle_pending, handler, send)
 
 
 def add_thread(thread):

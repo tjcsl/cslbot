@@ -23,7 +23,6 @@ import sys
 from helpers import control, sql, hook, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
-from concurrent.futures import ThreadPoolExecutor
 
 
 class BotHandler():
@@ -42,7 +41,6 @@ class BotHandler():
         | db - Is a db wrapper for data storage.
         """
         self.config = config
-        self.executor = ThreadPoolExecutor(5)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []

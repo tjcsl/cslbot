@@ -21,7 +21,7 @@ import sys
 import handler
 import argparse
 import atexit
-from helpers import workers, server, config, defer, traceback, misc, modutils
+from helpers import workers, server, config, defer, traceback, misc, modutils, thread
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
@@ -81,11 +81,10 @@ class IrcBot(SingleServerIRCBot):
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
 
-    def do_shutdown(self):
+    def do_shutdown(self, reload=False):
         self.server.shutdown()
         self.server.socket.close()
-        # blocks on the message processing otherwise.
-        #self.handler.executor.shutdown(False)
+        thread.shutdown(reload)
         # threading cleanup
         workers.stop_workers()
 
@@ -110,7 +109,7 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         # preserve data
         data = self.handler.get_data()
-        self.do_shutdown()
+        self.do_shutdown(True)
         self.handler = handler.BotHandler(self.config)
         self.server = server.init_server(self)
         self.handler.set_data(data)
