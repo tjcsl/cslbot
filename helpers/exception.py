@@ -16,5 +16,5 @@
 
 
 # Pretty error messages.
-class CSLException(Exception):
+class CommandFailedException(Exception):
     pass

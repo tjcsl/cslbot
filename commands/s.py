@@ -16,7 +16,7 @@
 
 import re
 import sre_constants
-from helpers.exception import CSLException
+from helpers.exception import CommandFailedException
 from helpers.orm import Log
 from helpers.command import Command
 
@@ -95,5 +95,5 @@ def cmd(send, msg, args):
                     send("%s actually meant: %s" % (line.source, output))
                 return
     except sre_constants.error as ex:
-        raise CSLException(ex)
+        raise CommandFailedException(ex)
     send("No match found.")

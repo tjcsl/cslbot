@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from requests import post
 from socket import timeout
-from .exception import CSLException
+from .exception import CommandFailedException
 
 
 def get_short(msg):
@@ -56,12 +56,12 @@ def get_title(url):
             else:
                 title = ctype
     except (timeout, HTTPError) as e:
-        raise CSLException(e)
+        raise CommandFailedException(e)
     except URLError as e:
         if e.reason.strerror is None:
-            raise CSLException(e.reason)
+            raise CommandFailedException(e.reason)
         else:
-            raise CSLException(e.reason.strerror)
+            raise CommandFailedException(e.reason.strerror)
     if len(title) > 256:
         title = title[:253] + "..."
     return title

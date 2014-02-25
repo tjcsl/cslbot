@@ -32,7 +32,7 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     prettyerrors = config['feature'].getboolean('prettyerrors')
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors:
-        if name == 'CSLException':
+        if name == 'CommandFailedException':
             c.privmsg(target, "%s -- %s" % (source, output))
         else:
             c.privmsg(target, "An %s has occured in %s. See the control channel for details." % (name, source))
