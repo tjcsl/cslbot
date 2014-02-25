@@ -31,7 +31,7 @@ def start(*args):
 def shutdown(reload):
     global _executor
     _lock.acquire()
-    _executor.shutdown(False)
+    _executor.shutdown()
     if reload:
         _executor = ThreadPoolExecutor(_threadcount)
     _lock.release()

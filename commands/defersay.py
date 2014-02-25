@@ -16,7 +16,7 @@
 
 from helpers.command import Command
 from helpers.misc import parse_time
-from helpers.defer import defer
+from helpers.workers import defer
 
 
 @Command('defersay', ['nick', 'is_admin'])

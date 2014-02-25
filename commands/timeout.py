@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.defer import defer
+from helpers.workers import defer
 from helpers.misc import parse_time
 
 

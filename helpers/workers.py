@@ -14,40 +14,45 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import Event, current_thread, get_ident
+from threading import RLock
+from sched import scheduler
 from .control import show_pending
 from .thread import start
 
-_threads = {}
+_lock = RLock()
+_events = {}
+_sched = scheduler()
+
+
+def defer(t, func, *args):
+    event = _sched.enter(t, 1, func, argument=args)
+    with _lock:
+        _events[id(event)] = event
+    return id(event)
+
+
+def cancel(eventid):
+    with _lock:
+        _sched.cancel(_events[eventid])
+        _events.remove(eventid)
 
 
 def stop_workers():
-    for thread, event in _threads.values():
-        event.set()
-        thread.join()
-    _threads.clear()
+    with _lock:
+        _events.clear()
+    map(_sched.cancel, _sched.queue)
 
 
 def start_workers(handler):
-    stop_workers()
-
     # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    start(handle_pending, handler, send)
-
-
-def add_thread(thread):
-    global _threads
-    _threads[thread.ident] = (thread, Event())
-
-
-def get_thread(ident):
-    return _threads[ident] if ident in _threads.keys() else None
+    defer(3600, handle_pending, handler, send)
+    start(_sched.run)
 
 
 def handle_pending(handler, send):
     admins = ": ".join(handler.admins)
     cursor = handler.db.get()
-    add_thread(current_thread())
-    while not _threads[get_ident()][1].wait(3600):
-        show_pending(cursor, admins, send, True)
+    show_pending(cursor, admins, send, True)
+    # Re-schedule handle_pending
+    defer(3600, handle_pending, handler, send)

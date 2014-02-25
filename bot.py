@@ -15,13 +15,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import sys
+if sys.version_info < (3, 3):
+    raise Exception("Need Python 3.3 or higher.")
 import logging
 import imp
-import sys
 import handler
 import argparse
 import atexit
-from helpers import workers, server, config, defer, traceback, misc, modutils, thread
+from helpers import workers, server, config, traceback, misc, modutils, thread
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
@@ -82,11 +84,10 @@ class IrcBot(SingleServerIRCBot):
                 self.do_reload(c, target, cmdargs, 'irc')
 
     def do_shutdown(self, reload=False):
-        self.server.shutdown()
         self.server.socket.close()
-        thread.shutdown(reload)
-        # threading cleanup
+        self.server.shutdown()
         workers.stop_workers()
+        thread.shutdown(reload)
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -141,7 +142,7 @@ class IrcBot(SingleServerIRCBot):
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]
             for i in range(len(extrachans)):
-                defer.defer(i, c.join, extrachans[i])
+                workers.defer(i, c.join, extrachans[i])
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -208,7 +209,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
-        defer.defer(5, c.join, e.arguments[0])
+        workers.defer(5, c.join, e.arguments[0])
 
     def on_ctcpreply(self, c, e):
         misc.ping(c, e, time())
@@ -216,7 +217,7 @@ class IrcBot(SingleServerIRCBot):
     def on_nicknameinuse(self, c, e):
         self.connection.nick('Guest%d' % getrandbits(20))
         self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
-        defer.defer(5, self.do_welcome, c)
+        workers.defer(5, self.do_welcome, c)
 
     def on_kick(self, c, e):
         """Handle kicks.
@@ -230,7 +231,7 @@ class IrcBot(SingleServerIRCBot):
         if e.arguments[0] != c.real_nickname:
             return
         logging.info("Kicked from channel %s" % e.target)
-        defer.defer(5, c.join, e.target)
+        workers.defer(5, c.join, e.target)
 
 
 def main(args):
@@ -254,8 +255,6 @@ def main(args):
     bot.start()
 
 if __name__ == '__main__':
-    if sys.version_info < (3, 3):
-        raise Exception("Need Python 3.3 or higher.")
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     args = parser.parse_args()
