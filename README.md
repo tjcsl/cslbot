@@ -3,7 +3,10 @@ cslbot
 
 A bot written by the TJHSST CSL for IRC. 
 
-
+Support
+-------
+To quote the GPL "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+That said, the bot devs hangout in #tjcsl-cslbot on freenode and are usually happy to answer your questions.
 
 Documentation
 -------------
