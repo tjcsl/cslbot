@@ -15,6 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import sre_constants
+from helpers.exception import CSLException
 from helpers.orm import Log
 from helpers.command import Command
 
@@ -76,19 +78,22 @@ def cmd(send, msg, args):
     regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
     log = get_log(args['db'], args['target'], modifiers['nick'])
 
-    for line in log:
-        # ignore previous !s calls.
-        if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
-            continue
-        if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
-            continue
-        if regex.search(line.msg):
-            output = regex.sub(replacement, line.msg)
-            if len(output) > 256:
-                output = output[:253] + "..."
-            if line.type == 'action':
-                send("correction: * %s %s" % (line.source, output))
-            elif line.type != 'mode':
-                send("%s actually meant: %s" % (line.source, output))
-            return
+    try:
+        for line in log:
+            # ignore previous !s calls.
+            if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
+                continue
+            if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
+                continue
+            if regex.search(line.msg):
+                output = regex.sub(replacement, line.msg)
+                if len(output) > 256:
+                    output = output[:253] + "..."
+                if line.type == 'action':
+                    send("correction: * %s %s" % (line.source, output))
+                elif line.type != 'mode':
+                    send("%s actually meant: %s" % (line.source, output))
+                return
+    except sre_constants.error as ex:
+        raise CSLException(ex)
     send("No match found.")
