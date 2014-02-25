@@ -75,10 +75,10 @@ def cmd(send, msg, args):
     if modifiers is None:
         send("Invalid modifiers.")
         return
-    regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(args['db'], args['target'], modifiers['nick'])
 
     try:
+        regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
+        log = get_log(args['db'], args['target'], modifiers['nick'])
         for line in log:
             # ignore previous !s calls.
             if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
