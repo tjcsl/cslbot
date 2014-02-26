@@ -14,18 +14,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import RLock
+from time import time, sleep
+from datetime import datetime, timedelta
+from threading import Lock
 from sched import scheduler
 from .control import show_pending
 from .thread import start
 
-_lock = RLock()
+_lock = Lock()
 _events = {}
-_sched = scheduler()
+_sched = scheduler(time)
 
 
 def defer(t, func, *args):
-    event = _sched.enter(t, 1, func, argument=args)
+    t = datetime.now() + timedelta(seconds=t)
+    event = _sched.enterabs(t.timestamp(), 1, func, argument=args)
     with _lock:
         _events[id(event)] = event
     return id(event)
@@ -39,20 +42,27 @@ def cancel(eventid):
 
 def stop_workers():
     with _lock:
+        map(_sched.cancel, _sched.queue)
         _events.clear()
-    map(_sched.cancel, _sched.queue)
+
+def run_sched():
+    #FIXME: there has to be a better way to do this.
+    while True:
+        _sched.run(False)
+        sleep(1)
 
 
 def start_workers(handler):
     # Set-up notifications for pending admin approval.
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+    # the scheduler immediately exits if there are no pending tasks.
     defer(3600, handle_pending, handler, send)
     start(_sched.run)
 
 
 def handle_pending(handler, send):
+    # Re-schedule handle_pending
+    defer(3600, handle_pending, handler, send)
     admins = ": ".join(handler.admins)
     cursor = handler.db.get()
     show_pending(cursor, admins, send, True)
-    # Re-schedule handle_pending
-    defer(3600, handle_pending, handler, send)

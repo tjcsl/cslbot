@@ -23,15 +23,13 @@ _executor = ThreadPoolExecutor(_threadcount)
 
 
 def start(*args):
-    _lock.acquire()
-    _executor.submit(*args)
-    _lock.release()
+    with _lock:
+        _executor.submit(*args)
 
 
 def shutdown(reload):
     global _executor
-    _lock.acquire()
-    _executor.shutdown()
-    if reload:
-        _executor = ThreadPoolExecutor(_threadcount)
-    _lock.release()
+    with _lock:
+        _executor.shutdown(False)
+        if reload:
+            _executor = ThreadPoolExecutor(_threadcount)
