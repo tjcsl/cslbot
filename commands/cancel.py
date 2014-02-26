@@ -27,9 +27,11 @@ def cmd(send, msg, args):
         send("Only admins can cancel threads.")
         return
     try:
-        cancel(msg)
+        cancel(int(msg))
     except ValueError:
         send("Index must be a digit.")
+        return
     except KeyError:
         send("No such event.")
+        return
     send("Event canceled.")

@@ -14,42 +14,32 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import time, sleep
-from datetime import datetime, timedelta
-from threading import Lock
-from sched import scheduler
+from threading import Lock, Timer
 from .control import show_pending
-from .thread import start
 
 _lock = Lock()
 _events = {}
-_sched = scheduler(time)
 
 
 def defer(t, func, *args):
-    t = datetime.now() + timedelta(seconds=t)
-    event = _sched.enterabs(t.timestamp(), 1, func, argument=args)
+    event = Timer(t, func, args)
+    event.start()
     with _lock:
-        _events[id(event)] = event
-    return id(event)
+        _events[event.ident] = event
+    return event.ident
 
 
 def cancel(eventid):
     with _lock:
-        _sched.cancel(_events[eventid])
-        _events.remove(eventid)
+        _events[eventid].cancel()
+        del _events[eventid]
 
 
 def stop_workers():
     with _lock:
-        map(_sched.cancel, _sched.queue)
+        for event in _events.values():
+            event.cancel()
         _events.clear()
-
-def run_sched():
-    #FIXME: there has to be a better way to do this.
-    while True:
-        _sched.run(False)
-        sleep(1)
 
 
 def start_workers(handler):
@@ -57,7 +47,6 @@ def start_workers(handler):
     send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
     # the scheduler immediately exits if there are no pending tasks.
     defer(3600, handle_pending, handler, send)
-    start(_sched.run)
 
 
 def handle_pending(handler, send):

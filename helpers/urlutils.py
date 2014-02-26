@@ -57,6 +57,8 @@ def get_title(url):
                 title = ctype
     except (timeout, HTTPError) as e:
         raise CommandFailedException(e)
+    except ConnectionResetError as e:
+        raise CommandFailedException(e.strerror)
     except URLError as e:
         if e.reason.strerror is None:
             raise CommandFailedException(e.reason)

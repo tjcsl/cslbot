@@ -17,7 +17,7 @@
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
 
-_threadcount = 5
+_threadcount = 4
 _lock = Lock()
 _executor = ThreadPoolExecutor(_threadcount)
 
