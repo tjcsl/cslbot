@@ -116,7 +116,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self)
+        self.handler.workers = workers.Workers(self.handler)
         if output:
             return output
 
@@ -135,7 +135,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.connection = c
         self.handler.channels = self.channels
         self.handler.get_admins(c)
-        self.handler.workers = workers.Workers(self)
+        self.handler.workers = workers.Workers(self.handler)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         extrachans = self.config['core']['extrachans']
