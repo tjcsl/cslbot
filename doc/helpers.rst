@@ -36,14 +36,6 @@ helpers.control module
     :undoc-members:
     :show-inheritance:
 
-helpers.defer module
---------------------
-
-.. automodule:: helpers.defer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 helpers.exception module
 ------------------------
 
@@ -112,6 +104,14 @@ helpers.textutils module
 ------------------------
 
 .. automodule:: helpers.textutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+helpers.thread module
+---------------------
+
+.. automodule:: helpers.thread
     :members:
     :undoc-members:
     :show-inheritance:

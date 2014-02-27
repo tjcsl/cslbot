@@ -188,14 +188,6 @@ commands.demorse module
     :undoc-members:
     :show-inheritance:
 
-commands.dialup module
-----------------------
-
-.. automodule:: commands.dialup
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.distro module
 ----------------------
 
@@ -640,6 +632,14 @@ commands.stopwatch module
 -------------------------
 
 .. automodule:: commands.stopwatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.threads module
+-----------------------
+
+.. automodule:: commands.threads
     :members:
     :undoc-members:
     :show-inheritance:
