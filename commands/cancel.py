@@ -15,10 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.workers import cancel
 
 
-@Command('cancel', ['nick', 'is_admin'])
+@Command('cancel', ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
     """Cancels a deferred action with the given id.
     Syntax: !cancel id
@@ -27,7 +26,7 @@ def cmd(send, msg, args):
         send("Only admins can cancel threads.")
         return
     try:
-        cancel(int(msg))
+        args['handler'].workers.cancel(int(msg))
     except ValueError:
         send("Index must be a digit.")
         return

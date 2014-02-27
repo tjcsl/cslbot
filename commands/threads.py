@@ -23,5 +23,5 @@ def cmd(send, msg, args):
     """Enumerate threads.
     Syntax: !threads
     """
-    for x in threading.enumerate():
+    for x in sorted(threading.enumerate(), key=lambda k: k.name):
         send(x.name)

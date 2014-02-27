@@ -23,7 +23,7 @@ import imp
 import handler
 import argparse
 import atexit
-from helpers import workers, server, config, traceback, misc, modutils, thread
+from helpers import server, config, traceback, misc, modutils, thread, workers
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from os.path import dirname, join, exists
@@ -86,7 +86,7 @@ class IrcBot(SingleServerIRCBot):
     def do_shutdown(self, reload=False):
         self.server.socket.close()
         self.server.shutdown()
-        workers.stop_workers()
+        self.handler.workers.stop_workers()
         thread.shutdown(reload)
 
     def do_reload(self, c, target, cmdargs, msgtype):
@@ -116,7 +116,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        workers.start_workers(self.handler)
+        self.handler.workers = workers.Workers(self)
         if output:
             return output
 
@@ -134,10 +134,10 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Connected to server %s" % self.config['core']['host'])
         self.handler.connection = c
         self.handler.channels = self.channels
+        self.handler.workers = workers.Workers(self)
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
-        workers.start_workers(self.handler)
         extrachans = self.config['core']['extrachans']
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]

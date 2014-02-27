@@ -17,41 +17,37 @@
 from threading import Lock, Timer
 from .control import show_pending
 
-_lock = Lock()
-_events = {}
 
+class Workers():
 
-def defer(t, func, *args):
-    event = Timer(t, func, args)
-    event.start()
-    with _lock:
-        _events[event.ident] = event
-    return event.ident
+    def __init__(self, handler):
+        self.lock = Lock()
+        self.events = {}
+        # Set-up notifications for pending admin approval.
+        send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+        self.defer(3600, self.handle_pending, handler, send)
 
+    def defer(self, t, func, *args):
+        event = Timer(t, func, args)
+        event.start()
+        with self.lock:
+            self.events[event.ident] = event
+        return event.ident
 
-def cancel(eventid):
-    with _lock:
-        _events[eventid].cancel()
-        del _events[eventid]
+    def cancel(self, eventid):
+        with self.lock:
+            self.events[eventid].cancel()
+            del self.events[eventid]
 
+    def stop_workers(self):
+        with self.lock:
+            for x in self.events.values():
+                x.cancel()
+            self.events.clear()
 
-def stop_workers():
-    with _lock:
-        for event in _events.values():
-            event.cancel()
-        _events.clear()
-
-
-def start_workers(handler):
-    # Set-up notifications for pending admin approval.
-    send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    # the scheduler immediately exits if there are no pending tasks.
-    defer(3600, handle_pending, handler, send)
-
-
-def handle_pending(handler, send):
-    # Re-schedule handle_pending
-    defer(3600, handle_pending, handler, send)
-    admins = ": ".join(handler.admins)
-    cursor = handler.db.get()
-    show_pending(cursor, admins, send, True)
+    def handle_pending(self, handler, send):
+        # Re-schedule handle_pending
+        self.defer(3600, self.handle_pending, handler, send)
+        admins = ": ".join(handler.admins)
+        cursor = handler.db.get()
+        show_pending(cursor, admins, send, True)

@@ -16,10 +16,9 @@
 
 from helpers.command import Command
 from helpers.misc import parse_time
-from helpers.workers import defer
 
 
-@Command('defersay', ['nick', 'is_admin'])
+@Command('defersay', ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
     """Says something at a later time.
     Syntax: !defersay <delay> <msg>
@@ -37,5 +36,5 @@ def cmd(send, msg, args):
     elif t < 0:
         send("Time travel not yet implemented, sorry.")
     else:
-        ident = defer(t, send, msg[1])
+        ident = args['handler'].workers.defer(t, send, msg[1])
         send("Message deferred, ident: %s" % ident)

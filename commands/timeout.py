@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.workers import defer
 from helpers.misc import parse_time
 
 
@@ -42,5 +41,5 @@ def cmd(send, msg, args):
         send("Invalid unit.")
     else:
         setmode(channel, " +q %s!*@*" % user)
-        ident = defer(time, setmode, *defer_args)
+        ident = args['handler'].workers.defer(time, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))
