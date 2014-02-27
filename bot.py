@@ -134,8 +134,8 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Connected to server %s" % self.config['core']['host'])
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self)
         self.handler.get_admins(c)
+        self.handler.workers = workers.Workers(self)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         extrachans = self.config['core']['extrachans']
