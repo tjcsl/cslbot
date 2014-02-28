@@ -189,7 +189,7 @@ class IrcBot(SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_disconnect(self, c, e):
-        self.do_shutdown()
+        self.do_shutdown(True)
 
     def on_join(self, c, e):
         """Handle joins."""
