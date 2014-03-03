@@ -22,7 +22,7 @@ from helpers.misc import parse_time
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
-    timespec is in the format: {number}{unit}, where unit is m, h, or d.
+    timespec is in the format: {number}{unit}, where unit is s, m, h, or d.
     """
     setmode = args['handler'].connection.mode
     channel = args['target']
