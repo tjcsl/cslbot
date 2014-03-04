@@ -33,7 +33,7 @@ from helpers.sql import get_session
 
 
 def get_quotes(session):
-    return session.query(Quotes).filter(Quotes.approved == 1).all()
+    return session.query(Quotes).filter(Quotes.approved == 1).order_by(Quotes.id).all()
 
 
 def get_scores(session):
