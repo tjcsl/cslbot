@@ -16,8 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
+import re
 from configparser import ConfigParser
-from time import strftime, localtime
+from time import strftime, strptime, mktime, localtime
 from os.path import dirname, exists
 from os import mkdir
 from sys import path
@@ -33,13 +34,27 @@ logs = {}
 day = False
 
 
+def get_timestamp(config, outdir):
+    outfile = "%s/%s.log" % (outdir, config['core']['channel'])
+    if not exists(outfile):
+        return 0
+    #FIXME: this shouldn't have to read the whole file.
+    with open(outfile) as f:
+        for line in reversed(f.readlines()[-50:]):
+            match = re.match('([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})', line)
+            if match:
+                return mktime(strptime(match.group(1), '%Y-%m-%d %H:%M:%S'))
+    # If we don't have a timestamp in the last 50 lines, assume all need to be outputted.
+    return 0
+
+
 def write_log(name, outdir, msg):
     global logs
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
         if not exists(outdir):
             mkdir(outdir)
-        logs[name] = open(outfile, 'w')
+        logs[name] = open(outfile, 'a')
     logs[name].write(msg)
 
 
@@ -89,9 +104,13 @@ def gen_log(row):
 
 def main(config, outdir):
     session = get_session(config)
-    for row in session.query(Log).order_by(Log.time).all():
+    #FIXME: this only has second percision, so it's possible that events with the same timestamp might be dropped.
+    timestamp = get_timestamp(config, outdir)
+    for row in session.query(Log).filter(Log.time > timestamp).order_by(Log.time).all():
         check_day(row, outdir, config['core']['channel'])
         write_log(row.target, outdir, gen_log(row))
+    for x in logs.values():
+        x.close()
 
 
 if __name__ == '__main__':
