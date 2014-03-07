@@ -21,7 +21,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from time import time
 from atexit import register
-from os.path import dirname
 from .orm import setup_db, Log
 
 
