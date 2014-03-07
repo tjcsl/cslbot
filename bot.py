@@ -84,9 +84,11 @@ class IrcBot(SingleServerIRCBot):
                 self.do_reload(c, target, cmdargs, 'irc')
 
     def do_shutdown(self, reload=False):
-        self.server.socket.close()
-        self.server.shutdown()
-        self.handler.workers.stop_workers()
+        if hasattr(self, 'server'):
+            self.server.socket.close()
+            self.server.shutdown()
+        if hasattr(self, 'handler'):
+            self.handler.workers.stop_workers()
         thread.shutdown(reload)
 
     def do_reload(self, c, target, cmdargs, msgtype):

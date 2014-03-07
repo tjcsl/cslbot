@@ -3,7 +3,6 @@ host: irc.freenode.net
 serverport: 2688
 ircport: 6667
 nick: exampleBot
-dbname:
 channel: #channel
 ctrlchan: #channel-control
 extrachans: #chan1, #chan2
@@ -17,6 +16,9 @@ nickpass:
 dbpass:
 ctrlkey:
 admins: admin1, admin2
+[db]
+type: postgres
+name:
 [feature]
 prettyerrors: True
 stallmanmode: False

@@ -21,12 +21,18 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from time import time
 from atexit import register
+from os.path import dirname
 from .orm import setup_db, Log
 
 
 def get_session(config):
-    #FIXME: add support for sqlite connection string
-    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+    if config['db']['type'] == 'sqlite':
+        dbname = dirname(__file__) + "/../db.sqlite"
+        engine = create_engine('sqlite:///%s' % dbname)
+    elif config['db']['type'] == 'postgres':
+        engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['db']['name']))
+    else:
+        raise Exception("Invalid db type.")
     return scoped_session(sessionmaker(bind=engine))
 
 
