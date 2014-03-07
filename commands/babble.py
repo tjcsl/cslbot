@@ -45,11 +45,11 @@ def weighted_rand(d):
     return choice(l)
 
 
-def get_messages(cursor, speaker, cmdchar):
+def get_messages(cursor, speaker, cmdchar, ctrlchan):
     location = 'target' if speaker.startswith('#') else 'source'
     #FIXME: is python random sort faster?
     return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker),
-                                        ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%')).order_by(func.random()).all()
+                                        ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).order_by(func.random()).all()
 
 
 #FIXME: make sphinx happy
@@ -99,6 +99,6 @@ def cmd(send, msg, args):
     """
     cursor = args['db']
     speaker = msg.split()[0] if msg else args['config']['core']['channel']
-    messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'])
+    messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'], args['config']['core']['ctrlchan'])
     markov = build_markov(messages, speaker)
     send(build_msg(markov, speaker))
