@@ -26,13 +26,7 @@ from .orm import setup_db, Log
 
 
 def get_session(config):
-    if config['db']['type'] == 'sqlite':
-        dbname = dirname(__file__) + "/../db.sqlite"
-        engine = create_engine('sqlite:///%s' % dbname)
-    elif config['db']['type'] == 'postgres':
-        engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['db']['name']))
-    else:
-        raise Exception("Invalid db type.")
+    engine = create_engine(config['db']['engine'])
     return scoped_session(sessionmaker(bind=engine))
 
 
