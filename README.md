@@ -16,17 +16,33 @@ Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
 Python must be at least 3.3.
-You will need a working PostgreSQL database.
 Hard mode:
 1. Install irc (https://pypi.python.org/pypi/irc),
 2. beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
 3. lxml (https://pypi.python.org/pypi/lxml),
 4. requests (https://pypi.python.org/pypi/requests),
-5. psycopg2 (https://pypi.python.org/pypi/psycopg2),
-6. IRC (http://pypi.python.org/pypi/irc)
+5. IRC (http://pypi.python.org/pypi/irc)
 6. and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
 Easy mode:
 If you have Pip installed, you can simply run `pip install -r requirements.txt`
+
+You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
+
+Database Backends
+-----------------
+Example configurations:
+1. PostgreSQL - engine: postgresql://ircbot:dbpass@localhost/dbname
+2. SQLite - engine: sqlite:///db.sqlite
+
+See: http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html for more information on SQLAlchemy database engine URLs.
+
+If you intend to use SQLite, the default DBAPI is provided by a built-in python module (sqlite3), so you don't need to install any additional packages.
+
+If you intend to use PostgreSQL, the default DBAPI is provided by the psycopg2 package (https://pypi.python.org/pypi/psycopg2)
+
+If you intend to use MySQL, the default DBAPI is provided by the mysql-python package (https://pypi.python.org/pypi/MySQL-python)
+
+See the SQLAlchemy documentation if you want to use another backend.
 
 Adding Modules
 --------------

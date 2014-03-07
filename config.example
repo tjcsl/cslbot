@@ -17,8 +17,7 @@ dbpass:
 ctrlkey:
 admins: admin1, admin2
 [db]
-type: postgres
-name:
+engine:
 [feature]
 prettyerrors: True
 stallmanmode: False
