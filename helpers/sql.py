@@ -50,6 +50,7 @@ class Sql():
         entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
         self.session.add(entry)
         self.session.commit()
+        self.session.rollback()
 
     def get(self):
         return self.session
