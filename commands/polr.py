@@ -18,13 +18,10 @@ from requests import get
 from helpers.command import Command
 
 
-@Command(['polr','[config]'])
+@Command(['polr','config'])
 def cmd(send, msg, args):
     """Shortens a long URL using Polr - make sure to include http:// before a url.
     """
     apikey = ['config']['polr']['polrkey']
-    try:
-        html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
-        send("Polrfied (shortened) : "+html)
-    except ValueError:
-        send('Error: INVALID KEY OR OTHER ERROR.')
+    tree = etree.parse("http://polr.cf/api" % args['config']['api']['polrkey'])
+    send(tree.xpath('//text')[0].text)
