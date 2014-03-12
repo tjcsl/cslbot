@@ -18,12 +18,11 @@ from requests import get
 from helpers.command import Command
 
 
-@Command('polr')
-@Command('shorten')
+@Command(['polr','[config]'])
 def cmd(send, msg, args):
     """Shortens a long URL using Polr - make sure to include http:// before a url.
     """
-    apikey = "insertkeyhere"
+    apikey = ['config']['polr']['polrkey']
     try:
         html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
         send("Polrfied (shortened) : "+html)
