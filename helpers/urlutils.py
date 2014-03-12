@@ -24,14 +24,12 @@ from .exception import CommandFailedException
 from requests import get
 
 def get_short(msg):
-        apikey = args['config']['api']['polrkey']
-        
-        try:
-            html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
-            send("Polrfied (shortened) : %s" % html.text)
-        except ValueError:
-            send('Error: INVALID KEY OR OTHER ERROR.')
-
+    apikey = args['config']['api']['polrkey']
+    try:
+        html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
+        send("Polrfied (shortened) : %s" % html.text)
+    except ValueError:
+        send('Error: INVALID KEY OR OTHER ERROR.')
 
 def get_title(url):
     title = 'No Title Found'
