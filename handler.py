@@ -245,14 +245,15 @@ class BotHandler():
 
         | Checks if bot is already joined to channel.
         """
-        cmd = cmdargs.split()
         if not cmdargs:
+            send("Join what?")
             return
         if cmdargs == '0':
             send("I'm sorry, Dave. I'm afraid I can't do that.")
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
+        cmd = cmdargs.split()
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
             send("%s is already a member of %s" % (self.config['core']['nick'],
                  cmd[0]))
