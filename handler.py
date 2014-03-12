@@ -248,6 +248,9 @@ class BotHandler():
         cmd = cmdargs.split()
         if not cmdargs:
             return
+        if cmdargs == '0':
+            send("I'm sorry, Dave. I'm afraid I can't do that.")
+            return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
