@@ -27,14 +27,11 @@ def cmd(send, msg, args):
         send("Message who?")
         return
     msg = msg.split(maxsplit=1)
-    if re.match("#[^ ,]{1,49}", msg[0]):
+    if re.match("#[^ ,]{1,49}$", msg[0]):
         if len(msg) == 1:
             send("What message?")
         elif args['is_admin'](args['nick']):
-            if "nickserv" not in msg[0]:
-                send(msg[1], target=msg[0])
-            else:
-                send("Sorry, nickserv abuse killed the last bot")
+            send(msg[1], target=msg[0])
         else:
             send("You are not a admin.")
     else:
