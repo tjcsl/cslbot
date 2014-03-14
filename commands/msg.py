@@ -31,7 +31,10 @@ def cmd(send, msg, args):
         if len(msg) == 1:
             send("What message?")
         elif args['is_admin'](args['nick']):
-            send(msg[1], target=msg[0])
+            if "nickserv" not in msg[0]:
+                send(msg[1], target=msg[0])
+            else:
+                send("Sorry, nickserv abuse killed the last bot")
         else:
             send("You are not a admin.")
     else:
