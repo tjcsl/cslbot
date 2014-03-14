@@ -636,6 +636,14 @@ commands.stopwatch module
     :undoc-members:
     :show-inheritance:
 
+commands.summon module
+----------------------
+
+.. automodule:: commands.summon
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.threads module
 -----------------------
 

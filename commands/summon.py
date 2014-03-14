@@ -38,3 +38,4 @@ def cmd(send, msg, args):
     message = "You have been summoned!"
     row = Notes(note=message, submitter="The Dark Gods", nick=nick, time=time())
     args['db'].add(row)
+    send("%s has been summoned!" % nick)
