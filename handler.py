@@ -399,11 +399,9 @@ class BotHandler():
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
         if msgtype == 'privnotice':
-            if not hasattr(self, 'connection'):
-                return
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
-                return
+            return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
             for hook in self.hooks:
