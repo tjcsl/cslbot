@@ -444,7 +444,10 @@ class BotHandler():
         cmd = msg.split()[0]
         cmdchar = self.config['core']['cmdchar']
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
-
+        
+        if msgtype == "pubnotice":
+            return
+        
         # handle !s
         cmdlen = len(cmd) + 1
         if cmd.startswith('%ss' % cmdchar):
