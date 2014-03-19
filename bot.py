@@ -43,7 +43,7 @@ class IrcBot(SingleServerIRCBot):
         atexit.register(self.do_shutdown)
         self.handler = handler.BotHandler(botconfig)
         self.config = botconfig
-        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['nickpass'])
+        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
         SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # properly log quits.
@@ -218,7 +218,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nicknameinuse(self, c, e):
         self.connection.nick('Guest%d' % getrandbits(20))
-        self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
+        self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
         self.handler.workers.defer(5, self.do_welcome, c)
 
     def on_kick(self, c, e):

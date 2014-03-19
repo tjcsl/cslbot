@@ -115,20 +115,20 @@ class BotHandler():
         if nick not in self.admins:
             self.admins[nick] = -1
         if self.admins[nick] == -1:
-            self.connection.privmsg('NickServ', 'ACC %s' % nick)
+            self.connection.send_raw('NS ACC %s' % nick)
             if complain:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
             # reverify every 5min
             if int(time.time()) - self.admins[nick] > 300:
-                self.connection.privmsg('NickServ', 'ACC %s' % nick)
+                self.connection.send_raw('NS ACC %s' % nick)
             return True
 
     def get_admins(self, c):
         """Check verification for all admins."""
         for a in self.admins:
-            c.privmsg('NickServ', 'ACC %s' % a)
+            c.send_raw('NS ACC %s' % a)
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -399,8 +399,12 @@ class BotHandler():
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
         if msgtype == 'privnotice':
+            #FIXME: come up with a better way to prevent admin abuse.
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
+                return
+
+        if msgtype == 'pubnotice':
             return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
@@ -410,7 +414,7 @@ class BotHandler():
 
         if msgtype == 'nick':
             if e.target in self.admins:
-                c.privmsg('NickServ', 'ACC %s' % e.target)
+                c.send_raw('NS ACC %s' % e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
