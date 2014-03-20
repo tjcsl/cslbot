@@ -5,7 +5,9 @@ A bot written by the TJHSST CSL for IRC.
 
 Support
 -------
-To quote the GPL "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+To quote the GPL: 
+
+>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 That said, the bot devs hangout in #tjcsl-cslbot on freenode and are usually happy to answer your questions.
 
 Documentation
@@ -19,13 +21,21 @@ Copy config.example to config.cfg and change values as needed.
 Python must be at least 3.3.
 
 Hard mode:
-1. Install irc (https://pypi.python.org/pypi/irc),
-2. beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
-3. lxml (https://pypi.python.org/pypi/lxml),
-4. requests (https://pypi.python.org/pypi/requests),
-5. IRC (http://pypi.python.org/pypi/irc)
-6. and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
+
+1.  Install irc (https://pypi.python.org/pypi/irc),
+
+2.  beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
+
+3.  lxml (https://pypi.python.org/pypi/lxml),
+
+4.  requests (https://pypi.python.org/pypi/requests),
+
+5.  IRC (http://pypi.python.org/pypi/irc)
+
+6.  and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
+
 Easy mode:
+
 If you have Pip installed, you can simply run `pip install -r requirements.txt`
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
@@ -37,8 +47,10 @@ Note: the init script (scripts/ircbot) is gentoo/openrc specific.
 Database Backends
 -----------------
 Example configurations:
-1. PostgreSQL - engine: postgresql://ircbot:dbpass@localhost/dbname
-2. SQLite - engine: sqlite:///db.sqlite
+
+1.  PostgreSQL - engine: postgresql://ircbot:dbpass@localhost/dbname
+
+2.  SQLite - engine: sqlite:///db.sqlite
 
 See: http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html for more information on SQLAlchemy database engine URLs.
 
