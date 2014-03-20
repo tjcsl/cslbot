@@ -127,8 +127,10 @@ class BotHandler():
 
     def get_admins(self, c):
         """Check verification for all admins."""
+        i = 0
         for a in self.admins:
-            c.send_raw('NS ACC %s' % a)
+            self.workers.defer(i, c.send_raw, 'NS ACC %s' % a)
+            i += 1
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
