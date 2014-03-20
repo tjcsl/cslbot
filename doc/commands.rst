@@ -68,14 +68,6 @@ commands.bike module
     :undoc-members:
     :show-inheritance:
 
-commands.bingo module
----------------------
-
-.. automodule:: commands.bingo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.blame module
 ---------------------
 
