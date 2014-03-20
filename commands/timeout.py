@@ -34,6 +34,9 @@ def cmd(send, msg, args):
         send("Bot must be an op.")
         return
     time, user = msg.split(maxsplit=1)
+    if user == args['botnick']:
+        send("I won't put myself in timeout!")
+        return
     defer_args = [channel, " -q %s!*@*" % user]
 
     time = parse_time(time)
