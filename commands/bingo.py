@@ -29,7 +29,9 @@ def cmd(send, msg, args):
               'password change', 'jholtom uses music cart', 'khakis', 'zan mods mc', 'fwilson\'s stuff stolen',
               'zan feels inferior', 'FOOOOX', 'crashing the san', 'jholtom\'s plaid collared shirt', 'frozen pizza',
               'iodine breaks', 'mac in machine room', 'hipster web tech', 'ethanicorn', 'marching band',
-              'ahamilto\'s laugh', '<creffett> POTATO!!!', 'xscreensaver bug', 'shibe', 'no shibing', '<skasturi> hi zan']
+              'ahamilto\'s laugh', '<creffett> zan--', 'xscreensaver bug', 'shibe', 'no shibing', '<skasturi> hi zan'
+              'jwoglom\'s sweatpants', 'jwoglom makes a chip sandwich', 'smash bros', 'anya hates someone', 'fwilson doesn\'t mod MC',
+              'river flows in you', 'my main girl', 'someone throws the lemon', 'shirt tucked in', 'dammit zeal']
 
     board = [[None for i in range(5)] for j in range(5)]
     for i in range(5):
