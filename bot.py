@@ -87,7 +87,7 @@ class IrcBot(SingleServerIRCBot):
         if hasattr(self, 'server'):
             self.server.socket.close()
             self.server.shutdown()
-        if hasattr(self, 'handler'):
+        if hasattr(self, 'handler') and hasattr(self.handler, 'workers'):
             self.handler.workers.stop_workers()
         thread.shutdown(reload)
 
