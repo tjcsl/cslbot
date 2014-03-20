@@ -214,7 +214,8 @@ class IrcBot(SingleServerIRCBot):
         self.handler.workers.defer(5, c.join, e.arguments[0])
 
     def on_ctcpreply(self, c, e):
-        misc.ping(c, e, time())
+        if len(e.arguments) == 2:
+            misc.ping(c, e, time())
 
     def on_nicknameinuse(self, c, e):
         self.connection.nick('Guest%d' % getrandbits(20))
