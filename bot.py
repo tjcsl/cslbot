@@ -23,9 +23,11 @@ import imp
 import handler
 import argparse
 import atexit
+import ssl
 from helpers import server, config, traceback, misc, modutils, thread, workers
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
+from irc.connection import Factory
 from os.path import dirname, join, exists
 from time import time
 from random import getrandbits
@@ -45,7 +47,10 @@ class IrcBot(SingleServerIRCBot):
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
-        SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
+        if botconfig['core'].getboolean('ssl'):
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick, connect_factory=Factory(wrapper=ssl.wrap_socket))
+        else:
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # properly log quits.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
