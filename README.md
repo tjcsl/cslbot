@@ -15,7 +15,9 @@ See http://tjcsl.github.io/cslbot for api docs.
 Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
+
 Python must be at least 3.3.
+
 Hard mode:
 1. Install irc (https://pypi.python.org/pypi/irc),
 2. beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
