@@ -28,6 +28,10 @@ If you have Pip installed, you can simply run `pip install -r requirements.txt`
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 
+Service
+-------
+Note: the init script (scripts/ircbot) is gentoo/openrc specific.
+
 Database Backends
 -----------------
 Example configurations:
@@ -61,12 +65,16 @@ to STEAMID64. An example steamid mapping file is provided in the static folder.
 For this reason the !steam command is disabled by default;  
 to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
 
-parsequotes.py
---------------
-
-This python script parses the quotes stored and generates a jinja2-templated
-html file containing the quotes. It is intended to be used as a cronjob with
+parsedata.py
+------------
+This python script parses the db and generates jinja2-templated
+html files containing quotes, score, polls, etc. It is intended to be used as a cronjob with
 a webserver to serve quotes over HTTP.
+
+parselogs.py
+------------
+This script parses the logs and generates human-readable logs for each channel the bot is in.
+It is intended to be used as a cronjob to generate and optionally make available logs.
 
 Credits
 -------
