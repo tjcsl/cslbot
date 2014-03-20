@@ -25,6 +25,9 @@ def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
     """
+    if not args['config'].getboolean('hooks'):
+        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+        return
     session = args['db']
     match = re.match('--(.+)', msg)
     if match:
