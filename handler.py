@@ -402,7 +402,7 @@ class BotHandler():
             #FIXME: come up with a better way to prevent admin abuse.
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
-                return
+            return
 
         if msgtype == 'pubnotice':
             return
