@@ -18,9 +18,9 @@ from helpers.command import Command
 from helpers.misc import parse_header
 
 
-@Command('errno')
+@Command('signal')
 def cmd(send, msg, args):
-    """Return either a random value or the specified one from errno.h.
-    Syntax: !errno <errorcode|list>
+    """Return either a random value or the specified one from signal.h.
+    Syntax: !signal <signal|list>
     """
-    send(parse_header('errno', msg))
+    send(parse_header('signal', msg))

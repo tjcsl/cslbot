@@ -17,9 +17,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import subprocess
+import re
+from random import choice
 from requests import get
 from datetime import timedelta
-import subprocess
 
 _pinglist = {}
 
@@ -114,3 +116,23 @@ def get_cmdchar(config, connection, msg, msgtype):
         if msgtype == 'privmsg' and not msg.startswith(cmdchar):
             msg = cmdchar + msg
         return msg
+
+
+def parse_header(header, msg):
+    preproc = subprocess.check_output(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'])
+    if header == 'errno':
+        defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+    else:
+        defines = re.findall('^#define (SIG[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+    deftoval = dict((x, y) for x, y in defines)
+    valtodef = dict((y, x) for x, y in defines)
+    if not msg:
+        msg = choice(list(valtodef.keys()))
+    if msg == 'list':
+        return ", ".join(deftoval.keys())
+    elif msg in deftoval:
+        return '#define %s %s' % (msg, deftoval[msg])
+    elif msg in valtodef:
+        return '#define %s %s' % (valtodef[msg], msg)
+    else:
+        return "%s not found in errno.h" % msg

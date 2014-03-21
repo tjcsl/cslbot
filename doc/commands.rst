@@ -564,6 +564,14 @@ commands.shibe module
     :undoc-members:
     :show-inheritance:
 
+commands.signal module
+----------------------
+
+.. automodule:: commands.signal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.skasturi module
 ------------------------
 
