@@ -35,7 +35,7 @@ def cmd(send, msg, args):
         send("Invalid nick.")
         return
     row = args['db'].query(Log).filter(Log.msg.ilike("%" + msg + "%"), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
-                                       Log.target == args['target'], Log.source != args['botnick'],
+                                       Log.target == args['target'], Log.source != args['botnick'], Log.source != msg,
                                        Log.type != 'mode', Log.type != 'nick').order_by(Log.time.desc()).first()
     if row is None:
         send("%s has never been pinged." % msg)
