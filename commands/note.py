@@ -24,7 +24,7 @@ def cmd(send, msg, args):
     """Leaves a note for a user.
     Syntax: !note <nick> <note>
     """
-    if not args['config'].getboolean('hooks'):
+    if not args['config']['feature'].getboolean('hooks'):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
         return
     if args['type'] == 'privmsg':
