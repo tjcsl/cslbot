@@ -20,6 +20,7 @@ admins: admin1, admin2
 [db]
 engine:
 [feature]
+server: True
 prettyerrors: True
 stallmanmode: False
 clippy: False
