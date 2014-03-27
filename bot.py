@@ -119,7 +119,7 @@ class IrcBot(SingleServerIRCBot):
         data = self.handler.get_data()
         self.do_shutdown(True)
         self.handler = handler.BotHandler(self.config)
-        if self.config['feature']['server'].getboolean():
+        if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
         self.handler.set_data(data)
         self.handler.connection = c
@@ -260,7 +260,7 @@ def main(args):
         return
     botconfig.read_file(open(configfile))
     bot = IrcBot(botconfig)
-    if botconfig['feature']['server'].getboolean():
+    if botconfig['feature'].getboolean('server'):
         bot.server = server.init_server(bot)
     bot.start()
 
