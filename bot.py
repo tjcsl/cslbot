@@ -1,4 +1,4 @@
-#!/usr/bin/python3.3 -O
+#!/usr/bin/python3 -O
 # Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
 #
 # This program is free software; you can redistribute it and/or
@@ -16,10 +16,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import sys
-if sys.version_info < (3, 3):
-    raise Exception("Need Python 3.3 or higher.")
+if sys.version_info < (3, 4):
+    raise Exception("Need Python 3.4 or higher.")
 import logging
-import imp
+import importlib
 import handler
 import argparse
 import atexit
@@ -110,8 +110,8 @@ class IrcBot(SingleServerIRCBot):
         for x in modutils.get_enabled(dirname(__file__) + '/helpers'):
             name = 'helpers.%s' % x
             if name in sys.modules:
-                imp.reload(sys.modules[name])
-        imp.reload(handler)
+                importlib.reload(sys.modules[name])
+        importlib.reload(handler)
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
         self.config.read_file(open(configfile))
