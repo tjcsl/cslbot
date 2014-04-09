@@ -53,8 +53,10 @@ def get_title(url):
             t = html.find('.//title') if html.getroot() is not None else None
             if t is not None and t.text is not None:
                 title = t.text.replace('\n', ' ').strip()
-            else:
+            elif ctype is not None:
                 title = ctype
+            else:
+                title = "Title Not Found"
     except (timeout, HTTPError) as e:
         raise CommandFailedException(e)
     except ConnectionResetError as e:
