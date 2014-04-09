@@ -46,7 +46,7 @@ def get_title(url):
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         req = urlopen(Request(url, headers=headers), timeout=5)
         ctype = req.getheader('Content-Type')
-        if ctype.startswith('image/'):
+        if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
         else:
             html = parse(req)
