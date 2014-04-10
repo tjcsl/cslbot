@@ -54,7 +54,7 @@ def cmd(send, msg, args):
             score = session.query(Scores).filter(Scores.nick == name).scalar()
             if score is not None:
                 if name == args['botnick'].lower():
-                    output = 'has %s points! :)' % score
+                    output = 'has %s points! :)' % score.score
                     send(output, 'action')
                 else:
                     send("%s has %i points!" % (name, score.score))
