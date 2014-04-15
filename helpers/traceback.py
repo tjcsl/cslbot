@@ -36,4 +36,7 @@ def handle_traceback(ex, c, target, config, source="the bot"):
             c.privmsg(target, "%s -- %s" % (source, output))
         else:
             c.privmsg(target, "%s occured in %s. See the control channel for details." % (name, source))
+    #FIXME: better support for very long errors.
+    if len(output) > 256:
+        output = output[:253] + "..."
     c.privmsg(errtarget, 'Error in channel %s -- %s -- %s in %s on line %s: %s' % (target, source, name, trace[0], trace[1], output))
