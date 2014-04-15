@@ -2,16 +2,8 @@
 set -e
 
 # do docs
-cd gh-pages
-../scripts/gendocs.sh
-git add .
-if ! [ -z "`git status --porcelain`" ]; then
-	git commit -m 'update docs'
-fi
-git push
-cd ..
-
-# update master ro dev
+# handle_docs
+# update master to dev
 git checkout master
 git pull
 if ! git merge --ff-only dev; then
@@ -33,3 +25,14 @@ if [ "$1" == "restart" ]; then
 else
 	sudo -u ircbot ./scripts/reload
 fi
+
+function handle_docs() {
+cd gh-pages
+../scripts/gendocs.sh
+git add .
+if ! [ -z "`git status --porcelain`" ]; then
+	git commit -m 'update docs'
+fi
+git push
+cd ..
+}

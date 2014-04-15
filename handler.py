@@ -410,9 +410,9 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
-            for hook in self.hooks:
-                realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
-                hook.run(send, msg, msgtype, self, target, realargs)
+            for h in self.hooks:
+                realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
+                h.run(send, msg, msgtype, self, target, realargs)
 
         if msgtype == 'nick':
             if e.target in self.admins:
