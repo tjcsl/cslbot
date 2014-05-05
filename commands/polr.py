@@ -1,4 +1,4 @@
-# Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
+# Copyright (C) 2013-2014 Chaoyi Zha (cydrobolt), creators of cslbot
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,22 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import random
-from helpers.hook import Hook
+from requests import get
+from helpers.command import Command
 
 
-@Hook('pubmsg', ['type', 'nick'])
-def handle(send, msg, args):
-    if "the cloud" in msg:
-        msg = msg.replace("the cloud", "my butt")
-    elif "cloud" in msg:
-        msg = msg.replace("cloud", "butt")
-    else:
-        return
-    # make it more random.
-    if random() > 0.005:
-        return
-    if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], msg))
-    else:
-        send("correction: * %s %s" % (args['nick'], msg))
+@Command('polr', ['config'])
+def cmd(send, msg, args):
+    """Shortens a long URL using Polr - make sure to include http:// before a url.
+    """
+    apikey = args['config']['api']['polrkey']
+    try:
+        html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
+        send("Polrfied (shortened) : %s" % html.text)
+    except ValueError:
+        send('Error: INVALID KEY OR OTHER ERROR.')

@@ -7,3 +7,6 @@ gh-pages
 *.*~
 scripts/fixperms.sh
 static/templates/analytics.html
+build
+db.sqlite
+db.sqlitee

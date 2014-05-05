@@ -18,7 +18,7 @@ from helpers.command import Command
 from helpers.misc import parse_time
 
 
-@Command('defersay', ['nick', 'is_admin', 'handler'])
+@Command(['defersay', 'in'], ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
     """Says something at a later time.
     Syntax: !defersay <delay> <msg>

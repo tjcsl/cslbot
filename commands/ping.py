@@ -26,8 +26,7 @@ def cmd(send, msg, args):
     Syntax: !ping <target>
     """
     if not msg:
-        send("Ping what?")
-        return
+        msg = args['nick']
     channel = args['target'] if args['target'] != 'private' else args['nick']
     # CTCP PING
     if "." not in msg:

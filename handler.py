@@ -214,8 +214,8 @@ class BotHandler():
 
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
-            if target != ctrlchan:
-                ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
+            if target != ctrlchan and msgtype == "privmsg":
+                ctrlmsg = "< %s > %s" % (nick, msg)
                 # If we call self.send, we'll get a infinite loop.
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
 

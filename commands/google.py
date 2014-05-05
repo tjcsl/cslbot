@@ -16,7 +16,7 @@
 
 from requests import get
 from helpers.command import Command
-
+from helpers.urlutils import get_title
 
 @Command(['google', 'g'])
 def cmd(send, msg, args):
@@ -32,4 +32,7 @@ def cmd(send, msg, args):
         send("Google didn't say much.")
     else:
         url = results[0]['unescapedUrl']
-        send("Google says %s" % url)
+        title = get_title(url)
+        if len(title) > 128:
+            title = title[:125] + "..."
+        send("Google says %s (Title: %s)" % (url, title))

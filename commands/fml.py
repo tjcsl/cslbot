@@ -18,7 +18,7 @@ from lxml import etree
 from helpers.command import Command
 
 
-@Command('fml', ['config'], limit=2)
+@Command('fml', ['config'])
 def cmd(send, msg, args):
     """Gets a random FML post.
     Syntax: !fml
