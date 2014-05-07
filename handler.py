@@ -54,7 +54,7 @@ class BotHandler():
         self.loadmodules()
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
-        self.log_to_ctrlchan = False
+        self.log_to_ctrlchan = True
         self.db = sql.Sql(config)
 
     def get_data(self):
@@ -214,7 +214,7 @@ class BotHandler():
 
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
-            if target != ctrlchan and msgtype == "privmsg":
+            if target != ctrlchan and msgtype == "privmsg" and target != self.config['core']['nick']:
                 ctrlmsg = "< %s > %s" % (nick, msg)
                 # If we call self.send, we'll get a infinite loop.
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
