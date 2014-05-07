@@ -51,11 +51,11 @@ Example configurations:
 
 1.  PostgreSQL - engine: postgresql://ircbot:dbpass@localhost/dbname
 
-2.  SQLite - engine: sqlite:///db.sqlite
+2.  SQLite - engine: sqlite:///db.sqlite?check_same_thread=False
 
 See: http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html for more information on SQLAlchemy database engine URLs.
 
-If you intend to use SQLite, the default DBAPI is provided by a built-in python module (sqlite3), so you don't need to install any additional packages.
+If you intend to use SQLite, the default DBAPI is provided by a built-in python module (sqlite3), so you don't need to install any additional packages. It is also reccomended to add `?check_same_thread=False` to the end of the SQLite url in order to avoid erros caused by multithreading.
 
 If you intend to use PostgreSQL, the default DBAPI is provided by the psycopg2 package (https://pypi.python.org/pypi/psycopg2)
 
