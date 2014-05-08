@@ -21,16 +21,21 @@ from urllib.error import URLError, HTTPError
 from requests import post
 from socket import timeout
 from .exception import CommandFailedException
+import polr
 
-
-def get_short(msg):
-    if len(msg) < 20:
-        return msg
-    data = post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps({'longUrl': msg}), headers={'Content-Type': 'application/json'}).json()
-    if 'error' in data:
-        return msg
-    else:
-        return data['id']
+def get_short(url, key = "INVALIDKEYHERE"):
+    if len(url) < 30:
+        return url
+    polr.apikey = key 
+    try:
+        short = polr.shorten(url)
+    except polr.UnauthorizedError:
+        data = post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps({'longUrl': url}), headers={'Content-Type': 'application/json'}).json()
+        if 'error' in data:
+            short = url
+        else:
+            short =  data['id']
+    return short
 
 
 def get_title(url):

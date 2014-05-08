@@ -19,25 +19,19 @@ Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
 
-Python must be at least 3.3.
+Then install the dependencies using `pip install -r requirements.txt`
 
-Hard mode:
+Required Dependencies:
 
-1.  Install irc (https://pypi.python.org/pypi/irc),
+1.  irc (https://pypi.python.org/pypi/irc),
+2.  lxml (https://pypi.python.org/pypi/lxml),
+3.  requests (https://pypi.python.org/pypi/requests),
+4.  sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
 
-2.  beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
+A couple of commands require these packages (do not worry, the bot will still work without these)
 
-3.  lxml (https://pypi.python.org/pypi/lxml),
-
-4.  requests (https://pypi.python.org/pypi/requests),
-
-5.  IRC (http://pypi.python.org/pypi/irc)
-
-6.  and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
-
-Easy mode:
-
-If you have Pip installed, you can simply run `pip install -r requirements.txt`
+1. Beautiful Soup 4 (https://pypi.python.org/pypi/bs4)
+2. Polr (https://pypi.python.org/pypi/polr)
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 

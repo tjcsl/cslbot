@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from requests import get
+import polr
 from helpers.command import Command
 
 
@@ -22,9 +22,8 @@ from helpers.command import Command
 def cmd(send, msg, args):
     """Shortens a long URL using Polr - make sure to include http:// before a url.
     """
-    apikey = args['config']['api']['polrkey']
+    polr.apikey = args['config']['api']['polrkey']
     try:
-        html = get('http://polr.cf/api/', params={'apikey': apikey, 'action':'shorten', 'url':msg})
-        send("Polrfied (shortened) : %s" % html.text)
-    except ValueError:
-        send('Error: INVALID KEY OR OTHER ERROR.')
+        send(polr.shorten(msg.split(" ")[0]))
+    except polr.UnauthorizedError:
+        send("Your bot admin has not provided me with a valid key. Please ask them to do so. Thank you!")

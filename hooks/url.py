@@ -32,6 +32,9 @@ def handle(send, msg, args):
     #FIXME: don't hardcode.
     if "http://git.io" in msg:
         return
+    #FIXME: also, don't hardcode.
+    if msg.split()[0][-4:] == "polr":
+        return
     # crazy regex to match urls
     match = re.search(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.]
                           [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
@@ -40,7 +43,7 @@ def handle(send, msg, args):
     if match:
         url = match.group(1)
         title = get_title(url)
-        short = get_short(url)
+        short = get_short(url, args['config']['api']['polrkey'])
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
            # if last:

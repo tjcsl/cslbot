@@ -14,12 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-bs4import = True
-
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    bs4import = False
+from bs4 import BeautifulSoup
 from requests import get
 from helpers.command import Command
 
@@ -29,9 +24,6 @@ def cmd(send, msg, args):
     """Gets the F***ING weather!
     Syntax: !fweather <location>
     """
-    if not bs4import:
-        send("Sorry, but that command requires the BeautifulSoup library which has not been installed by the bot admin.")
-        return
     try:
         html = get('http://thefuckingweather.com/', params={'where': msg})
         soup = BeautifulSoup(html.text)
@@ -39,4 +31,3 @@ def cmd(send, msg, args):
         send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
     except ValueError:
         send('NO FSCKING RESULTS.')
-

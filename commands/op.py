@@ -32,13 +32,13 @@ def kick(args, msg):
     if not msg:
        args['handler'].connection.kick(args['target'], args['nick'], args['nick'])
     else:
-       args['handler'].connection.kick(args['target'], msg, msg)
+       args['handler'].connection.kick(args['target'], msg, args['nick'])
 
 def ban(args, msg):
     if not msg:
         mode(args, "+b %s!*@* %s!*@*" % (args['nick'], args['nick']))
     else:
-        mode(args, "+bq %s %s" % (msg, msg))
+        mode(args, "+b %s %s" % (msg, msg))
 
 @Command(['op', 'deop', 'voice', 'devoice', 'kick', 'kickban'], ['nick', 'is_admin', 'handler', 'botnick', 'target', 'name'])
 def cmd(send, msg, args):
