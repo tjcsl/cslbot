@@ -18,14 +18,12 @@ from requests import get
 from helpers.command import Command
 
 
-@Command('urban')
-def cmd(send, msg, args):
-    """Gets a definition from urban dictionary.
-    Syntax: !urban (#<num>) <term>
-    """
-    if not msg:
-        send("Lookup what?")
-        return
+def get_random():
+    url = get('http://www.urbandictionary.com/random.php').url
+    return url.split('=')[1].replace('+', ' ')
+
+
+def get_definition(msg):
     msg = msg.split()
     index = msg[0][1:] if msg[0].startswith('#') else None
     term = " ".join(msg[1:]) if index is not None else " ".join(msg)
@@ -41,6 +39,19 @@ def cmd(send, msg, args):
         output = data[int(index)]['output']
     output = output.replace('shit', '$#!+').replace('fuck', 'fsck')
     output = output.splitlines()[0]
+    return output
+
+
+@Command('urban')
+def cmd(send, msg, args):
+    """Gets a definition from urban dictionary.
+    Syntax: !urban (#<num>) <term>
+    """
+    if msg:
+        output = get_definition(msg)
+    else:
+        msg = get_random()
+        output = "%s: %s" % (msg, get_definition(msg))
     if len(output) > 256:
         output = output[:253] + "..."
     send(output)
