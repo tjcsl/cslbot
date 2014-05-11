@@ -71,7 +71,7 @@ def do_nuke(c, nick, target, channel):
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
-#FIXME: there has to be a better way to do this.
+# FIXME: there has to be a better way to do this.
 def recordping(nick, channel):
     global _pinglist
     _pinglist[nick] = channel

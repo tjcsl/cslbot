@@ -19,7 +19,7 @@ from requests import post, get
 from helpers.command import Command
 
 
-#FIXME: can cache for 10 minutes.
+# FIXME: can cache for 10 minutes.
 def get_token(client_id, secret):
     postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
     data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()

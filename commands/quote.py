@@ -45,7 +45,7 @@ def get_quotes_nick(session, nick):
 
 
 def do_add_quote(cmd, session, isadmin, send, args):
-    #FIXME: have better parsing.
+    # FIXME: have better parsing.
     if '--' not in cmd:
         send("To add a quote, it must be in the format <quote> -- <nick>")
         return

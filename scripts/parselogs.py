@@ -23,7 +23,7 @@ from os.path import dirname, exists
 from os import mkdir
 from sys import path
 
-#HACK: allow sibling imports
+# HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
 from helpers.orm import Log
@@ -38,7 +38,7 @@ def get_timestamp(config, outdir):
     outfile = "%s/%s.log" % (outdir, config['core']['channel'])
     if not exists(outfile):
         return 0
-    #FIXME: this shouldn't have to read the whole file.
+    # FIXME: this shouldn't have to read the whole file.
     with open(outfile) as f:
         for line in reversed(f.readlines()[-50:]):
             match = re.match('([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})', line)
@@ -104,7 +104,7 @@ def gen_log(row):
 
 def main(config, outdir):
     session = get_session(config)
-    #FIXME: this only has second percision, so it's possible that events with the same timestamp might be dropped.
+    # FIXME: this only has second percision, so it's possible that events with the same timestamp might be dropped.
     timestamp = get_timestamp(config, outdir)
     for row in session.query(Log).filter(Log.time > timestamp).order_by(Log.time).all():
         check_day(row, outdir, config['core']['channel'])
