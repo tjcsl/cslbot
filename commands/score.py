@@ -62,7 +62,7 @@ def cmd(send, msg, args):
             if score is not None:
                 if name == args['botnick'].lower():
                     output = 'has %s %s! :)' % (score.score, pluralize('point', score.score))
-                    send(output, 'action'
+                    send(output, 'action')
                 else:
                     send("%s has %i %s!" % (name, score.score, pluralize('point', score.score)))
             else:
@@ -76,4 +76,4 @@ def cmd(send, msg, args):
         else:
             randid = randint(1, count)
             query = session.query(Scores).get(randid)
-            send("%s has %i points!" % (query.nick, query.score))
+            send("%s has %i %s!" % (query.nick, query.score, pluralize('point', query.score)))
