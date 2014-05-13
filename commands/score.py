@@ -20,6 +20,13 @@ from helpers.orm import Scores
 from helpers.command import Command
 
 
+def pluralize(s, n):
+    if n == 1:
+        return s
+    else:
+        return s + 's'
+
+
 @Command('score', ['config', 'db', 'botnick'])
 def cmd(send, msg, args):
     """Gets scores.
@@ -54,10 +61,10 @@ def cmd(send, msg, args):
             score = session.query(Scores).filter(Scores.nick == name).scalar()
             if score is not None:
                 if name == args['botnick'].lower():
-                    output = 'has %s points! :)' % score.score
-                    send(output, 'action')
+                    output = 'has %s %s! :)' % (score.score, pluralize('point', score.score))
+                    send(output, 'action'
                 else:
-                    send("%s has %i points!" % (name, score.score))
+                    send("%s has %i %s!" % (name, score.score, pluralize('point', score.score)))
             else:
                 send("Nobody cares about %s" % name)
     elif msg:
