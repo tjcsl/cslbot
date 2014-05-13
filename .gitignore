@@ -10,3 +10,4 @@ static/templates/analytics.html
 build
 db.sqlite
 db.sqlitee
+*.bak

@@ -14,13 +14,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import localtime, strftime
+from time import localtime, strftime, sleep
 from helpers.hook import Hook
 from helpers.orm import Notes
 
 
 @Hook(['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
+    sleep(1)
     nick = args['nick']
     notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:

@@ -14,16 +14,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import polr
+from polr import api
 from helpers.command import Command
-
+from helpers.exception import CommandFailedException
 
 @Command('polr', ['config'])
 def cmd(send, msg, args):
     """Shortens a long URL using Polr - make sure to include http:// before a url.
     """
-    polr.apikey = args['config']['api']['polrkey']
+    polr = api(apikey = args['config']['api']['polrkey'])
     try:
         send(polr.shorten(msg.split(" ")[0]))
-    except polr.UnauthorizedError:
-        send("Your bot admin has not provided me with a valid key. Please ask them to do so. Thank you!")
+    except Exception as e:
+        raise CommandFailedException(e)
