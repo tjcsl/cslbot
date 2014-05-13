@@ -22,7 +22,7 @@ from requests import post
 from socket import timeout
 from .exception import CommandFailedException
 
-def get_short(url, polr):
+def get_short(url, polr = None):
     if len(url) < 30:
         return url
     try:
