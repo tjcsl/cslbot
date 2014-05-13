@@ -401,7 +401,7 @@ class BotHandler():
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
         if msgtype == 'privnotice':
-            #FIXME: come up with a better way to prevent admin abuse.
+            # FIXME: come up with a better way to prevent admin abuse.
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
             return

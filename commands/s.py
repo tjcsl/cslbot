@@ -59,7 +59,7 @@ def cmd(send, msg, args):
         return
     char = msg[0]
     msg = msg[1:].split(char, maxsplit=2)
-    #fix for people who forget a trailing slash
+    # fix for people who forget a trailing slash
     if len(msg) == 2 and args['config']['feature'].getboolean('lazyregex'):
         msg.append('')
     # not a valid sed statement.

@@ -122,7 +122,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 else:
                     send("Unknown command. Type help for more info.\n")
         except Exception as ex:
-            #FIXME: use helpers.traceback
+            # FIXME: use helpers.traceback
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__
