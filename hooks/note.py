@@ -17,15 +17,18 @@
 from time import localtime, strftime, sleep
 from helpers.hook import Hook
 from helpers.orm import Notes
-
+from sqlalchemy import exc
 
 @Hook(['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
     sleep(1)
     nick = args['nick']
-    notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
+    try:
+        notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
+    except exc.OperationalError:
+        return
     for note in notes:
         time = strftime('%m/%d/%Y %H:%M:%S', localtime(note.time))
         send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))
-        note.pending = 0
+        note.pending = 0        
     args['db'].commit()
