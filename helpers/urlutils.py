@@ -23,7 +23,7 @@ from socket import timeout
 from .exception import CommandFailedException
 
 def get_short(url, polr = None):
-    if len(url) < 30:
+    if len(url) < 40:
         return url
     try:
         short = polr.shorten(url, temp = True)
