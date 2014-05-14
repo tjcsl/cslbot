@@ -47,7 +47,7 @@ def get_title(url):
         # url[1] = url[1].encode('idna').decode()
         url = "://".join(url)
         # User-Agent is really hard to get right :(
-        headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
+        headers = {'User-Agent': 'Mozilla/5.0 (compatible; cslbot; +https://github.com/sckasturi/saltlake)'}
         req = urlopen(Request(url, headers=headers), timeout=5)
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
