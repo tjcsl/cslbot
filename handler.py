@@ -337,10 +337,18 @@ class BotHandler():
                 else:
                     self.ignored.remove(cmdargs[1])
                     send("%s is no longer ignored." % cmdargs[1])
-            elif cmdargs[0] in self.ignored:
-                send("%s is already ignored." % cmdargs[0])
+            elif cmdargs[0] == 'add':
+                if len(cmdargs) == 1:
+                    send("Ignore who?")
+                elif cmdargs[1] in self.ignored:
+                    send("%s is already ignored." % cmdargs[1])
+                else:
+                    self.ignore(send, cmdargs[1])
             else:
-                self.ignore(send, cmdargs[0])
+                 if cmdargs[0] in self.ignored:
+                     send("%s is already ignored." % cmdargs[0])
+                 else:
+                     self.ignore(send, cmdargs[0])
         elif cmd == 'join':
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
