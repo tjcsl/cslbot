@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import choice
+from random import choice as c
 from helpers.command import Command
 
 abbrev = ["TCP", "HTTP", "SDD", "RAM", "GB", "CSS", "SSL", "AGP", "SQL",
@@ -46,13 +46,13 @@ def cmd(send, msg, args):
     """Causes the bot to generate some jargon.
     Syntax: !jargon
     """
-    msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbrev), choice(noun), choice(adj), choice(abbrev), choice(noun)),
-               "We need to %s the %s %s %s!" % (choice(verb), choice(adj), choice(abbrev), choice(noun)),
-               "Try to %s the %s %s, maybe it will %s the %s %s!" % (choice(verb), choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun)),
-               "You can't %s the %s without %s the %s %s %s!" % (choice(verb), choice(noun), choice(ingverb), choice(adj), choice(abbrev), choice(noun)),
-               "Use the %s %s %s, then you can %s the %s %s!" % (choice(adj), choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun)),
-               "The %s %s is down, %s the %s %s so we can %s the %s %s!" % (choice(abbrev), choice(noun), choice(verb), choice(adj), choice(noun), choice(verb), choice(abbrev), choice(noun)),
-               "%s the %s won't do anything, we need to %s the %s %s %s!" % (choice(ingverb), choice(noun), choice(verb), choice(adj), choice(abbrev), choice(noun)),
-               "I'll %s the %s %s %s, that should %s the %s %s!" % (choice(verb), choice(adj), choice(abbrev), choice(noun), choice(verb), choice(abbrev), choice(noun))]
+    msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (c(verb), c(noun), c(abbrev), c(noun), c(adj), c(abbrev), c(noun)),
+               "We need to %s the %s %s %s!" % (c(verb), c(adj), c(abbrev), c(noun)),
+               "Try to %s the %s %s, maybe it will %s the %s %s!" % (c(verb), c(abbrev), c(noun), c(verb), c(adj), c(noun)),
+               "You can't %s the %s without %s the %s %s %s!" % (c(verb), c(noun), c(ingverb), c(adj), c(abbrev), c(noun)),
+               "Use the %s %s %s, then you can %s the %s %s!" % (c(adj), c(abbrev), c(noun), c(verb), c(adj), c(noun)),
+               "The %s %s is down, %s the %s %s so we can %s the %s %s!" % (c(abbrev), c(noun), c(verb), c(adj), c(noun), c(verb), c(abbrev), c(noun)),
+               "%s the %s won't do anything, we need to %s the %s %s %s!" % (c(ingverb), c(noun), c(verb), c(adj), c(abbrev), c(noun)),
+               "I'll %s the %s %s %s, that should %s the %s %s!" % (c(verb), c(adj), c(abbrev), c(noun), c(verb), c(abbrev), c(noun))]
 
-    send(choice(msgtype))
+    send(c(msgtype))
