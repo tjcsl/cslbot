@@ -103,10 +103,10 @@ def get_channels(chanlist, nick):
 
 def get_cmdchar(config, connection, msg, msgtype):
         cmdchar = config['core']['cmdchar']
-        botnick = '%s: ' % connection.real_nickname
-        if msg.startswith(botnick):
-            msg = msg.replace(botnick, cmdchar, 1)
-
+        botnick = connection.real_nickname
+        prefix_check = msg.split(" ", maxsplit=1)
+        if len(prefix_check[0]) == len(botnick) + 1:
+            msg = cmdchar + prefix_check[1]
         altchars = [x.strip() for x in config['core']['altcmdchars'].split(',')]
         if altchars and altchars[0] != '':
             for i in altchars:
