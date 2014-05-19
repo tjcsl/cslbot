@@ -23,7 +23,7 @@ from helpers.misc import check_exists
 @Command(['reddit', 'srepetsk'], ['name'])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
-    Syntax: !reddit <subreddit>
+    Syntax: {command} <subreddit>
     """
     if args['name'] == 'srepetsk':
         msg = 'nottheonion'

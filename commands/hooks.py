@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('hooks')
 def cmd(send, msg, args):
     """Lists loaded hooks
-    Syntax: !hooks
+    Syntax: {command} 
     """
     hooklist = ', '.join([str(x) for x in get_known_hooks()])
     send('Loaded hooks: %s' % (hooklist))

@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('cidr', [])
 def cmd(send, msg, args):
     """Gets a CIDR range.
-    Syntax: !cidr <range>
+    Syntax: {command} <range>
     """
     if not msg:
         send("Need a CIDR range.")

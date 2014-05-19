@@ -21,7 +21,7 @@ from random import choice
 @Command(['ahamilto', 'ahamilton'])
 def cmd(send, msg, args):
     """Emulates ahamilto.
-    Syntax: !ahamilto (nick)
+    Syntax: {command} (nick)
     """
     sayings = ['ic', '...', 'ic...']
     saying = choice(sayings)

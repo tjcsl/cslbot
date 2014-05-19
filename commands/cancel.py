@@ -20,7 +20,7 @@ from helpers.command import Command
 @Command('cancel', ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
     """Cancels a deferred action with the given id.
-    Syntax: !cancel id
+    Syntax: {command} id
     """
     if not args['is_admin'](args['nick']):
         send("Only admins can cancel threads.")

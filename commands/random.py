@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('random')
 def cmd(send, msg, args):
     """For when you don't have enough randomness in your life.
-    Syntax: !random (--int) (len)
+    Syntax: {command} (len)
     """
     match = re.match(r'--(.+?)\b', msg)
     randtype = 'hex'

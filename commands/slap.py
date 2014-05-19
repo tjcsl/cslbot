@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('slap', ['handler', 'target', 'config'])
 def cmd(send, msg, args):
     """Slap somebody.
-    Syntax: !slap <nick> for <reason>
+    Syntax: {command} <reason>
     """
     implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     methods = ['around a bit', 'upside the head']
@@ -41,7 +41,7 @@ def cmd(send, msg, args):
         while i < len(msg):
             if msg[i] == 'for':
                 if reason:
-                    send("Invalid Syntax: You can only have one for clause!")
+                    send("Invalid Syntax: {command} clause!")
                     return
                 i += 1
                 while i < len(msg):

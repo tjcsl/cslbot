@@ -27,7 +27,7 @@ from helpers.command import Command
 @Command('fweather')
 def cmd(send, msg, args):
     """Gets the F***ING weather!
-    Syntax: !fweather <location>
+    Syntax: {command} <location>
     """
     if not bs4import:
         send("Sorry, but that command requires the BeautifulSoup library which has not been installed by the bot admin.")

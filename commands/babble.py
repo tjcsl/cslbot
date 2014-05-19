@@ -95,7 +95,7 @@ def build_msg(markov, speaker):
 @Command('babble', ['db', 'config'])
 def cmd(send, msg, args):
     """Babbles like a user
-    Syntax: !babble (nick)
+    Syntax: {command} (nick)
     """
     cursor = args['db']
     speaker = msg.split()[0] if msg else args['config']['core']['channel']

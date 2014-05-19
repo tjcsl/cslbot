@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command(['lmgtfy', 'explain'])
 def cmd(send, msg, args):
     """Explain things.
-    Syntax: !explain <text>
+    Syntax: {command} <text>
     """
     if not msg:
         send("Explain What?")

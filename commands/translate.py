@@ -29,7 +29,7 @@ def get_token(client_id, secret):
 @Command(['translate', 'trans'], ['config'])
 def cmd(send, msg, args):
     """Translate something.
-    Syntax: !translate <text>
+    Syntax: {command} <text>
     """
     if not msg:
         send("Translate what?")

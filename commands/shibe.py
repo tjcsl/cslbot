@@ -22,7 +22,7 @@ from helpers.textutils import gen_word
 @Command('shibe')
 def cmd(send, msg, args):
     """Generates a shibe reaction.
-    Syntax: !shibe (topic1)...(topicn)
+    Syntax: {command} (topic1)...(topicn)
     """
     topics = msg.split() if msg else [gen_word()]
 

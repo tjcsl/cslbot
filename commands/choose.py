@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('choose')
 def cmd(send, msg, args):
     """Chooses between multiple choices.
-    Syntax: !choose <object> or <object> (or <object>...)
+    Syntax: {command} <object>...)
     """
     if not msg:
         send("Choose what?")

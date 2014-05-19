@@ -22,7 +22,7 @@ from helpers.misc import do_pull
 @Command('pull', ['handler', 'is_admin', 'nick', 'botnick'])
 def cmd(send, msg, args):
     """Pull changes.
-    Syntax: !pull <branch>
+    Syntax: {command} <branch>
     """
     if not args['is_admin'](args['nick']):
         send("Nope, not gonna do it.")

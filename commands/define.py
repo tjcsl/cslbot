@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('define', ['config'])
 def cmd(send, msg, args):
     """Gets the definition of a word.
-    Syntax: !define <word>
+    Syntax: {command} <word>
     """
     if not msg:
         send("Define what?")

@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command(['note', 'memo'], ['db', 'nick', 'type', 'config'], limit=5)
 def cmd(send, msg, args):
     """Leaves a note for a user.
-    Syntax: !note <nick> <note>
+    Syntax: {command} <note>
     """
     if not args['config']['feature'].getboolean('hooks'):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")

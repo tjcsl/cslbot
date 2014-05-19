@@ -30,7 +30,7 @@ def get_log(conn, user, target):
 @Command(['reverse', 'sdamashek'], ['db', 'target'])
 def cmd(send, msg, args):
     """Reverses a message.
-    Syntax: !reverse --<nick>
+    Syntax: {command} --<nick>
     """
     conn = args['db']
     user = msg[2:] if re.search("^--", msg) else None

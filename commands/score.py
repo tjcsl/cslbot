@@ -30,7 +30,7 @@ def pluralize(s, n):
 @Command('score', ['config', 'db', 'botnick'])
 def cmd(send, msg, args):
     """Gets scores.
-    Syntax: !score <--high|--low|nick>
+    Syntax: {command} <--high|--low|nick>
     """
     if not args['config']['feature'].getboolean('hooks'):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")

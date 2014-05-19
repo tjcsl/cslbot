@@ -20,7 +20,7 @@ from helpers.command import Command
 @Command('kill', ['botnick'])
 def cmd(send, msg, args):
     """Kills somebody.
-    Syntax: !kill <victim>
+    Syntax: {command} <victim>
     """
     if not msg:
         send("kill who?")

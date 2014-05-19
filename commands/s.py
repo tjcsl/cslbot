@@ -52,7 +52,7 @@ def get_modifiers(msg, nick, nickregex):
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target'])
 def cmd(send, msg, args):
     """Corrects a previous message.
-    Syntax: !s/<msg>/<replacement>/<ig|nick>
+    Syntax: {command} >
     """
     if not msg:
         send("Invalid Syntax.")

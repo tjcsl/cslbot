@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('pfoley')
 def cmd(send, msg, args):
     """Imitates pfoley.
-    Syntax: !pfoley <message>
+    Syntax: {command} <message>
     """
     if not msg:
         msg = gen_word()

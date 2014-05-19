@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('meme')
 def cmd(send, msg, args):
     """Gets a random meme.
-    Syntax: !meme
+    Syntax: {command} 
     """
     html = fromstring(get('http://knowyourmeme.com/random').text)
     title = html.find(".//title").text.split('|')[0]

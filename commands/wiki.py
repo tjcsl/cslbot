@@ -58,7 +58,7 @@ def get_blurb(wiki_num, api_url, wiki_list, article):
 @Command('wiki', ['config'])
 def cmd(send, msg, args):
     """Returns the first wikipedia result for the argument.
-    Syntax: !wiki <term>
+    Syntax: {command} <term>
     """
     if not msg:
         send("Need a article.")

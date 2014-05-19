@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('fml', ['config'])
 def cmd(send, msg, args):
     """Gets a random FML post.
-    Syntax: !fml
+    Syntax: {command} 
     """
     tree = etree.parse("http://api.fmylife.com/view/random/nosex/?key=%s&language=en" % args['config']['api']['fmlkey'])
     send(tree.xpath('//text')[0].text)

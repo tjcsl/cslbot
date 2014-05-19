@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command(['time', 'date'])
 def cmd(send, msg, args):
     """Tells the time.
-    Syntax: !time
+    Syntax: {command} 
     """
     bold = '\x02'
     if not msg:

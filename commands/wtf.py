@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('wtf')
 def cmd(send, msg, args):
     """Tells you what acronyms mean.
-    Syntax: !wtf <term>
+    Syntax: {command} <term>
     """
     try:
         answer = subprocess.check_output(['wtf', msg], stderr=subprocess.STDOUT)

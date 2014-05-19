@@ -27,7 +27,7 @@ def get_last(cursor, nick):
 @Command('highlight', ['db', 'nick', 'config', 'target', 'botnick'])
 def cmd(send, msg, args):
     """When a nick was last pinged.
-    Syntax: !highlight (nick)
+    Syntax: {command} (nick)
     """
     if not msg:
         msg = args['nick']

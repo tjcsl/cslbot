@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('isup', ['nick'])
 def cmd(send, msg, args):
     """Checks if a website is up.
-    Syntax: !isup <website>
+    Syntax: {command} <website>
     """
     if not msg:
         send("What are you trying to get to?")

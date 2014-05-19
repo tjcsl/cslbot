@@ -22,7 +22,7 @@ from helpers.textutils import gen_insult
 @Command('insult', ['handler', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Insults a user.
-    Syntax: !insult (nick)
+    Syntax: {command} (nick)
     """
 
     if not msg:

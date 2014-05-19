@@ -36,7 +36,7 @@ def create_issue(msg, nick, repo, apikey):
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Files a github issue or gets a open one.
-    Syntax: !issue (description)
+    Syntax: {command} (description)
     """
     repo = args['config']['api']['githubrepo']
     apikey = args['config']['api']['githubapikey']

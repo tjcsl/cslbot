@@ -21,7 +21,7 @@ from random import choice, random
 @Command(['skasturi', 'randissue'])
 def cmd(send, msg, args):
     """Gives a a random, non-sensical issue.
-    Syntax: !skasturi
+    Syntax: {command} 
     """
     a = ["add", "implement", "fix", "remove", "resolve", "delete", "improve"]
     b = ["compressor", "engine", "lift", "elevator", "irc bot", "stabilizer",

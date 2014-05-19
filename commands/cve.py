@@ -24,7 +24,7 @@ from helpers.urlutils import get_short
 @Command(['cve', 'cveid'])
 def cmd(send, msg, args):
     """Gets info on a CVE id from MITRE's CVE database
-    Syntax: !cve <cveid>
+    Syntax: {command} <cveid>
     """
     elements = msg.split('-')
     if len(elements) > 3 or len(elements) < 2:

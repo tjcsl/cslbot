@@ -21,7 +21,7 @@ from helpers import textutils
 @Command('filter', ['handler', 'is_admin', 'nick', 'type'])
 def cmd(send, msg, args):
     """Changes the output filter.
-    Syntax: !filter <filter|show|list|reset|chain filter>
+    Syntax: {command} filter>
     """
     output_filters = {
         "fwilson": textutils.gen_fwilson,

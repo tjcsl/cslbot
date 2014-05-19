@@ -23,7 +23,7 @@ from helpers.command import Command
 @Command(['movie', 'imdb'])
 def cmd(send, msg, args):
     """Gets a random movie.
-    Syntax: !movie
+    Syntax: {command} 
     """
 
     req = get('http://www.imdb.com/random/title')

@@ -21,7 +21,7 @@ from helpers.misc import do_nuke
 @Command('nuke', ['nick', 'is_admin', 'handler', 'target', 'config', 'botnick'])
 def cmd(send, msg, args):
     """Nukes somebody.
-    Syntax: !nuke target
+    Syntax: {command} target
     """
     c, nick = args['handler'].connection, args['nick']
     channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']

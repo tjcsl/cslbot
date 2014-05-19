@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('threads')
 def cmd(send, msg, args):
     """Enumerate threads.
-    Syntax: !threads
+    Syntax: {command} 
     """
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
         send(x.name)

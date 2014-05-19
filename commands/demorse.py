@@ -20,7 +20,7 @@ from helpers.command import Command
 @Command('demorse')
 def cmd(send, msg, args):
     """Converts morse to ascii.
-    Syntax: !demorse <text>
+    Syntax: {command} <text>
     """
     demorse_codes = {'.----': '1', '-.--': 'y', '..-': 'u', '...': 's',
                      '-.-.': 'c', '.-.-.': '+', '--..--': ',', '-.-': 'k',

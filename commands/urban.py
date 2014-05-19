@@ -45,7 +45,7 @@ def get_definition(msg):
 @Command('urban')
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
-    Syntax: !urban (#<num>) <term>
+    Syntax: {command} <term>
     """
     if msg:
         output = get_definition(msg)

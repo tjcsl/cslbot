@@ -42,7 +42,7 @@ def gen_nato(msg):
 @Command(['nato', 'ipa'])
 def cmd(send, msg, args):
     """Converts text into NATO form.
-    Syntax: !nato <text>
+    Syntax: {command} <text>
     """
     if not msg:
         send("NATO what?")

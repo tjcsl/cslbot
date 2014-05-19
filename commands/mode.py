@@ -33,6 +33,6 @@ def set_mode(args, mode):
 @Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target'])
 def cmd(send, msg, args):
     """Sets a mode.
-    Syntax: !mode <mode>
+    Syntax: {command} <mode>
     """
     send(set_mode(args, msg))

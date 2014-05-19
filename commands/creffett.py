@@ -21,7 +21,7 @@ from helpers.textutils import gen_creffett
 @Command(['creffett', 'rage'], ['nick', 'target', 'ignore', 'do_kick', 'botnick', 'name'])
 def cmd(send, msg, args):
     """RAGE!!!
-    Syntax: !rage <text>
+    Syntax: {command} <text>
     """
     if args['name'] == 'creffett':
         if not args['nick'].startswith('creffett') and args['nick'] != args['botnick']:

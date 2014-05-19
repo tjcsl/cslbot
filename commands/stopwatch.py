@@ -81,7 +81,7 @@ def stopwatch_list(session, send, nick):
 @Command(['stopwatch', 'sw'], ['db', 'nick'])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
-    Syntax: !stopwatch <start|stop|resume|get|list>
+    Syntax: {command} <start|stop|resume|get|list>
     """
 
     if not msg:

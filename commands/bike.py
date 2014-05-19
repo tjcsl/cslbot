@@ -21,7 +21,7 @@ from helpers.command import Command
 def cmd(send, msg, args):
     """I've got a bike, you can ride it if you like. It's got a basket, a bell that rings and things to make it look good.
     I'd give it to you if I could but I borrowed it.
-    Syntax: !bike
+    Syntax: {command} 
     """
     send(' _f_,_')
     send('(_)`(_)')

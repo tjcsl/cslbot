@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('summon', ['db', 'nick', 'type'], limit=5)
 def cmd(send, msg, args):
     """Summons a user
-    Syntax: !summon <nick>
+    Syntax: {command} <nick>
     """
     if args['type'] == 'privmsg':
         send("Note-passing should be done in public.")

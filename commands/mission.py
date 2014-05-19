@@ -20,6 +20,6 @@ from helpers.command import Command
 @Command('mission')
 def cmd(send, msg, args):
     """Announces the mission.
-    Syntax: !mission
+    Syntax: {command} 
     """
     send("says my mission is to provide all functionality necessary so that you never have to leave IRC again.", "action")

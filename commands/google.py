@@ -21,7 +21,7 @@ from helpers.urlutils import get_title
 @Command(['google', 'g'])
 def cmd(send, msg, args):
     """Googles something.
-    Syntax: !google <term>
+    Syntax: {command} <term>
     """
     if not msg:
         send("Google what?")

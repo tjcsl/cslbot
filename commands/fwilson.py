@@ -22,7 +22,7 @@ from helpers.textutils import gen_fwilson, gen_word
 @Command(['fwilson'])
 def cmd(send, msg, args):
     """Imitates fwilson.
-    Syntax: !fwilson (-f|w) <message>
+    Syntax: {command} <message>
     """
     if not msg:
         msg = gen_word()

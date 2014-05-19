@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('ssearch', ['handler'])
 def cmd(send, msg, args):
     """Searches steam.
-    Syntax: !ssearch <text>
+    Syntax: {command} <text>
     """
     picklefile = open(args['handler'].srcdir + '/static/steamids.pickle', 'rb')
     idlist = pickle.load(picklefile)

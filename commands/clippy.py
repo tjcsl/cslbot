@@ -22,7 +22,7 @@ from helpers.textutils import gen_clippy
 @Command('clippy', ['nick'])
 def cmd(send, msg, args):
     """Informs a user that they are trying to do something and inquire if they want help
-    Syntax: !clippy <nick> <action>
+    Syntax: {command} <action>
     """
     msg = msg.split()
     if not msg:

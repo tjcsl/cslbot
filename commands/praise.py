@@ -27,7 +27,7 @@ def gen_praise(msg):
 @Command('praise')
 def cmd(send, msg, args):
     """Praises something.
-    Syntax: !praise <something>
+    Syntax: {command} <something>
     """
     if not msg:
         send("Praise what?")

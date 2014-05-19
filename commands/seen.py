@@ -27,7 +27,7 @@ def get_last(cursor, nick):
 @Command('seen', ['db'])
 def cmd(send, msg, args):
     """When a nick was last seen.
-    Syntax: !seen <nick>
+    Syntax: {command} <nick>
     """
     if not msg:
         send("Seen who?")

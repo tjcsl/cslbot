@@ -21,7 +21,7 @@ from helpers.textutils import gen_slogan, gen_word
 @Command('slogan')
 def cmd(send, msg, args):
     """Gets a slogan.
-    Syntax: !slogan <text>
+    Syntax: {command} <text>
     """
     if not msg:
         msg = gen_word()

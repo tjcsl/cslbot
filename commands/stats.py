@@ -48,7 +48,7 @@ def get_nick_totals(session, commands, name=None):
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
-    Syntax: !stats <--high|--low|command>
+    Syntax: {command} <--high|--low|command>
     """
     session = args['db']
     commands = get_commands(session)

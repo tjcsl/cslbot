@@ -27,7 +27,7 @@ def get_ids():
 @Command('steam', ['config'])
 def cmd(send, msg, args):
     """Gets steam status.
-    Syntax: !steam <user>
+    Syntax: {command} <user>
     """
     apikey = args['config']['api']['steamapikey']
     if not apikey:

@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('nicks', ['db'])
 def cmd(send, msg, args):
     """Gets previous nicks.
-    Syntax: !nicks <nick>
+    Syntax: {command} <nick>
     """
     if not msg:
         send("Which nick?")
