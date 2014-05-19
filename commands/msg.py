@@ -21,7 +21,7 @@ import re
 @Command('msg', ['nick', 'is_admin'])
 def cmd(send, msg, args):
     """Sends a message to a channel
-    Syntax: {command} <message>
+    Syntax: {command} <channel> <message>
     """
     if not msg:
         send("Message who?")

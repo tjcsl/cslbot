@@ -21,7 +21,7 @@ from helpers.misc import parse_time
 @Command(['defersay', 'in'], ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
     """Says something at a later time.
-    Syntax: {command} <msg>
+    Syntax: {command} <delay> <msg>
     """
     if not args['is_admin'](args['nick']):
         send("Admins only")

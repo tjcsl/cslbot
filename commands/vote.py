@@ -36,7 +36,7 @@ def start_poll(session, msg, isadmin, send, nick, ctrlchan):
 def delete_poll(session, pid):
     """ Deletes a poll """
     if not pid:
-        return "Syntax: {command} <pollnum>"
+        return "Syntax: !poll delete <pollnum>"
     if not pid.isdigit():
         return "Not A Valid Positive Integer."
     poll = session.query(Polls).filter(Polls.accepted, Polls.id == pid).first()
@@ -54,7 +54,7 @@ def edit_poll(session, msg):
     """ Edits a poll """
     cmd = msg.split(maxsplit=1)
     if len(cmd) < 2:
-        return "Syntax: {command} <question>"
+        return "Syntax: !vote edit <pollnum> <question>"
     if not cmd[0].isdigit():
         return "Not A Valid Positive Integer."
     pid = int(cmd[0])
@@ -69,7 +69,7 @@ def reopen(session, msg):
     """ reopens a closed poll."""
     cmd = msg.split()
     if not cmd:
-        return "Syntax: {command} <pollnum>"
+        return "Syntax: !poll reopen <pollnum>"
     if not cmd[0].isdigit():
         return "Not a valid positve integer."
     pid = int(cmd[0])
@@ -83,7 +83,7 @@ def reopen(session, msg):
 def end_poll(session, pid):
     """ Ends a poll """
     if not pid:
-        return "Syntax: {command} <pollnum>"
+        return "Syntax: !vote end <pollnum>"
     if not pid.isdigit():
         return "Not A Valid Positive Integer."
     poll = session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
@@ -96,7 +96,7 @@ def end_poll(session, pid):
 def tally_poll(session, pid, send, target):
     """Shows the results of poll """
     if not pid:
-        send("Syntax: {command} <pollnum>")
+        send("Syntax: !vote tally <pollnum>")
         return
     if not pid.isdigit():
         send("Not A Valid Positive Integer.")
@@ -160,7 +160,7 @@ def vote(session, nick, pid, vote):
 def retract(session, pid, nick):
     """ Deletes a vote for a poll """
     if not pid:
-        return "Syntax: {command} <pollnum>"
+        return "Syntax: !vote retract <pollnum>"
     if not pid.isdigit():
         return "Not A Valid Positive Integer."
     response = session.query(Poll_responses).filter(Poll_responses.pid == pid, Poll_responses.voter == nick).first()
@@ -178,7 +178,7 @@ def list_polls(session, poll_url):
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: {command} <start|end|list|tally|edit|delete|vote|retract>
+    Syntax: {{command}} <start|end|list|tally|edit|delete|vote|retract>
     """
     session = args['db']
     cmd = msg.split()

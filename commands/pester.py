@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('pester', ['config'], limit=5)
 def cmd(send, msg, args):
     """Pesters somebody.
-    Syntax: {command} <message>
+    Syntax: {command} <nick> <message>
     """
     if not msg or len(msg.split()) < 2:
         send("Pester needs at least two arguments.")
