@@ -43,7 +43,7 @@ def ban(args, msg):
 @Command(['op', 'deop', 'voice', 'devoice', 'kick', 'kickban'], ['nick', 'is_admin', 'handler', 'botnick', 'target', 'name'])
 def cmd(send, msg, args):
     """Ops, Deops, Voices, Devoices, Kicks, or Kickbans a user.
-       Syntax: !command <nick>"""
+       Syntax: {command} <nick>"""
     if args['target'] == 'private':
        send("Modes don't work in a PM!")
        return

@@ -36,7 +36,7 @@ def cmd(send, msg, args):
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
-                    send(line)
+                    send(line.format(command = cmdchar + msg))
     else:
         modules = sorted(get_commands())
         num = int(len(modules) / 2)
