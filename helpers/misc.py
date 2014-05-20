@@ -106,9 +106,11 @@ def get_cmdchar(config, connection, msg, msgtype):
         cmdchar = config['core']['cmdchar']
         botnick = connection.real_nickname
         prefix_check = msg.split(" ", maxsplit=1)
-        if (len(prefix_check[0]) == len(botnick) + 1 and
-            prefix_check[0].startswith(botnick)):
-            if not prefix_check[0][-1] in (string.ascii_letters + string.digits):
+        if prefix_check[0].startswith(botnick):
+            if len(prefix_check[0]) == len(botnick) + 1:
+                if not prefix_check[0][-1] in (string.ascii_letters + string.digits + '[\\]^`_{|}'):
+                    msg = cmdchar + prefix_check[1]
+            elif prefix_check[0] == botnick:
                 msg = cmdchar + prefix_check[1]
         altchars = [x.strip() for x in config['core']['altcmdchars'].split(',')]
         if altchars and altchars[0] != '':
