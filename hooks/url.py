@@ -41,6 +41,8 @@ def handle(send, msg, args):
                           <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
                           \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
     if match:
+        if "!" + match in msg:
+            return
         url = match.group(1)
         title = get_title(url)
         short = get_short(url, polr.api(apikey =  args['config']['api']['polrkey']))
