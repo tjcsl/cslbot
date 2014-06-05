@@ -46,11 +46,5 @@ def handle(send, msg, args):
             return
         title = get_title(url)
         short = get_short(url, polr.api(apikey =  args['config']['api']['polrkey']))
-        last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
-           # if last:
-           #     lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last.time))
-           #     send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last.nick, title))
-           # else:
            send('** %s - %s' % (title, short))
-        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time()))

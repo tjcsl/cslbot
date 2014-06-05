@@ -354,7 +354,8 @@ class BotHandler():
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
         elif cmd == 'quit':
-            c.disconnect('Goodbye, Cruel World!')
+            c.disconnect("Quit called upon by %s" % nick)
+            print("Quit called upon by %s" % nick)
             sys.exit(0)
 
     def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
