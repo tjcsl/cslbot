@@ -30,7 +30,7 @@ def check_exists(subreddit):
     if subreddit == 'random':
         return True
     req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=True)
-    if data['kind'] and data['kind'] == "Listing":
+    if req['kind'] and req['kind'] == "Listing":
         # no subreddit exists, search results page is shown
         return False
     return req.status_code == 200
