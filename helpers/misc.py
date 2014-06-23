@@ -27,6 +27,8 @@ _pinglist = {}
 
 
 def check_exists(subreddit):
+    if subreddit == 'random':
+        return True
     req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
     return req.status_code == 200
 
