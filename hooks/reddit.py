@@ -31,9 +31,6 @@ def handle(send, msg, args):
         return
     data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=True).json()['data']
     output = ''
-    if data['kind'] and data['kind'] == "Listing":
-        # no subreddit exists, search results page is shown
-        return
     if data['public_description']:
         for line in data['public_description'].splitlines():
             output += line + " "
