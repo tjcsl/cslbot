@@ -69,4 +69,4 @@ def cmd(send, msg, args):
         else:
             randid = randint(1, count)
             query = session.query(Scores).get(randid)
-            send("%s has %i points!" % (query.nick, query.score))
+            send("%s has %i point%s!" % (query.nick, query.score, '' if abs(query.score) == 1 else 's'))
