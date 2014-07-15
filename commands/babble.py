@@ -48,7 +48,7 @@ def weighted_rand(d):
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     location = 'target' if speaker.startswith('#') else 'source'
     # FIXME: is python random sort faster?
-    return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker),
+    return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker, escape='$'),
                                         ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).order_by(func.random()).all()
 
 
