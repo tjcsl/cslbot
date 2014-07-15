@@ -23,6 +23,7 @@ import sys
 from helpers import control, sql, hook, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
+from sqlalchemy.exc import InternalError
 
 
 class BotHandler():
@@ -410,9 +411,12 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
-            for h in self.hooks:
-                realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
-                h.run(send, msg, msgtype, self, target, realargs)
+                for h in self.hooks:
+                    realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
+                    try:
+                        h.run(send, msg, msgtype, self, target, realargs)
+                    except InternalError:
+                        self.db.rollback()
 
         if msgtype == 'nick':
             if e.target in self.admins:
@@ -465,11 +469,14 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                # Duplicate command
-                if command.check_command(self.db.get(), nick, msg, target):
-                    return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
-                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
+                try:
+                    # Duplicate command
+                    if command.check_command(self.db.get(), nick, msg, target):
+                        return
+                    args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
+                    cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
+                except InternalError:
+                    self.db.rollback()
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

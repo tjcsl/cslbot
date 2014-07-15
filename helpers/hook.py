@@ -20,6 +20,7 @@
 from .modutils import scan_and_reimport
 from .traceback import handle_traceback
 from .thread import start
+from sqlalchemy.exc import InternalError
 
 _known_hooks = []
 
@@ -49,6 +50,8 @@ class Hook():
             if msgtype in self.types:
                 try:
                     func(send, msg, args)
+                except InternalError:
+                    raise
                 except Exception as ex:
                     handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
         self.exe = wrapper
