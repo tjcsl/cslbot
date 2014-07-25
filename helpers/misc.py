@@ -138,4 +138,4 @@ def parse_header(header, msg):
     elif msg in valtodef:
         return '#define %s %s' % (valtodef[msg], msg)
     else:
-        return "%s not found in errno.h" % msg
+        return "%s not found in %s.h" % (msg, header)
