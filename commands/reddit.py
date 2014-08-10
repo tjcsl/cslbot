@@ -20,13 +20,15 @@ from helpers.urlutils import get_title, get_short
 from helpers.misc import check_exists
 
 
-@Command(['reddit', 'srepetsk'], ['name'])
+@Command(['reddit', 'srepetsk', 'zan'], ['name'])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
     Syntax: !reddit <subreddit>
     """
     if args['name'] == 'srepetsk':
         msg = 'nottheonion'
+    if args['name'] == 'zan':
+        msg = 'nocontext'
     if msg and not check_exists(msg):
         send("Non-existant subreddit.")
         return
