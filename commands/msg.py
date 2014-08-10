@@ -27,7 +27,7 @@ def cmd(send, msg, args):
         send("Message who?")
         return
     msg = msg.split(maxsplit=1)
-    if re.match("#[^ ,]{1,49}", msg[0]):
+    if re.match("#[^ ,]{1,49}$", msg[0]):
         if len(msg) == 1:
             send("What message?")
         elif args['is_admin'](args['nick']):

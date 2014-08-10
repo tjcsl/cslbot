@@ -21,7 +21,6 @@ import sys
 import os
 from os.path import basename
 import importlib
-import imp
 from glob import glob
 
 
@@ -38,6 +37,6 @@ def scan_and_reimport(folder, mod_pkg):
     for mod in get_enabled(folder):
         mod_name = mod_pkg + "." + mod
         if mod_name in sys.modules:
-            imp.reload(sys.modules[mod_name])
+            importlib.reload(sys.modules[mod_name])
         else:
             importlib.import_module(mod_name)

@@ -14,28 +14,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
-from requests import post, get
+from time import time
+from helpers.orm import Notes
 from helpers.command import Command
 
 
-# FIXME: can cache for 10 minutes.
-def get_token(client_id, secret):
-    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
-    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
-    return data['access_token']
-
-
-@Command(['translate', 'trans'], ['config'])
+@Command('summon', ['db', 'nick', 'type'], limit=5)
 def cmd(send, msg, args):
-    """Translate something.
-    Syntax: !translate <text>
+    """Summons a user
+    Syntax: !summon <nick>
     """
-    if not msg:
-        send("Translate what?")
+    if args['type'] == 'privmsg':
+        send("Note-passing should be done in public.")
         return
-    token = get_token(args['config']['api']['translateid'], args['config']['api']['translatesecret'])
-    params = {'text': msg, 'to': 'en'}
-    headers = {'Authorization': 'Bearer %s' % token}
-    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    send(re.search('>(.*)<', data).group(1))
+    arguments = msg.split()
+    if len(arguments) > 1:
+        send("Sorry, I can only perform the summoning ritual for one person at a time")
+        return
+    elif len(arguments) == 0:
+        send("Whoe shall I summon?")
+        return
+    nick = arguments[0]
+    message = "You have been summoned!"
+    row = Notes(note=message, submitter="The Dark Gods", nick=nick, time=time())
+    args['db'].add(row)
+    send("%s has been summoned!" % nick)

@@ -109,10 +109,10 @@ def tally_poll(session, pid, send, target):
     votes = session.query(Poll_responses).filter(Poll_responses.pid == pid).all()
     send("%s poll: %s, %d total votes" % (state, poll.question, len(votes)))
     votemap = {}
-    for vote, nick in votes:
-        if vote not in votemap:
-            votemap[vote] = []
-        votemap[vote].append(nick)
+    for vote in votes:
+        if vote.response not in votemap:
+            votemap[vote.response] = []
+        votemap[vote.response].append(vote.voter)
     for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])), target=target)
     if not votemap:

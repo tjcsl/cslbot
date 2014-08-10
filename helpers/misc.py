@@ -17,15 +17,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import subprocess
+import re
+from random import choice
 from requests import get
 from datetime import timedelta
-import subprocess
 
 _pinglist = {}
 
 
 def check_exists(subreddit):
-    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}, allow_redirects=False)
+    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    if req.json()['kind'] == 'Listing':
+        # no subreddit exists, search results page is shown
+        return False
     return req.status_code == 200
 
 
@@ -35,7 +40,7 @@ def parse_time(time):
         time = int(time)
     else:
         return None
-    conv = {'m': 60, 'h': 3600, 'd': 86400}
+    conv = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
     if unit in conv.keys():
         return time * conv[unit]
     else:
@@ -69,7 +74,7 @@ def do_nuke(c, nick, target, channel):
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
-#FIXME: there has to be a better way to do this.
+# FIXME: there has to be a better way to do this.
 def recordping(nick, channel):
     global _pinglist
     _pinglist[nick] = channel
@@ -114,3 +119,23 @@ def get_cmdchar(config, connection, msg, msgtype):
         if msgtype == 'privmsg' and not msg.startswith(cmdchar):
             msg = cmdchar + msg
         return msg
+
+
+def parse_header(header, msg):
+    preproc = subprocess.check_output(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'])
+    if header == 'errno':
+        defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+    else:
+        defines = re.findall('^#define (SIG[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+    deftoval = dict((x, y) for x, y in defines)
+    valtodef = dict((y, x) for x, y in defines)
+    if not msg:
+        msg = choice(list(valtodef.keys()))
+    if msg == 'list':
+        return ", ".join(deftoval.keys())
+    elif msg in deftoval:
+        return '#define %s %s' % (msg, deftoval[msg])
+    elif msg in valtodef:
+        return '#define %s %s' % (valtodef[msg], msg)
+    else:
+        return "%s not found in %s.h" % (msg, header)

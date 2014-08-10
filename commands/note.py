@@ -19,11 +19,14 @@ from helpers.orm import Notes
 from helpers.command import Command
 
 
-@Command('note', ['db', 'nick', 'type'], limit=5)
+@Command('note', ['db', 'nick', 'type', 'config'], limit=5)
 def cmd(send, msg, args):
     """Leaves a note for a user.
     Syntax: !note <nick> <note>
     """
+    if not args['config']['feature'].getboolean('hooks'):
+        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+        return
     if args['type'] == 'privmsg':
         send("Note-passing should be done in public.")
         return

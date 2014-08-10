@@ -20,7 +20,7 @@ from helpers.misc import recordping
 from helpers.command import Command
 
 
-@Command('ping', ['handler', 'target', 'config', 'nick'])
+@Command(['ping', 'ping6'], ['handler', 'target', 'config', 'nick', 'name'])
 def cmd(send, msg, args):
     """Ping something.
     Syntax: !ping <target>
@@ -35,7 +35,7 @@ def cmd(send, msg, args):
         recordping(msg, channel)
         return
     try:
-        answer = subprocess.check_output(['ping', '-q', '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
+        answer = subprocess.check_output([args['name'], '-q', '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
         answer = answer.decode().splitlines()
         send(answer[0])
         send(answer[-2])

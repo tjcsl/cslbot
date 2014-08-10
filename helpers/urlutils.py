@@ -17,8 +17,10 @@
 import json
 from lxml.html import parse
 from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 from requests import post
-from requests.exceptions import Timeout
+from socket import timeout
+from .exception import CommandFailedException
 
 
 def get_short(msg):
@@ -34,23 +36,36 @@ def get_short(msg):
 def get_title(url):
     title = 'No Title Found'
     try:
-        if not url.startswith('http'):
-            url = "http://%s" % url
+        url = url.split('://', maxsplit=1)
+        if len(url) == 1:
+            url = ['http', url[0]]
+        # FIXME: dies on urls > 64 chars
+        # url[1] = url[1].encode('idna').decode()
+        url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         req = urlopen(Request(url, headers=headers), timeout=5)
         ctype = req.getheader('Content-Type')
-        if ctype.startswith('image/'):
+        if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
         else:
             html = parse(req)
             t = html.find('.//title') if html.getroot() is not None else None
             if t is not None and t.text is not None:
                 title = t.text.replace('\n', ' ').strip()
-            else:
+            elif ctype is not None:
                 title = ctype
-    except Timeout:
-        title = 'Request Timed Out'
+            else:
+                title = "Title Not Found"
+    except (timeout, HTTPError) as e:
+        raise CommandFailedException(e)
+    except ConnectionResetError as e:
+        raise CommandFailedException(e.strerror)
+    except URLError as e:
+        if e.reason.strerror is None:
+            raise CommandFailedException(e.reason)
+        else:
+            raise CommandFailedException(e.reason.strerror)
     if len(title) > 256:
         title = title[:253] + "..."
     return title

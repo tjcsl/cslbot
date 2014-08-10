@@ -25,6 +25,9 @@ def cmd(send, msg, args):
     """Gets scores.
     Syntax: !score <--high|--low|nick>
     """
+    if not args['config']['feature'].getboolean('hooks'):
+        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+        return
     session = args['db']
     match = re.match('--(.+)', msg)
     if match:
@@ -51,7 +54,7 @@ def cmd(send, msg, args):
             score = session.query(Scores).filter(Scores.nick == name).scalar()
             if score is not None:
                 if name == args['botnick'].lower():
-                    output = 'has %s points! :)' % score
+                    output = 'has %s points! :)' % score.score
                     send(output, 'action')
                 else:
                     send("%s has %i points!" % (name, score.score))
@@ -66,4 +69,4 @@ def cmd(send, msg, args):
         else:
             randid = randint(1, count)
             query = session.query(Scores).get(randid)
-            send("%s has %i points!" % (query.nick, query.score))
+            send("%s has %i point%s!" % (query.nick, query.score, '' if abs(query.score) == 1 else 's'))

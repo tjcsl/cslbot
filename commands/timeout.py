@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.defer import defer
 from helpers.misc import parse_time
 
 
@@ -23,7 +22,7 @@ from helpers.misc import parse_time
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
-    timespec is in the format: {number}{unit}, where unit is m, h, or d.
+    timespec is in the format: {number}{unit}, where unit is s, m, h, or d.
     """
     setmode = args['handler'].connection.mode
     channel = args['target']
@@ -35,6 +34,9 @@ def cmd(send, msg, args):
         send("Bot must be an op.")
         return
     time, user = msg.split(maxsplit=1)
+    if user == args['botnick']:
+        send("I won't put myself in timeout!")
+        return
     defer_args = [channel, " -q %s!*@*" % user]
 
     time = parse_time(time)
@@ -42,5 +44,5 @@ def cmd(send, msg, args):
         send("Invalid unit.")
     else:
         setmode(channel, " +q %s!*@*" % user)
-        ident = defer(time, setmode, *defer_args)
+        ident = args['handler'].workers.defer(time, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))

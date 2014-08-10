@@ -14,27 +14,22 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from helpers.command import Command
-from helpers.misc import parse_time
+from threading import Lock
+from concurrent.futures import ThreadPoolExecutor
+
+_threadcount = 4
+_lock = Lock()
+_executor = ThreadPoolExecutor(_threadcount)
 
 
-@Command('defersay', ['nick', 'is_admin', 'handler'])
-def cmd(send, msg, args):
-    """Says something at a later time.
-    Syntax: !defersay <delay> <msg>
-    """
-    if not args['is_admin'](args['nick']):
-        send("Admins only")
-        return
-    msg = msg.split(maxsplit=1)
-    if len(msg) != 2:
-        send("Not enough arguments")
-        return
-    t = parse_time(msg[0])
-    if t is None:
-        send("Invalid unit.")
-    elif t < 0:
-        send("Time travel not yet implemented, sorry.")
-    else:
-        ident = args['handler'].workers.defer(t, send, msg[1])
-        send("Message deferred, ident: %s" % ident)
+def start(*args):
+    with _lock:
+        _executor.submit(*args)
+
+
+def shutdown(reload):
+    global _executor
+    with _lock:
+        _executor.shutdown(False)
+        if reload:
+            _executor = ThreadPoolExecutor(_threadcount)

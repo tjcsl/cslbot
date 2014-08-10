@@ -20,9 +20,10 @@
 import sys
 from inspect import getdoc
 from datetime import datetime, timedelta
-from helpers.modutils import scan_and_reimport
-from helpers.traceback import handle_traceback
-from helpers.orm import Commands, Log
+from .modutils import scan_and_reimport
+from .traceback import handle_traceback
+from .thread import start
+from .orm import Commands, Log
 
 _known_commands = {}
 _disabled_commands = []
@@ -113,7 +114,7 @@ class Command():
             try:
                 func(send, msg, args)
             except Exception as ex:
-                handle_traceback(ex, self.handler.connection, self.target, self.handler.config['core']['ctrlchan'], "commands.%s" % self.names[0])
+                handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")
@@ -127,7 +128,7 @@ class Command():
             self.target = target
             self.handler = handler
             record_command(handler.db.get(), nick, command, target)
-            handler.executor.submit(self.exe, send, msg, args)
+            start(self.exe, send, msg, args)
 
     def get_doc(self):
         return self.doc

@@ -19,14 +19,14 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.exc import InternalError
 from time import time
 from atexit import register
 from .orm import setup_db, Log
 
 
 def get_session(config):
-    #FIXME: add support for sqlite connection string
-    engine = create_engine('postgresql://ircbot:%s@localhost/%s' % (config['auth']['dbpass'], config['core']['dbname']))
+    engine = create_engine(config['db']['engine'])
     return scoped_session(sessionmaker(bind=engine))
 
 
@@ -49,11 +49,17 @@ class Sql():
         | time: The current time (Unix Epoch).
         """
         entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
-        self.session.add(entry)
-        self.session.commit()
+        try:
+            self.session.add(entry)
+            self.session.commit()
+        except InternalError:
+            self.rollback()
 
     def get(self):
         return self.session
+
+    def rollback(self):
+        self.session.rollback()
 
     def shutdown(self):
         self.session.remove()

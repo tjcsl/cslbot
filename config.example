@@ -2,8 +2,8 @@
 host: irc.freenode.net
 serverport: 2688
 ircport: 6667
+ssl: False
 nick: exampleBot
-dbname:
 channel: #channel
 ctrlchan: #channel-control
 extrachans: #chan1, #chan2
@@ -14,17 +14,21 @@ nickregex: [a-zA-Z0-9_\|`\^-]
 [auth]
 ctrlpass:
 nickpass:
-dbpass:
+serverpass:
 ctrlkey:
 admins: admin1, admin2
+[db]
+engine:
 [feature]
-stallmanmode = False
-clippy = False
-lazyregex = True
-hooks = True
-capskick = True
-nickkick = True
-linkread = True
+server: True
+prettyerrors: True
+stallmanmode: False
+clippy: False
+lazyregex: True
+hooks: True
+capskick: True
+nickkick: True
+linkread: True
 [api]
 steamapikey:
 dictionaryapikey:

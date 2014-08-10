@@ -29,7 +29,7 @@ def handle(send, msg, args):
     | Get the page title.
     """
 
-    #FIXME: don't hardcode.
+    # FIXME: don't hardcode.
     if "http://git.io" in msg:
         return
     # crazy regex to match urls

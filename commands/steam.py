@@ -19,12 +19,12 @@ from requests import get
 from helpers.command import Command
 
 
-def get_ids():
-    steamidfile = open('steamids.pickle', 'rb')
+def get_ids(handler):
+    steamidfile = open(handler.srcdir + '/static/steamids.pickle', 'rb')
     return pickle.load(steamidfile)
 
 
-@Command('steam', ['config'])
+@Command('steam', ['config', 'handler'])
 def cmd(send, msg, args):
     """Gets steam status.
     Syntax: !steam <user>
@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     if not apikey:
         send("API Key not specified.")
         return
-    idlist = get_ids()
+    idlist = get_ids(args['handler'])
     try:
         params = {'key': apikey, 'steamids': idlist[msg]}
         output = get('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/', params=params).json()

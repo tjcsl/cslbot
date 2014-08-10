@@ -15,15 +15,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import logging
-import imp
 import sys
+if sys.version_info < (3, 4):
+    raise Exception("Need Python 3.4 or higher.")
+import logging
+import importlib
 import handler
 import argparse
 import atexit
-from helpers import workers, server, config, defer, traceback, misc, modutils
+import ssl
+from helpers import server, config, traceback, misc, modutils, thread, workers
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
+from irc.connection import Factory
 from os.path import dirname, join, exists
 from time import time
 from random import getrandbits
@@ -41,9 +45,12 @@ class IrcBot(SingleServerIRCBot):
         atexit.register(self.do_shutdown)
         self.handler = handler.BotHandler(botconfig)
         self.config = botconfig
-        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['nickpass'])
+        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
-        SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
+        if botconfig['core'].getboolean('ssl'):
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick, connect_factory=Factory(wrapper=ssl.wrap_socket))
+        else:
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
         # properly log quits.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
@@ -65,7 +72,7 @@ class IrcBot(SingleServerIRCBot):
                 self.check_reload(target, c, e, msgtype)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
-            traceback.handle_traceback(ex, c, target, self.config['core']['ctrlchan'])
+            traceback.handle_traceback(ex, c, target, self.config)
 
     def check_reload(self, target, c, e, msgtype):
         cmd = e.arguments[0].strip()
@@ -81,13 +88,13 @@ class IrcBot(SingleServerIRCBot):
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
 
-    def do_shutdown(self):
-        self.server.shutdown()
-        self.server.socket.close()
-        # blocks on the message processing otherwise.
-        #self.handler.executor.shutdown(False)
-        # threading cleanup
-        workers.stop_workers()
+    def do_shutdown(self, reload=False):
+        if hasattr(self, 'server'):
+            self.server.socket.close()
+            self.server.shutdown()
+        if hasattr(self, 'handler') and hasattr(self.handler, 'workers'):
+            self.handler.workers.stop_workers()
+        thread.shutdown(reload)
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -101,20 +108,23 @@ class IrcBot(SingleServerIRCBot):
             output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
         for x in modutils.get_enabled(dirname(__file__) + '/helpers'):
-            imp.reload(sys.modules['helpers.%s' % x])
-        imp.reload(handler)
+            name = 'helpers.%s' % x
+            if name in sys.modules:
+                importlib.reload(sys.modules[name])
+        importlib.reload(handler)
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
         self.config.read_file(open(configfile))
         # preserve data
         data = self.handler.get_data()
-        self.do_shutdown()
+        self.do_shutdown(True)
         self.handler = handler.BotHandler(self.config)
-        self.server = server.init_server(self)
+        if self.config['feature'].getboolean('server'):
+            self.server = server.init_server(self)
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        workers.start_workers(self.handler)
+        self.handler.workers = workers.Workers(self.handler)
         if output:
             return output
 
@@ -132,15 +142,15 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Connected to server %s" % self.config['core']['host'])
         self.handler.connection = c
         self.handler.channels = self.channels
+        self.handler.workers = workers.Workers(self.handler)
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
-        workers.start_workers(self.handler)
         extrachans = self.config['core']['extrachans']
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]
             for i in range(len(extrachans)):
-                defer.defer(i, c.join, extrachans[i])
+                self.handler.workers.defer(i, c.join, extrachans[i])
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -187,7 +197,7 @@ class IrcBot(SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_disconnect(self, c, e):
-        self.do_shutdown()
+        self.do_shutdown(True)
 
     def on_join(self, c, e):
         """Handle joins."""
@@ -207,15 +217,16 @@ class IrcBot(SingleServerIRCBot):
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
-        defer.defer(5, c.join, e.arguments[0])
+        self.handler.workers.defer(5, c.join, e.arguments[0])
 
     def on_ctcpreply(self, c, e):
-        misc.ping(c, e, time())
+        if len(e.arguments) == 2:
+            misc.ping(c, e, time())
 
     def on_nicknameinuse(self, c, e):
         self.connection.nick('Guest%d' % getrandbits(20))
-        self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
-        defer.defer(5, self.do_welcome, c)
+        self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
+        self.handler.workers.defer(5, self.do_welcome, c)
 
     def on_kick(self, c, e):
         """Handle kicks.
@@ -229,7 +240,7 @@ class IrcBot(SingleServerIRCBot):
         if e.arguments[0] != c.real_nickname:
             return
         logging.info("Kicked from channel %s" % e.target)
-        defer.defer(5, c.join, e.target)
+        self.handler.workers.defer(5, c.join, e.target)
 
 
 def main(args):
@@ -249,12 +260,11 @@ def main(args):
         return
     botconfig.read_file(open(configfile))
     bot = IrcBot(botconfig)
-    bot.server = server.init_server(bot)
+    if botconfig['feature'].getboolean('server'):
+        bot.server = server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':
-    if sys.version_info < (3, 3):
-        raise Exception("Need Python 3.3 or higher.")
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     args = parser.parse_args()

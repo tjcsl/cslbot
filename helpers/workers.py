@@ -1,4 +1,3 @@
-#!/usr/bin/python3 -O
 # Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
 #
 # This program is free software; you can redistribute it and/or
@@ -15,40 +14,40 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import Event, current_thread, get_ident
-from helpers.control import show_pending
-
-_threads = {}
+from threading import Lock, Timer
+from .control import show_pending
 
 
-def stop_workers():
-    for thread, event in _threads.values():
-        event.set()
-        # Doesn't exit cleanly
-        #thread.join()
-    _threads.clear()
+class Workers():
 
+    def __init__(self, handler):
+        self.lock = Lock()
+        self.events = {}
+        # Set-up notifications for pending admin approval.
+        send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+        self.defer(3600, self.handle_pending, handler, send)
 
-def start_workers(handler):
-    stop_workers()
+    def defer(self, t, func, *args):
+        event = Timer(t, func, args)
+        event.start()
+        with self.lock:
+            self.events[event.ident] = event
+        return event.ident
 
-    # Set-up notifications for pending admin approval.
-    send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-    handler.executor.submit(handle_pending, handler, send)
+    def cancel(self, eventid):
+        with self.lock:
+            self.events[eventid].cancel()
+            del self.events[eventid]
 
+    def stop_workers(self):
+        with self.lock:
+            for x in self.events.values():
+                x.cancel()
+            self.events.clear()
 
-def add_thread(thread):
-    global _threads
-    _threads[thread.ident] = (thread, Event())
-
-
-def get_thread(ident):
-    return _threads[ident] if ident in _threads.keys() else None
-
-
-def handle_pending(handler, send):
-    admins = ": ".join(handler.admins)
-    cursor = handler.db.get()
-    add_thread(current_thread())
-    while not _threads[get_ident()][1].wait(3600):
+    def handle_pending(self, handler, send):
+        # Re-schedule handle_pending
+        self.defer(3600, self.handle_pending, handler, send)
+        admins = ": ".join(handler.admins)
+        cursor = handler.db.get()
         show_pending(cursor, admins, send, True)

@@ -68,14 +68,6 @@ commands.bike module
     :undoc-members:
     :show-inheritance:
 
-commands.bingo module
----------------------
-
-.. automodule:: commands.bingo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.blame module
 ---------------------
 
@@ -188,14 +180,6 @@ commands.demorse module
     :undoc-members:
     :show-inheritance:
 
-commands.dialup module
-----------------------
-
-.. automodule:: commands.dialup
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.distro module
 ----------------------
 
@@ -296,6 +280,14 @@ commands.help module
 --------------------
 
 .. automodule:: commands.help
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.highlight module
+-------------------------
+
+.. automodule:: commands.highlight
     :members:
     :undoc-members:
     :show-inheritance:
@@ -572,6 +564,14 @@ commands.shibe module
     :undoc-members:
     :show-inheritance:
 
+commands.signal module
+----------------------
+
+.. automodule:: commands.signal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.skasturi module
 ------------------------
 
@@ -632,6 +632,22 @@ commands.stopwatch module
 -------------------------
 
 .. automodule:: commands.stopwatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.summon module
+----------------------
+
+.. automodule:: commands.summon
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.threads module
+-----------------------
+
+.. automodule:: commands.threads
     :members:
     :undoc-members:
     :show-inheritance:

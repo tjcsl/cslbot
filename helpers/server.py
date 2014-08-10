@@ -16,6 +16,7 @@
 
 import socketserver
 import traceback
+from .thread import start
 from os.path import basename
 
 WELCOME = """
@@ -39,7 +40,7 @@ def init_server(bot):
     port = bot.config.getint('core', 'serverport')
     server = BotNetServer(('', port), BotNetHandler)
     server.bot = bot
-    bot.handler.executor.submit(server.serve_forever)
+    start(server.serve_forever)
     return server
 
 
@@ -121,6 +122,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 else:
                     send("Unknown command. Type help for more info.\n")
         except Exception as ex:
+            # FIXME: use helpers.traceback
             trace = traceback.extract_tb(ex.__traceback__)[-1]
             trace = [basename(trace[0]), trace[1]]
             name = type(ex).__name__

@@ -23,7 +23,7 @@ import sys
 from helpers import control, sql, hook, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
-from concurrent.futures import ThreadPoolExecutor
+from sqlalchemy.exc import InternalError
 
 
 class BotHandler():
@@ -42,7 +42,6 @@ class BotHandler():
         | db - Is a db wrapper for data storage.
         """
         self.config = config
-        self.executor = ThreadPoolExecutor(5)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
@@ -117,20 +116,22 @@ class BotHandler():
         if nick not in self.admins:
             self.admins[nick] = -1
         if self.admins[nick] == -1:
-            self.connection.privmsg('NickServ', 'ACC %s' % nick)
+            self.connection.send_raw('NS ACC %s' % nick)
             if complain:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
             # reverify every 5min
             if int(time.time()) - self.admins[nick] > 300:
-                self.connection.privmsg('NickServ', 'ACC %s' % nick)
+                self.connection.send_raw('NS ACC %s' % nick)
             return True
 
     def get_admins(self, c):
         """Check verification for all admins."""
+        i = 0
         for a in self.admins:
-            c.privmsg('NickServ', 'ACC %s' % a)
+            self.workers.defer(i, c.send_raw, 'NS ACC %s' % a)
+            i += 1
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -247,11 +248,15 @@ class BotHandler():
 
         | Checks if bot is already joined to channel.
         """
-        cmd = cmdargs.split()
         if not cmdargs:
+            send("Join what?")
+            return
+        if cmdargs == '0':
+            send("I'm sorry, Dave. I'm afraid I can't do that.")
             return
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
+        cmd = cmdargs.split()
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
             send("%s is already a member of %s" % (self.config['core']['nick'],
                  cmd[0]))
@@ -397,20 +402,25 @@ class BotHandler():
         send = lambda msg, mtype='privmsg', target=target: self.send(target, self.config['core']['nick'], msg, mtype)
 
         if msgtype == 'privnotice':
-            if not hasattr(self, 'connection'):
-                return
+            # FIXME: come up with a better way to prevent admin abuse.
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
-                return
+            return
+
+        if msgtype == 'pubnotice':
+            return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
-            for hook in self.hooks:
-                realargs = self.do_args(hook.args, send, nick, target, e.source, c, hook, msgtype)
-                hook.run(send, msg, msgtype, self, target, realargs)
+                for h in self.hooks:
+                    realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
+                    try:
+                        h.run(send, msg, msgtype, self, target, realargs)
+                    except InternalError:
+                        self.db.rollback()
 
         if msgtype == 'nick':
             if e.target in self.admins:
-                c.privmsg('NickServ', 'ACC %s' % e.target)
+                c.send_raw('NS ACC %s' % e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
@@ -459,11 +469,14 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                # Duplicate command
-                if command.check_command(self.db.get(), nick, msg, target):
-                    return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
-                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
+                try:
+                    # Duplicate command
+                    if command.check_command(self.db.get(), nick, msg, target):
+                        return
+                    args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
+                    cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
+                except InternalError:
+                    self.db.rollback()
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

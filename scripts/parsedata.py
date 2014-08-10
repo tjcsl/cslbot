@@ -25,7 +25,7 @@ from os import mkdir
 from sys import path
 from configparser import ConfigParser
 
-#HACK: allow sibling imports
+# HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
@@ -33,7 +33,7 @@ from helpers.sql import get_session
 
 
 def get_quotes(session):
-    return session.query(Quotes).filter(Quotes.approved == 1).all()
+    return session.query(Quotes).filter(Quotes.approved == 1).order_by(Quotes.id).all()
 
 
 def get_scores(session):

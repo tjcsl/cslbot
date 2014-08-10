@@ -15,25 +15,22 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.workers import get_thread
 
 
-@Command('cancel', ['nick', 'is_admin', 'handler', 'target'])
+@Command('cancel', ['nick', 'is_admin', 'handler'])
 def cmd(send, msg, args):
-    """Cancels a deferred action (i.e. kills a thread) with the given name.
-    Syntax: !cancel thread-name
+    """Cancels a deferred action with the given id.
+    Syntax: !cancel id
     """
     if not args['is_admin'](args['nick']):
         send("Only admins can cancel threads.")
         return
     try:
-        thread = get_thread(int(msg))
+        args['handler'].workers.cancel(int(msg))
     except ValueError:
-        send("Thread ident must be a number.")
+        send("Index must be a digit.")
         return
-    if thread is None:
-        send("I couldn't find any thread matching that name.")
+    except KeyError:
+        send("No such event.")
         return
-    thread[1].set()
-    thread[0].join()
-    send("Thread canceled.")
+    send("Event canceled.")

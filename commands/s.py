@@ -15,6 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import sre_constants
+from helpers.exception import CommandFailedException
 from helpers.orm import Log
 from helpers.command import Command
 
@@ -57,7 +59,7 @@ def cmd(send, msg, args):
         return
     char = msg[0]
     msg = msg[1:].split(char, maxsplit=2)
-    #fix for people who forget a trailing slash
+    # fix for people who forget a trailing slash
     if len(msg) == 2 and args['config']['feature'].getboolean('lazyregex'):
         msg.append('')
     # not a valid sed statement.
@@ -73,22 +75,25 @@ def cmd(send, msg, args):
     if modifiers is None:
         send("Invalid modifiers.")
         return
-    regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-    log = get_log(args['db'], args['target'], modifiers['nick'])
 
-    for line in log:
-        # ignore previous !s calls.
-        if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
-            continue
-        if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
-            continue
-        if regex.search(line.msg):
-            output = regex.sub(replacement, line.msg)
-            if len(output) > 256:
-                output = output[:253] + "..."
-            if line.type == 'action':
-                send("correction: * %s %s" % (line.source, output))
-            elif line.type != 'mode':
-                send("%s actually meant: %s" % (line.source, output))
-            return
+    try:
+        regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
+        log = get_log(args['db'], args['target'], modifiers['nick'])
+        for line in log:
+            # ignore previous !s calls.
+            if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
+                continue
+            if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
+                continue
+            if regex.search(line.msg):
+                output = regex.sub(replacement, line.msg)
+                if len(output) > 256:
+                    output = output[:253] + "..."
+                if line.type == 'action':
+                    send("correction: * %s %s" % (line.source, output))
+                elif line.type != 'mode':
+                    send("%s actually meant: %s" % (line.source, output))
+                return
+    except sre_constants.error as ex:
+        raise CommandFailedException(ex)
     send("No match found.")
