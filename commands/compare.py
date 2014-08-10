@@ -19,10 +19,10 @@ def cmd(send, msg, args):
         msg = choice(users)
 
     if mode == 0:
-        sentence = msg + "is " + random.choice(comparisons) + " than " + random.choice(posessivepeople) + " " + random.choice(things) + "."
+        sentence = msg + " is " + random.choice(comparisons) + " than " + random.choice(posessivepeople) + " " + random.choice(things) + "."
     elif mode == 1:
-        sentence = msg + "is " + random.choice(comparisons) + " than " + random.choice(people) + "."
+        sentence = msg + " is " + random.choice(comparisons) + " than " + random.choice(people) + "."
     elif mode == 2:
-        sentence = msg + "is the " + random.choice(superlatives) + " damn thing."
+        sentence = msg + " is the " + random.choice(superlatives) + " damn thing."
     
     send(sentence)
