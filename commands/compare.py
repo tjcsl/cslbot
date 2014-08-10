@@ -13,6 +13,10 @@ def cmd(send, msg, args):
     
     mode = random.randint(0, 2)
     sentence = None
+    
+    if msg == "":
+        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
+        msg = choice(users)
 
     if mode == 0:
         sentence = msg + "is " + random.choice(comparisons) + " than " + random.choice(posessivepeople) + " " + random.choice(things) + "."
