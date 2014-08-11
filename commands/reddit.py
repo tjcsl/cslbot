@@ -20,6 +20,7 @@ from helpers.urlutils import get_title, get_short
 from helpers.misc import check_exists
 import time
 
+
 @Command(['reddit', 'srepetsk', 'zan'], ['name'])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
