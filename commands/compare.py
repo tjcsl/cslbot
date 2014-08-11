@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-from random import choice
-
-@Command(['compare', 'comparatron'])
-def cmd(send, msg, args):
-    """Compares something.
-    Syntax: !compare (thing)"""
-    
-    comparisons = ["nastier", "whiter", "dumber", "pastier", "crustier", "uglier", "stinkier", "more disgusting", "blacker", "crappier"]
-    superlatives = ["nastiest", "whitest", "dumbest", "pastiest", "crustiest", "ugliest", "stinkiest", "most disgusting", "blackest", "crappiest"]
-    people = ["Maya Angelou", "me", "your momma", "Hillary Clinton", "Thor", "my grandmomma", "you", "the Reverend Martin Luther King, Jr", "the Pope", "Danny Devito", "Sarah Palin"]
-    posessivepeople = ["Maya Angelou's", "my", "yo momma's", "Hillary Clinton's", "Thor's", "my grandmomma's", "your", "the Reverend Martin Luther King, Jr.'s", "the Pope's", "Danny Devito's", "Sarah Palin's"]
-    things = ["vag", "libido", "dingdong", "legs", "sex life", "butt", "body", "torso", "entire extended family", "stupid dumbass face"]
-    
-    mode = random.randint(0, 2)
-    sentence = None
-    
-    if msg == "":
-=======
->>>>>>> Create compare.py
 # Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
 #
 # This program is free software; you can redistribute it and/or
@@ -54,10 +32,6 @@ def cmd(send, msg, args):
     sentence = None
 
     if not msg:
-<<<<<<< HEAD
-=======
->>>>>>> 91598ee... making pfoley happy
->>>>>>> Create compare.py
         users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
         msg = choice(users)
 
@@ -67,18 +41,5 @@ def cmd(send, msg, args):
         sentence = msg + " is " + random.choice(comparisons) + " than " + random.choice(people) + "."
     elif mode == 2:
         sentence = msg + " is the " + random.choice(superlatives) + " damn thing."
-<<<<<<< HEAD
 
     send(sentence)
-=======
-<<<<<<< HEAD
-    
-=======
-
-<<<<<<< HEAD
->>>>>>> 91598ee... making pfoley happy
-    send(sentence)
-=======
-    send(sentence)
->>>>>>> ba75e9a... oops newline
->>>>>>> Create compare.py
