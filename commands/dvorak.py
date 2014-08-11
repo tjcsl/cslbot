@@ -27,18 +27,26 @@ def get_log(conn, user, target):
         return query.filter(Log.source == user).limit(1).scalar()
 
 
-@Command(['reverse', 'sdamashek'], ['db', 'target'])
+def translate(msg, encode=True):
+    dv_orig = '-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
+    dv_dvor = '[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'
+    dv_encode = str.maketrans(dv_orig, dv_dvor)
+    dv_decode = str.maketrans(dv_dvor, dv_orig)
+    return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
+
+
+@Command(['dvorak', 'sdamashek'], ['db', 'target'])
 def cmd(send, msg, args):
-    """Reverses a message.
-    Syntax: !reverse --<nick>
+    """Converts a message to/from dvorak.
+    Syntax: !dvorak --<nick>
     """
     conn = args['db']
     user = msg[2:] if re.search("^--", msg) else None
     if msg and not user:
-        send(msg[::-1].strip())
+        send(translate(msg, False).strip())
         return
     log = get_log(conn, user, args['target'])
     if user and not log:
         send("Couldn't find a message from %s :(" % user)
     else:
-        send(log[::-1])
+        send(translate(log))
