@@ -18,7 +18,7 @@ from requests import get
 from helpers.command import Command
 from helpers.urlutils import get_title, get_short
 from helpers.misc import check_exists
-
+import time
 
 @Command(['reddit', 'srepetsk', 'zan'], ['name'])
 def cmd(send, msg, args):
@@ -33,5 +33,6 @@ def cmd(send, msg, args):
         send("Non-existant subreddit.")
         return
     subreddit = '/r/%s' % msg if msg else ''
-    url = get('http://reddit.com%s/random' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).url
+    urlstr = 'http://reddit.com%s/random?%s' % (subreddit, time.time())
+    url = get(urlstr, headers={'User-Agent': 'CslBot/1.0'}).url
     send('** %s - %s' % (get_title(url), get_short(url)))
