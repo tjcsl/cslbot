@@ -132,7 +132,7 @@ def parse_header(header, msg):
     if not msg:
         msg = choice(list(valtodef.keys()))
     if msg == 'list':
-        return ", ".join(deftoval.keys())
+        return ", ".join(sorted(deftoval.keys()))
     elif msg in deftoval:
         return '#define %s %s' % (msg, deftoval[msg])
     elif msg in valtodef:
