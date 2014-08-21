@@ -44,6 +44,7 @@ class IrcBot(SingleServerIRCBot):
         """
         atexit.register(self.do_shutdown)
         self.handler = handler.BotHandler(botconfig)
+        self.handler.workers = workers.Workers(self.handler)
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
@@ -142,7 +143,6 @@ class IrcBot(SingleServerIRCBot):
         logging.info("Connected to server %s" % self.config['core']['host'])
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self.handler)
         self.handler.get_admins(c)
         c.join(self.config['core']['channel'])
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
