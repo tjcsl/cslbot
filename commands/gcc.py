@@ -36,7 +36,9 @@ def cmd(send, msg, args):
     process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = process.communicate()[0]
     tmpfile.close()
-    for line in output.decode().splitlines():
+    # Take the last 3 lines to prevent Excess Flood on long error messages
+    output = output.decode().splitlines()[:3]
+    for line in output:
         send(line, target=args['nick'])
     if process.returncode == 0:
         send(gen_slogan("gcc victory"))
