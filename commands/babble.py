@@ -92,7 +92,7 @@ def build_msg(markov, speaker):
     return "%s says: %s" % (speaker, msg)
 
 
-@Command('babble', ['db', 'config'])
+@Command('babble', ['db', 'config'], limit=5)
 def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (nick)
