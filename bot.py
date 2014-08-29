@@ -189,7 +189,8 @@ class IrcBot(SingleServerIRCBot):
         """Handle ping timeouts."""
         logging.error(e.target)
         # trigger channel joining, etc. on reconnection.
-        delattr(self.handler, 'connection')
+        if hasattr(self.handler, 'connection'):
+            delattr(self.handler, 'connection')
 
     def handle_quit(self, c, e):
         """Log quits."""
