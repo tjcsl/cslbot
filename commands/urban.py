@@ -30,7 +30,7 @@ def get_definition(msg):
     req = get('http://api.urbandictionary.com/v0/define', params={'term': term})
     data = req.json()['list']
     if len(data) == 0:
-        output = "UrbanDictionary doesn't have a answer for you."
+        output = "UrbanDictionary doesn't have an answer for you."
     elif index is None:
         output = data[0]['definition']
     elif not index.isdigit() or int(index) >= len(data):
