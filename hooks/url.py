@@ -43,8 +43,8 @@ def handle(send, msg, args):
         r'(?::\d+)?'  # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     match = regex.search(msg)
-    if match:
-        url = match.group(1)
+    if match is not None:
+        url = match.group(0)
         title = get_title(url)
         short = get_short(url)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
