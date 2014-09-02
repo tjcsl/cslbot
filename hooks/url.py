@@ -33,10 +33,16 @@ def handle(send, msg, args):
     if "http://git.io" in msg:
         return
     # crazy regex to match urls
-    match = re.search(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.]
-                          [a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()
-                          <>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*
-                          \)|[^\s`!()\[\]{};:'\".,<>?....]))""", msg)
+    # taken from https://github.com/django/django/blob/master/django/core/validators.py
+    regex = re.compile(
+        r'^(?:http|ftp)s?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # ...or ipv4
+        r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # ...or ipv6
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    match = regex.search(msg)
     if match:
         url = match.group(1)
         title = get_title(url)
