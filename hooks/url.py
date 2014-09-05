@@ -34,9 +34,8 @@ def handle(send, msg, args):
         return
     # crazy regex to match urls
     regex = re.compile(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?....]))""")
-    match = regex.search(msg)
-    if match is not None:
-        url = match.group(0)
+    urls = [x[0] for x in regex.findall(msg)]
+    for url in urls:
         title = get_title(url)
         short = get_short(url)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()

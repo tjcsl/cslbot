@@ -165,6 +165,8 @@ class BotHandler():
 
         Records the message in the log.
         """
+        if type(msg) is not str:
+            raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
         for i in self.outputfilter:
             msg = i(msg)
