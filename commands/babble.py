@@ -15,11 +15,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import time
+from collections import namedtuple
+from threading import Lock
 from random import choice
 from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from helpers.command import Command
 from helpers.orm import Log
+
+MarkovState = namedtuple('MarkovState', ['time', 'data'])
+
+# Keep cached results for five minutes
+CACHE_LIFE = 60 * 5
+
+# FIXME: have a better caching mechanism.
+markov_map = {}
+markov_lock = Lock()
 
 
 # Make the generated messages look better.
@@ -53,7 +65,7 @@ def get_messages(cursor, speaker, cmdchar, ctrlchan):
 
 
 # FIXME: make sphinx happy
-def build_markov(messages, speaker):
+def build_markov(cursor, speaker, cmdchar, ctrlchan):
     """ Builds a markov dictionary of the form
 
         word : {
@@ -64,6 +76,7 @@ def build_markov(messages, speaker):
         }
     """
     markov = {}
+    messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
     if messages is None or len(messages) == 0:
         return markov
     for msg in messages:
@@ -76,6 +89,24 @@ def build_markov(messages, speaker):
             else:
                 markov[msg[i - 1]][msg[i]] += 1
     return markov
+
+
+def get_markov(cursor, speaker, defer, cmdchar, ctrlchan):
+    if speaker not in markov_map:
+        update_markov(cursor, speaker, cmdchar, ctrlchan)
+    else:
+        with markov_lock:
+            if time.time() - markov_map[speaker].time > CACHE_LIFE:
+                defer(0, update_markov, cursor, speaker, cmdchar, ctrlchan)
+    with markov_lock:
+        markov = markov_map[speaker].data
+    return markov
+
+
+def update_markov(cursor, speaker, cmdchar, ctrlchan):
+    data = build_markov(cursor, speaker, cmdchar, ctrlchan)
+    with markov_lock:
+        markov_map[speaker] = MarkovState(time.time(), data)
 
 
 def build_msg(markov, speaker):
@@ -92,13 +123,12 @@ def build_msg(markov, speaker):
     return "%s says: %s" % (speaker, msg)
 
 
-@Command('babble', ['db', 'config'], limit=5)
+@Command('babble', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (nick)
     """
-    cursor = args['db']
-    speaker = msg.split()[0] if msg else args['config']['core']['channel']
-    messages = get_messages(cursor, speaker, args['config']['core']['cmdchar'], args['config']['core']['ctrlchan'])
-    markov = build_markov(messages, speaker)
+    corecfg = args['config']['core']
+    speaker = msg.split()[0] if msg else corecfg['channel']
+    markov = get_markov(args['db'], speaker, args['handler'].workers.defer, corecfg['cmdchar'], corecfg['ctrlchan'])
     send(build_msg(markov, speaker))
