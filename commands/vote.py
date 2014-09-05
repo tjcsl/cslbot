@@ -22,6 +22,7 @@ def start_poll(session, msg, isadmin, send, nick, ctrlchan):
     """ Starts a poll """
     if not msg:
         send("Polls need a question.")
+        return
     poll = Polls(question=msg, submitter=nick)
     session.add(poll)
     session.flush()
@@ -39,7 +40,7 @@ def delete_poll(session, pid):
         return "Syntax: !poll delete <pollnum>"
     if not pid.isdigit():
         return "Not A Valid Positive Integer."
-    poll = session.query(Polls).filter(Polls.accepted, Polls.id == pid).first()
+    poll = session.query(Polls).filter(Polls.accepted == 1, Polls.id == pid).first()
     if poll is None:
         return "Poll does not exist."
     if poll.active == 1:
