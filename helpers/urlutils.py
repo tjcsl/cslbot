@@ -36,11 +36,11 @@ def get_short(msg):
 def get_title(url):
     title = 'No Title Found'
     try:
+        # Strip unicode
+        url = url.encode('ascii', 'ignore').decode()
         url = url.split('://', maxsplit=1)
         if len(url) == 1:
             url = ['http', url[0]]
-        # FIXME: dies on urls > 64 chars
-        # url[1] = url[1].encode('idna').decode()
         url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
