@@ -151,7 +151,8 @@ def gen_clippy(nick, msg):
 
 
 def do_xkcd_sub(msg, hook=False):
-    substitutions = {'keyboard': 'leopard', 'witnesses': 'these dudes I know',
+    # http://xkcd.com/1288/
+    substitutions = {'witnesses': 'these dudes I know',
                      'allegedly': 'kinda probably', 'new study': 'tumblr post',
                      'rebuild': 'avenge', 'space': 'SPAAAAAACCCEEEEE',
                      'google glass': 'virtual boy', 'smartphone': 'pokedex',
@@ -160,8 +161,12 @@ def do_xkcd_sub(msg, hook=False):
                      'river spirits', 'homeland security': 'homestar runner',
                      'could not be reached for comment':
                      'is guilty and everyone knows it'}
+    # http://xkcd.com/1031/
+    substitutions['keyboard'] = 'leopard'
+    # http://xkcd.com/1418/
+    substitutions['force'] = 'horse'
     output = msg
-    if not hook or random() < 0.1:
+    if not hook or random() < 0.25:
         for text, replacement in substitutions.items():
             if text in output:
                 output = re.sub(r"\b%s\b" % text, replacement, output)
