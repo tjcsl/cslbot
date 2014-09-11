@@ -242,6 +242,10 @@ class BotHandler():
         if cmdargs == channel:
             send("%s must have a home." % botnick)
             return
+        # don't leave the control channel
+        if cmdargs == self.config['core']['ctrlchan']:
+            send("%s must remain under control, or bad things will happen." % botnick)
+            return
         self.send(cmdargs, nick, "Leaving at the request of " + nick, msgtype)
         c.part(cmdargs)
 
