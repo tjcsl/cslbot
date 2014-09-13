@@ -18,12 +18,15 @@
 # USA.
 
 import traceback
+import sys
 from os.path import basename
 
 
 def handle_traceback(ex, c, target, config, source="the bot"):
     # Dump full traceback to console.
     traceback.print_exc()
+    # Force traceback to be flushed
+    sys.stderr.flush()
     trace = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
