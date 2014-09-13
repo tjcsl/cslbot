@@ -166,7 +166,8 @@ def do_xkcd_sub(msg, hook=False):
     # http://xkcd.com/1418/
     substitutions['force'] = 'horse'
     output = msg
-    if not hook or random() < 0.75:
+    # for creffett
+    if not hook or 'space' in output or random() < 0.25:
         for text, replacement in substitutions.items():
             if text in output:
                 output = re.sub(r"\b%s\b" % text, replacement, output)
