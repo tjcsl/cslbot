@@ -15,9 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.hook import Hook
+from threading import Lock
 import string
 
 _caps = []
+_caps_lock = Lock()
 
 
 @Hook('pubmsg', ['nick', 'do_kick', 'target', 'config'])
@@ -29,7 +31,6 @@ def handle(send, msg, args):
     | If this is the second line in a row, kick the user.
     """
     # SHUT CAPS LOCK OFF, MORON
-    global _caps
 
     if args['config']['feature'].getboolean('capskick'):
         nick = args['nick']
@@ -40,11 +41,12 @@ def handle(send, msg, args):
             return
         upper_ratio = len(upper) / len(msg)
         if args['target'] != 'private':
-            if upper_ratio > THRESHOLD and len(msg) > 20:
-                if nick in _caps:
-                    args['do_kick'](args['target'], nick, text)
+            with _caps_lock:
+                if upper_ratio > THRESHOLD and len(msg) > 20:
+                    if nick in _caps:
+                        args['do_kick'](args['target'], nick, text)
+                        _caps.remove(nick)
+                    else:
+                        _caps.append(nick)
+                elif nick in _caps:
                     _caps.remove(nick)
-                else:
-                    _caps.append(nick)
-            elif nick in _caps:
-                _caps.remove(nick)
