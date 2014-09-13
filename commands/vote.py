@@ -227,4 +227,4 @@ def cmd(send, msg, args):
         else:
             send("Nope, not gonna do it.")
     else:
-        send('Invalid Syntax.')
+        send('Command %s invalid.' % cmd)
