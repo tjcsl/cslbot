@@ -269,7 +269,7 @@ def accept_poll(handler, cmd):
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
     nick = poll.submitter
-    msg = "Poll #%d accepted: %s , Submitted by %s" % (id, poll.question, nick)
+    msg = "Poll #%d accepted: %s , Submitted by %s" % (pid, poll.question, nick)
     handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     handler.do_log('private', botnick, msg, 'privmsg')
     return ""
