@@ -26,7 +26,7 @@ from .exception import CommandFailedException
 def get_short(msg):
     if len(msg) < 20:
         return msg
-    data = post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps({'longUrl': msg}), headers={'Content-Type': 'application/json'}).json()
+    data = post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps({'longUrl': msg}), headers={'Content-Type': 'application/json'}, timeout=5).json()
     if 'error' in data:
         return msg
     else:
