@@ -374,7 +374,7 @@ def handle_ctrlchan(handler, msg, c, send):
         send("cs|chanserv <chanserv command>")
         send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
         send("get <disabled|enabled> modules")
-        send("show <guarded|issues|quotes|polls>")
+        send("show <guarded|issues|quotes|polls|pending>")
         send("accept|reject <issue|quote|poll> <num>")
         send("guard|unguard <nick>")
     elif cmd[0] == "guard":
