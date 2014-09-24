@@ -63,6 +63,7 @@ def cmd(send, msg, args):
                     implement += ' '
                     i += 1
                 implement = implement.strip()
+            i += 1
 
         if not implement:
             implement = choice(implements)
