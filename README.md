@@ -31,9 +31,7 @@ Hard mode:
 
 4.  requests (https://pypi.python.org/pypi/requests),
 
-5.  IRC (http://pypi.python.org/pypi/irc)
-
-6.  and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
+5.  and sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
 
 Easy mode:
 
