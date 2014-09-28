@@ -36,8 +36,7 @@ def get_definition(msg):
     elif not index.isdigit() or int(index) >= len(data):
         output = "Invalid Index"
     else:
-        output = data[int(index)]['output']
-    output = output.replace('shit', '$#!+').replace('fuck', 'fsck')
+        output = data[int(index)]['definition']
     output = output.splitlines()[0]
     return output
 
