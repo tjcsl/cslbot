@@ -50,12 +50,7 @@ def cmd(send, msg, args):
     if msg:
         output = get_definition(msg)
     else:
-        # throw a couple retries in
-        for x in range(5):
-            msg = get_random()
-            # It seems that urban dictionary's "random" function really likes Unicorns...
-            if msg != "Russian Unicorn":
-                break
+        msg = get_random()
         output = "%s: %s" % (msg, get_definition(msg))
     if len(output) > 256:
         output = output[:253] + "..."
