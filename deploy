@@ -3,18 +3,12 @@ set -e
 
 # do docs
 # handle_docs
-# update master to dev
-git checkout master
-git pull
-if ! git merge --ff-only dev; then
-	git checkout dev
-	figlet Please rebase dev
-	exit 1
-fi
-git checkout dev
+
+# update master
+git pull -r
 
 # push to github
-git push --all
+git push
 
 ./scripts/reload
 
