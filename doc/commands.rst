@@ -188,6 +188,14 @@ commands.distro module
     :undoc-members:
     :show-inheritance:
 
+commands.dvorak module
+----------------------
+
+.. automodule:: commands.dvorak
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.ebay module
 --------------------
 
@@ -504,14 +512,6 @@ commands.reddit module
 ----------------------
 
 .. automodule:: commands.reddit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.reverse module
------------------------
-
-.. automodule:: commands.reverse
     :members:
     :undoc-members:
     :show-inheritance:

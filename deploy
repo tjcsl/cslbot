@@ -1,8 +1,19 @@
 #!/bin/bash
 set -e
 
+function handle_docs() {
+cd gh-pages
+../scripts/gendocs.sh
+git add .
+if ! [ -z "`git status --porcelain`" ]; then
+	git commit -m 'update docs'
+fi
+git push
+cd ..
+}
+
 # do docs
-# handle_docs
+#handle_docs
 
 # update master
 git pull -r
@@ -20,13 +31,3 @@ else
 	sudo -u ircbot ./scripts/reload
 fi
 
-function handle_docs() {
-cd gh-pages
-../scripts/gendocs.sh
-git add .
-if ! [ -z "`git status --porcelain`" ]; then
-	git commit -m 'update docs'
-fi
-git push
-cd ..
-}

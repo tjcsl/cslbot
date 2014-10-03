@@ -44,6 +44,14 @@ hooks.clippy module
     :undoc-members:
     :show-inheritance:
 
+hooks.ctf module
+----------------
+
+.. automodule:: hooks.ctf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 hooks.note module
 -----------------
 
