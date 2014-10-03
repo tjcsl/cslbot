@@ -13,10 +13,10 @@ cd ..
 }
 
 # do docs
-#handle_docs
+# handle_docs
 
 # update master
-git pull -r
+git pull --ff-only
 
 # push to github
 git push
