@@ -30,7 +30,7 @@ def cmd(send, msg, args):
         return
     channel = args['target'] if args['target'] != 'private' else args['nick']
     # CTCP PING
-    if "." not in msg:
+    if "." not in msg and ":" not in msg:
         args['handler'].connection.ctcp("PING", msg, " ".join(str(time()).split('.')))
         recordping(msg, channel)
         return
