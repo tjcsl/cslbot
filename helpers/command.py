@@ -99,9 +99,10 @@ def check_command(cursor, nick, msg, target):
 
 
 class Command():
+
     def __init__(self, names, args=[], limit=0):
         global _known_commands
-        self.names = [names] if type(names) == str else names
+        self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
         for t in self.names:

@@ -117,7 +117,7 @@ def output_urls(env, session, outdir, time):
 
 def main(config, outdir):
     session = get_session(config)
-    env = Environment(loader=FileSystemLoader(dirname(__file__)+'/../static/templates'))
+    env = Environment(loader=FileSystemLoader(dirname(__file__) + '/../static/templates'))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not exists(outdir):

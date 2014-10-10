@@ -39,32 +39,32 @@ def handle_chanserv(c, cmd, send):
 
 
 def handle_disable(handler, cmd):
-        if len(cmd) < 2:
-            return "Missing argument."
-        if cmd[1] == "kick":
-            if not handler.kick_enabled:
-                return "Kick already disabled."
-            else:
-                handler.kick_enabled = False
-                return "Kick disabled."
-        elif cmd[1] == "module":
-            if len(cmd) < 3:
-                return "Missing argument."
-            return command.disable_command(cmd[2])
-        elif cmd[1] == "logging":
-            if logging.getLogger().getEffectiveLevel() == logging.INFO:
-                return "logging already disabled."
-            else:
-                logging.getLogger().setLevel(logging.INFO)
-                return "Logging disabled."
-        elif cmd[1] == "chanlog":
-            if handler.log_to_ctrlchan:
-                handler.log_to_ctrlchan = False
-                return "Control channel logging disabled."
-            else:
-                return "Control channel logging is already disabled."
+    if len(cmd) < 2:
+        return "Missing argument."
+    if cmd[1] == "kick":
+        if not handler.kick_enabled:
+            return "Kick already disabled."
         else:
-            return "Invalid argument."
+            handler.kick_enabled = False
+            return "Kick disabled."
+    elif cmd[1] == "module":
+        if len(cmd) < 3:
+            return "Missing argument."
+        return command.disable_command(cmd[2])
+    elif cmd[1] == "logging":
+        if logging.getLogger().getEffectiveLevel() == logging.INFO:
+            return "logging already disabled."
+        else:
+            logging.getLogger().setLevel(logging.INFO)
+            return "Logging disabled."
+    elif cmd[1] == "chanlog":
+        if handler.log_to_ctrlchan:
+            handler.log_to_ctrlchan = False
+            return "Control channel logging disabled."
+        else:
+            return "Control channel logging is already disabled."
+    else:
+        return "Invalid argument."
 
 
 def handle_enable(handler, cmd):
@@ -183,23 +183,23 @@ def show_polls(polls, send):
 
 
 def show_pending(db, admins, send, ping=False):
-        issues = db.query(Issues).filter(Issues.accepted == 0).all()
-        quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
-        polls = db.query(Polls).filter(Polls.accepted == 0).all()
-        if issues or quotes or polls:
-            if ping:
-                send("%s: Items are Pending Approval" % admins)
-        elif not ping:
-            send("No items are Pending")
-        if issues:
-            send("Issues:")
-            show_issues(issues, send)
-        if quotes:
-            send("Quotes:")
-            show_quotes(quotes, send)
-        if polls:
-            send("Polls:")
-            show_polls(polls, send)
+    issues = db.query(Issues).filter(Issues.accepted == 0).all()
+    quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
+    polls = db.query(Polls).filter(Polls.accepted == 0).all()
+    if issues or quotes or polls:
+        if ping:
+            send("%s: Items are Pending Approval" % admins)
+    elif not ping:
+        send("No items are Pending")
+    if issues:
+        send("Issues:")
+        show_issues(issues, send)
+    if quotes:
+        send("Quotes:")
+        show_quotes(quotes, send)
+    if polls:
+        send("Polls:")
+        show_polls(polls, send)
 
 
 def handle_accept(handler, cmd):

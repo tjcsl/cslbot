@@ -86,7 +86,7 @@ def ping(c, e, pongtime):
     nick = e.source.split('!')[0]
     try:
         pingtime = float(response)
-        delta = timedelta(seconds=pongtime-pingtime)
+        delta = timedelta(seconds=pongtime - pingtime)
         elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
     except ValueError:
         elapsed = response
@@ -105,20 +105,20 @@ def get_channels(chanlist, nick):
 
 
 def get_cmdchar(config, connection, msg, msgtype):
-        cmdchar = config['core']['cmdchar']
-        botnick = '%s: ' % connection.real_nickname
-        if msg.startswith(botnick):
-            msg = msg.replace(botnick, cmdchar, 1)
+    cmdchar = config['core']['cmdchar']
+    botnick = '%s: ' % connection.real_nickname
+    if msg.startswith(botnick):
+        msg = msg.replace(botnick, cmdchar, 1)
 
-        altchars = [x.strip() for x in config['core']['altcmdchars'].split(',')]
-        if altchars and altchars[0] != '':
-            for i in altchars:
-                if msg.startswith(i):
-                    msg = msg.replace(i, cmdchar, 1)
-        # Don't require cmdchar in PMs.
-        if msgtype == 'privmsg' and not msg.startswith(cmdchar):
-            msg = cmdchar + msg
-        return msg
+    altchars = [x.strip() for x in config['core']['altcmdchars'].split(',')]
+    if altchars and altchars[0] != '':
+        for i in altchars:
+            if msg.startswith(i):
+                msg = msg.replace(i, cmdchar, 1)
+    # Don't require cmdchar in PMs.
+    if msgtype == 'privmsg' and not msg.startswith(cmdchar):
+        msg = cmdchar + msg
+    return msg
 
 
 def parse_header(header, msg):

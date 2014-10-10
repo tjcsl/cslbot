@@ -165,7 +165,7 @@ class BotHandler():
 
         Records the message in the log.
         """
-        if type(msg) is not str:
+        if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
         for i in self.outputfilter:
@@ -204,9 +204,9 @@ class BotHandler():
         flags = 0
         if target[0] == "#":
             if target in self.channels and nick in self.channels[target].opers():
-                    flags |= 1
+                flags |= 1
             if target in self.channels and nick in self.channels[target].voiced():
-                    flags |= 2
+                flags |= 2
         else:
             target = 'private'
         # strip ctrl chars from !creffett
@@ -265,7 +265,7 @@ class BotHandler():
         cmd = cmdargs.split()
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
             send("%s is already a member of %s" % (self.config['core']['nick'],
-                 cmd[0]))
+                                                   cmd[0]))
             return
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
@@ -417,12 +417,12 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
-                for h in self.hooks:
-                    realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
-                    try:
-                        h.run(send, msg, msgtype, self, target, realargs)
-                    except InternalError:
-                        self.db.rollback()
+            for h in self.hooks:
+                realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
+                try:
+                    h.run(send, msg, msgtype, self, target, realargs)
+                except InternalError:
+                    self.db.rollback()
 
         if msgtype == 'nick':
             if e.target in self.admins:
