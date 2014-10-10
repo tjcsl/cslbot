@@ -19,7 +19,7 @@ Setup
 -----
 Copy config.example to config.cfg and change values as needed.  
 
-Python must be at least 3.3.
+Python must be at least 3.4.
 
 Hard mode:
 
