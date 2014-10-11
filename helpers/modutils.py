@@ -45,7 +45,9 @@ GROUPS = {
 def group_enabled(groups, mod_type, name):
     if mod_type == 'helpers':
         return True
-    for group in GROUPS[mod_type].values():
+    for group_name, group in GROUPS[mod_type].items():
+        if group_name == 'disabled':
+            continue
         if name in group:
             return True
     return False
