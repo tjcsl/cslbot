@@ -18,24 +18,52 @@
 # USA.
 
 import sys
-import os
 from os.path import basename
 import importlib
 from glob import glob
 
+# FIXME: put this in a config file
+GROUPS = {
+    'hooks': {
+        'core': ['caps', 'note', 'scores', 'url'],
+        'optional': ['band', 'butt', 'understanding', 'xkcd', 'reddit'],
+        'disabled': ['bob', 'clippy', 'ctf', 'stallman']},
+    'commands': {
+        'core': ['about', 'admins', 'cancel', 'channels', 'defersay', 'guarded',
+                 'help', 'highlight', 'hooks', 'mission', 'mode', 'msg', 'nicks', 'note',
+                 'pull', 'score', 'seen', 's', 'stats', 'threads', 'timeout', 'uptime', 'version', 'vote'],
+        'useful': ['quote', 'ping', 'google', 'reddit', 'weather', 'slogan', 'issue',
+                   'isup', 'time', 'translate', 'wiki', 'wolf', 'urban', 'babble', 'bc', 'define'],
+        'optional': ['8ball', 'acronym', 'ahamilto', 'bike', 'blame', 'botsnack',
+                     'choose', 'cidr', 'clippy', 'coin', 'creffett', 'cve', 'ddate' 'demorse', 'distro',
+                     'dvorak', 'ebay', 'eix', 'errno', 'filter', 'fml', 'fortune', 'fweather', 'fwilson', 'gcc',
+                     'imdb', 'inspect', 'insult', 'ipa', 'jargon', 'kill', 'lmgtfy', 'meme', 'microwave', 'morse', 'nuke', 'pester',
+                     'pfoley', 'praise', 'random', 'roman', 'sha512', 'shibe', 'signal', 'skasturi', 'slap', 'ssearch', 'steam',
+                     'stock', 'stopwatch', 'summon', 'throw', 'wai', 'wikipath', 'word', 'wtf', 'xkcd', 'yoda']}}
 
-def get_enabled(moddir):
+
+def group_enabled(groups, mod_type, name):
+    if mod_type == 'helpers':
+        return True
+    for group in GROUPS[mod_type].values():
+        if name in group:
+            return True
+    return False
+
+
+def get_enabled(groups, moddir, mod_type):
     mods = []
     for f in glob(moddir + '/*.py'):
-        if os.access(f, os.X_OK):
-            mods.append(basename(f).split('.')[0])
+        name = basename(f).split('.')[0]
+        if group_enabled(groups, mod_type, name):
+            mods.append(name)
     return mods
 
 
-def scan_and_reimport(folder, mod_pkg):
+def scan_and_reimport(groups, folder, mod_type):
     """ Scans folder for hooks """
-    for mod in get_enabled(folder):
-        mod_name = mod_pkg + "." + mod
+    for mod in get_enabled(groups, folder, mod_type):
+        mod_name = mod_type + "." + mod
         if mod_name in sys.modules:
             importlib.reload(sys.modules[mod_name])
         else:

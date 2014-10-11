@@ -25,11 +25,11 @@ from sqlalchemy.exc import InternalError
 _known_hooks = []
 
 
-def scan_for_hooks(folder):
+def scan_for_hooks(groups, folder):
     """ Scans folder for hooks """
     global _known_hooks
     _known_hooks = []
-    scan_and_reimport(folder, "hooks")
+    scan_and_reimport(groups, folder, "hooks")
     return _known_hooks
 
 

@@ -17,11 +17,9 @@
 from helpers.hook import Hook
 
 
-@Hook('pubmsg', ['config', 'nick'])
+@Hook('pubmsg', ['nick'])
 def handle(send, msg, args):
     msg = msg.lower()
-    if not args['config']['feature'].getboolean('stallmanmode'):
-        return
     if "linux" in msg and "gnu/linux" not in msg:
         send(args['nick'] + ": I'd just like to interject for a moment. What you're referring to as Linux, is in fact, GNU/Linux, \
 or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, \

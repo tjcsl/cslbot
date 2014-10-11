@@ -75,25 +75,25 @@ class BotHandler():
             setattr(self, key, val)
         return
 
-    @staticmethod
-    def loadmodules():
+    def loadmodules(self):
         """Load all the commands.
 
         | Globs over all the .py files in the commands dir.
         | Skips file without the executable bit set
         | Imports the modules into a dict
         """
-        command.scan_for_commands(dirname(__file__) + '/commands')
+        groups = [x.strip() for x in self.config['groups']['commands'].split(',')]
+        command.scan_for_commands(groups, dirname(__file__) + '/commands')
 
-    @staticmethod
-    def loadhooks():
+    def loadhooks(self):
         """Load all the hooks.
 
         | Globs over all the .py files in the hooks dir.
         | Skips file without the executable bit set
         | Imports the hooks into a dict
         """
-        return hook.scan_for_hooks(dirname(__file__) + '/hooks')
+        groups = [x.strip() for x in self.config['groups']['hooks'].split(',')]
+        return hook.scan_for_hooks(groups, dirname(__file__) + '/hooks')
 
     def ignore(self, send, nick):
         """Ignores a nick."""
