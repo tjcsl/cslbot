@@ -39,7 +39,7 @@ GROUPS = {
                      'dvorak', 'ebay', 'eix', 'errno', 'filter', 'fml', 'fortune', 'fweather', 'fwilson', 'gcc',
                      'imdb', 'inspect', 'insult', 'ipa', 'jargon', 'kill', 'lmgtfy', 'meme', 'microwave', 'morse', 'nuke', 'pester',
                      'pfoley', 'praise', 'random', 'roman', 'sha512', 'shibe', 'signal', 'skasturi', 'slap', 'ssearch', 'steam',
-                     'stock', 'stopwatch', 'summon', 'throw', 'wai', 'wikipath', 'word', 'wtf', 'xkcd', 'yoda']}}
+                     'stock', 'stopwatch', 'summon', 'throw', 'wai', 'wikipath', 'word', 'wtf', 'xkcd', 'yoda', 'laudiacay']}}
 
 
 def group_enabled(groups, mod_type, name):

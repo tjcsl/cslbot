@@ -51,7 +51,7 @@ def gen_laudiacay(x, mode=None):
     if mode is None:
         mode = 'l' if random() < 0.5 else 'f'
     if mode == 'l':
-        output = "FSCK %s"
+        output = "FSCK %s" % x
         return output.upper()
     else:
         output = 'I LOVE %s' % x
