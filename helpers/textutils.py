@@ -47,6 +47,19 @@ def gen_fwilson(x, mode=None):
         return output.lower()
 
 
+def gen_fwilson(x, mode=None):
+    if x.lower().startswith('fwil'):
+        mode = 'l'
+    if mode is None:
+        mode = 'l' if random() < 0.5 else 'f'
+    if mode == 'l':
+        output = "FSCK %s"
+        return output.upper()
+    else:
+        output = 'I LOVE %s' % x
+        return output.upper()
+
+
 def gen_creffett(msg):
     return '\x02\x038,4%s!!!' % msg.upper()
 
