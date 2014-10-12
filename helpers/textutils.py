@@ -47,9 +47,7 @@ def gen_fwilson(x, mode=None):
         return output.lower()
 
 
-def gen_fwilson(x, mode=None):
-    if x.lower().startswith('fwil'):
-        mode = 'l'
+def gen_laudiacay(x, mode=None):
     if mode is None:
         mode = 'l' if random() < 0.5 else 'f'
     if mode == 'l':
