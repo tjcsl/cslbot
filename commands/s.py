@@ -26,7 +26,7 @@ def get_log(conn, target, user):
     if user is None:
         return query.offset(1).limit(50).all()
     else:
-        return query.filter(Log.source == user).limit(50).all()
+        return query.filter(Log.source.ilike(user)).limit(50).all()
 
 
 def get_modifiers(msg, nick, nickregex):
