@@ -202,10 +202,10 @@ class BotHandler():
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
         flags = 0
-        if target[0] == "#":
-            if target in self.channels and nick in self.channels[target].opers():
+        if target in self.channels:
+            if nick in self.channels[target].opers():
                 flags |= 1
-            if target in self.channels and nick in self.channels[target].voiced():
+            if nick in self.channels[target].voiced():
                 flags |= 2
         else:
             target = 'private'
@@ -384,6 +384,18 @@ class BotHandler():
         self.loadmodules()
         self.loadhooks()
 
+    def is_ignored(self, target, nick):
+        if target in self.channels:
+            # If the channel is /mode +z and the bot is opped, commands from quieted,
+            # but non-ignored nicks can show up in the channel and confuse the hell out of everybody.
+            # The irc library treats +q as "owner", so abuse that.
+            # FIXME: the irc library is stupid and only records +q's if it's already connected to channel.
+            ch = self.channels[target]
+            quieted = [re.match('(.*)\*?!.*', x).group(1) for x in ch.owners()]
+            if nick in quieted:
+                return True
+        return nick in self.ignored
+
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
 
@@ -416,7 +428,7 @@ class BotHandler():
         if msgtype == 'pubnotice':
             return
 
-        if self.config['feature'].getboolean('hooks') and nick not in self.ignored:
+        if self.config['feature'].getboolean('hooks') and not self.is_ignored(target, nick):
             for h in self.hooks:
                 realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
                 try:
@@ -451,7 +463,7 @@ class BotHandler():
         if e.target == self.config['core']['ctrlchan']:
             control.handle_ctrlchan(self, msg, c, send)
 
-        if not self.is_admin(send, nick, False) and nick in self.ignored:
+        if self.is_ignored(target, nick) and not self.is_admin(send, nick, False):
             return
 
         msg = misc.get_cmdchar(self.config, c, msg, msgtype)
