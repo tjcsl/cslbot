@@ -20,7 +20,7 @@
 import re
 import time
 import sys
-from helpers import control, sql, hook, command, textutils, admin, identity, misc
+from helpers import control, sql, hook, modutils, command, textutils, admin, identity, misc
 from os.path import dirname
 from random import choice, random
 from sqlalchemy.exc import InternalError
@@ -52,6 +52,7 @@ class BotHandler():
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
+        modutils.init_groups(self.config['groups'])
         self.loadmodules()
         self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
@@ -82,8 +83,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the modules into a dict
         """
-        groups = [x.strip() for x in self.config['groups']['commands'].split(',')]
-        command.scan_for_commands(groups, dirname(__file__) + '/commands')
+        command.scan_for_commands(dirname(__file__) + '/commands')
 
     def loadhooks(self):
         """Load all the hooks.
@@ -92,8 +92,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the hooks into a dict
         """
-        groups = [x.strip() for x in self.config['groups']['hooks'].split(',')]
-        return hook.scan_for_hooks(groups, dirname(__file__) + '/hooks')
+        return hook.scan_for_hooks(dirname(__file__) + '/hooks')
 
     def ignore(self, send, nick):
         """Ignores a nick."""

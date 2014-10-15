@@ -18,53 +18,59 @@
 # USA.
 
 import sys
-from os.path import basename
+from configparser import ConfigParser
+from os.path import basename, dirname
 import importlib
 from glob import glob
 
-# FIXME: put this in a config file
-GROUPS = {
-    'hooks': {
-        'core': ['caps', 'note', 'scores', 'url'],
-        'optional': ['band', 'butt', 'understanding', 'xkcd', 'reddit'],
-        'disabled': ['bob', 'clippy', 'ctf', 'stallman']},
-    'commands': {
-        'core': ['about', 'admins', 'cancel', 'channels', 'defersay', 'guarded',
-                 'help', 'highlight', 'hooks', 'mission', 'mode', 'msg', 'nicks', 'note',
-                 'pull', 'score', 'seen', 's', 'stats', 'threads', 'timeout', 'uptime', 'version', 'vote'],
-        'useful': ['quote', 'ping', 'google', 'reddit', 'weather', 'slogan', 'issue',
-                   'isup', 'time', 'translate', 'wiki', 'wolf', 'urban', 'babble', 'bc', 'define'],
-        'optional': ['8ball', 'acronym', 'ahamilto', 'bike', 'blame', 'botsnack',
-                     'choose', 'cidr', 'clippy', 'coin', 'creffett', 'cve', 'ddate' 'demorse', 'distro',
-                     'dvorak', 'ebay', 'eix', 'errno', 'filter', 'fml', 'fortune', 'fweather', 'fwilson', 'gcc',
-                     'imdb', 'inspect', 'insult', 'ipa', 'jargon', 'kill', 'lmgtfy', 'meme', 'microwave', 'morse', 'nuke', 'pester',
-                     'pfoley', 'praise', 'random', 'roman', 'sha512', 'shibe', 'signal', 'skasturi', 'slap', 'ssearch', 'steam',
-                     'stock', 'stopwatch', 'summon', 'throw', 'wai', 'wikipath', 'word', 'wtf', 'xkcd', 'yoda', 'laudiacay']}}
+GROUPS = {'commands': set(), 'hooks': set()}
 
 
-def group_enabled(groups, mod_type, name):
+def init_groups(groups):
+    # FIXME: validate that all commands/hooks are in groups.cfg exactly once.
+    config = ConfigParser()
+    config.read_file(open(dirname(__file__)+'/groups.cfg'))
+    enabled_command_groups = [x.strip() for x in groups['commands'].split(',')]
+    command_group = parse_group(config['commands'])
+    for name, values in command_group.items():
+        if name not in enabled_command_groups:
+            continue
+        for x in values:
+            GROUPS['commands'].add(x)
+    enabled_hook_groups = [x.strip() for x in groups['hooks'].split(',')]
+    hook_group = parse_group(config['hooks'])
+    for name, values in hook_group.items():
+        if name not in enabled_hook_groups:
+            continue
+        for x in values:
+            GROUPS['hooks'].add(x)
+
+
+def parse_group(cfg):
+    groups = {}
+    for group in cfg.keys():
+        groups[group] = [x.strip() for x in cfg[group].split(',')]
+    return groups
+
+
+def group_enabled(mod_type, name):
     if mod_type == 'helpers':
         return True
-    for group_name, group in GROUPS[mod_type].items():
-        if group_name == 'disabled':
-            continue
-        if name in group:
-            return True
-    return False
+    return name in GROUPS[mod_type]
 
 
-def get_enabled(groups, moddir, mod_type):
+def get_enabled(moddir, mod_type):
     mods = []
     for f in glob(moddir + '/*.py'):
         name = basename(f).split('.')[0]
-        if group_enabled(groups, mod_type, name):
+        if group_enabled(mod_type, name):
             mods.append(name)
     return mods
 
 
-def scan_and_reimport(groups, folder, mod_type):
-    """ Scans folder for hooks """
-    for mod in get_enabled(groups, folder, mod_type):
+def scan_and_reimport(folder, mod_type):
+    """ Scans folder for modules."""
+    for mod in get_enabled(folder, mod_type):
         mod_name = mod_type + "." + mod
         if mod_name in sys.modules:
             importlib.reload(sys.modules[mod_name])

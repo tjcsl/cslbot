@@ -29,11 +29,11 @@ _known_commands = {}
 _disabled_commands = []
 
 
-def scan_for_commands(groups, folder):
+def scan_for_commands(folder):
     """ Scans folder for commands """
     global _known_commands
     _known_commands = {}
-    scan_and_reimport(groups, folder, "commands")
+    scan_and_reimport(folder, "commands")
     return _known_commands
 
 
