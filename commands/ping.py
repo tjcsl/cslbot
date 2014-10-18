@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+import re
 from time import time
 from helpers.misc import recordping
 from helpers.command import Command
@@ -38,7 +39,7 @@ def cmd(send, msg, args):
         answer = subprocess.check_output([args['name'], '-q', '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
         answer = answer.decode().splitlines()
         send(answer[0])
-        send(answer[-2])
+        send(re.sub('time.*$',answer[-1],answer[-2]))
     except subprocess.CalledProcessError as e:
         if e.returncode == 2:
             send("ping: unknown host " + msg)
