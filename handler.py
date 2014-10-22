@@ -384,15 +384,17 @@ class BotHandler():
         self.loadhooks()
 
     def is_ignored(self, target, nick):
-        if target in self.channels:
+        # FIXME: do something sane here, which would probably require parsing channel modes on startup,
+        # and then updating them on /mode
+        # if target in self.channels:
             # If the channel is /mode +z and the bot is opped, commands from quieted,
             # but non-ignored nicks can show up in the channel and confuse the hell out of everybody.
             # The irc library treats +q as "owner", so abuse that.
             # FIXME: the irc library is stupid and only records +q's if it's already connected to channel.
-            ch = self.channels[target]
-            quieted = [re.match('(.*)\*?!.*', x).group(1) for x in ch.owners()]
-            if nick in quieted:
-                return True
+            # ch = self.channels[target]
+            # quieted = [re.match('(.*)\*?!.*', x).group(1) for x in ch.owners()]
+            # if nick in quieted:
+            #    return True
         return nick in self.ignored
 
     def handle_msg(self, msgtype, c, e):
