@@ -27,7 +27,7 @@ def cmd(send, msg, args):
         send("Need a article.")
         return
     if 'livedoc' in args['name']:
-        url = 'http://www.tjhsst.edu/admin/livedoc/index.php'
+        url = 'http://livedoc.tjhsst.edu/w'
         name = 'livedoc'
     else:
         url = 'http://en.wikipedia.org/w'
@@ -41,6 +41,5 @@ def cmd(send, msg, args):
         return
     article = article.replace(' ', '_')
     # wikipedia uses /w for api and /wiki for articles
-    if 'livedoc' not in args['name']:
-        url += 'iki'
+    url += 'iki'
     send('%s/%s' % (url, article))
