@@ -14,13 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from html.parser import HTMLParser
 from requests import get
 from helpers.command import Command
 
 
 def get_random():
     url = get('http://www.urbandictionary.com/random.php').url
-    return url.split('=')[1].replace('+', ' ')
+    url = url.split('=')[1].replace('+', ' ')
+    return HTMLParser().unescape(url)
 
 
 def get_definition(msg):
