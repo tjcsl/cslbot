@@ -24,6 +24,11 @@ import importlib
 from glob import glob
 
 GROUPS = {'commands': set(), 'hooks': set()}
+AUX = {'commands': [], 'hooks': [], 'helpers': []}
+
+
+def init_aux(commands):
+    AUX['commands'] = [x.strip() for x in commands.split(',')]
 
 
 def init_groups(groups):
@@ -64,15 +69,22 @@ def get_enabled(moddir, mod_type):
     for f in glob(moddir + '/*.py'):
         name = basename(f).split('.')[0]
         if group_enabled(mod_type, name):
-            mods.append(name)
+            mod_pkg = moddir.replace('/', '.')
+            mods.append("%s.%s" % (mod_pkg, name))
     return mods
+
+
+def get_modules(folder, mod_type):
+    core_modules = get_enabled(folder, mod_type)
+    for aux in AUX[mod_type]:
+        core_modules.extend(get_enabled(aux, mod_type))
+    return core_modules
 
 
 def scan_and_reimport(folder, mod_type):
     """ Scans folder for modules."""
-    for mod in get_enabled(folder, mod_type):
-        mod_name = mod_type + "." + mod
-        if mod_name in sys.modules:
-            importlib.reload(sys.modules[mod_name])
+    for mod in get_modules(folder, mod_type):
+        if mod in sys.modules:
+            importlib.reload(sys.modules[mod])
         else:
-            importlib.import_module(mod_name)
+            importlib.import_module(mod)

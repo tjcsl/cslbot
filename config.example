@@ -11,6 +11,7 @@ cmdchar: !
 altcmdchars: fwil, @, ~
 url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`\^-]
+extracommands:
 [groups]
 hooks: core, optional
 commands: core, useful, optional

@@ -52,6 +52,8 @@ class BotHandler():
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
+        # FIXME: add hooks/helpers
+        modutils.init_aux(self.config['core']['extracommands'])
         modutils.init_groups(self.config['groups'])
         self.loadmodules()
         self.hooks = self.loadhooks()
@@ -83,7 +85,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the modules into a dict
         """
-        command.scan_for_commands(dirname(__file__) + '/commands')
+        command.scan_for_commands('commands')
 
     def loadhooks(self):
         """Load all the hooks.
@@ -92,7 +94,7 @@ class BotHandler():
         | Skips file without the executable bit set
         | Imports the hooks into a dict
         """
-        return hook.scan_for_hooks(dirname(__file__) + '/hooks')
+        return hook.scan_for_hooks('hooks')
 
     def ignore(self, send, nick):
         """Ignores a nick."""
