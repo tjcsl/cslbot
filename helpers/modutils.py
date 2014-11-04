@@ -19,7 +19,7 @@
 
 import sys
 from configparser import ConfigParser
-from os.path import basename, dirname
+from os.path import abspath, basename, dirname, join
 import importlib
 from glob import glob
 
@@ -66,7 +66,9 @@ def group_enabled(mod_type, name):
 
 def get_enabled(moddir, mod_type):
     mods = []
-    for f in glob(moddir + '/*.py'):
+    full_path = abspath(join(dirname(__file__), '..'))
+    full_dir = join(full_path, moddir)
+    for f in glob(join(full_dir, '*.py')):
         name = basename(f).split('.')[0]
         if group_enabled(mod_type, name):
             mod_pkg = moddir.replace('/', '.')
