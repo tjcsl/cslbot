@@ -19,6 +19,8 @@
 
 import sys
 from configparser import ConfigParser
+import fnmatch
+import os
 from os.path import basename, dirname
 import importlib
 from glob import glob
@@ -58,20 +60,41 @@ def group_enabled(mod_type, name):
         return True
     return name in GROUPS[mod_type]
 
+def filename_to_modname(fname, mod_type):
+    fname = os.path.splitext(fname)[0] # remove .py
+    directories = []
+    while True:
+        fnames = os.path.split(fname)
+        if fnames[1] == '':
+            break
+        fname = fnames[0]
+        directories.append(os.path.split(fname)[1])
+    directories = directories[::-1]
+    while directories[0] != mod_type:
+        directories = directories[1:]
+    return '.'.join(directories)
 
 def get_enabled(moddir, mod_type):
     mods = []
-    for f in glob(moddir + '/*.py'):
-        name = basename(f).split('.')[0]
-        if group_enabled(mod_type, name):
-            mods.append(name)
+    roots = []
+    # get the common root directory
+    root_dir = os.path.dirname(__file__)
+    for root, dirnames, filenames in os.walk(moddir):
+        # We don't want to grab the pyc file in the pycache
+        if root == '__pycache__':
+            continue
+
+        for filename in fnmatch.filter(filenames, '*.py'):
+            name = os.path.splitext(basename(filename))[0]
+            if group_enabled(mod_type, name):
+                modname = filename_to_modname(os.path.join(root, filename), mod_type)
+                mods.append(modname + '.' + name)
     return mods
 
 
 def scan_and_reimport(folder, mod_type):
     """ Scans folder for modules."""
-    for mod in get_enabled(folder, mod_type):
-        mod_name = mod_type + "." + mod
+    for mod_name in get_enabled(folder, mod_type):
         if mod_name in sys.modules:
             importlib.reload(sys.modules[mod_name])
         else:
