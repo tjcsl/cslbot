@@ -16,17 +16,18 @@ cd ..
 # handle_docs
 
 # update master
-git submodule update --remote
+(cd commands/tjhsst; git pull --ff-only)
 git pull --ff-only
 
 # push to github
 git push
+(cd commands/tjhsst; git push)
 
 ./scripts/reload
 
 cd /home/ircbot/bot
-sudo -u ircbot git submodule update --remote
 sudo -u ircbot git pull
+(cd commands/tjhsst; sudo -u ircbot git pull)
 if [ "$1" == "restart" ]; then
 	sudo /etc/init.d/ircbot restart
 else

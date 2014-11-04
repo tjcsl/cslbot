@@ -1,3 +1,0 @@
-[submodule "commands/tjhsst"]
-	path = commands/tjhsst
-	url = git://github.com/tjcsl/cslbot-tjhsst
