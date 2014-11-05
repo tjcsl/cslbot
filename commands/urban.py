@@ -39,8 +39,8 @@ def get_definition(msg):
         output = "Invalid Index"
     else:
         output = data[int(index)]['definition']
-    output = output.splitlines()[0]
-    return output
+    output = output.splitlines()
+    return ' '.join(output)
 
 
 @Command('urban')
