@@ -3,7 +3,7 @@
 {% block content %}
 <ol class="list-group">
     {% for x in urls %}
-        {% set url = x.url|trim %}
+        {% set url = x.url|trim|e %}
         <li class="list-group-item">
             <a href="{{ url }}">
                 {% if x.title == 'Image' %}
@@ -11,7 +11,7 @@
                 {% elif x.title == 'No Title Found' %}
                     {{ url }}
                 {% else %}
-                    {{ x.title|trim }}
+                    {{ x.title|trim|e }}
                 {% endif %}
             </a>
           {{ x.time.strftime('%I:%M %p, %a, %b %d, %Y') }}

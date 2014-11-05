@@ -10,17 +10,17 @@
     {% for id,question in polls.items() %}
     <tr>
         <td>{{ id|trim }}</td>
-        <td>{{ question|trim }}</td>
+        <td>{{ question|trim|e }}</td>
         <td>
             <table>
                 {% for response,votes in responses[id].items() %}
                 <tr>
-                    <td>{{ response|trim }}</td>
+                    <td>{{ response|trim|e }}</td>
                     <td>{{ votes|join(', ') }}</td>
                 </tr>
                 {% endfor %}
             </table>
-            {{ winners[id]|trim }}
+            {{ winners[id]|trim|e }}
         </td>
     </tr>
     {% endfor %}
