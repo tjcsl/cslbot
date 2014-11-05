@@ -19,6 +19,7 @@
 
 import re
 from requests import get
+from lxml.html import fromstring
 from html.parser import HTMLParser
 from random import random, choice, randrange
 
@@ -31,6 +32,18 @@ def gen_word():
     html = get('http://randomword.setgetgo.com/get.php').text
     # Strip BOM
     return html[3:].rstrip()
+
+
+def gen_praise(msg):
+    praise = get_praise()
+    while not praise:
+        praise = get_praise()
+    return '%s: %s' % (msg, praise)
+
+
+def get_praise():
+    html = fromstring(get('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG').text)
+    return html.find('body/center/h2').text.replace('\n', ' ').strip()
 
 
 def gen_fwilson(x, mode=None):

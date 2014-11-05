@@ -14,14 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from requests import get
-from lxml.html import fromstring
+from helpers.textutils import gen_praise
 from helpers.command import Command
-
-
-def gen_praise(msg):
-    html = fromstring(get('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG').text)
-    return html.find('body/center/h2').text.replace('\n', ' ').strip()
 
 
 @Command('praise')
@@ -32,7 +26,4 @@ def cmd(send, msg, args):
     if not msg:
         send("Praise what?")
         return
-    praise = gen_praise(msg)
-    while not praise:
-        praise = gen_praise(msg)
-    send('%s: %s' % (msg, praise))
+    send(gen_praise(msg))
