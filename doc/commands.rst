@@ -108,14 +108,6 @@ commands.cidr module
     :undoc-members:
     :show-inheritance:
 
-commands.clippy module
-----------------------
-
-.. automodule:: commands.clippy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.coin module
 --------------------
 
@@ -356,14 +348,6 @@ commands.lmgtfy module
     :undoc-members:
     :show-inheritance:
 
-commands.meme module
---------------------
-
-.. automodule:: commands.meme
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.microwave module
 -------------------------
 
@@ -432,14 +416,6 @@ commands.pester module
 ----------------------
 
 .. automodule:: commands.pester
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.pfoley module
-----------------------
-
-.. automodule:: commands.pfoley
     :members:
     :undoc-members:
     :show-inheritance:
@@ -680,14 +656,6 @@ commands.vote module
 --------------------
 
 .. automodule:: commands.vote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.wai module
--------------------
-
-.. automodule:: commands.wai
     :members:
     :undoc-members:
     :show-inheritance:

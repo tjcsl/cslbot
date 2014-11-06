@@ -60,11 +60,6 @@ def gen_fwilson(x, mode=None):
         return output.lower()
 
 
-def gen_laudiacay(x):
-    output = "e%s %s" % ('w' * randrange(3, 20), x)
-    return output.upper()
-
-
 def gen_creffett(msg):
     return '\x02\x038,4%s!!!' % msg.upper()
 
@@ -162,10 +157,6 @@ def char_to_bin(c):
 
 def gen_binary(string):
     return "".join(map(char_to_bin, string))
-
-
-def gen_clippy(nick, msg):
-    return '%s: I see you are trying to %s, would you like some help with that?' % (nick, msg)
 
 
 def do_xkcd_sub(msg, hook=False):

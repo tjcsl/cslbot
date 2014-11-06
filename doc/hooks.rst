@@ -36,14 +36,6 @@ hooks.caps module
     :undoc-members:
     :show-inheritance:
 
-hooks.clippy module
--------------------
-
-.. automodule:: hooks.clippy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 hooks.ctf module
 ----------------
 
