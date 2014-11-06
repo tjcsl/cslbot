@@ -36,14 +36,6 @@ commands.admins module
     :undoc-members:
     :show-inheritance:
 
-commands.ahamilto module
-------------------------
-
-.. automodule:: commands.ahamilto
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.babble module
 ----------------------
 
@@ -128,14 +120,6 @@ commands.coin module
 --------------------
 
 .. automodule:: commands.coin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.creffett module
-------------------------
-
-.. automodule:: commands.creffett
     :members:
     :undoc-members:
     :show-inheritance:
@@ -248,14 +232,6 @@ commands.fweather module
 ------------------------
 
 .. automodule:: commands.fweather
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.fwilson module
------------------------
-
-.. automodule:: commands.fwilson
     :members:
     :undoc-members:
     :show-inheritance:
@@ -568,14 +544,6 @@ commands.signal module
 ----------------------
 
 .. automodule:: commands.signal
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.skasturi module
-------------------------
-
-.. automodule:: commands.skasturi
     :members:
     :undoc-members:
     :show-inheritance:
