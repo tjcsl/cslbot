@@ -60,15 +60,9 @@ def gen_fwilson(x, mode=None):
         return output.lower()
 
 
-def gen_laudiacay(x, mode=None):
-    if mode is None:
-        mode = 'l' if random() < 0.5 else 'f'
-    if mode == 'l':
-        output = "FSCK %s" % x
-        return output.upper()
-    else:
-        output = 'I LOVE %s' % x
-        return output.upper()
+def gen_laudiacay(x):
+    output = "e%s %s" % ('w' * randrange(3, 20), x)
+    return output.upper()
 
 
 def gen_creffett(msg):
