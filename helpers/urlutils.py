@@ -58,7 +58,7 @@ def get_title(url):
             else:
                 title = "Title Not Found"
     except (timeout, HTTPError) as e:
-        raise CommandFailedException(e)
+        raise CommandFailedException('HTTP Error %d' % e.code)
     except ConnectionResetError as e:
         raise CommandFailedException(e.strerror)
     except URLError as e:
