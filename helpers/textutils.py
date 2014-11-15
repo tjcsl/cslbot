@@ -70,7 +70,7 @@ def gen_slogan(msg):
     parser = HTMLParser()
     slogan = parser.unescape(parser.unescape(slogan))
     slogan = slogan.replace('\\', '').strip()
-    return slogan if slogan else gen_slogan(msg)
+    return slogan if len(slogan) > len(msg) else gen_slogan(msg)
 
 
 def gen_morse(msg):
