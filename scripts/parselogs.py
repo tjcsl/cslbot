@@ -19,7 +19,7 @@ import argparse
 from configparser import ConfigParser
 from time import strftime, localtime
 from os.path import dirname, exists
-from os import mkdir
+from os import mkdirs
 from sys import path
 
 # HACK: allow sibling imports
@@ -43,7 +43,7 @@ def get_id(config, outdir):
 
 def save_id(outdir, new_id):
     if not exists(outdir):
-        mkdir(outdir)
+        mkdirs(outdir)
     with open('%s/.dbid' % outdir, 'w') as f:
         f.write(str(new_id))
 
@@ -52,8 +52,6 @@ def write_log(name, outdir, msg):
     global logs
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
-        if not exists(outdir):
-            mkdir(outdir)
         logs[name] = open(outfile, 'a')
     logs[name].write(msg)
 
