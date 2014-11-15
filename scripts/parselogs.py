@@ -16,9 +16,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import re
 from configparser import ConfigParser
-from time import strftime, strptime, mktime, localtime
+from time import strftime, localtime
 from os.path import dirname, exists
 from os import mkdir
 from sys import path
@@ -34,18 +33,19 @@ logs = {}
 day = False
 
 
-def get_timestamp(config, outdir):
-    outfile = "%s/%s.log" % (outdir, config['core']['channel'])
+def get_id(config, outdir):
+    outfile = "%s/.dbid" % outdir
     if not exists(outfile):
         return 0
-    # FIXME: this shouldn't have to read the whole file.
     with open(outfile) as f:
-        for line in reversed(f.readlines()[-50:]):
-            match = re.match('([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})', line)
-            if match:
-                return mktime(strptime(match.group(1), '%Y-%m-%d %H:%M:%S'))
-    # If we don't have a timestamp in the last 50 lines, assume all need to be outputted.
-    return 0
+        return int(f.read())
+
+
+def save_id(outdir, new_id):
+    if not exists(outdir):
+        mkdir(outdir)
+    with open('%s/.dbid' % outdir, 'w') as f:
+        f.write(str(new_id))
 
 
 def write_log(name, outdir, msg):
@@ -104,9 +104,10 @@ def gen_log(row):
 
 def main(config, outdir):
     session = get_session(config)
-    # FIXME: this only has second percision, so it's possible that events with the same timestamp might be dropped.
-    timestamp = get_timestamp(config, outdir)
-    for row in session.query(Log).filter(Log.time > timestamp).order_by(Log.time).all():
+    current_id = get_id(config, outdir)
+    new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
+    save_id(outdir, new_id)
+    for row in session.query(Log).filter(new_id > Log.id).filter(Log.id >= current_id).order_by(Log.id).all():
         check_day(row, outdir, config['core']['channel'])
         write_log(row.target, outdir, gen_log(row))
     for x in logs.values():
