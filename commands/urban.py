@@ -38,7 +38,7 @@ def get_definition(msg):
     elif not index.isdigit() or int(index) >= len(data) or int(index) == 0:
         output = "Invalid Index"
     else:
-        output = data[int(index)+1]['definition']
+        output = data[int(index)-1]['definition']
     output = output.splitlines()
     return ' '.join(output)
 
