@@ -20,7 +20,15 @@
 import re
 import time
 import sys
-from helpers import control, sql, hook, modutils, command, textutils, admin, identity, misc
+import helpers.control as control
+import helpers.sql as sql
+import helpers.hook as hook
+import helpers.modutils as modutils
+import helpers.command as command
+import helpers.textutils as textutils
+import helpers.admin as admin
+import helpers.identity as identity
+import helpers.misc as misc
 from os.path import dirname
 from random import choice, random
 from sqlalchemy.exc import InternalError

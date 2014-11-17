@@ -24,7 +24,13 @@ import handler
 import argparse
 import atexit
 import ssl
-from helpers import server, config, traceback, misc, modutils, thread, workers
+import helpers.server as server
+import helpers.config as config
+import helpers.traceback as traceback
+import helpers.misc as misc
+import helpers.modutils as modutils
+import helpers.thread as thread
+import helpers.workers as workers
 from configparser import ConfigParser
 from irc.bot import ServerSpec, SingleServerIRCBot
 from irc.connection import Factory
@@ -108,8 +114,7 @@ class IrcBot(SingleServerIRCBot):
         if cmdargs == 'pull':
             output = misc.do_pull(dirname(__file__), c.real_nickname)
             c.privmsg(target, output)
-        for x in modutils.get_enabled(dirname(__file__) + '/helpers', 'helpers'):
-            name = 'helpers.%s' % x
+        for name in modutils.get_enabled('helpers', 'helpers'):
             if name in sys.modules:
                 importlib.reload(sys.modules[name])
         importlib.reload(handler)

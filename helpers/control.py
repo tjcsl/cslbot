@@ -98,19 +98,6 @@ def handle_enable(handler, cmd):
         return "Invalid argument."
 
 
-def handle_get(handler, cmd):
-    if len(cmd) < 3:
-        return "Missing argument."
-    elif cmd[1] == "disabled" and cmd[2] == "modules":
-        mods = ", ".join(sorted(command.get_disabled_commands()))
-        return mods if mods else "No disabled modules."
-    elif cmd[1] == "enabled" and cmd[2] == "modules":
-        mods = ", ".join(sorted(command.get_enabled_commands()))
-        return mods
-    else:
-        return "Invalid arguments."
-
-
 def handle_guard(handler, cmd):
     if len(cmd) < 2:
         return "Missing argument."
@@ -162,6 +149,15 @@ def handle_show(handler, cmd, send):
     elif cmd[1] == "pending":
         admins = ": ".join(handler.admins)
         show_pending(db, admins, send)
+    elif len(cmd) == 3:
+        if cmd[1] == "disabled" and cmd[2] == "modules":
+            mods = ", ".join(sorted(command.get_disabled_commands()))
+            send(mods if mods else "No disabled modules.")
+        elif cmd[1] == "enabled" and cmd[2] == "modules":
+            mods = ", ".join(sorted(command.get_enabled_commands()))
+            send(mods)
+        else:
+            send("Invalid Argument.")
     else:
         send("Invalid Argument.")
 
@@ -367,14 +363,11 @@ def handle_ctrlchan(handler, msg, c, send):
         send(handle_disable(handler, cmd))
     elif cmd[0] == "enable":
         send(handle_enable(handler, cmd))
-    elif cmd[0] == "get":
-        send(handle_get(handler, cmd))
     elif cmd[0] == "help":
         send("quote <raw command>")
         send("cs|chanserv <chanserv command>")
         send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
-        send("get <disabled|enabled> modules")
-        send("show <guarded|issues|quotes|polls|pending>")
+        send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> modules")
         send("accept|reject <issue|quote|poll> <num>")
         send("guard|unguard <nick>")
     elif cmd[0] == "guard":
