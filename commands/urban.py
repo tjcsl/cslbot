@@ -14,8 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from requests import get
+from requests.exceptions import ReadTimeout
 from helpers.command import Command
 
 
@@ -29,8 +31,11 @@ def get_definition(msg):
     msg = msg.split()
     index = msg[0][1:] if msg[0].startswith('#') else None
     term = " ".join(msg[1:]) if index is not None else " ".join(msg)
-    req = get('http://api.urbandictionary.com/v0/define', params={'term': term})
-    data = req.json()['list']
+    try:
+        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=5)
+        data = req.json()['list']
+    except (JSONDecodeError, ReadTimeout):
+        return "UrbanDictionary is having problems."
     if len(data) == 0:
         output = "UrbanDictionary doesn't have an answer for you."
     elif index is None:
