@@ -29,7 +29,7 @@ def get_list(offensive=False):
     fortunes = [x.strip() for x in output.splitlines()[1:]]
     if offensive:
         fortunes = map(lambda x: 'off/%s' % x, fortunes)
-    return set(fortunes)
+    return sorted(fortunes)
 
 
 @Command(['fortune', 'bofh', 'excuse'], ['name'])
@@ -37,9 +37,9 @@ def cmd(send, msg, args):
     """Returns a fortune.
     Syntax: !fortune <list|(-a|-o) (module)>
     """
-    fortunes = get_list().union(get_list(True))
+    fortunes = get_list() + get_list(True)
     if msg == 'list':
-        send(" ".join(sorted(fortunes)))
+        send(" ".join(fortunes))
     else:
         cmd = ['fortune', '-s']
         match = re.match('(-[ao])( .+|$)', msg)
