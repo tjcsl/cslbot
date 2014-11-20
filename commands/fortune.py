@@ -27,6 +27,8 @@ def get_list(offensive=False):
     output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
     output = re.sub('[0-9]{1,2}\.[0-9]{2}%', '', output)
     fortunes = [x.strip() for x in output.splitlines()[1:]]
+    if offensive:
+        fortunes = map(lambda x: 'off/%s' % x, fortunes)
     return set(fortunes)
 
 
