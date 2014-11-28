@@ -52,7 +52,11 @@ def get_title(url):
             html = parse(req)
             t = html.find('.//title') if html.getroot() is not None else None
             if t is not None and t.text is not None:
-                title = bytes(map(ord, t.text)).decode('utf-8')
+                # Try to handle multiple types of unicode.
+                try:
+                    title = bytes(map(ord, t.text)).decode('utf-8')
+                except UnicodeDecodeError:
+                    title = t.text
                 title = title.replace('\n', ' ').strip()
             elif ctype is not None:
                 title = ctype
