@@ -16,8 +16,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-from time import strftime
-from datetime import datetime
+from time import strftime, mktime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname, exists
@@ -41,7 +41,10 @@ def get_scores(session):
 
 
 def get_urls(session):
-    rows = session.query(Urls).order_by(Urls.time.desc()).all()
+    # FIXME: support stuff older than one week
+    limit = datetime.now() - timedelta(weeks=1)
+    limit = mktime(limit.timetuple())
+    rows = session.query(Urls).filter(Urls.time > limit).order_by(Urls.time.desc()).all()
     urls = []
     for row in rows:
         urls.append({'time': datetime.fromtimestamp(row.time), 'title': row.title, 'url': row.url})
