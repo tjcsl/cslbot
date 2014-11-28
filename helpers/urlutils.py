@@ -55,7 +55,7 @@ def get_title(url):
                 # Try to handle multiple types of unicode.
                 try:
                     title = bytes(map(ord, t.text)).decode('utf-8')
-                except UnicodeDecodeError:
+                except (UnicodeDecodeError, ValueError):
                     title = t.text
                 title = title.replace('\n', ' ').strip()
             elif ctype is not None:
