@@ -29,9 +29,6 @@ def handle(send, msg, args):
     | Get the page title.
     """
 
-    # FIXME: don't hardcode.
-    if "http://git.io" in msg:
-        return
     # crazy regex to match urls
     regex = re.compile(r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?....]))""")
     urls = [x[0] for x in regex.findall(msg)]

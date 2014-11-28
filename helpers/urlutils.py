@@ -52,7 +52,8 @@ def get_title(url):
             html = parse(req)
             t = html.find('.//title') if html.getroot() is not None else None
             if t is not None and t.text is not None:
-                title = t.text.replace('\n', ' ').strip()
+                title = bytes(map(ord, t.text)).decode('utf-8')
+                title = title.replace('\n', ' ').strip()
             elif ctype is not None:
                 title = ctype
             else:
