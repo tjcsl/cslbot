@@ -38,8 +38,10 @@ def cmd(send, msg, args):
         slapee = msg[0]
         # Basic and stupid NLP!
         i = 1
+        args = False
         while i < len(msg):
             if msg[i] == 'for':
+                args = True
                 if reason:
                     send("Invalid Syntax: You can only have one for clause!")
                     return
@@ -52,6 +54,7 @@ def cmd(send, msg, args):
                     i += 1
                 reason = reason.strip()
             elif msg[i] == 'with':
+                args = True
                 if implement:
                     send("Invalid Synatx: You can only have one with clause!")
                     return
@@ -63,6 +66,8 @@ def cmd(send, msg, args):
                     implement += ' '
                     i += 1
                 implement = implement.strip()
+            elif not args:
+                slapee += ' ' + msg[i]
             i += 1
 
         if not implement:
