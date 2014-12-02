@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('note', ['db', 'nick', 'type', 'config'], limit=5)
 def cmd(send, msg, args):
     """Leaves a note for a user.
-    Syntax: !note <nick> <note>
+    Syntax: !note <nick(,nick2)> <note>
     """
     if not args['config']['feature'].getboolean('hooks'):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
@@ -32,9 +32,11 @@ def cmd(send, msg, args):
         return
     try:
         nick, note = msg.split(maxsplit=1)
+        nicks = set(x for x in nick.split(',') if x)
     except ValueError:
         send("Not enough arguments.")
         return
-    row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
-    args['db'].add(row)
-    send("Note left for %s." % nick)
+    for nick in nicks:
+        row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
+        args['db'].add(row)
+        send("Note left for %s." % nick)
