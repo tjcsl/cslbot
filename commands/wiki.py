@@ -18,20 +18,25 @@ from requests import get
 from helpers.command import Command
 
 
+def get_rand(url):
+    params = {'format': 'json', 'action': 'query', 'list': 'random', 'rnnamespace': '0'}
+    data = get('%s/api.php' % url, params=params).json()
+    return data['query']['random'][0]['title']
+
+
 @Command(['wiki', 'wikipedia', 'livedoc'], ['name'])
 def cmd(send, msg, args):
     """Returns the first wikipedia result for the argument.
     Syntax: !wiki <term>
     """
-    if not msg:
-        send("Need a article.")
-        return
     if 'livedoc' in args['name']:
         url = 'http://livedoc.tjhsst.edu/w'
         name = 'livedoc'
     else:
         url = 'http://en.wikipedia.org/w'
         name = 'wikipedia'
+    if not msg:
+        msg = get_rand(url)
     params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': msg}
     data = get('%s/api.php' % url, params=params).json()
     try:
