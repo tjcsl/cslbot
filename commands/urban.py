@@ -40,7 +40,7 @@ def get_definition(msg):
         output = "UrbanDictionary doesn't have an answer for you."
     elif index is None:
         output = data[0]['definition']
-    elif not index.isdigit() or int(index) >= len(data) or int(index) == 0:
+    elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
         output = "Invalid Index"
     else:
         output = data[int(index)-1]['definition']
