@@ -1,7 +1,7 @@
 SQLAlchemy>=0.9.1
 beautifulsoup4>=4.3.2
-irc>=10.0
-jaraco.util>=9.0
+irc>=11.0
+jaraco.util>=10.0
 lxml>=3.3.0
 requests>=2.2.1
 six>=1.5.2
