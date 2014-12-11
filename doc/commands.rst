@@ -660,6 +660,14 @@ commands.vote module
     :undoc-members:
     :show-inheritance:
 
+commands.wai module
+-------------------
+
+.. automodule:: commands.wai
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.weather module
 -----------------------
 
