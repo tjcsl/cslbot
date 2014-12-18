@@ -42,5 +42,6 @@ wolframapikey:
 translateid:
 translatesecret:
 fmlkey:
-xkcdkey:
-xkcdid:
+googleapikey:
+xkcdsearchid:
+googlesearchid:

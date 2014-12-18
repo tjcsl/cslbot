@@ -18,7 +18,7 @@ from requests import get
 from helpers.command import Command
 
 
-@Command(['google', 'g'])
+@Command(['google', 'g'], ['config'])
 def cmd(send, msg, args):
     """Googles something.
     Syntax: !google <term>
@@ -26,10 +26,11 @@ def cmd(send, msg, args):
     if not msg:
         send("Google what?")
         return
-    data = get('http://ajax.googleapis.com/ajax/services/search/web', params={'v': '1.0', 'q': msg}).json()
-    results = data['responseData']['results']
-    if len(results) == 0:
+    key = args['config']['api']['googleapikey']
+    cx = args['config']['api']['googlesearchid']
+    data = get('https://www.googleapis.com/customsearch/v1', params={'key': key, 'cx': cx, 'q': msg}).json()
+    if 'items' not in data:
         send("Google didn't say much.")
     else:
-        url = results[0]['unescapedUrl']
+        url = data['items'][0]['link']
         send("Google says %s" % url)
