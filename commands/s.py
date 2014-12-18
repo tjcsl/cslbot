@@ -43,7 +43,7 @@ def get_modifiers(msg, nick, nickregex):
         mods['ignorecase'] = True
         mods['nick'] = None
     elif re.match(nickregex, msg):
-        mods['nick'] = msg
+        mods['nick'] = msg.replace('\\', '\\\\')
     else:
         return None
     return mods
