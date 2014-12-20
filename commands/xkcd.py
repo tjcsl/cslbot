@@ -50,7 +50,7 @@ def cmd(send, msg, args):
             send("Number out of range")
             return
     else:
-        send(do_search(msg, args['config']['api']['googlesearchkey'], args['config']['api']['xkcdsearchid']))
+        send(do_search(msg, args['config']['api']['googleapikey'], args['config']['api']['xkcdsearchid']))
         return
     url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
     data = get(url).json()
