@@ -220,11 +220,11 @@ class BotHandler():
             target = 'private'
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
-        # strip non-printable chars
-        msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
         self.db.log(nick, target, flags, msg, msgtype)
 
         if self.log_to_ctrlchan:
+            # strip non-printable chars
+            msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
                 ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
