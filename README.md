@@ -17,7 +17,7 @@ See http://tjcsl.github.io/cslbot for api docs.
 
 Setup
 -----
-Copy config.example to config.cfg and change values as needed.  
+Run ./bot.py to setup the initial configuration and change values in config.cfg as needed.
 
 Python must be at least 3.4.
 
