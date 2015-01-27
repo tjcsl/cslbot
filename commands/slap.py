@@ -23,7 +23,7 @@ def cmd(send, msg, args):
     """Slap somebody.
     Syntax: !slap <nick> for <reason>
     """
-    implements = ['a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
+    implements = ['the golden gate bridge', 'a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     methods = ['around a bit', 'upside the head']
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
