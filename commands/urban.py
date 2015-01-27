@@ -32,7 +32,7 @@ def get_definition(msg):
     index = msg[0][1:] if msg[0].startswith('#') else None
     term = " ".join(msg[1:]) if index is not None else " ".join(msg)
     try:
-        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=5)
+        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
         data = req.json()['list']
     except (JSONDecodeError, ReadTimeout):
         return "UrbanDictionary is having problems."
