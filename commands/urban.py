@@ -34,8 +34,10 @@ def get_definition(msg):
     try:
         req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
         data = req.json()['list']
-    except (JSONDecodeError, ReadTimeout):
+    except JSONDecodeError:
         return "UrbanDictionary is having problems."
+    except ReadTimeout:
+        return "UrbanDictionary timed out."
     if len(data) == 0:
         output = "UrbanDictionary doesn't have an answer for you."
     elif index is None:
