@@ -54,14 +54,18 @@ class IrcBot(SingleServerIRCBot):
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
-        if botconfig['core'].getboolean('ssl'):
-            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick, connect_factory=Factory(wrapper=ssl.wrap_socket))
-        else:
-            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick)
+        self.handle_connect(serverinfo, nick, botconfig['core'])
         # properly log quits.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
+
+    def handle_connect(self, serverinfo, nick, botconfig):
+        ipv6 = botconfig.getboolean('ipv6')
+        if botconfig.getboolean('ssl'):
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick, connect_factory=Factory(wrapper=ssl.wrap_socket, ipv6=ipv6))
+        else:
+            SingleServerIRCBot.__init__(self, [serverinfo], nick, nick, connect_factory=Factory(ipv6=ipv6))
 
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
