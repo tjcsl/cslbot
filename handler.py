@@ -121,6 +121,9 @@ class BotHandler():
         """
         if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
             return False
+        # no nickserv support, assume people are who they say they are.
+        if not self.config['feature'].getboolean('nickserv'):
+            return True
         # unauthed
         if nick not in self.admins:
             self.admins[nick] = -1
@@ -137,6 +140,8 @@ class BotHandler():
 
     def get_admins(self, c):
         """Check verification for all admins."""
+        if not self.config['feature'].getboolean('nickserv'):
+            return
         i = 0
         for a in self.admins:
             self.workers.defer(i, c.send_raw, 'NS ACC %s' % a)
@@ -437,7 +442,7 @@ class BotHandler():
                     self.db.rollback()
 
         if msgtype == 'nick':
-            if e.target in self.admins:
+            if self.config['feature'].getboolean('nickserv') and e.target in self.admins:
                 c.send_raw('NS ACC %s' % e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):

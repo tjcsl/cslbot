@@ -25,6 +25,7 @@ admins: admin1, admin2
 [db]
 engine:
 [feature]
+nickserv: True
 server: True
 prettyerrors: True
 lazyregex: True
