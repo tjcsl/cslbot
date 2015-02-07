@@ -101,7 +101,7 @@ def gen_log(row):
 
 
 def main(config, outdir):
-    session = get_session(config)
+    session = get_session(config)()
     current_id = get_id(config, outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
     save_id(outdir, new_id)

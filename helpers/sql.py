@@ -24,12 +24,16 @@ from time import time
 from .orm import setup_db, Log
 
 
+def get_session(config):
+    engine = create_engine(config['db']['engine'])
+    return sessionmaker(bind=engine)
+
+
 class Sql():
 
     def __init__(self, config):
         """ Set everything up"""
-        engine = create_engine(config['db']['engine'])
-        self.session = sessionmaker(bind=engine)
+        self.session = get_session(config)
         with self.session_scope() as session:
             setup_db(session)
 
