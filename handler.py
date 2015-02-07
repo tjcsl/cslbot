@@ -31,7 +31,6 @@ import helpers.identity as identity
 import helpers.misc as misc
 from os.path import dirname
 from random import choice, random
-from sqlalchemy.exc import InternalError
 
 
 class BotHandler():
@@ -229,6 +228,7 @@ class BotHandler():
 
         if self.log_to_ctrlchan:
             # strip non-printable chars
+            # FIXME: do we care about unicode?
             msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
@@ -375,7 +375,7 @@ class BotHandler():
         realargs = {}
         args = {'nick': nick,
                 'handler': self,
-                'db': self.db.get(),
+                'db': None,
                 'config': self.config,
                 'source': source,
                 'name': name,
@@ -390,7 +390,7 @@ class BotHandler():
             if arg in args:
                 realargs[arg] = args[arg]
             else:
-                raise Exception("Invalid Argument: " + arg)
+                raise Exception("Invalid Argument: %s" % arg)
         return realargs
 
     def do_reload(self):
@@ -436,10 +436,7 @@ class BotHandler():
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(target, nick):
             for h in self.hooks:
                 realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
-                try:
-                    h.run(send, msg, msgtype, self, target, realargs)
-                except InternalError:
-                    self.db.rollback()
+                h.run(send, msg, msgtype, self, target, realargs)
 
         if msgtype == 'nick':
             if self.config['feature'].getboolean('nickserv') and e.target in self.admins:
@@ -492,15 +489,8 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                try:
-                    # Duplicate command
-                    # Causes more problems than it solves
-                    # if command.check_command(self.db.get(), nick, msg, target):
-                    #    return
-                    args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
-                    cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
-                except InternalError:
-                    self.db.rollback()
+                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
+                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
         # special commands
         if cmd.startswith(cmdchar):
             if cmd[len(cmdchar):] == 'reload':

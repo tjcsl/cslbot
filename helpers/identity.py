@@ -21,12 +21,12 @@ from .orm import Nicks
 
 def handle_nick(handler, e):
     old, new = e.source.nick, e.target
-    session = handler.db.get()
-    session.add(Nicks(old=old, new=new, time=time()))
-    if handler.config['feature'].getboolean('nickkick'):
-        return do_kick(handler, session, new)
-    else:
-        return False
+    with handler.db.session_scope() as session:
+        session.add(Nicks(old=old, new=new, time=time()))
+        if handler.config['feature'].getboolean('nickkick'):
+            return do_kick(handler, session, new)
+        else:
+            return False
 
 
 def get_mapping(session, nick, limit):

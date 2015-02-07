@@ -113,7 +113,8 @@ class Command():
     def __call__(self, func):
         def wrapper(send, msg, args):
             try:
-                func(send, msg, args)
+                with self.handler.db.session_scope() as args['db']:
+                    func(send, msg, args)
             except Exception as ex:
                 handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
         self.doc = getdoc(func)
@@ -128,7 +129,8 @@ class Command():
         else:
             self.target = target
             self.handler = handler
-            record_command(handler.db.get(), nick, command, target)
+            with handler.db.session_scope() as session:
+                record_command(session, nick, command, target)
             start(self.exe, send, msg, args)
 
     def get_doc(self):

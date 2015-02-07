@@ -118,8 +118,7 @@ def handle_unguard(handler, cmd):
         return "No longer guarding %s" % cmd[1]
 
 
-def handle_show(handler, cmd, send):
-    db = handler.db.get()
+def handle_show(handler, db, cmd, send):
     if len(cmd) < 2:
         send("Missing argument.")
         return
@@ -198,23 +197,22 @@ def show_pending(db, admins, send, ping=False):
         show_polls(polls, send)
 
 
-def handle_accept(handler, cmd):
+def handle_accept(handler, db, cmd):
     if len(cmd) < 3:
         return "Missing argument."
     if cmd[1] == 'issue':
-        return accept_issue(handler, cmd[1:])
+        return accept_issue(handler, db, cmd[1:])
     elif cmd[1] == 'quote':
-        return accept_quote(handler, cmd[1:])
+        return accept_quote(handler, db, cmd[1:])
     elif cmd[1] == 'poll':
-        return accept_poll(handler, cmd[1:])
+        return accept_poll(handler, db, cmd[1:])
     else:
         return "Valid arguments are issue and quote"
 
 
-def accept_issue(handler, cmd):
+def accept_issue(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     num = int(cmd[1])
     issue = db.query(Issues).get(num)
     if issue is None:
@@ -233,10 +231,9 @@ def accept_issue(handler, cmd):
     return ""
 
 
-def accept_quote(handler, cmd):
+def accept_quote(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     qid = int(cmd[1])
     quote = db.query(Quotes).get(qid)
     if quote is None:
@@ -252,10 +249,9 @@ def accept_quote(handler, cmd):
     return ""
 
 
-def accept_poll(handler, cmd):
+def accept_poll(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     pid = int(cmd[1])
     poll = db.query(Polls).get(pid)
     if poll is None:
@@ -271,23 +267,22 @@ def accept_poll(handler, cmd):
     return ""
 
 
-def handle_reject(handler, cmd):
+def handle_reject(handler, db, cmd):
     if len(cmd) < 3:
         return "Missing argument."
     if cmd[1] == 'issue':
-        return reject_issue(handler, cmd[1:])
+        return reject_issue(handler, db, cmd[1:])
     elif cmd[1] == 'quote':
-        return reject_quote(handler, cmd[1:])
+        return reject_quote(handler, db, cmd[1:])
     elif cmd[1] == 'poll':
-        return reject_poll(handler, cmd[1:])
+        return reject_poll(handler, db, cmd[1:])
     else:
         return "Valid arguments are issue and quote"
 
 
-def reject_issue(handler, cmd):
+def reject_issue(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     num = int(cmd[1])
     issue = db.query(Issues).get(num)
     if issue is None:
@@ -303,10 +298,9 @@ def reject_issue(handler, cmd):
     return ""
 
 
-def reject_quote(handler, cmd):
+def reject_quote(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     qid = int(cmd[1])
     quote = db.query(Quotes).get(qid)
     if quote is None:
@@ -324,10 +318,9 @@ def reject_quote(handler, cmd):
     return ""
 
 
-def reject_poll(handler, cmd):
+def reject_poll(handler, db, cmd):
     if not cmd[1].isdigit():
         return "Not A Valid Positive Integer"
-    db = handler.db.get()
     pid = int(cmd[1])
     poll = db.query(Polls).get(pid)
     if poll is None:
@@ -354,29 +347,30 @@ def handle_quote(handler, cmd):
 
 def handle_ctrlchan(handler, msg, c, send):
     """ Handle the control channel."""
-    cmd = msg.split()
-    if cmd[0] == "quote":
-        send(handle_quote(handler, cmd))
-    elif cmd[0] == "cs" or cmd[0] == "chanserv":
-        handle_chanserv(c, cmd, send)
-    elif cmd[0] == "disable":
-        send(handle_disable(handler, cmd))
-    elif cmd[0] == "enable":
-        send(handle_enable(handler, cmd))
-    elif cmd[0] == "help":
-        send("quote <raw command>")
-        send("cs|chanserv <chanserv command>")
-        send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
-        send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> modules")
-        send("accept|reject <issue|quote|poll> <num>")
-        send("guard|unguard <nick>")
-    elif cmd[0] == "guard":
-        send(handle_guard(handler, cmd))
-    elif cmd[0] == "unguard":
-        send(handle_unguard(handler, cmd))
-    elif cmd[0] == "show":
-        handle_show(handler, cmd, send)
-    elif cmd[0] == "accept":
-        send(handle_accept(handler, cmd))
-    elif cmd[0] == "reject":
-        send(handle_reject(handler, cmd))
+    with handler.db.session_scope() as db:
+        cmd = msg.split()
+        if cmd[0] == "quote":
+            send(handle_quote(handler, cmd))
+        elif cmd[0] == "cs" or cmd[0] == "chanserv":
+            handle_chanserv(c, cmd, send)
+        elif cmd[0] == "disable":
+            send(handle_disable(handler, cmd))
+        elif cmd[0] == "enable":
+            send(handle_enable(handler, cmd))
+        elif cmd[0] == "help":
+            send("quote <raw command>")
+            send("cs|chanserv <chanserv command>")
+            send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
+            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> modules")
+            send("accept|reject <issue|quote|poll> <num>")
+            send("guard|unguard <nick>")
+        elif cmd[0] == "guard":
+            send(handle_guard(handler, cmd))
+        elif cmd[0] == "unguard":
+            send(handle_unguard(handler, cmd))
+        elif cmd[0] == "show":
+            handle_show(handler, db, cmd, send)
+        elif cmd[0] == "accept":
+            send(handle_accept(handler, db, cmd))
+        elif cmd[0] == "reject":
+            send(handle_reject(handler, db, cmd))

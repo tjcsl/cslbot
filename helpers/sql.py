@@ -17,26 +17,34 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+from contextlib import contextmanager
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.exc import InternalError
+from sqlalchemy.orm import sessionmaker
 from time import time
-from atexit import register
 from .orm import setup_db, Log
-
-
-def get_session(config):
-    engine = create_engine(config['db']['engine'])
-    return scoped_session(sessionmaker(bind=engine))
 
 
 class Sql():
 
     def __init__(self, config):
         """ Set everything up"""
-        self.session = get_session(config)
-        setup_db(self.session)
-        register(self.shutdown)
+        engine = create_engine(config['db']['engine'])
+        self.session = sessionmaker(bind=engine)
+        with self.session_scope() as session:
+            setup_db(session)
+
+    @contextmanager
+    def session_scope(self):
+        """Provide a transactional scope around a series of operations."""
+        session = self.session()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
     def log(self, source, target, flags, msg, type):
         """ Logs a message to the database
@@ -49,17 +57,5 @@ class Sql():
         | time: The current time (Unix Epoch).
         """
         entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
-        try:
-            self.session.add(entry)
-            self.session.commit()
-        except InternalError:
-            self.rollback()
-
-    def get(self):
-        return self.session
-
-    def rollback(self):
-        self.session.rollback()
-
-    def shutdown(self):
-        self.session.remove()
+        with self.session_scope() as session:
+            session.add(entry)

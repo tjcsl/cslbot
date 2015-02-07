@@ -49,5 +49,5 @@ class Workers():
         # Re-schedule handle_pending
         self.defer(3600, self.handle_pending, handler, send)
         admins = ": ".join(handler.admins)
-        cursor = handler.db.get()
-        show_pending(cursor, admins, send, True)
+        with handler.db.session_scope() as session:
+            show_pending(session, admins, send, True)
