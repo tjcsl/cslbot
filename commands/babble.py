@@ -42,14 +42,15 @@ def clean_msg(msg):
 
 
 def weighted_rand(d):
-    """ d should be a dictionary of the form
+    """ Gets a random key from d taking weights into account.
 
-    {
-        thing1: freq1,
-        thing2: freq2,
-        ...
-        thingn: freqn
-    }
+        d should be a dictionary of the form:
+            {
+                thing1: freq1,
+                thing2: freq2,
+                ...
+                thingn: freqn
+                }
     """
     l = []
     for k in d:
@@ -64,16 +65,16 @@ def get_messages(cursor, speaker, cmdchar, ctrlchan):
                                         ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).order_by(func.random()).all()
 
 
-# FIXME: make sphinx happy
 def build_markov(cursor, speaker, cmdchar, ctrlchan):
-    """ Builds a markov dictionary of the form
+    """ Builds a markov dictionary.
 
-        word : {
-           nextword1 : num_apperences,
-           nextword2 : num_apperances,
-           ....
-           nextwordn : num_apperances
-        }
+        Dictionary should be in the form:
+            word : {
+               nextword1 : num_apperences,
+               nextword2 : num_apperances,
+               ....
+               nextwordn : num_apperances
+               }
     """
     markov = {}
     messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
