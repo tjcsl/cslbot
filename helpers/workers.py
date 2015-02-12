@@ -24,7 +24,8 @@ class Workers():
         self.lock = Lock()
         self.events = {}
         # Set-up notifications for pending admin approval.
-        send = lambda msg, target=handler.config['core']['ctrlchan']: handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+
+        def send(msg, target=handler.config['core']['ctrlchan']): handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, self.handle_pending, handler, send)
 
     def defer(self, t, func, *args):

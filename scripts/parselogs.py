@@ -25,8 +25,8 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.orm import Log
-from helpers.sql import get_session
+from helpers.orm import Log  # noqa
+from helpers.sql import get_session  # noqa
 
 logs = {}
 

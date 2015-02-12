@@ -28,8 +28,8 @@ from configparser import ConfigParser
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
-from helpers.sql import get_session
+from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls  # noqa
+from helpers.sql import get_session  # noqa
 
 
 def get_quotes(session):

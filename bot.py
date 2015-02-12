@@ -15,28 +15,32 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import sys
+try:
+    import sys
+    import logging
+    import importlib
+    import argparse
+    import atexit
+    import ssl
+    import handler
+    import helpers.server as server
+    import helpers.config as config
+    import helpers.traceback as traceback
+    import helpers.misc as misc
+    import helpers.modutils as modutils
+    import helpers.thread as thread
+    import helpers.workers as workers
+    from configparser import ConfigParser
+    from irc.bot import ServerSpec, SingleServerIRCBot
+    from irc.connection import Factory
+    from os.path import dirname, join, exists
+    from time import time
+    from random import getrandbits
+except ImportError:
+    raise Exception("Import failed, are you using Python 3.4 or higher?")
 if sys.version_info < (3, 4):
+    # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
-import logging
-import importlib
-import handler
-import argparse
-import atexit
-import ssl
-import helpers.server as server
-import helpers.config as config
-import helpers.traceback as traceback
-import helpers.misc as misc
-import helpers.modutils as modutils
-import helpers.thread as thread
-import helpers.workers as workers
-from configparser import ConfigParser
-from irc.bot import ServerSpec, SingleServerIRCBot
-from irc.connection import Factory
-from os.path import dirname, join, exists
-from time import time
-from random import getrandbits
 
 
 class IrcBot(SingleServerIRCBot):

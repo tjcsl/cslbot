@@ -422,7 +422,7 @@ class BotHandler():
         else:
             target = e.target
 
-        send = lambda msg, mtype='privmsg', target=target: self.send(target, self.connection.real_nickname, msg, mtype)
+        def send(msg, mtype='privmsg', target=target): self.send(target, self.connection.real_nickname, msg, mtype)
 
         if msgtype == 'privnotice':
             # FIXME: come up with a better way to prevent admin abuse.
