@@ -63,3 +63,4 @@ class Sql():
         entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
         with self.session_scope() as session:
             session.add(entry)
+            session.flush()
