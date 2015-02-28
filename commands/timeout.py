@@ -14,16 +14,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from helpers.command import Command
 from helpers.misc import parse_time
 
 
-@Command('timeout', ['nick', 'is_admin', 'handler', 'target', 'botnick'])
+@Command('timeout', ['nick', 'is_admin', 'handler', 'target', 'botnick', 'config'])
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
     timespec is in the format: {number}{unit}, where unit is s, m, h, or d.
     """
+    nickregex = args['config']['core']['nickregex']
     setmode = args['handler'].connection.mode
     channel = args['target']
     ops = list(args['handler'].channels[channel].opers())
@@ -36,6 +38,9 @@ def cmd(send, msg, args):
     time, user = msg.split(maxsplit=1)
     if user == args['botnick']:
         send("I won't put myself in timeout!")
+        return
+    if not re.match(nickregex, user):
+        send("%s is an invalid nick." % user)
         return
     defer_args = [channel, " -q %s!*@*" % user]
 
