@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from time import time
 from helpers.orm import Notes
 from helpers.command import Command
@@ -36,7 +37,11 @@ def cmd(send, msg, args):
     except ValueError:
         send("Not enough arguments.")
         return
+    nickregex = args['config']['core']['nickregex'] + '+$'
     for nick in nicks:
-        row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
-        args['db'].add(row)
-        send("Note left for %s." % nick)
+        if re.match(nickregex, nick):
+            row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
+            args['db'].add(row)
+            send("Note left for %s." % nick)
+        else:
+            send("Invalid nick: %s" % nick)
