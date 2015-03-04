@@ -16,20 +16,12 @@
 
 from random import choice
 from helpers.command import Command
-from commands.fortune import get_fortune
-from commands.urban import get_random
+from helpers.misc import get_fortune, get_urban
 
 
-def fortune(send):
+def gen_fortune(send):
     for line in get_fortune('-o').splitlines():
         send(line)
-
-
-def urban(send):
-    output = get_random()
-    if len(output) > 256:
-        output = output[:253] + "..."
-    send(output)
 
 
 @Command('botspam')
@@ -37,6 +29,6 @@ def cmd(send, msg, args):
     """Uses the bot.
     Syntax: !botspam
     """
-    cmds = [lambda: fortune(send),
-            lambda: urban(send)]
+    cmds = [lambda: gen_fortune(send),
+            lambda: send(get_urban())]
     choice(cmds)()

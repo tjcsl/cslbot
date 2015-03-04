@@ -19,9 +19,12 @@
 
 import subprocess
 import re
-from random import choice
-from requests import get
+from random import choice, random
 from datetime import timedelta
+from simplejson import JSONDecodeError
+from urllib.parse import unquote
+from requests import get
+from requests.exceptions import ReadTimeout
 
 _pinglist = {}
 
@@ -139,3 +142,73 @@ def parse_header(header, msg):
         return '#define %s %s' % (valtodef[msg], msg)
     else:
         return "%s not found in %s.h" % (msg, header)
+
+
+def list_fortunes(offensive=False):
+    cmd = ['fortune', '-f']
+    if offensive:
+        cmd.append('-o')
+    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
+    output = re.sub('[0-9]{1,2}\.[0-9]{2}%', '', output)
+    fortunes = [x.strip() for x in output.splitlines()[1:]]
+    if offensive:
+        fortunes = map(lambda x: 'off/%s' % x, fortunes)
+    return sorted(fortunes)
+
+
+def get_fortune(msg, name='fortune'):
+        fortunes = list_fortunes() + list_fortunes(True)
+        cmd = ['fortune', '-s']
+        match = re.match('(-[ao])( .+|$)', msg)
+        if match:
+            cmd.append(match.group(1))
+            msg = match.group(2).strip()
+        if 'bofh' in name or 'excuse' in name:
+            if random() < 0.05:
+                return "BOFH Excuse #1337:\nYou don't exist, go away!"
+            cmd.append('bofh-excuses')
+        elif msg in fortunes:
+            cmd.append(msg)
+        elif msg:
+            return "%s is not a valid fortune module" % msg
+        return subprocess.check_output(cmd).decode()
+
+
+def get_rand_word():
+    url = get('http://www.urbandictionary.com/random.php').url
+    url = url.split('=')[1].replace('+', ' ')
+    return unquote(url)
+
+
+def get_urban(msg=""):
+    if msg:
+        output = get_urban_definition(msg)
+    else:
+        msg = get_rand_word()
+        output = "%s: %s" % (msg, get_urban_definition(msg))
+    if len(output) > 256:
+        output = output[:253] + "..."
+    return output
+
+
+def get_urban_definition(msg):
+    msg = msg.split()
+    index = msg[0][1:] if msg[0].startswith('#') else None
+    term = " ".join(msg[1:]) if index is not None else " ".join(msg)
+    try:
+        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
+        data = req.json()['list']
+    except JSONDecodeError:
+        return "UrbanDictionary is having problems."
+    except ReadTimeout:
+        return "UrbanDictionary timed out."
+    if len(data) == 0:
+        output = "UrbanDictionary doesn't have an answer for you."
+    elif index is None:
+        output = data[0]['definition']
+    elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
+        output = "Invalid Index"
+    else:
+        output = data[int(index)-1]['definition']
+    output = output.splitlines()
+    return ' '.join(output)
