@@ -32,31 +32,33 @@ def get_list(offensive=False):
     return sorted(fortunes)
 
 
-@Command(['fortune', 'bofh', 'excuse'], ['name'])
-def cmd(send, msg, args):
-    """Returns a fortune.
-    Syntax: !fortune <list|(-a|-o) (module)>
-    """
-    fortunes = get_list() + get_list(True)
-    if msg == 'list':
-        send(" ".join(fortunes))
-    else:
+def get_fortune(msg, name='fortune'):
+        fortunes = get_list() + get_list(True)
         cmd = ['fortune', '-s']
         match = re.match('(-[ao])( .+|$)', msg)
         if match:
             cmd.append(match.group(1))
             msg = match.group(2).strip()
-        if 'bofh' in args['name'] or 'excuse' in args['name']:
+        if 'bofh' in name or 'excuse' in name:
             if random() < 0.05:
-                send("BOFH Excuse #1337:")
-                send("You don't exist, go away!")
-                return
+                return "BOFH Excuse #1337:\nYou don't exist, go away!"
             cmd.append('bofh-excuses')
         elif msg in fortunes:
             cmd.append(msg)
         elif msg:
-            send("%s is not a valid fortune module" % msg)
-            return
-        output = subprocess.check_output(cmd).decode()
+            return "%s is not a valid fortune module" % msg
+        return subprocess.check_output(cmd).decode()
+
+
+@Command(['fortune', 'bofh', 'excuse'], ['name'])
+def cmd(send, msg, args):
+    """Returns a fortune.
+    Syntax: !fortune <list|(-a|-o) (module)>
+    """
+    if msg == 'list':
+        fortunes = get_list() + get_list(True)
+        send(" ".join(fortunes))
+    else:
+        output = get_fortune(msg, args['name'])
         for line in output.splitlines():
             send(line)

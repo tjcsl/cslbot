@@ -21,10 +21,15 @@ from requests.exceptions import ReadTimeout
 from helpers.command import Command
 
 
-def get_random():
+def get_rand_word():
     url = get('http://www.urbandictionary.com/random.php').url
     url = url.split('=')[1].replace('+', ' ')
     return unquote(url)
+
+
+def get_random():
+    msg = get_rand_word()
+    return "%s: %s" % (msg, get_definition(msg))
 
 
 def get_definition(msg):
@@ -58,8 +63,7 @@ def cmd(send, msg, args):
     if msg:
         output = get_definition(msg)
     else:
-        msg = get_random()
-        output = "%s: %s" % (msg, get_definition(msg))
+        output = get_random()
     if len(output) > 256:
         output = output[:253] + "..."
     send(output)
