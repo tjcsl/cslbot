@@ -64,13 +64,18 @@ def gen_creffett(msg):
     return '\x02\x038,4%s!!!' % msg.upper()
 
 
-def gen_slogan(msg):
+def gen_slogan(msg, count=0):
     html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg})
     slogan = re.search('>(.*)<', html.text).group(1)
     parser = HTMLParser()
     slogan = parser.unescape(parser.unescape(slogan))
     slogan = slogan.replace('\\', '').strip()
-    return slogan if len(slogan) > len(msg) else gen_slogan(msg)
+    if len(slogan) > len(msg):
+        return slogan
+    if count > 5:
+        return "Failed to get slogan"
+    else:
+        return gen_slogan(msg, count+1)
 
 
 def gen_morse(msg):
