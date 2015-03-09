@@ -163,7 +163,7 @@ class IrcBot(SingleServerIRCBot):
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]
             for i in range(len(extrachans)):
-                self.handler.workers.defer(i, c.join, extrachans[i])
+                self.handler.workers.defer(i, False, c.join, extrachans[i])
 
     def on_pubmsg(self, c, e):
         """Pass public messages to :func:`handle_msg`."""
@@ -231,7 +231,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_bannedfromchan(self, c, e):
         # FIXME: Implement auto-rejoin on ban.
-        self.handler.workers.defer(5, c.join, e.arguments[0])
+        self.handler.workers.defer(5, False, c.join, e.arguments[0])
 
     def on_ctcpreply(self, c, e):
         if len(e.arguments) == 2:
@@ -240,7 +240,7 @@ class IrcBot(SingleServerIRCBot):
     def on_nicknameinuse(self, c, e):
         self.connection.nick('Guest%d' % getrandbits(20))
         self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
-        self.handler.workers.defer(5, self.do_welcome, c)
+        self.handler.workers.defer(5, False, self.do_welcome, c)
 
     def on_kick(self, c, e):
         """Handle kicks.
@@ -254,7 +254,7 @@ class IrcBot(SingleServerIRCBot):
         if e.arguments[0] != c.real_nickname:
             return
         logging.info("Kicked from channel %s" % e.target)
-        self.handler.workers.defer(5, c.join, e.target)
+        self.handler.workers.defer(5, False, c.join, e.target)
 
 
 def main(args):

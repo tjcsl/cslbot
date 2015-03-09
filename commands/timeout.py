@@ -49,5 +49,5 @@ def cmd(send, msg, args):
         send("Invalid unit.")
     else:
         setmode(channel, " +q %s!*@*" % user)
-        ident = args['handler'].workers.defer(time, setmode, *defer_args)
+        ident = args['handler'].workers.defer(time, True, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))

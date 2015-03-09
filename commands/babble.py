@@ -98,7 +98,7 @@ def get_markov(cursor, speaker, defer, cmdchar, ctrlchan):
     else:
         with markov_lock:
             if time.time() - markov_map[speaker].time > CACHE_LIFE:
-                defer(0, update_markov, cursor, speaker, cmdchar, ctrlchan)
+                defer(0, False, update_markov, cursor, speaker, cmdchar, ctrlchan)
     with markov_lock:
         markov = markov_map[speaker].data
     return markov

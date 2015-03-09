@@ -143,7 +143,7 @@ class BotHandler():
             return
         i = 0
         for a in self.admins:
-            self.workers.defer(i, c.send_raw, 'NS ACC %s' % a)
+            self.workers.defer(i, False, c.send_raw, 'NS ACC %s' % a)
             i += 1
 
     def abusecheck(self, send, nick, target, limit, cmd):

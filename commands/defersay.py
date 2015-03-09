@@ -36,5 +36,5 @@ def cmd(send, msg, args):
     elif t < 0:
         send("Time travel not yet implemented, sorry.")
     else:
-        ident = args['handler'].workers.defer(t, send, msg[1])
+        ident = args['handler'].workers.defer(t, False, send, msg[1])
         send("Message deferred, ident: %s" % ident)
