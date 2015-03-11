@@ -24,6 +24,7 @@ def cmd(send, msg, args):
     Syntax: !filter <filter|show|list|reset|chain filter>
     """
     output_filters = {
+        "hashtag": textutils.gen_hashtag,
         "fwilson": textutils.gen_fwilson,
         "creffett": textutils.gen_creffett,
         "slogan": textutils.gen_slogan,

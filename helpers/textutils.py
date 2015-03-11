@@ -18,6 +18,7 @@
 # USA.
 
 import re
+import string
 from requests import get
 from lxml.html import fromstring
 from html.parser import HTMLParser
@@ -32,6 +33,11 @@ def gen_word():
     html = get('http://randomword.setgetgo.com/get.php').text
     # Strip BOM
     return html[3:].rstrip()
+
+
+def gen_hashtag(msg):
+    msg = "".join([x.strip() for x in msg.split()])
+    return '#' + msg.translate(dict.fromkeys(map(ord, string.punctuation)))
 
 
 def gen_praise(msg):
