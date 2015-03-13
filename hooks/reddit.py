@@ -21,7 +21,7 @@ from helpers.misc import check_exists
 from helpers.urlutils import get_short
 
 
-@Hook(['pubmsg', 'action'])
+@Hook(['pubmsg', 'action'], ['config'])
 def handle(send, msg, args):
     match = re.search(r'(?:^|\s)/r/([\w|^/]*)\b', msg)
     if not match:
