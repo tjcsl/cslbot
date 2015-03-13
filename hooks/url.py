@@ -34,7 +34,8 @@ def handle(send, msg, args):
     urls = [x[0] for x in regex.findall(msg)]
     for url in urls:
         title = get_title(url)
-        short = get_short(url)
+        key = args['config']['api']['googleapikey']
+        short = get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
             if last:

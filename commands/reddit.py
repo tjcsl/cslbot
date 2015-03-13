@@ -21,7 +21,7 @@ from helpers.misc import check_exists
 import time
 
 
-@Command(['reddit', 'srepetsk'], ['name'])
+@Command(['reddit', 'srepetsk'], ['name', 'config'])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
     Syntax: !reddit <subreddit>
@@ -34,4 +34,5 @@ def cmd(send, msg, args):
     subreddit = '/r/%s' % msg if msg else ''
     urlstr = 'http://reddit.com%s/random?%s' % (subreddit, time.time())
     url = get(urlstr, headers={'User-Agent': 'CslBot/1.0'}).url
-    send('** %s - %s' % (get_title(url), get_short(url)))
+    key = args['config']['api']['googleapikey']
+    send('** %s - %s' % (get_title(url), get_short(url, key)))

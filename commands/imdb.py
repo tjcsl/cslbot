@@ -20,7 +20,7 @@ from helpers.urlutils import get_short
 from helpers.command import Command
 
 
-@Command(['movie', 'imdb'])
+@Command(['movie', 'imdb'], ['config'])
 def cmd(send, msg, args):
     """Gets a random movie.
     Syntax: !movie
@@ -29,4 +29,5 @@ def cmd(send, msg, args):
     req = get('http://www.imdb.com/random/title')
     html = fromstring(req.text)
     name = html.find('head/title').text.split('-')[0].strip()
-    send("%s -- %s" % (name, get_short(req.url)))
+    key = args['config']['api']['googleapikey']
+    send("%s -- %s" % (name, get_short(req.url, key)))

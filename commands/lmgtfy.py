@@ -18,7 +18,7 @@ from helpers.urlutils import get_short
 from helpers.command import Command
 
 
-@Command(['lmgtfy', 'explain'])
+@Command(['lmgtfy', 'explain'], ['config'])
 def cmd(send, msg, args):
     """Explain things.
     Syntax: !explain <text>
@@ -28,4 +28,5 @@ def cmd(send, msg, args):
         return
     msg = msg.replace(' ', '+')
     msg = 'http://lmgtfy.com/?q=%s' % msg
-    send(get_short(msg))
+    key = args['config']['api']['googleapikey']
+    send(get_short(msg, key))

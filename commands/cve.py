@@ -21,7 +21,7 @@ from helpers.command import Command
 from helpers.urlutils import get_short
 
 
-@Command(['cve', 'cveid'])
+@Command(['cve', 'cveid'], ['config'])
 def cmd(send, msg, args):
     """Gets info on a CVE id from MITRE's CVE database
     Syntax: !cve <cveid>
@@ -47,5 +47,6 @@ def cmd(send, msg, args):
     if title.startswith('ERROR'):
         output = 'Invalid CVE Number'
     else:
-        output = "%s -- %s" % (title, get_short(url))
+        key = args['config']['api']['googleapikey']
+        output = "%s -- %s" % (title, get_short(url, key))
     send(output)
