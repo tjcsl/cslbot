@@ -28,7 +28,7 @@ def create_sw(session):
 
 
 def get_status(session, sw):
-    active = session.query(Stopwatches.active).get(sw).scalar()
+    active = session.query(Stopwatches).get(sw).active
     if active is None:
         return "Invalid ID!"
     return "Active" if active == 1 else "Paused"
@@ -51,7 +51,7 @@ def stop_stopwatch(session, sw):
     if stopwatch.active == 0:
         return "That stopwatch is already disabled!"
     etime = stopwatch.elapsed
-    etime = time.time() - stopwatch.time
+    etime = time() - stopwatch.time
     stopwatch.elapsed = etime
     stopwatch.active = 0
     return "Stopwatch stopped!"
