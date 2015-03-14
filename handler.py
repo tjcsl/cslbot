@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Fox Wilson, Peter Foley, Srijay Kasturi,
+# Copyright (C) 2013-2015 Fox Wilson, Peter Foley, Srijay Kasturi,
 # Samuel Damashek and James Forcier
 #
 # This program is free software; you can redistribute it and/or
