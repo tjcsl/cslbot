@@ -76,6 +76,14 @@ commands.botsnack module
     :undoc-members:
     :show-inheritance:
 
+commands.botspam module
+-----------------------
+
+.. automodule:: commands.botspam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.cancel module
 ----------------------
 
