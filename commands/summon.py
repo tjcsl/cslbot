@@ -32,7 +32,7 @@ def cmd(send, msg, args):
         send("Sorry, I can only perform the summoning ritual for one person at a time")
         return
     elif len(arguments) == 0:
-        send("Whoe shall I summon?")
+        send("Who shall I summon?")
         return
     nick = arguments[0]
     message = "You have been summoned!"
