@@ -49,7 +49,7 @@ def cmd(send, msg, args):
         send(line.rstrip())
     root = quote.parent.parent
     postid = root.get('id').split('quote-')[1].rstrip()
-    tagitems = root.find('div', attrs={'class':'quote-tags'})
+    tagitems = root.find('div', attrs={'class': 'quote-tags'})
     if tagitems is not None:
         tagitems = tagitems.find_all('a')
         tags = []
