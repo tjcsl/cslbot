@@ -43,6 +43,7 @@ def cmd(send, msg, args):
     quote = choice(quotes)
     text = quote.text.splitlines()
     text = list(filter(None, text))
+    snipped = (len(text) > 3)
     text = text[:3]
     for line in text:
         send(line.rstrip())
@@ -54,6 +55,6 @@ def cmd(send, msg, args):
         tags = []
         for tag in tagitems:
             tags.append(tag.text.rstrip())
-        send(" -- {} -- http://tjbash.org/{}".format(', '.join(tags), postid))
+        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if snipped else "", postid))
     else:
         send(" -- http://tjbash.org/{}".format(postid))
