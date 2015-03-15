@@ -5,3 +5,4 @@ jaraco.util>=10.0
 lxml>=3.3.0
 requests>=2.2.1
 six>=1.5.2
+simplejson>=3.6.5
