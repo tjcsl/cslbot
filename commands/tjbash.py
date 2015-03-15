@@ -24,12 +24,16 @@ from helpers.command import Command
 def cmd(send, msg, args):
     """Finds a random quote from tjbash.org given search criteria
     """
-    if len(args) < 2:
+    if len(msg) < 0:
         url = 'http://tjbash.org/random1'
     else:
         url = 'http://tjbash.org/search?query='
-        for tag in args[1:]:
-            url += 'tag:'+tag+' '
+        targs = msg.split(' ')
+        if len(targs) == 1 and targs[0].isnumeric():
+            url = 'http://tjbash.org/'+targs[0]
+        else:
+            for tag in targs:
+                url += 'tag:'+tag+' '
     html = get(url)
     soup = BeautifulSoup(html.text)
     quotes = soup.findAll('blockquote')
