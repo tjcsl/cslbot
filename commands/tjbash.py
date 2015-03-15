@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     """Finds a random quote from tjbash.org given search criteria
     """
     if len(args) < 2:
-        url = 'http://tjbash.org/random'
+        url = 'http://tjbash.org/random1'
     else:
         url = 'http://tjbash.org/search?query='
         for tag in args[1:]:
@@ -36,21 +36,20 @@ def cmd(send, msg, args):
     if len(quotes) < 1:
         send("There were no results.")
         return
-    send(str(quotes))
     quote = choice(quotes)
     text = quote.text.splitlines()
     text = list(filter(None, text))
     text = text[:3]
     for line in text:
-        send(line)
+        send(line.rstrip())
     root = quote.parent.parent
-    postid = root.get('id').split('quote-')[1]
+    postid = root.get('id').split('quote-')[1].rstrip()
     tagitems = root.find('div', attrs={'class':'quote-tags'})
     if tagitems is not None:
         tagitems = tagitems.find_all('a')
         tags = []
         for tag in tagitems:
-            tags.append(tag.text)
+            tags.append(tag.text.rstrip())
         send(" -- {} -- http://tjbash.org/{}".format(', '.join(tags), postid))
     else:
         send(" -- http://tjbash.org/{}".format(postid))
