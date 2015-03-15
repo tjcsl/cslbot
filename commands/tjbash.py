@@ -24,7 +24,7 @@ from helpers.command import Command
 def cmd(send, msg, args):
     """Finds a random quote from tjbash.org given search criteria
     """
-    if len(msg) < 0:
+    if len(msg) == 0:
         url = 'http://tjbash.org/random1'
     else:
         url = 'http://tjbash.org/search?query='
