@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, PickleType
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 
@@ -115,3 +115,9 @@ class Nicks(Base):
     old = Column(String)
     new = Column(String)
     time = Column(Float)
+
+
+class Babble(Base):
+    nick = Column(String, unique=True)
+    time = Column(Float)
+    data = Column(PickleType)

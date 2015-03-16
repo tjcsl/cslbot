@@ -16,22 +16,14 @@
 
 import re
 import time
-from collections import namedtuple
-from threading import Lock
 from random import choice
 from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from helpers.command import Command
-from helpers.orm import Log
+from helpers.orm import Log, Babble
 
-MarkovState = namedtuple('MarkovState', ['time', 'data'])
-
-# Keep cached results for five minutes
-CACHE_LIFE = 60 * 5
-
-# FIXME: have a better caching mechanism.
-markov_map = {}
-markov_lock = Lock()
+# Keep cached results for thirty minutes
+CACHE_LIFE = 60 * 30
 
 
 # Make the generated messages look better.
@@ -93,21 +85,18 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
 
 
 def get_markov(cursor, speaker, defer, cmdchar, ctrlchan):
-    if speaker not in markov_map:
+    markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
+    if not markov:
         update_markov(cursor, speaker, cmdchar, ctrlchan)
-    else:
-        with markov_lock:
-            if time.time() - markov_map[speaker].time > CACHE_LIFE:
-                defer(0, False, update_markov, cursor, speaker, cmdchar, ctrlchan)
-    with markov_lock:
-        markov = markov_map[speaker].data
-    return markov
+        markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
+    elif time.time() - markov.time > CACHE_LIFE:
+        defer(0, False, update_markov, cursor, speaker, cmdchar, ctrlchan)
+    return markov.data
 
 
 def update_markov(cursor, speaker, cmdchar, ctrlchan):
     data = build_markov(cursor, speaker, cmdchar, ctrlchan)
-    with markov_lock:
-        markov_map[speaker] = MarkovState(time.time(), data)
+    cursor.add(Babble(nick=speaker, time=time.time(), data=data))
 
 
 def build_msg(markov, speaker):
