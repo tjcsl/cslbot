@@ -21,10 +21,6 @@ from helpers.orm import Issues
 from helpers.command import Command
 
 
-def get_issues(repo):
-    return get('https://api.github.com/repos/%s/issues' % repo).json()
-
-
 def create_issue(msg, nick, repo, apikey):
     body = {"title": msg, "body": "Issue created by %s" % nick, "labels": ["bot"]}
     headers = {'Authorization': 'token %s' % apikey}
@@ -60,7 +56,8 @@ def cmd(send, msg, args):
             else:
                 break
         issue = choice(issues)
-        send("There are %d open issues, here's one." % len(issues))
+        num_issues = len([x for x in issues if 'pull_request' not in x])
+        send("There are %d open issues, here's one." % num_issues)
         send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif args['is_admin'](args['nick']):
         url = create_issue(msg, args['source'], repo, apikey)
