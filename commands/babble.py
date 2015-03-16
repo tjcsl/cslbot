@@ -87,7 +87,7 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
 def get_markov(cursor, speaker, handler, cmdchar, ctrlchan):
     markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
     if not markov:
-        update_markov(cursor, speaker, cmdchar, ctrlchan)
+        update_markov(handler, speaker, cmdchar, ctrlchan)
         markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
     elif time.time() - markov.time > CACHE_LIFE:
         handler.workers.defer(0, False, update_markov, handler, speaker, cmdchar, ctrlchan)
