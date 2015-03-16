@@ -84,20 +84,25 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
     return markov
 
 
-def get_markov(cursor, speaker, defer, cmdchar, ctrlchan):
+def get_markov(cursor, speaker, handler, cmdchar, ctrlchan):
     markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
     if not markov:
         update_markov(cursor, speaker, cmdchar, ctrlchan)
         markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
     elif time.time() - markov.time > CACHE_LIFE:
-        defer(0, False, update_markov, cursor, speaker, cmdchar, ctrlchan)
+        handler.workers.defer(0, False, update_markov, handler, speaker, cmdchar, ctrlchan)
     return markov.data
 
 
-def update_markov(cursor, speaker, cmdchar, ctrlchan):
-    data = build_markov(cursor, speaker, cmdchar, ctrlchan)
-    cursor.add(Babble(nick=speaker, time=time.time(), data=data))
-    cursor.commit()
+def update_markov(handler, speaker, cmdchar, ctrlchan):
+    with handler.db.session_scope() as cursor:
+        data = build_markov(cursor, speaker, cmdchar, ctrlchan)
+        markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
+        if markov:
+            markov.time = time.time()
+            markov.data = data
+        else:
+            cursor.add(Babble(nick=speaker, time=time.time(), data=data))
 
 
 def build_msg(markov, speaker):
@@ -121,5 +126,5 @@ def cmd(send, msg, args):
     """
     corecfg = args['config']['core']
     speaker = msg.split()[0] if msg else corecfg['channel']
-    markov = get_markov(args['db'], speaker, args['handler'].workers.defer, corecfg['cmdchar'], corecfg['ctrlchan'])
+    markov = get_markov(args['db'], speaker, args['handler'], corecfg['cmdchar'], corecfg['ctrlchan'])
     send(build_msg(markov, speaker))
