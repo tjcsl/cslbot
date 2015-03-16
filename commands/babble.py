@@ -97,6 +97,7 @@ def get_markov(cursor, speaker, defer, cmdchar, ctrlchan):
 def update_markov(cursor, speaker, cmdchar, ctrlchan):
     data = build_markov(cursor, speaker, cmdchar, ctrlchan)
     cursor.add(Babble(nick=speaker, time=time.time(), data=data))
+    cursor.commit()
 
 
 def build_msg(markov, speaker):
