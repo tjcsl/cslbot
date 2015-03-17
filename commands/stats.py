@@ -80,7 +80,7 @@ def cmd(send, msg, args):
             else:
                 send("%s is not a valid flag" % match.group(1))
         elif msg:
-            send("Invalid Command.")
+            send("Non-existant Command.")
         else:
             cmd = choice(list(totals.keys()))
             send("%s has been used %s times." % (cmd, totals[cmd]))
