@@ -39,7 +39,7 @@ def handle(send, msg, args):
         upper = [i for i in msg if i in string.ascii_uppercase]
         if len(msg) == 0:
             return
-        upper_ratio = len(upper) / len(msg)
+        upper_ratio = len(upper) / len(msg.replace(' ', ''))
         if args['target'] != 'private':
             with _caps_lock:
                 if upper_ratio > THRESHOLD and len(msg) > 20:
