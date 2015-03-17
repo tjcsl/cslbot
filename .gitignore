@@ -2,6 +2,7 @@ b
 db.sqlite
 config.cfg
 __pycache__
+*.py[co]
 *.sw?
 gh-pages
 *.*~
