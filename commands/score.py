@@ -44,22 +44,21 @@ def cmd(send, msg, args):
         else:
             send("%s is not a valid flag" % match.group(1))
         return
-    matches = re.findall('(%s+)' % args['config']['core']['nickregex'], msg)
-    if matches:
-        for match in matches:
-            name = match.lower()
-            if name == 'c':
-                send("We all know you love C better than anything else, so why rub it in?")
-                return
-            score = session.query(Scores).filter(Scores.nick == name).scalar()
-            if score is not None:
-                if name == args['botnick'].lower():
-                    output = 'has %s points! :)' % score.score
-                    send(output, 'action')
-                else:
-                    send("%s has %i points!" % (name, score.score))
+    match = re.match('(%s+)$' % args['config']['core']['nickregex'], msg)
+    if match:
+        name = match.group(1).lower()
+        if name == 'c':
+            send("We all know you love C better than anything else, so why rub it in?")
+            return
+        score = session.query(Scores).filter(Scores.nick == name).scalar()
+        if score is not None:
+            if name == args['botnick'].lower():
+                output = 'has %s points! :)' % score.score
+                send(output, 'action')
             else:
-                send("Nobody cares about %s" % name)
+                send("%s has %i points!" % (name, score.score))
+        else:
+            send("Nobody cares about %s" % name)
     elif msg:
         send("Invalid nick")
     else:
