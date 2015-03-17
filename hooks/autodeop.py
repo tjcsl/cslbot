@@ -18,16 +18,18 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(['pubmsg','action','mode'], ['config','target','type','handler'])
+@Hook(['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
 def handle(send, msg, args):
     if 'autodeop' not in args['config']['core']:
         return
 
+    to_deop = [x.strip() for x in args['config']['core']['autodeop'].split(',')]
+
     if args['type'] == 'mode':
-        for nick in args['config']['core']['autodeop'].replace(' ','').split(','):
-            if re.match(r'^\+[^ ]*o.+%s.*$'%nick, msg):
+        for nick in to_deop:
+            if re.match(r'^\+[^ ]*o.+%s.*$' % nick, msg):
                 args['handler'].connection.mode(args['target'], '-o %s' % nick)
     else:
-        for nick in args['config']['core']['autodeop'].replace(' ','').split(','):
-            if nick in self.channels[args['target']].opers():
+        for nick in to_deop:
+            if nick in args['handler'].channels[args['target']].opers():
                 args['handler'].connection.mode(args['target'], '-o %s' % nick)
