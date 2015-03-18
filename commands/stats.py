@@ -53,7 +53,7 @@ def get_nick_totals(session, command=None):
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
-    Syntax: !stats <--high|--low|--userhigh|command>
+    Syntax: !stats <--high|--low|--userhigh|--user <nick>|command>
     """
     session = args['db']
     nickregex = args['config']['core']['nickregex']
@@ -91,15 +91,18 @@ def cmd(send, msg, args):
                 if x < len(high):
                     send("%s: %s" % (high[x], totals[high[x]]))
         else:
-            send("%s is not a valid flag" % match.group(1))
-    elif re.match(nickregex, msg):
-        totals = get_nick_totals(session)
-        if msg not in totals.keys():
-            send("%s has never used a bot command." % msg)
-        else:
-            send("%s has used %d bot commands." % (msg, totals[msg]))
+            match = re.match('--user (%s+)' % nickregex, msg)
+            if match:
+                msg = match.group(1)
+                totals = get_nick_totals(session)
+                if msg not in totals.keys():
+                    send("%s has never used a bot command." % msg)
+                else:
+                    send("%s has used %d bot commands." % (msg, totals[msg]))
+            else:
+                send("%s is not a valid flag" % match.group(1))
     elif msg:
-        send("Non-existant command or invalid nick.")
+        send("Non-existant command.")
     else:
         cmd = choice(list(totals.keys()))
         send("%s has been used %s times." % (cmd, totals[cmd]))
