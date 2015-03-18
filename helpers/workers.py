@@ -28,7 +28,8 @@ class Workers():
         self.events = {}
         # Set-up notifications for pending admin approval.
 
-        def send(msg, target=handler.config['core']['ctrlchan']): handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+        def send(msg, target=handler.config['core']['ctrlchan']):
+            handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
 
     def defer(self, t, run_on_cancel, func, *args):

