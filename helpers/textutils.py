@@ -196,3 +196,7 @@ def do_xkcd_sub(msg, hook=False):
         return None if hook else msg
     else:
         return output
+
+
+def reverse(msg):
+    return msg[::-1]
