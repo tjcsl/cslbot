@@ -63,6 +63,8 @@ def gen_fwilson(x, mode=None):
 def gen_creffett(msg):
     return '\x02\x038,4%s!!!' % msg.upper()
 
+def gen_lenny(msg):
+    return '%s ( ͡° ͜ʖ ͡°)' % msg
 
 def gen_slogan(msg):
     html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg})
