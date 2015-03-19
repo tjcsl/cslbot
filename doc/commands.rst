@@ -628,6 +628,14 @@ commands.timeout module
     :undoc-members:
     :show-inheritance:
 
+commands.tjbash module
+----------------------
+
+.. automodule:: commands.tjbash
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.translate module
 -------------------------
 

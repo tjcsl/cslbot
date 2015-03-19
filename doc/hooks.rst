@@ -4,6 +4,14 @@ hooks package
 Submodules
 ----------
 
+hooks.autodeop module
+---------------------
+
+.. automodule:: hooks.autodeop
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 hooks.band module
 -----------------
 
