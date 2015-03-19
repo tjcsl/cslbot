@@ -34,7 +34,8 @@ def cmd(send, msg, args):
         "binary": textutils.gen_binary,
         "xkcd": textutils.do_xkcd_sub,
         "praise": textutils.gen_praise,
-        "reverse": textutils.reverse
+        "reverse": textutils.reverse,
+        "lenny": textutils.gen_lenny
         }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')

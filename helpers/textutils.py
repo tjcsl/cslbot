@@ -200,3 +200,6 @@ def do_xkcd_sub(msg, hook=False):
 
 def reverse(msg):
     return msg[::-1]
+
+def gen_lenny(msg):
+    return "%s ( ͡° ͜ʖ ͡°)" % msg
