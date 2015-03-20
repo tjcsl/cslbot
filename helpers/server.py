@@ -15,9 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-import traceback
+from .traceback import get_traceback
 from .thread import start
-from os.path import basename
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -123,11 +122,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 else:
                     send("Unknown command. Type help for more info.\n")
         except Exception as ex:
-            # FIXME: use helpers.traceback
-            trace = traceback.extract_tb(ex.__traceback__)[-1]
-            trace = [basename(trace[0]), trace[1]]
-            name = type(ex).__name__
-            msg = '%s in %s on line %s: %s\n' % (name, trace[0], trace[1], str(ex))
-            send(msg + '\n')
+            msg, _ = get_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']
+            send(msg + '\n')
             bot.connection.privmsg(ctrlchan, msg)
