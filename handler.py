@@ -188,7 +188,8 @@ class BotHandler():
             msgs.append(msg[:split_pos].strip())
             msg = msg[split_pos:]
         msgs.append(msg.strip())
-        for i in msgs:
+        # Never send more then two lines to avoid Excess Flood errors
+        for i in msgs[:2]:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':
                 self.connection.action(target, i)

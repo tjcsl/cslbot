@@ -43,6 +43,4 @@ def cmd(send, msg, args):
     words = get_list()
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]
     output = " ".join([choice(words[c]) for c in letters])
-    if len(output) > 256:
-        output = output[:253] + "..."
     send('%s: %s' % (msg, output.title()))

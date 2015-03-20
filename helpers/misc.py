@@ -186,8 +186,6 @@ def get_urban(msg=""):
     else:
         msg = get_rand_word()
         output = "%s: %s" % (msg, get_urban_definition(msg))
-    if len(output) > 256:
-        output = output[:253] + "..."
     return output
 
 

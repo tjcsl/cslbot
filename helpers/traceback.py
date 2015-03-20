@@ -31,9 +31,6 @@ def get_traceback(ex):
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
-    # FIXME: better support for very long errors.
-    if len(output) > 256:
-        output = output[:253] + "..."
     msg = "%s in %s on line %s: %s" % (name, trace[0], trace[1], output)
     return (msg, output)
 

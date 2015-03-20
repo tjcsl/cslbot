@@ -87,8 +87,6 @@ def cmd(send, msg, args):
                 continue
             if regex.search(line.msg):
                 output = regex.sub(replacement, line.msg)
-                if len(output) > 256:
-                    output = output[:253] + "..."
                 if line.type == 'action':
                     send("correction: * %s %s" % (line.source, output))
                 elif line.type != 'mode':

@@ -39,8 +39,6 @@ def handle(send, msg, args):
     else:
         output += data['display_name']
     output = output.strip()
-    if len(output) > 256:
-        output = output[:253] + "..."
     key = args['config']['api']['googleapikey']
     output = "%s -- %s" % (output, get_short('http://reddit.com/r/%s' % subreddit, key))
     send(output)

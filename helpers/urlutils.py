@@ -74,6 +74,7 @@ def get_title(url):
             raise CommandFailedException(e.reason)
         else:
             raise CommandFailedException(e.reason.strerror)
+    # Truncate over-long titles.
     if len(title) > 256:
         title = title[:253] + "..."
     return title
