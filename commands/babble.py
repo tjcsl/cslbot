@@ -16,7 +16,10 @@
 
 import re
 import time
-from random import choice
+import itertools
+import bisect
+import collections
+import random
 from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from helpers.command import Command
@@ -44,15 +47,17 @@ def weighted_rand(d):
                 thingn: freqn
                 }
     """
-    l = []
+    l = collections.defaultdict(int)
     for k in d:
-        l += [k] * d[k]
-    return choice(l)
+        l[k] += 1
+    # from https://docs.python.org/3/library/random.html
+    dist = list(itertools.accumulate(l.values()))
+    x = random.random() * dist[-1]
+    return list(l.keys())[bisect.bisect(dist, x)]
 
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     location = 'target' if speaker.startswith('#') else 'source'
-    # FIXME: is python random sort faster?
     return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker, escape='$'),
                                         ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).order_by(func.random()).all()
 
@@ -108,9 +113,9 @@ def update_markov(handler, speaker, cmdchar, ctrlchan):
 def build_msg(markov, speaker):
     if len(markov.keys()) == 0:
         return "%s hasn't said anything =(" % speaker
-    msg = choice(list(markov.keys()))
+    msg = random.choice(list(markov.keys()))
     last_word = msg
-    while len(msg) < 100:
+    while len(msg) < 256:
         if last_word not in markov.keys() or len(list(markov[last_word])) == 0:
             break
         next_word = weighted_rand(markov[last_word])
