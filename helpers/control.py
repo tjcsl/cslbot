@@ -47,7 +47,7 @@ def handle_disable(handler, cmd):
         else:
             handler.kick_enabled = False
             return "Kick disabled."
-    elif cmd[1] == "module":
+    elif cmd[1] == "command":
         if len(cmd) < 3:
             return "Missing argument."
         return command.disable_command(cmd[2])
@@ -80,11 +80,11 @@ def handle_enable(handler, cmd):
         else:
             handler.kick_enabled = True
             return "Kick enabled."
-    elif cmd[1] == "module":
+    elif cmd[1] == "command":
         if len(cmd) < 3:
             return "Missing argument."
         return command.enable_command(cmd[2])
-    elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
+    elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "commands":
         return command.enable_command(cmd[1])
     elif cmd[1] == "hook":
         if len(cmd) < 3:
@@ -159,13 +159,13 @@ def handle_show(handler, db, cmd, send):
         admins = ": ".join(handler.admins)
         show_pending(db, admins, send)
     elif len(cmd) == 3:
-        if cmd[1] == "disabled" and cmd[2] == "modules":
+        if cmd[1] == "disabled" and cmd[2] == "commands":
             mods = ", ".join(sorted(command.get_disabled_commands()))
-            send(mods if mods else "No disabled modules.")
+            send(mods if mods else "No disabled commands.")
         elif cmd[1] == "disabled" and cmd[2] == "hooks":
             mods = ", ".join(sorted(hook.get_disabled_hooks()))
             send(mods if mods else "No disabled hooks.")
-        elif cmd[1] == "enabled" and cmd[2] == "modules":
+        elif cmd[1] == "enabled" and cmd[2] == "commands":
             mods = ", ".join(sorted(command.get_enabled_commands()))
             send(mods)
         elif cmd[1] == "enabled" and cmd[2] == "hooks":
@@ -376,8 +376,8 @@ def handle_ctrlchan(handler, msg, c, send):
         elif cmd[0] == "help":
             send("quote <raw command>")
             send("cs|chanserv <chanserv command>")
-            send("disable|enable <kick|module <module>|hook <hook>|all <modules|hooks>|logging|chanlog>")
-            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <modules|hooks>")
+            send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
+            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <commands|hooks>")
             send("accept|reject <issue|quote|poll> <num>")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":

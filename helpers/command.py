@@ -18,22 +18,23 @@
 # USA.
 
 import sys
+from . import modutils
 from inspect import getdoc
 from datetime import datetime, timedelta
-from .modutils import scan_and_reimport
 from .traceback import handle_traceback
 from .thread import start
 from .orm import Commands, Log
 
 _known_commands = {}
-_disabled_commands = []
+_disabled_commands = set()
 
 
 def scan_for_commands(folder):
     """ Scans folder for commands """
-    global _known_commands
+    global _known_commands, _disabled_commands
     _known_commands = {}
-    scan_and_reimport(folder, "commands")
+    _disabled_commands = modutils.get_disabled("commands")
+    modutils.scan_and_reimport(folder, "commands")
     return _known_commands
 
 
@@ -63,7 +64,7 @@ def disable_command(command):
     if ("commands." + command) not in sys.modules:
         return command + " is not a loaded module"
     if command not in _disabled_commands:
-        _disabled_commands.append(command)
+        _disabled_commands.add(command)
         return "Disabled command " + command
     else:
         return "That command is already disabled!"

@@ -24,6 +24,7 @@ import importlib
 from glob import glob
 
 GROUPS = {'commands': set(), 'hooks': set()}
+DISABLED = {'commands': set(), 'hooks': set()}
 AUX = {'commands': [], 'hooks': [], 'helpers': []}
 
 
@@ -32,23 +33,27 @@ def init_aux(commands):
 
 
 def init_groups(groups):
-    # FIXME: validate that all commands/hooks are in groups.cfg exactly once.
     config = ConfigParser()
     config.read_file(open(dirname(__file__)+'/groups.cfg'))
-    enabled_command_groups = [x.strip() for x in groups['commands'].split(',')]
-    command_group = parse_group(config['commands'])
-    for name, values in command_group.items():
-        if name not in enabled_command_groups:
-            continue
+    add_to_groups(config, groups, 'commands')
+    add_to_groups(config, groups, 'hooks')
+
+
+def add_to_groups(config, groups, mod_type):
+    enabled_groups = [x.strip() for x in groups[mod_type].split(',')]
+    mod_group = parse_group(config[mod_type])
+    for name, values in mod_group.items():
         for x in values:
-            GROUPS['commands'].add(x)
-    enabled_hook_groups = [x.strip() for x in groups['hooks'].split(',')]
-    hook_group = parse_group(config['hooks'])
-    for name, values in hook_group.items():
-        if name not in enabled_hook_groups:
-            continue
-        for x in values:
-            GROUPS['hooks'].add(x)
+            if loaded(mod_type, x):
+                raise Exception('Module %s cannot occur multiple times in groups.cfg' % x)
+            if name in enabled_groups:
+                GROUPS[mod_type].add(x)
+            else:
+                DISABLED[mod_type].add(x)
+
+
+def loaded(mod_type, name):
+    return name in GROUPS[mod_type] or name in DISABLED[mod_type]
 
 
 def parse_group(cfg):
@@ -64,28 +69,44 @@ def group_enabled(mod_type, name):
     return name in GROUPS[mod_type]
 
 
+def group_disabled(mod_type, name):
+    return name in DISABLED[mod_type]
+
+
+def get_disabled(mod_type):
+    return DISABLED[mod_type]
+
+
 def get_enabled(moddir, mod_type):
-    mods = []
+    enabled, disabled = [], []
     full_path = abspath(join(dirname(__file__), '..'))
     full_dir = join(full_path, moddir)
     for f in glob(join(full_dir, '*.py')):
         name = basename(f).split('.')[0]
+        mod_pkg = moddir.replace('/', '.')
+        mod_name = "%s.%s" % (mod_pkg, name)
         if group_enabled(mod_type, name):
-            mod_pkg = moddir.replace('/', '.')
-            mods.append("%s.%s" % (mod_pkg, name))
-    return mods
+            enabled.append(mod_name)
+        elif group_disabled(mod_type, name):
+            disabled.append(mod_name)
+        elif name != '__init__':
+            raise Exception("%s must be either enabled or disabled in groups.cfg" % mod_name)
+    return enabled, disabled
 
 
 def get_modules(folder, mod_type):
-    core_modules = get_enabled(folder, mod_type)
+    core_enabled, core_disabled = get_enabled(folder, mod_type)
     for aux in AUX[mod_type]:
-        core_modules.extend(get_enabled(aux, mod_type))
-    return core_modules
+        aux_enabled, aux_disabled = get_enabled(aux, mod_type)
+        core_enabled.extend(aux_enabled)
+        core_disabled.extend(aux_disabled)
+    return core_enabled, core_disabled
 
 
 def scan_and_reimport(folder, mod_type):
     """ Scans folder for modules."""
-    for mod in get_modules(folder, mod_type):
+    mod_enabled, mod_disabled = get_modules(folder, mod_type)
+    for mod in (mod_enabled + mod_disabled):
         if mod in sys.modules:
             importlib.reload(sys.modules[mod])
         else:

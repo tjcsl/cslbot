@@ -18,19 +18,20 @@
 # USA.
 
 import sys
-from .modutils import scan_and_reimport
+from . import modutils
 from .traceback import handle_traceback
 from .thread import start
 
 _known_hooks = {}
-_disabled_hooks = []
+_disabled_hooks = set()
 
 
 def scan_for_hooks(folder):
     """ Scans folder for hooks """
-    global _known_hooks
+    global _known_hooks, _disabled_hooks
     _known_hooks = {}
-    scan_and_reimport(folder, "hooks")
+    _disabled_hooks = modutils.get_disabled("hooks")
+    modutils.scan_and_reimport(folder, "hooks")
     return _known_hooks
 
 
@@ -52,7 +53,7 @@ def disable_hook(hook):
     if ("hooks.%s" % hook) not in sys.modules:
         return "%s is not a loaded hook" % hook
     if hook not in _disabled_hooks:
-        _disabled_hooks.append(hook)
+        _disabled_hooks.add(hook)
         return "Disabled hook %s" % hook
     else:
         return "That hook is already disabled!"
