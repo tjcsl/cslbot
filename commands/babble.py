@@ -92,8 +92,10 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
 def get_markov(cursor, speaker, handler, cmdchar, ctrlchan):
     markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
     if not markov:
-        update_markov(handler, speaker, cmdchar, ctrlchan)
-        markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
+        if update_markov(handler, speaker, cmdchar, ctrlchan):
+            markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
+        else:
+            return {}
     elif time.time() - markov.time > CACHE_LIFE:
         handler.workers.defer(0, False, update_markov, handler, speaker, cmdchar, ctrlchan)
     return markov.data
@@ -102,12 +104,15 @@ def get_markov(cursor, speaker, handler, cmdchar, ctrlchan):
 def update_markov(handler, speaker, cmdchar, ctrlchan):
     with handler.db.session_scope() as cursor:
         data = build_markov(cursor, speaker, cmdchar, ctrlchan)
+        if len(data.keys()) == 0:
+            return False
         markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
         if markov:
             markov.time = time.time()
             markov.data = data
         else:
             cursor.add(Babble(nick=speaker, time=time.time(), data=data))
+        return True
 
 
 def build_msg(markov, speaker, start):
