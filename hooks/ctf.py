@@ -18,7 +18,7 @@ import re
 from helpers.hook import Hook
 
 
-@Hook('mitrectf', 'pubmsg', ['nick'])
+@Hook('ctf', 'pubmsg', ['nick'])
 def handle(send, msg, args):
     if re.match(".*[A-Fa-f0-9]{8}.*", msg):
         send("%s, sharing flags is against the rules! Please do not share flags during the competition." % args['nick'])

@@ -17,7 +17,7 @@
 from helpers.hook import Hook
 
 
-@Hook('msbob', 'pubnotice', ['nick'])
+@Hook('bob', 'pubnotice', ['nick'])
 def handle(send, msg, args):
     if msg.startswith('[freenode-info]'):
         return
