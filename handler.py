@@ -436,7 +436,7 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(target, nick):
-            for h in self.hooks:
+            for h in self.hooks.values():
                 realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
                 h.run(send, msg, msgtype, self, target, realargs)
 

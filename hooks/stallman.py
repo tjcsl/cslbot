@@ -17,7 +17,7 @@
 from helpers.hook import Hook
 
 
-@Hook('pubmsg', ['nick'])
+@Hook('stallman', 'pubmsg', ['nick'])
 def handle(send, msg, args):
     msg = msg.lower()
     if "linux" in msg and "gnu/linux" not in msg:

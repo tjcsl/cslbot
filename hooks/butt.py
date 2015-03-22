@@ -18,7 +18,7 @@ from random import random
 from helpers.hook import Hook
 
 
-@Hook('pubmsg', ['type', 'nick'])
+@Hook('cloud2butt', 'pubmsg', ['type', 'nick'])
 def handle(send, msg, args):
     if "the cloud" in msg:
         msg = msg.replace("the cloud", "my butt")

@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
-from . import command
+from . import command, hook
 from .orm import Quotes, Issues, Polls
 from commands.issue import create_issue
 
@@ -51,6 +51,10 @@ def handle_disable(handler, cmd):
         if len(cmd) < 3:
             return "Missing argument."
         return command.disable_command(cmd[2])
+    elif cmd[1] == "hook":
+        if len(cmd) < 3:
+            return "Missing argument."
+        return hook.disable_hook(cmd[2])
     elif cmd[1] == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.INFO:
             return "logging already disabled."
@@ -82,6 +86,12 @@ def handle_enable(handler, cmd):
         return command.enable_command(cmd[2])
     elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "modules":
         return command.enable_command(cmd[1])
+    elif cmd[1] == "hook":
+        if len(cmd) < 3:
+            return "Missing argument."
+        return hook.enable_hook(cmd[2])
+    elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "hooks":
+        return hook.enable_hook(cmd[1])
     elif cmd[1] == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
             return "logging already enabled."
@@ -152,8 +162,14 @@ def handle_show(handler, db, cmd, send):
         if cmd[1] == "disabled" and cmd[2] == "modules":
             mods = ", ".join(sorted(command.get_disabled_commands()))
             send(mods if mods else "No disabled modules.")
+        elif cmd[1] == "disabled" and cmd[2] == "hooks":
+            mods = ", ".join(sorted(hook.get_disabled_hooks()))
+            send(mods if mods else "No disabled hooks.")
         elif cmd[1] == "enabled" and cmd[2] == "modules":
             mods = ", ".join(sorted(command.get_enabled_commands()))
+            send(mods)
+        elif cmd[1] == "enabled" and cmd[2] == "hooks":
+            mods = ", ".join(sorted(hook.get_enabled_hooks()))
             send(mods)
         else:
             send("Invalid Argument.")
@@ -360,8 +376,8 @@ def handle_ctrlchan(handler, msg, c, send):
         elif cmd[0] == "help":
             send("quote <raw command>")
             send("cs|chanserv <chanserv command>")
-            send("disable|enable <kick|module <module>|all modules|logging|chanlog>")
-            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> modules")
+            send("disable|enable <kick|module <module>|hook <hook>|all <modules|hooks>|logging|chanlog>")
+            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <modules|hooks>")
             send("accept|reject <issue|quote|poll> <num>")
             send("guard|unguard <nick>")
         elif cmd[0] == "guard":

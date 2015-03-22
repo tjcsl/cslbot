@@ -22,7 +22,7 @@ _caps = []
 _caps_lock = Lock()
 
 
-@Hook('pubmsg', ['nick', 'do_kick', 'target', 'config'])
+@Hook('caps', 'pubmsg', ['nick', 'do_kick', 'target', 'config'])
 def handle(send, msg, args):
     """ Check for capslock abuse.
 

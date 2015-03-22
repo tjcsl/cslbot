@@ -19,7 +19,7 @@ from helpers.orm import Scores
 import re
 
 
-@Hook(['pubmsg', 'privmsg'], ['nick', 'config', 'type', 'db', 'abuse'])
+@Hook('scores', ['pubmsg', 'privmsg'], ['nick', 'config', 'type', 'db', 'abuse'])
 def handle(send, msg, args):
     """ Handles scores
 

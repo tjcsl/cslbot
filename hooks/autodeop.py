@@ -18,7 +18,7 @@ from helpers.hook import Hook
 import re
 
 
-@Hook(['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
+@Hook('autodeop', ['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
 def handle(send, msg, args):
     if 'autodeop' not in args['config']['core']:
         return

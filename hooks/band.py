@@ -18,7 +18,7 @@ from helpers.hook import Hook
 from random import random
 
 
-@Hook('pubmsg', ['config'])
+@Hook('band', 'pubmsg', ['config'])
 def handle(send, msg, args):
     if not msg.startswith(args['config']['core']['cmdchar']):
         if ':' in msg:

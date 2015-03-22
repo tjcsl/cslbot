@@ -19,7 +19,7 @@ from helpers.hook import Hook
 from helpers.orm import Notes
 
 
-@Hook(['pubmsg', 'action'], ['nick', 'db'])
+@Hook('note', ['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, msg, args):
     nick = args['nick']
     notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
@@ -27,4 +27,5 @@ def handle(send, msg, args):
         time = strftime('%Y-%m-%d %H:%M:%S', localtime(note.time))
         send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))
         note.pending = 0
-    args['db'].commit()
+    if notes:
+        args['db'].commit()
