@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from requests import post
-from lxml.html import fromstring
+from helpers.textutils import gen_yoda
 from helpers.command import Command
 
 
@@ -27,6 +26,4 @@ def cmd(send, msg, args):
     if not msg:
         send("A message, Yoda did not receive, hmmmmmm.")
         return
-    html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
-    text = fromstring(html.text).findtext('.//textarea[@readonly]')
-    send(text)
+    send(gen_yoda(msg))

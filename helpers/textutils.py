@@ -19,7 +19,7 @@
 
 import re
 import string
-from requests import get
+from requests import get, post
 from lxml.html import fromstring
 from html.parser import HTMLParser
 from random import random, choice, randrange
@@ -38,6 +38,11 @@ def gen_word():
 def gen_hashtag(msg):
     msg = "".join([x.strip() for x in msg.split()])
     return '#' + msg.translate(dict.fromkeys(map(ord, string.punctuation)))
+
+
+def gen_yoda(msg):
+    html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
+    return fromstring(html.text).findtext('.//textarea[@readonly]')
 
 
 def gen_praise(msg):
