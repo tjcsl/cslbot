@@ -110,10 +110,15 @@ def update_markov(handler, speaker, cmdchar, ctrlchan):
             cursor.add(Babble(nick=speaker, time=time.time(), data=data))
 
 
-def build_msg(markov, speaker):
+def build_msg(markov, speaker, start):
     if len(markov.keys()) == 0:
         return "%s hasn't said anything =(" % speaker
-    msg = random.choice(list(markov.keys()))
+    if start is None:
+        msg = random.choice(list(markov.keys()))
+    elif start in markov.keys():
+        msg = start
+    else:
+        return "%s hasn't said %s" % (speaker, start)
     last_word = msg
     while len(msg) < 256:
         if last_word not in markov.keys() or len(list(markov[last_word])) == 0:
@@ -127,9 +132,17 @@ def build_msg(markov, speaker):
 @Command('babble', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
-    Syntax: !babble (nick)
+    Syntax: !babble (--start <word>) (nick)
     """
     corecfg = args['config']['core']
-    speaker = msg.split()[0] if msg else corecfg['channel']
+    match = re.match('--start (.+) (.+)', msg)
+    start = None
+    if match:
+        start = match.group(1)
+        speaker = match.group(2)
+    elif msg:
+        speaker = msg.split()[0]
+    else:
+        speaker = corecfg['channel']
     markov = get_markov(args['db'], speaker, args['handler'], corecfg['cmdchar'], corecfg['ctrlchan'])
-    send(build_msg(markov, speaker))
+    send(build_msg(markov, speaker, start))
