@@ -25,7 +25,7 @@ from .orm import setup_db, Log
 
 
 def get_session(config):
-    engine = create_engine(config['db']['engine'])
+    engine = create_engine(config['db']['engine'], max_overflow=50)
     return sessionmaker(bind=engine)
 
 
