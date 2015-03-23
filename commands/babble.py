@@ -145,12 +145,14 @@ def cmd(send, msg, args):
     if match:
         start = match.group(1)
         speaker = match.group(2)
-    else:
+    elif msg:
         match = re.match('--start (.+)', msg)
         if match:
             start = match.group(1)
             speaker = corecfg['channel']
         else:
             speaker = msg.split()[0]
+    else:
+        speaker = corecfg['channel']
     markov = get_markov(args['db'], speaker, args['handler'], corecfg['cmdchar'], corecfg['ctrlchan'])
     send(build_msg(markov, speaker, start))
