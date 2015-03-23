@@ -36,7 +36,6 @@ class Sql():
         self.session = get_session(config)
         with self.session_scope() as session:
             setup_db(session)
-        self.log_session = self.session()
 
     @contextmanager
     def session_scope(self):
@@ -62,5 +61,6 @@ class Sql():
         | time: The current time (Unix Epoch).
         """
         entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
-        self.log_session.add(entry)
-        self.log_session.flush()
+        with self.session_scope() as session:
+            session.add(entry)
+            session.flush()
