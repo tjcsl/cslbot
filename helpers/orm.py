@@ -19,7 +19,6 @@
 
 import pickle
 import pickletools
-import lzma
 from sqlalchemy import Column, String, Float, Integer, ForeignKey
 from sqlalchemy import types
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -29,10 +28,10 @@ class CompressedPickleType(types.TypeDecorator):
     impl = types.LargeBinary
 
     def process_bind_param(self, data, _):
-        return lzma.compress(pickletools.optimize(pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL)))
+        return pickletools.optimize(pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL))
 
     def process_result_value(self, data, _):
-        return pickle.loads(lzma.decompress(data))
+        return pickle.loads(data)
 
 
 class Base(object):
