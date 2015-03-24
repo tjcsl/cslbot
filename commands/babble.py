@@ -21,7 +21,6 @@ import bisect
 import collections
 import random
 from sqlalchemy import or_
-from sqlalchemy.sql.expression import func
 from helpers.command import Command
 from helpers.orm import Log, Babble
 
@@ -59,7 +58,7 @@ def weighted_rand(d):
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     location = 'target' if speaker.startswith('#') else 'source'
     return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker, escape='$'),
-                                        ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).order_by(func.random()).all()
+                                        ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).all()
 
 
 def build_markov(cursor, speaker, cmdchar, ctrlchan):
@@ -81,11 +80,8 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
         msg = clean_msg(msg.msg)
         for i in range(1, len(msg)):
             if msg[i - 1] not in markov:
-                markov[msg[i - 1]] = {}
-            if msg[i] not in markov[msg[i - 1]]:
-                markov[msg[i - 1]][msg[i]] = 1
-            else:
-                markov[msg[i - 1]][msg[i]] += 1
+                markov[msg[i - 1]] = collections.defaultdict(int)
+            markov[msg[i - 1]][msg[i]] += 1
     return markov
 
 
