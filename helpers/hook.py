@@ -18,6 +18,7 @@
 # USA.
 
 import sys
+import functools
 from . import modutils
 from .traceback import handle_traceback
 from .thread import start
@@ -84,6 +85,7 @@ class Hook():
         _known_hooks[name] = self
 
     def __call__(self, func):
+        @functools.wraps(func)
         def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:
                 try:

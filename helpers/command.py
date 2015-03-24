@@ -18,6 +18,7 @@
 # USA.
 
 import sys
+import functools
 from . import modutils
 from inspect import getdoc
 from datetime import datetime, timedelta
@@ -112,6 +113,7 @@ class Command():
             _known_commands[t] = self
 
     def __call__(self, func):
+        @functools.wraps(func)
         def wrapper(send, msg, args):
             try:
                 with self.handler.db.session_scope() as args['db']:
