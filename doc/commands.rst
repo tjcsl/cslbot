@@ -1,6 +1,13 @@
 commands package
 ================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    commands.tjhsst
+
 Submodules
 ----------
 
