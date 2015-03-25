@@ -18,7 +18,7 @@ from helpers.command import Command
 import re
 
 
-@Command('msg', ['nick', 'is_admin'])
+@Command('msg', ['nick', 'is_admin', 'config'])
 def cmd(send, msg, args):
     """Sends a message to a channel
     Syntax: !msg <channel> <message>
@@ -32,6 +32,7 @@ def cmd(send, msg, args):
             send("What message?")
         elif args['is_admin'](args['nick']):
             send(msg[1], target=msg[0])
+            send("%s sent message %s to %s" % (args['nick'], msg[1], msg[0]), target=args['config']['core']['ctrlchan'])
         else:
             send("You are not a admin.")
     else:
