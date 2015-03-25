@@ -36,8 +36,8 @@ try:
     from os.path import dirname, join, exists
     from time import time
     from random import getrandbits
-except ImportError:
-    raise Exception("Import failed, are you using Python 3.4 or higher?")
+except ImportError as e:
+    raise Exception("%s, are you using Python 3.4 or higher?" % e)
 if sys.version_info < (3, 4):
     # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
