@@ -134,3 +134,9 @@ class Babble(Base):
     nick = Column(String, unique=True)
     time = Column(Float)
     data = Column(CompressedPickleType)
+
+
+class Babble2(Base):
+    nick = Column(String, unique=True)
+    time = Column(Float)
+    data = Column(CompressedPickleType)
