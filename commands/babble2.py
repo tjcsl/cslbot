@@ -135,7 +135,7 @@ def build_msg(markov, speaker, start):
     return "%s says: %s" % (speaker, msg)
 
 
-@Command('babble', ['db', 'config', 'handler'])
+@Command('babble2', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (--start <word>) (nick)
