@@ -16,7 +16,6 @@
 
 import re
 import time
-import itertools
 import bisect
 import collections
 import random
@@ -35,24 +34,21 @@ def clean_msg(msg):
     return msg
 
 
-def weighted_rand(d):
-    """ Gets a random key from d taking weights into account.
+class WeightedRandomDistribution(object):
+    def __init__(self, weight_dict):
+        self.tags = []
+        self.partialSums = []
 
-        d should be a dictionary of the form:
-            {
-                thing1: freq1,
-                thing2: freq2,
-                ...
-                thingn: freqn
-                }
-    """
-    l = collections.defaultdict(int)
-    for k in d:
-        l[k] += 1
-    # from https://docs.python.org/3/library/random.html
-    dist = list(itertools.accumulate(l.values()))
-    x = random.random() * dist[-1]
-    return list(l.keys())[bisect.bisect(dist, x)]
+        current_sum = 0
+
+        for key, weight in weight_dict.items():
+            current_sum += weight
+            self.partialSums.append(current_sum)
+            self.tags.append(key)
+
+    def sample(self):
+        x = random.random() * self.partialSums[-1]
+        return self.tags[bisect.bisect_right(self.partialSums, x)]
 
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
@@ -83,6 +79,8 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
             if prev not in markov:
                 markov[prev] = collections.defaultdict(int)
             markov[prev][msg[i]] += 1
+    for key, values in markov.items():
+        markov[key] = WeightedRandomDistribution(values)
     return markov
 
 
@@ -129,7 +127,7 @@ def build_msg(markov, speaker, start):
     while len(msg) < 256:
         if prev not in markov:
             break
-        next_word = weighted_rand(markov[prev])
+        next_word = markov[prev].sample()
         msg = "%s %s" % (msg, next_word)
         prev = (prev[1], next_word)
     return "%s says: %s" % (speaker, msg)
