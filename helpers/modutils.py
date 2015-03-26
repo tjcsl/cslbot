@@ -97,6 +97,8 @@ def get_enabled(moddir, mod_type):
 def get_modules(folder, mod_type):
     core_enabled, core_disabled = get_enabled(folder, mod_type)
     for aux in AUX[mod_type]:
+        if not aux:
+            continue
         aux_enabled, aux_disabled = get_enabled(aux, mod_type)
         core_enabled.extend(aux_enabled)
         core_disabled.extend(aux_disabled)
