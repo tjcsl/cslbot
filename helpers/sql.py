@@ -25,6 +25,7 @@ from .orm import setup_db, Log
 
 
 def get_session(config):
+    # FIXME: sqlite doesn't support max_overflow
     engine = create_engine(config['db']['engine'], max_overflow=50)
     return sessionmaker(bind=engine)
 

@@ -17,21 +17,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import pickle
-import pickletools
 from sqlalchemy import Column, String, Float, Integer, ForeignKey
-from sqlalchemy import types
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
-
-
-class CompressedPickleType(types.TypeDecorator):
-    impl = types.LargeBinary
-
-    def process_bind_param(self, data, _):
-        return pickletools.optimize(pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL))
-
-    def process_result_value(self, data, _):
-        return pickle.loads(data)
 
 
 class Base(object):
@@ -130,13 +117,14 @@ class Nicks(Base):
     time = Column(Float)
 
 
+# FIXME: nuke this, needs inc updates first
 class Babble(Base):
     nick = Column(String, unique=True)
     time = Column(Float)
-    data = Column(CompressedPickleType)
 
 
-class Babble2(Base):
-    nick = Column(String, unique=True)
-    time = Column(Float)
-    data = Column(CompressedPickleType)
+class Babble_data(Base):
+    nick = Column(String)
+    key = Column(String, index=True)
+    word = Column(String)
+    freq = Column(Integer)
