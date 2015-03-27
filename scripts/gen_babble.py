@@ -25,18 +25,17 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.orm import Log, Babble
+from helpers.orm import Log, Babble, Babble_metadata
 from helpers.sql import get_session  # noqa
 
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     # Ignore all commands, messages addressed to people, and messages addressed to the ctrlchan
-    query = cursor.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'),
-                                     Log.target != ctrlchan)
+    query = cursor.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
     if speaker is not None:
         location = 'target' if speaker.startswith('#') else 'source'
         query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
-    return query.all()
+    return query.order_by(Log.id.desc()).all()
 
 Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
 
@@ -46,6 +45,7 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
     markov = {}
     print('Generating markov.')
     messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
+    last = messages[-1].id
     for row in messages:
         msg = row.msg.split()
         for i in range(2, len(msg)):
@@ -57,9 +57,13 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
     for key, node in markov.items():
         for word, freq in node.freq.items():
             data.append({'source': node.source, 'target': node.target, 'key': key, 'word': word, 'freq': freq})
-    print('Updating table')
+    print('Clearing table')
+    cursor.execute('DROP INDEX babble_index')
     cursor.execute(Babble.__table__.delete())
+    print('Inserting data')
     cursor.bulk_insert_mappings(Babble, data)
+    cursor.query(Babble_metadata).delete()
+    cursor.add(Babble_metadata(last=last))
     # FIXME: investigate alt indices
     print('Creating indices')
     index = Index('babble_index', Babble.key)

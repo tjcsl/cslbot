@@ -123,3 +123,7 @@ class Babble(Base):
     key = Column(String)
     word = Column(String)
     freq = Column(Integer)
+
+
+class Babble_metadata(Base):
+    last = Column(Integer)

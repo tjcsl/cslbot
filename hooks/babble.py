@@ -22,7 +22,7 @@ from helpers.orm import Log, Babble
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     # Ignore all commands, messages addressed to people, and messages addressed to the ctrlchan
-    query = cursor.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'),
+    query = cursor.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar),
                                      Log.target != ctrlchan)
     if speaker is not None:
         location = 'target' if speaker.startswith('#') else 'source'
