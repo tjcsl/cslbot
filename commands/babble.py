@@ -15,22 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-import time
 import bisect
-import collections
 import random
-from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from helpers.command import Command
-from helpers.orm import Log, Babble, Babble_data
-
-# Keep cached results for thirty minutes
-CACHE_LIFE = 60 * 30
+from helpers.orm import Babble
 
 
 def weighted_next(data):
     tags, partialSums = [], []
-
     current_sum = 0
 
     for d in data:
@@ -42,71 +35,16 @@ def weighted_next(data):
     return tags[bisect.bisect_right(partialSums, x)]
 
 
-def get_messages(cursor, speaker, cmdchar, ctrlchan):
-    # FIXME: don't dual store for nick/channel
-    location = 'target' if speaker.startswith('#') else 'source'
-    return cursor.query(Log.msg).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), getattr(Log, location).ilike(speaker, escape='$'),
-                                        ~Log.msg.startswith(cmdchar), ~Log.msg.like('%:%'), Log.target != ctrlchan).all()
-
-
-def build_markov(cursor, speaker, cmdchar, ctrlchan):
-    """ Builds a markov dictionary.
-
-        Dictionary should be in the form:
-            word : {
-               nextword1 : num_apperences,
-               nextword2 : num_apperances,
-               ....
-               nextwordn : num_apperances
-               }
-    """
-    markov = {}
-    messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
-    for msg in messages:
-        msg = msg.msg.split()
-        for i in range(2, len(msg)):
-            prev = "%s %s" % (msg[i-2], msg[i-1])
-            if prev not in markov:
-                markov[prev] = collections.defaultdict(int)
-            markov[prev][msg[i]] += 1
-    data = []
-    for key, values in markov.items():
-        for word, freq in values.items():
-            data.append({'nick': speaker, 'key': key, 'word': word, 'freq': freq})
-    cursor.execute(Babble_data.__table__.insert().values(data))
-
-
-def ensure_markov(cursor, speaker, handler, cmdchar, ctrlchan):
-    # FIXME: use incremental updates
-    markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
-    if not markov:
-        update_markov(handler, speaker, cmdchar, ctrlchan)
-    elif time.time() - markov.time > CACHE_LIFE and False:  # FIXME: updates nuke the cache first
-        handler.workers.defer(0, False, update_markov, handler, speaker, cmdchar, ctrlchan)
-
-
-def update_markov(handler, speaker, cmdchar, ctrlchan):
-    with handler.db.session_scope() as cursor:
-        # FIXME: update cache non-distructively
-        cursor.query(Babble_data).filter(Babble_data.nick == speaker).delete()
-        build_markov(cursor, speaker, cmdchar, ctrlchan)
-        # FIXME: kill the babble table w/ incremental updates
-        markov = cursor.query(Babble).filter(Babble.nick == speaker).first()
-        if markov:
-            markov.time = time.time()
-        else:
-            cursor.add(Babble(nick=speaker, time=time.time()))
-
-
 def build_msg(cursor, speaker, start):
-    markov = cursor.query(Babble_data).filter(Babble_data.nick == speaker).order_by(func.random()).first()
+    location = 'target' if speaker.startswith('#') else 'source'
+    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).order_by(func.random()).first()
     if markov is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
         prev = markov.key
     else:
         # FIXME: make this faster
-        markov = cursor.query(Babble_data).filter(Babble_data.nick == speaker, Babble_data.key.ilike(start+' %')).order_by(func.random()).first()
+        markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker, Babble.key.ilike(start+' %')).order_by(func.random()).first()
         if markov:
             prev = markov.key
         else:
@@ -114,7 +52,7 @@ def build_msg(cursor, speaker, start):
     msg = prev
     while len(msg) < 256:
         # FIXME: investigate alt indicies
-        data = cursor.query(Babble_data).filter(Babble_data.key == prev, Babble_data.nick == speaker).all()
+        data = cursor.query(Babble).filter(Babble.key == prev, getattr(Babble, location) == speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
@@ -143,5 +81,7 @@ def cmd(send, msg, args):
             speaker = msg.split()[0]
     else:
         speaker = corecfg['channel']
-    ensure_markov(args['db'], speaker, args['handler'], corecfg['cmdchar'], corecfg['ctrlchan'])
-    send(build_msg(args['db'], speaker, start))
+    if args['db'].query(Babble).count():
+        send(build_msg(args['db'], speaker, start))
+    else:
+        send("Please run ./scripts/gen_babble.py to initialize the babble cache")

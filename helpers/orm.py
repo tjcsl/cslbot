@@ -117,14 +117,9 @@ class Nicks(Base):
     time = Column(Float)
 
 
-# FIXME: nuke this, needs inc updates first
 class Babble(Base):
-    nick = Column(String, unique=True)
-    time = Column(Float)
-
-
-class Babble_data(Base):
-    nick = Column(String)
-    key = Column(String, index=True)
+    source = Column(String)
+    target = Column(String)
+    key = Column(String)
     word = Column(String)
     freq = Column(Integer)
