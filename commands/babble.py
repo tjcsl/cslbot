@@ -44,8 +44,7 @@ def build_msg(cursor, speaker, start):
     if start is None:
         prev = markov.key
     else:
-        # FIXME: make this faster
-        markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker, Babble.key.ilike(start+' %')).order_by(func.random()).first()
+        markov = cursor.query(Babble).filter(Babble.key.like(start+' %'), getattr(Babble, location) == speaker).order_by(func.random()).first()
         if markov:
             prev = markov.key
         else:
