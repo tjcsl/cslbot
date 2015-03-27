@@ -37,7 +37,8 @@ def weighted_next(data):
 
 def build_msg(cursor, speaker, start):
     location = 'target' if speaker.startswith('#') else 'source'
-    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).order_by(func.random()).first()
+    count = cursor.query(Babble).filter(getattr(Babble, location) == speaker).count()
+    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random()*count).first()
     if markov is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
