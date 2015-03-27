@@ -51,7 +51,6 @@ def build_msg(cursor, speaker, start):
             return "%s hasn't said %s" % (speaker, start)
     msg = prev
     while len(msg) < 256:
-        # FIXME: investigate alt indicies
         data = cursor.query(Babble).filter(Babble.key == prev, getattr(Babble, location) == speaker).all()
         if not data:
             break

@@ -58,16 +58,21 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
         for word, freq in node.freq.items():
             data.append({'source': node.source, 'target': node.target, 'key': key, 'word': word, 'freq': freq})
     print('Clearing table.')
-    cursor.execute('DROP INDEX IF EXISTS babble_index')
+    cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
+    cursor.execute('DROP INDEX IF EXISTS ix_babble_target')
     cursor.execute(Babble.__table__.delete())
     print('Inserting data.')
     cursor.bulk_insert_mappings(Babble, data)
-    cursor.query(Babble_metadata).delete()
-    cursor.add(Babble_metadata(last=last))
-    # FIXME: investigate alt indices
+    meta_row = cursor.query(Babble_metadata).first()
+    if meta_row:
+        meta_row.last = last
+    else:
+        cursor.add(Babble_metadata(last=last))
     print('Creating indices.')
-    index = Index('babble_index', Babble.key)
-    index.create(cursor.connection())
+    key_index = Index('ix_babble_key', Babble.key)
+    target_index = Index('ix_babble_target', Babble.target)
+    key_index.create(cursor.connection())
+    target_index.create(cursor.connection())
     cursor.commit()
 
 
