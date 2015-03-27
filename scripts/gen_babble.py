@@ -42,6 +42,7 @@ Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
 
 def build_markov(cursor, speaker, cmdchar, ctrlchan):
     """ Builds a markov dictionary."""
+    # Keep synchronized with hooks/babble.py
     markov = {}
     print('Generating markov.')
     messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
