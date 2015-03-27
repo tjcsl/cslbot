@@ -44,6 +44,7 @@ Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
 def build_markov(cursor, speaker, cmdchar, ctrlchan):
     """ Builds a markov dictionary."""
     markov = {}
+    print('Generating markov.')
     messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
     for row in messages:
         msg = row.msg.split()
@@ -56,9 +57,11 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
     for key, node in markov.items():
         for word, freq in node.freq.items():
             data.append({'source': node.source, 'target': node.target, 'key': key, 'word': word, 'freq': freq})
+    print('Updating table')
     cursor.execute(Babble.__table__.delete())
     cursor.bulk_insert_mappings(Babble, data)
     # FIXME: investigate alt indices
+    print('Creating indices')
     index = Index('babble_index', Babble.key)
     index.create(cursor.connection())
     cursor.commit()
