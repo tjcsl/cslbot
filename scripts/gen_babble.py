@@ -35,7 +35,7 @@ def get_messages(cursor, speaker, cmdchar, ctrlchan):
     if speaker is not None:
         location = 'target' if speaker.startswith('#') else 'source'
         query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
-    return query.order_by(Log.id.desc()).all()
+    return query.order_by(Log.id).all()
 
 Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
 
