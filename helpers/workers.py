@@ -16,6 +16,7 @@
 
 from collections import namedtuple
 from threading import Lock, Timer
+from .traceback import handle_traceback
 from .control import show_pending
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
@@ -26,14 +27,22 @@ class Workers():
     def __init__(self, handler):
         self.lock = Lock()
         self.events = {}
+        self.handler = handler
         # Set-up notifications for pending admin approval.
 
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
 
+    def run_action(self, func, args):
+        try:
+                func(*args)
+        except Exception as ex:
+            ctrlchan = self.handler.config['core']['ctrlchan']
+            handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
+
     def defer(self, t, run_on_cancel, func, *args):
-        event = Timer(t, func, args)
+        event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.start()
         with self.lock:
             self.events[event.ident] = Event(event, run_on_cancel)
