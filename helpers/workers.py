@@ -18,6 +18,9 @@ from collections import namedtuple
 from threading import Lock, Timer
 from .traceback import handle_traceback
 from .control import show_pending
+from .orm import Babble_last, Log
+from sqlalchemy import or_
+
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
@@ -33,6 +36,7 @@ class Workers():
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
+        self.defer(3600, False, self.check_babble, handler, send)
 
     def run_action(self, func, args):
         try:
@@ -67,3 +71,15 @@ class Workers():
         admins = ": ".join(handler.admins)
         with handler.db.session_scope() as session:
             show_pending(session, admins, send, True)
+
+    def check_babble(self, handler, send):
+        # Re-schedule check_babble
+        self.defer(3600, False, self.handle_pending, handler, send)
+        cmdchar = handler.config['core']['cmdchar']
+        ctrlchan = handler.config['core']['ctrlchan']
+        with handler.db.session_scope() as session:
+            last = session.query(Babble_last).first()
+            row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
+            if last.last != row.id:
+                # FIXME: make this less sensitive?
+                raise Exception("Last row in babble cache (%d) does not match last row in log (%d)." % (last.last, row.id))

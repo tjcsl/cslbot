@@ -19,7 +19,7 @@ import bisect
 import random
 from sqlalchemy.sql.expression import func
 from helpers.command import Command
-from helpers.orm import Babble
+from helpers.orm import Babble, Babble_count
 
 
 def weighted_next(data):
@@ -37,13 +37,14 @@ def weighted_next(data):
 
 def build_msg(cursor, speaker, start):
     location = 'target' if speaker.startswith('#') else 'source'
-    count = cursor.query(Babble).filter(getattr(Babble, location) == speaker).count()
-    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random()*count).first()
-    if markov is None:
+    count = cursor.query(Babble_count).filter(Babble_count.type == location, Babble_count.key == speaker).first()
+    if count is None:
         return "%s hasn't said anything =(" % speaker
+    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random()*count.count).first()
     if start is None:
         prev = markov.key
     else:
+        # FIXME: use Babble_count?
         markov = cursor.query(Babble).filter(Babble.key.like(start+' %'), getattr(Babble, location) == speaker).order_by(func.random()).first()
         if markov:
             prev = markov.key

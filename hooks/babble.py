@@ -18,7 +18,7 @@ import collections
 from threading import Lock
 from sqlalchemy import or_
 from helpers.hook import Hook
-from helpers.orm import Log, Babble, Babble_metadata
+from helpers.orm import Log, Babble, Babble_count, Babble_last
 
 babble_lock = Lock()
 
@@ -38,11 +38,24 @@ def get_markov(cursor, prev, row):
     return node
 
 
+def update_count(cursor, source, target):
+    count_source = cursor.query(Babble_count).filter(Babble_count.type == 'source', Babble_count.key == source).first()
+    if count_source:
+        count_source.count = count_source.count + 1
+    else:
+        cursor.add(Babble_count(type='source', key=source, count=1))
+    count_target = cursor.query(Babble_count).filter(Babble_count.type == 'target', Babble_count.key == target).first()
+    if count_target:
+        count_target.count = count_target.count + 1
+    else:
+        cursor.add(Babble_count(type='target', key=target, count=1))
+
+
 def build_markov(cursor, cmdchar, ctrlchan):
     """ Builds a markov dictionary."""
     # Keep synchronized with scripts/gen_babble.py
     markov = {}
-    last = cursor.query(Babble_metadata).first()
+    last = cursor.query(Babble_last).first()
     messages = get_messages(cursor, cmdchar, ctrlchan, last)
     if not messages:
         return
@@ -61,6 +74,7 @@ def build_markov(cursor, cmdchar, ctrlchan):
                 row.word = word
                 row.freq = freq
             else:
+                update_count(cursor, node.source, node.target)
                 cursor.add(Babble(source=node.source, target=node.target, key=key, word=word, freq=freq))
     last.last = curr
     cursor.commit()

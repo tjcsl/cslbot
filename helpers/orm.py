@@ -125,5 +125,11 @@ class Babble(Base):
     freq = Column(Integer)
 
 
-class Babble_metadata(Base):
+class Babble_last(Base):
     last = Column(Integer)
+
+
+class Babble_count(Base):
+    type = Column(String)
+    key = Column(String)
+    count = Column(Integer)

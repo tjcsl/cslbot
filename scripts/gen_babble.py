@@ -25,8 +25,8 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.orm import Log, Babble, Babble_metadata
-from helpers.sql import get_session  # noqa
+from helpers.orm import Log, Babble, Babble_last, Babble_count
+from helpers.sql import get_session
 
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
@@ -55,25 +55,34 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
                 markov[prev] = Node(collections.defaultdict(int), row.source, row.target)
             markov[prev].freq[msg[i]] += 1
     data = []
+    count_source = collections.defaultdict(int)
+    count_target = collections.defaultdict(int)
     for key, node in markov.items():
         for word, freq in node.freq.items():
+            count_source[node.source] += 1
+            count_target[node.target] += 1
             data.append({'source': node.source, 'target': node.target, 'key': key, 'word': word, 'freq': freq})
-    print('Clearing table.')
+    count_data = []
+    for source, count in count_source.items():
+        count_data.append({'type': 'source', 'key': source, 'count': count})
+    for target, count in count_target.items():
+        count_data.append({'type': 'target', 'key': target, 'count': count})
+    print('Clearing tables.')
     cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
-    cursor.execute('DROP INDEX IF EXISTS ix_babble_target')
     cursor.execute(Babble.__table__.delete())
+    cursor.execute(Babble_count.__table__.delete())
     print('Inserting data.')
     cursor.bulk_insert_mappings(Babble, data)
-    meta_row = cursor.query(Babble_metadata).first()
+    cursor.bulk_insert_mappings(Babble_count, count_data)
+    meta_row = cursor.query(Babble_last).first()
     if meta_row:
         meta_row.last = last
     else:
-        cursor.add(Babble_metadata(last=last))
+        cursor.add(Babble_last(last=last))
     print('Creating indices.')
     key_index = Index('ix_babble_key', Babble.key)
-    target_index = Index('ix_babble_target', Babble.target)
     key_index.create(cursor.connection())
-    target_index.create(cursor.connection())
+    print('Committing.')
     cursor.commit()
 
 
@@ -81,6 +90,7 @@ def main(config, speaker):
     session = get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
+    # FIXME: try psycopg2cffi/pypy3
     build_markov(session, speaker, cmdchar, ctrlchan)
 
 
