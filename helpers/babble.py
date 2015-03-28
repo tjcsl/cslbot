@@ -1,3 +1,22 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2013-2015 Fox Wilson, Peter Foley, Srijay Kasturi,
+# Samuel Damashek, James Forcier, and Reed Koser
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+# USA.
+
 import re
 import collections
 from sqlalchemy import or_
@@ -6,7 +25,7 @@ from helpers.orm import Log, Babble, Babble_last, Babble_count
 MarkovKey = collections.namedtuple('MarkovKey', ['key', 'source', 'target'])
 
 
-def get_messages(cursor, cmdchar, ctrlchan, speaker=None, newer_than_id=0):
+def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     query = cursor.query(Log).filter(Log.id > newer_than_id)
     # Ignore commands, and messages addressed to the ctrlchan
     query = query.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
@@ -17,6 +36,7 @@ def get_messages(cursor, cmdchar, ctrlchan, speaker=None, newer_than_id=0):
 
 
 def clean_msg(msg):
+    # FIXME: exclude tokens with only symbols?
     return [x for x in msg.split() if not re.match('https?://', x)]
 
 
@@ -34,9 +54,10 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None):
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)
-    messages = get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id=lastrow.last)
+    messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
     if not messages:
         return
+    # FIXME: count is off if speaker is not None
     curr = messages[-1].id
     for row in messages:
         msg = clean_msg(row.msg)

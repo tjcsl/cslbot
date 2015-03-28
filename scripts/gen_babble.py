@@ -31,7 +31,6 @@ def main(config, speaker):
     session = get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
-    # FIXME: try psycopg2cffi/pypy3
     build_markov(session, cmdchar, ctrlchan, speaker)
 
 
