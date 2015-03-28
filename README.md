@@ -21,21 +21,7 @@ Run ./bot.py to setup the initial configuration and change values in config.cfg 
 
 Python must be at least 3.4.
 
-Hard mode:
-
-1.  Install irc (https://pypi.python.org/pypi/irc),
-
-2.  beautiful soup (http://www.crummy.com/software/BeautifulSoup/)
-
-3.  lxml (https://pypi.python.org/pypi/lxml),
-
-4.  requests (https://pypi.python.org/pypi/requests),
-
-5.  sqlalchemy (https://pypi.python.org/pypi/SQLAlchemy).
-
-Easy mode:
-
-If you have Pip installed, you can simply run `pip install -r requirements.txt`
+Run `pip install -r requirements.txt`
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 
