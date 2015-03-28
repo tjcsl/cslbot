@@ -12,6 +12,14 @@ hooks.autodeop module
     :undoc-members:
     :show-inheritance:
 
+hooks.babble module
+-------------------
+
+.. automodule:: hooks.babble
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 hooks.band module
 -----------------
 

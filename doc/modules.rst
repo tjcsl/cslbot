@@ -9,3 +9,4 @@ IrcBot
    handler
    helpers
    hooks
+   scripts
