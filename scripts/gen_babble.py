@@ -17,6 +17,7 @@
 
 import argparse
 import collections
+import re
 from configparser import ConfigParser
 from sqlalchemy import Index, or_
 from os.path import dirname
@@ -28,6 +29,8 @@ path.append(dirname(__file__) + '/..')
 from helpers.orm import Log, Babble, Babble_last, Babble_count
 from helpers.sql import get_session
 
+Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
+
 
 def get_messages(cursor, speaker, cmdchar, ctrlchan):
     # Ignore all commands, messages addressed to people, and messages addressed to the ctrlchan
@@ -37,7 +40,9 @@ def get_messages(cursor, speaker, cmdchar, ctrlchan):
         query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
     return query.order_by(Log.id).all()
 
-Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
+
+def clean_msg(msg):
+    return [x for x in msg.split() if not re.match('https?://', x)]
 
 
 def build_markov(cursor, speaker, cmdchar, ctrlchan):
@@ -48,7 +53,7 @@ def build_markov(cursor, speaker, cmdchar, ctrlchan):
     messages = get_messages(cursor, speaker, cmdchar, ctrlchan)
     last = messages[-1].id
     for row in messages:
-        msg = row.msg.split()
+        msg = clean_msg(row.msg)
         for i in range(2, len(msg)):
             prev = "%s %s" % (msg[i-2], msg[i-1])
             if prev not in markov:

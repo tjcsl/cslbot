@@ -15,12 +15,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import collections
+import re
 from threading import Lock
 from sqlalchemy import or_
 from helpers.hook import Hook
 from helpers.orm import Log, Babble, Babble_count, Babble_last
 
 babble_lock = Lock()
+Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
 
 
 def get_messages(cursor, cmdchar, ctrlchan, last):
@@ -28,7 +30,9 @@ def get_messages(cursor, cmdchar, ctrlchan, last):
     return cursor.query(Log).filter(Log.id > last.last, or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar),
                                     Log.target != ctrlchan).order_by(Log.id).all()
 
-Node = collections.namedtuple('Node', ['freq', 'source', 'target'])
+
+def clean_msg(msg):
+    return [x for x in msg.split() if not re.match('https?://', x)]
 
 
 def get_markov(cursor, prev, row):
@@ -61,7 +65,7 @@ def build_markov(cursor, cmdchar, ctrlchan):
         return
     curr = messages[-1].id
     for row in messages:
-        msg = row.msg.split()
+        msg = clean_msg(row.msg)
         for i in range(2, len(msg)):
             prev = "%s %s" % (msg[i-2], msg[i-1])
             if prev not in markov:
@@ -93,5 +97,5 @@ def hook(send, msg, args):
     # No babble cache, nothing to update
     if not args['db'].query(Babble).count():
         return
-    # FIXME: is this the best way to do this?
+    # FIXME: move to check_babble?
     args['handler'].workers.defer(0, False, update_markov, args['handler'], args['config'])
