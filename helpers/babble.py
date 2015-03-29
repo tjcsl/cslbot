@@ -65,6 +65,8 @@ def update_count(cursor, source, target):
 def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     """ Builds a markov dictionary."""
     markov = {}
+    if initial_run:
+        cursor.query(Babble_last).delete()
     lastrow = cursor.query(Babble_last).first()
     if not lastrow:
         lastrow = Babble_last(last=0)
