@@ -23,15 +23,15 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.sql import get_session
 from helpers.babble import build_markov
+from helpers.sql import get_session
 
 
 def main(config, speaker):
     session = get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
-    build_markov(session, cmdchar, ctrlchan, speaker)
+    build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True)
 
 
 if __name__ == '__main__':

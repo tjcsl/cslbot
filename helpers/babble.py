@@ -19,7 +19,7 @@
 
 import re
 import collections
-from sqlalchemy import or_
+from sqlalchemy import Index, or_
 from helpers.orm import Log, Babble, Babble_last, Babble_count
 
 MarkovKey = collections.namedtuple('MarkovKey', ['key', 'source', 'target'])
@@ -40,14 +40,29 @@ def clean_msg(msg):
     return [x for x in msg.split() if not re.match('https?://', x)]
 
 
-def get_markov(cursor, node):
+def get_markov(cursor, node, initial_run):
     ret = collections.defaultdict(int)
+    if initial_run:
+        return ret
     old = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target).all()
     ret.update({x.word: x.freq for x in old})
     return ret
 
 
-def build_markov(cursor, cmdchar, ctrlchan, speaker=None):
+def update_count(cursor, source, target):
+    count_source = cursor.query(Babble_count).filter(Babble_count.type == 'source', Babble_count.key == source).first()
+    if count_source:
+        count_source.count = count_source.count + 1
+    else:
+        cursor.add(Babble_count(type='source', key=source, count=1))
+    count_target = cursor.query(Babble_count).filter(Babble_count.type == 'target', Babble_count.key == target).first()
+    if count_target:
+        count_target.count = count_target.count + 1
+    else:
+        cursor.add(Babble_count(type='target', key=target, count=1))
+
+
+def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     """ Builds a markov dictionary."""
     markov = {}
     lastrow = cursor.query(Babble_last).first()
@@ -65,26 +80,37 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None):
             prev = "%s %s" % (msg[i - 2], msg[i - 1])
             node = MarkovKey(prev, row.source, row.target)
             if node not in markov:
-                markov[node] = get_markov(cursor, node)
+                markov[node] = get_markov(cursor, node, initial_run)
             markov[node][msg[i]] += 1
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
     for node, word_freqs in markov.items():
         for word, freq in word_freqs.items():
-            row = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target, Babble.word == word).first()
+            row = None
+            if not initial_run:
+                row = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target, Babble.word == word).first()
             if row:
                 row.freq = freq
+                # FIXME: update_count(cursor, node.source, node.target)
             else:
                 count_source[node.source] += 1
                 count_target[node.target] += 1
                 data.append({'source': node.source, 'target': node.target, 'key': node.key, 'word': word, 'freq': freq})
-    count_objects = []
+    count_data = []
+    # FIXME: update count if it exists and not initial_run
     for source, count in count_source.items():
-        count_objects.append(Babble_count(type='source', key=source, count=count))
+        count_data.append({'type': 'source', 'key': source, 'count': count})
     for target, count in count_target.items():
-        count_objects.append(Babble_count(type='target', key=target, count=count))
+        count_data.append({'type': 'target', 'key': target, 'count': count})
+    if initial_run:
+        cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
+        cursor.execute(Babble.__table__.delete())
+        cursor.execute(Babble_count.__table__.delete())
     cursor.bulk_insert_mappings(Babble, data)
-    cursor.bulk_save_objects(count_objects)
+    cursor.bulk_insert_mappings(Babble_count, count_data)
     lastrow.last = curr
+    if initial_run:
+        key_index = Index('ix_babble_key', Babble.key)
+        key_index.create(cursor.connection())
     cursor.commit()
