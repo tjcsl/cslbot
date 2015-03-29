@@ -109,9 +109,6 @@ def build_rows(cursor, markov, initial_run):
 
 def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     """ Builds a markov dictionary."""
-    cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE')
-    cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE')
-    cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE')
     if initial_run:
         cursor.query(Babble_last).delete()
     lastrow = cursor.query(Babble_last).first()

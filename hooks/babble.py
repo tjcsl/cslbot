@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy.exc import OperationalError
 from helpers.hook import Hook
 from helpers.orm import Babble
 from helpers.babble import build_markov
@@ -23,7 +24,15 @@ def update_markov(handler, config):
     with handler.db.session_scope() as cursor:
         cmdchar = config['core']['cmdchar']
         ctrlchan = config['core']['ctrlchan']
-        build_markov(cursor, cmdchar, ctrlchan)
+        try:
+            cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
+            cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
+            cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+            build_markov(cursor, cmdchar, ctrlchan)
+        except OperationalError as ex:
+            # If we can't lock the table, silently fail and wait for the next time we're called.
+            if 'could not obtain lock on relation "babble"' not in str(ex):
+                raise ex
 
 
 @Hook('babble', ['pubmsg', 'privmsg'], ['db', 'handler', 'config'])

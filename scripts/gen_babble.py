@@ -32,6 +32,9 @@ def main(config, speaker):
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
     print('Generating markov.')
+    session.execute('LOCK TABLE babble IN EXCLUSIVE MODE')
+    session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE')
+    session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE')
     build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True)
 
 
