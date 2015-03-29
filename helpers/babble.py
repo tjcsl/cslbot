@@ -72,7 +72,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
     if not messages:
         return
-    # FIXME: count is off if speaker is not None
+    # FIXME: count can be too low if speaker is not None
     curr = messages[-1].id
     for row in messages:
         msg = clean_msg(row.msg)
@@ -92,16 +92,18 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
                 row = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target, Babble.word == word).first()
             if row:
                 row.freq = freq
-                # FIXME: update_count(cursor, node.source, node.target)
             else:
-                count_source[node.source] += 1
-                count_target[node.target] += 1
+                if initial_run:
+                    count_source[node.source] += 1
+                    count_target[node.target] += 1
+                else:
+                    update_count(cursor, node.source, node.target)
                 data.append({'source': node.source, 'target': node.target, 'key': node.key, 'word': word, 'freq': freq})
     count_data = []
-    # FIXME: update count if it exists and not initial_run
     for source, count in count_source.items():
         count_data.append({'type': 'source', 'key': source, 'count': count})
     for target, count in count_target.items():
+        update_count(cursor, source, target, initial_run)
         count_data.append({'type': 'target', 'key': target, 'count': count})
     if initial_run:
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')

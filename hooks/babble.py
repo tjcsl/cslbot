@@ -36,4 +36,4 @@ def hook(send, msg, args):
     if not args['db'].query(Babble).count():
         return
     # FIXME: move to check_babble?
-    # FIXME: args['handler'].workers.defer(0, False, update_markov, args['handler'], args['config'])
+    args['handler'].workers.defer(0, False, update_markov, args['handler'], args['config'])
