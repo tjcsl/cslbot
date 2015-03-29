@@ -37,7 +37,9 @@ Example configurations:
 
 2.  SQLite - engine: sqlite:///db.sqlite
 
-See: http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html for more information on SQLAlchemy database engine URLs.
+See: http://docs.sqlalchemy.org/en/latest/core/engines.html for more information on SQLAlchemy database engine URLs.
+
+Note that the primary install uses postgres, so sqlite and mysql receive less testing.
 
 If you intend to use SQLite, the default DBAPI is provided by a built-in python module (sqlite3), so you don't need to install any additional packages.
 
