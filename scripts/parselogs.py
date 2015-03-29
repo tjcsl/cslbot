@@ -105,7 +105,7 @@ def main(config, outdir):
     current_id = get_id(config, outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
     save_id(outdir, new_id)
-    for row in session.query(Log).filter(new_id > Log.id).filter(Log.id >= current_id).order_by(Log.id).all():
+    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.id).all():
         check_day(row, outdir, config['core']['channel'])
         write_log(row.target, outdir, gen_log(row))
     for x in logs.values():
