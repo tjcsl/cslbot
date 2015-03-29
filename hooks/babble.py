@@ -14,25 +14,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from threading import Lock
 from helpers.hook import Hook
 from helpers.orm import Babble
 from helpers.babble import build_markov
 
-babble_lock = Lock()
-
 
 def update_markov(handler, config):
-    with babble_lock:
-        with handler.db.session_scope() as cursor:
-            cmdchar = config['core']['cmdchar']
-            ctrlchan = config['core']['ctrlchan']
-            build_markov(cursor, cmdchar, ctrlchan)
+    with handler.db.session_scope() as cursor:
+        cmdchar = config['core']['cmdchar']
+        ctrlchan = config['core']['ctrlchan']
+        build_markov(cursor, cmdchar, ctrlchan)
 
 
 @Hook('babble', ['pubmsg', 'privmsg'], ['db', 'handler', 'config'])
 def hook(send, msg, args):
-    # No babble cache, nothing to update
+    # No babble cache, so nothing to update
     if not args['db'].query(Babble).count():
         return
     # FIXME: move to check_babble?
