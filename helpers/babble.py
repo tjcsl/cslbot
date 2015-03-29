@@ -19,6 +19,7 @@
 
 import re
 import collections
+import string
 from sqlalchemy import Index, or_
 from helpers.orm import Log, Babble, Babble_last, Babble_count
 
@@ -35,9 +36,11 @@ def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     return query.order_by(Log.id).all()
 
 
+exclude_re = re.compile('https?://|^[%s]+$' % string.punctuation)
+
+
 def clean_msg(msg):
-    # FIXME: exclude tokens with only symbols?
-    return [x for x in msg.split() if not re.match('https?://', x)]
+    return [x for x in msg.split() if not exclude_re.match(x)]
 
 
 def get_markov(cursor, node, initial_run):
