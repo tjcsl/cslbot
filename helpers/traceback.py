@@ -41,7 +41,7 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     ctrlchan = config['core']['ctrlchan']
     prettyerrors = config['feature'].getboolean('prettyerrors')
     errtarget = ctrlchan if prettyerrors else target
-    if prettyerrors:
+    if prettyerrors and target != ctrlchan:
         if name == 'CommandFailedException':
             c.privmsg(target, "%s -- %s" % (source, output))
         else:
