@@ -105,7 +105,6 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     for source, count in count_source.items():
         count_data.append({'type': 'source', 'key': source, 'count': count})
     for target, count in count_target.items():
-        update_count(cursor, source, target, initial_run)
         count_data.append({'type': 'target', 'key': target, 'count': count})
     if initial_run:
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
