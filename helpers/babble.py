@@ -62,20 +62,11 @@ def update_count(cursor, source, target):
         cursor.add(Babble_count(type='target', key=target, count=1))
 
 
-def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
-    """ Builds a markov dictionary."""
+def generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run):
     markov = {}
-    if initial_run:
-        cursor.query(Babble_last).delete()
-    lastrow = cursor.query(Babble_last).first()
-    if not lastrow:
-        lastrow = Babble_last(last=0)
-        cursor.add(lastrow)
     messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
-    if not messages:
-        return
     # FIXME: count can be too low if speaker is not None
-    curr = messages[-1].id
+    curr = messages[-1].id if messages else None
     for row in messages:
         msg = clean_msg(row.msg)
         for i in range(2, len(msg)):
@@ -84,6 +75,10 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
             if node not in markov:
                 markov[node] = get_markov(cursor, node, initial_run)
             markov[node][msg[i]] += 1
+    return curr, markov
+
+
+def build_rows(cursor, markov, initial_run):
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
@@ -106,13 +101,27 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
         count_data.append({'type': 'source', 'key': source, 'count': count})
     for target, count in count_target.items():
         count_data.append({'type': 'target', 'key': target, 'count': count})
+    return data, count_data
+
+
+def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
+    """ Builds a markov dictionary."""
+    if initial_run:
+        cursor.query(Babble_last).delete()
+    lastrow = cursor.query(Babble_last).first()
+    if not lastrow:
+        lastrow = Babble_last(last=0)
+        cursor.add(lastrow)
+    curr, markov = generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run)
+    data, count_data = build_rows(cursor, markov, initial_run)
     if initial_run:
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
     cursor.bulk_insert_mappings(Babble, data)
     cursor.bulk_insert_mappings(Babble_count, count_data)
-    lastrow.last = curr
+    if curr is not None:
+        lastrow.last = curr
     if initial_run:
         key_index = Index('ix_babble_key', Babble.key)
         key_index.create(cursor.connection())
