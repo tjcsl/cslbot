@@ -28,7 +28,7 @@ def cmd(send, msg, args):
         send('Please specify a search term.')
         return
     cmdchar = args['config']['core']['cmdchar']
-    row = args['db'].query(Log).filter(Log.msg.like('%'+msg+'%'), ~Log.msg.like(cmdchar+'loggrep%')).order_by(Log.id.desc()).first()
+    row = args['db'].query(Log).filter(Log.msg.like('%'+msg+'%'), ~Log.msg.like(cmdchar+'grep%')).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
