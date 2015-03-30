@@ -19,6 +19,7 @@
 # USA.
 
 import re
+import time
 import collections
 import string as pystring
 from sqlalchemy import Index, or_
@@ -127,21 +128,35 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)
+    t=time.time()
     messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
+    print('Messages retrived in %f' % (time.time()-t))
     # FIXME: count can be too low if speaker is not None
     curr = messages[-1].id if messages else None
+    t=time.time()
     markov = generate_markov(cursor, messages, curr, cmdchar, ctrlchan, speaker, lastrow, initial_run)
+    print('Markov built in %f' % (time.time()-t))
     # FIXME: cythonize data, count_data?
+    t=time.time()
     data, count_data = build_rows(cursor, markov, initial_run)
+    print('Rows built in %f' % (time.time()-t))
     if initial_run:
+        t=time.time()
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
+        print('Tables cleared in %f' % (time.time()-t))
+    t=time.time()
     cursor.bulk_insert_mappings(Babble, data)
     cursor.bulk_insert_mappings(Babble_count, count_data)
+    print('Rows inserted in %f' % (time.time()-t))
     if curr is not None:
         lastrow.last = curr
     if initial_run:
+        t=time.time()
         key_index = Index('ix_babble_key', Babble.key)
         key_index.create(cursor.connection())
+        print('Index created in %f' % (time.time()-t))
+    t=time.time()
     cursor.commit()
+    print('Data committed in %f' % (time.time()-t))

@@ -17,4 +17,4 @@ from distutils.extension import Extension
 
 
 def make_ext(modname, pyxfilename):
-    return Extension(name=modname, sources=[pyxfilename], libraries=['stdc++'], language='C++')
+    return Extension(name=modname, sources=[pyxfilename], libraries=['stdc++'], language='C++', extra_compile_args=['-Ofast', '-flto'])
