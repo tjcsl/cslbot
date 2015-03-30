@@ -363,6 +363,14 @@ commands.lmgtfy module
     :undoc-members:
     :show-inheritance:
 
+commands.loggrep module
+-----------------------
+
+.. automodule:: commands.loggrep
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.microwave module
 -------------------------
 
