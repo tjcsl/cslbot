@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# distutils: language=c++
 # Copyright (C) 2013-2015 Fox Wilson, Peter Foley, Srijay Kasturi,
 # Samuel Damashek, James Forcier, and Reed Koser
 #
@@ -19,9 +20,13 @@
 
 import re
 import collections
-import string
+import string as pystring
 from sqlalchemy import Index, or_
 from helpers.orm import Log, Babble, Babble_last, Babble_count
+from libcpp.map cimport map
+from libcpp.pair cimport pair
+from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
@@ -34,20 +39,21 @@ def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     return query.order_by(Log.id).all()
 
 
-exclude_re = re.compile('https?://|^[0-9%s]+$' % string.punctuation)
+exclude_re = re.compile('https?://|^[0-9%s]+$' % pystring.punctuation)
 
 
-def clean_msg(msg):
-    return [x for x in msg.split() if not exclude_re.match(x)]
+cdef vector[string] clean_msg(msg) except *:
+    return [x.encode() for x in msg.split() if not exclude_re.match(x)]
 
 
-def get_markov(cursor, node, initial_run):
-    key, source, target = node
-    ret = collections.defaultdict(int)
+cdef map[string, int] get_markov(cursor, vector[string] node, initial_run) except *:
+    key, source, target = node[0].c_str(), node[1].c_str(), node[2].c_str()
+    cdef map[string, int] ret
     if initial_run:
         return ret
     old = cursor.query(Babble).filter(Babble.key == key, Babble.source == source, Babble.target == target).all()
-    ret.update({x.word: x.freq for x in old})
+    for row in old:
+        ret.insert(pair[string, int](row.word, row.freq))
     return ret
 
 
@@ -64,32 +70,38 @@ def update_count(cursor, source, target):
         cursor.add(Babble_count(type='target', key=target, count=1))
 
 
-def generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run):
-    markov = {}
-    messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
-    # FIXME: count can be too low if speaker is not None
-    curr = messages[-1].id if messages else None
+ctypedef map[vector[string], map[string, int]] MarkovDict
+
+cdef MarkovDict generate_markov(cursor, messages, curr, cmdchar, ctrlchan, speaker, lastrow, initial_run) except *:
+    cdef MarkovDict markov
+    cdef vector[string] node
     for row in messages:
         msg = clean_msg(row.msg)
-        for i in range(2, len(msg)):
-            prev = "%s %s" % (msg[i - 2], msg[i - 1])
-            node = (prev, row.source, row.target)
-            if node not in markov:
+        for i in range(2,len(msg)):
+            #FIXME: use c strings
+            prev = msg[i-2] + " ".encode() + msg[i-1]
+            node = <vector[string]>[prev, row.source.encode(), row.target.encode()]
+            if markov.find(node) == markov.end():
                 markov[node] = get_markov(cursor, node, initial_run)
-            markov[node][msg[i]] += 1
-    return curr, markov
+            if markov[node][msg[i]]:
+                markov[node][msg[i]] = markov[node][msg[i]] + 1
+            else:
+                markov[node][msg[i]] = 1
+    return markov
 
 
-def build_rows(cursor, markov, initial_run):
+cdef build_rows(cursor, MarkovDict markov, initial_run): #FIXME: except *
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
-    for node, word_freqs in markov.items():
-        for word, freq in word_freqs.items():
+    for pair in markov:
+        node, word_freqs = pair.first, pair.second
+        for freq_pair in word_freqs:
+            word, freq = freq_pair.first, freq_pair.second
             row = None
             key, source, target = node
             if not initial_run:
-                row = cursor.query(Babble).filter(Babble.key == key, Babble.source == source, Babble.target == target, Babble.word == word).first()
+                row = cursor.query(Babble).filter(Babble.key == key.c_str(), Babble.source == source.c_str(), Babble.target == target.c_str(), Babble.word == word.c_str()).first()
             if row:
                 row.freq = freq
             else:
@@ -115,7 +127,11 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)
-    curr, markov = generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run)
+    messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
+    # FIXME: count can be too low if speaker is not None
+    curr = messages[-1].id if messages else None
+    markov = generate_markov(cursor, messages, curr, cmdchar, ctrlchan, speaker, lastrow, initial_run)
+    # FIXME: cythonize data, count_data?
     data, count_data = build_rows(cursor, markov, initial_run)
     if initial_run:
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
