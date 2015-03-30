@@ -19,7 +19,7 @@ from helpers.orm import Log
 from helpers.command import Command
 
 
-@Command(['grep', 'loggrep'], ['config', 'db'])
+@Command(['grep', 'loggrep'], ['config', 'db', 'botnick'])
 def cmd(send, msg, args):
     """Greps the log for a string.
     Syntax: !grep <string>
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
         send('Please specify a search term.')
         return
     cmdchar = args['config']['core']['cmdchar']
-    row = args['db'].query(Log).filter(Log.msg.like('%'+msg+'%'), ~Log.msg.like(cmdchar+'grep%')).order_by(Log.id.desc()).first()
+    row = args['db'].query(Log).filter(Log.source != args['botnick'], ~Log.msg.like(cmdchar+'grep%'), Log.msg.like('%'+msg+'%')).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
