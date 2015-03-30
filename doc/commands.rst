@@ -259,6 +259,14 @@ commands.google module
     :undoc-members:
     :show-inheritance:
 
+commands.grep module
+--------------------
+
+.. automodule:: commands.grep
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.guarded module
 -----------------------
 
@@ -359,14 +367,6 @@ commands.lmgtfy module
 ----------------------
 
 .. automodule:: commands.lmgtfy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.loggrep module
------------------------
-
-.. automodule:: commands.loggrep
     :members:
     :undoc-members:
     :show-inheritance:

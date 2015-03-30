@@ -19,10 +19,10 @@ from helpers.orm import Log
 from helpers.command import Command
 
 
-@Command('loggrep', ['config', 'db'])
+@Command(['grep', 'loggrep'], ['config', 'db'])
 def cmd(send, msg, args):
     """Greps the log for a string.
-    Syntax: !loggrep <string>
+    Syntax: !grep <string>
     """
     if not msg:
         send('Please specify a search term.')
