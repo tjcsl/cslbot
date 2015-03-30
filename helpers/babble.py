@@ -18,6 +18,7 @@
 # USA.
 
 import re
+import time
 import collections
 import string
 from sqlalchemy import Index, or_
@@ -107,7 +108,7 @@ def build_rows(cursor, markov, initial_run):
     return data, count_data
 
 
-def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
+def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False):
     """ Builds a markov dictionary."""
     if initial_run:
         cursor.query(Babble_last).delete()
@@ -115,17 +116,40 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False):
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)
+    if debug:
+        t = time.time()
     curr, markov = generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run)
+    if debug:
+        print('Generated markov in %f' % (time.time()-t))
+        t = time.time()
     data, count_data = build_rows(cursor, markov, initial_run)
+    if debug:
+        print('Rows built in %f' % (time.time()-t))
     if initial_run:
+        if debug:
+            t = time.time()
         cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
+        if debug:
+            print('Created index in %f' % (time.time()-t))
+    if debug:
+        t = time.time()
     cursor.bulk_insert_mappings(Babble, data)
     cursor.bulk_insert_mappings(Babble_count, count_data)
+    if debug:
+        print('Inserted rows in %f' % (time.time()-t))
     if curr is not None:
         lastrow.last = curr
     if initial_run:
+        if debug:
+            t = time.time()
         key_index = Index('ix_babble_key', Babble.key)
         key_index.create(cursor.connection())
+        if debug:
+            print('Created index in %f' % (time.time()-t))
+    if debug:
+        t = time.time()
     cursor.commit()
+    if debug:
+        print('Commited in %f' % (time.time()-t))
