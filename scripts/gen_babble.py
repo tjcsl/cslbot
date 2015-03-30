@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import time
 from configparser import ConfigParser
 from os.path import dirname
 from sys import path
@@ -24,10 +23,8 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.sql import get_session
-import pyximport
-pyximport.install()
 from helpers.babble import build_markov
+from helpers.sql import get_session
 
 
 def main(config, speaker):
@@ -38,9 +35,7 @@ def main(config, speaker):
     session.execute('LOCK TABLE babble IN EXCLUSIVE MODE')
     session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE')
     session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE')
-    t = time.time()
     build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True)
-    print('Markov built in %f' % (time.time()-t))
 
 
 if __name__ == '__main__':

@@ -18,7 +18,6 @@ from time import time, strftime, localtime
 from helpers.urlutils import get_title, get_short
 from helpers.orm import Urls
 from helpers.hook import Hook
-# FIXME: use cffi_re2
 import re
 
 
