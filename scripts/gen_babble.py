@@ -23,8 +23,10 @@ from sys import path
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.babble import build_markov
 from helpers.sql import get_session
+import pyximport
+pyximport.install()
+from helpers.babble import build_markov
 
 
 def main(config, speaker):

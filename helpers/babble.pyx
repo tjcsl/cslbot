@@ -23,8 +23,6 @@ import string
 from sqlalchemy import Index, or_
 from helpers.orm import Log, Babble, Babble_last, Babble_count
 
-MarkovKey = collections.namedtuple('MarkovKey', ['key', 'source', 'target'])
-
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     query = cursor.query(Log).filter(Log.id > newer_than_id)
@@ -44,10 +42,11 @@ def clean_msg(msg):
 
 
 def get_markov(cursor, node, initial_run):
+    key, source, target = node
     ret = collections.defaultdict(int)
     if initial_run:
         return ret
-    old = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target).all()
+    old = cursor.query(Babble).filter(Babble.key == key, Babble.source == source, Babble.target == target).all()
     ret.update({x.word: x.freq for x in old})
     return ret
 
@@ -74,7 +73,7 @@ def generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run):
         msg = clean_msg(row.msg)
         for i in range(2, len(msg)):
             prev = "%s %s" % (msg[i - 2], msg[i - 1])
-            node = MarkovKey(prev, row.source, row.target)
+            node = (prev, row.source, row.target)
             if node not in markov:
                 markov[node] = get_markov(cursor, node, initial_run)
             markov[node][msg[i]] += 1
@@ -88,17 +87,18 @@ def build_rows(cursor, markov, initial_run):
     for node, word_freqs in markov.items():
         for word, freq in word_freqs.items():
             row = None
+            key, source, target = node
             if not initial_run:
-                row = cursor.query(Babble).filter(Babble.key == node.key, Babble.source == node.source, Babble.target == node.target, Babble.word == word).first()
+                row = cursor.query(Babble).filter(Babble.key == key, Babble.source == source, Babble.target == target, Babble.word == word).first()
             if row:
                 row.freq = freq
             else:
                 if initial_run:
-                    count_source[node.source] += 1
-                    count_target[node.target] += 1
+                    count_source[source] += 1
+                    count_target[target] += 1
                 else:
-                    update_count(cursor, node.source, node.target)
-                data.append({'source': node.source, 'target': node.target, 'key': node.key, 'word': word, 'freq': freq})
+                    update_count(cursor, source, target)
+                data.append({'source': source, 'target': target, 'key': key, 'word': word, 'freq': freq})
     count_data = []
     for source, count in count_source.items():
         count_data.append({'type': 'source', 'key': source, 'count': count})

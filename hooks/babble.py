@@ -14,31 +14,35 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import logging
 from sqlalchemy.exc import OperationalError
 from helpers.hook import Hook
 from helpers.orm import Babble
+import pyximport
+pyximport.install()
 from helpers.babble import build_markov
 
 
-def update_markov(handler, config):
-    with handler.db.session_scope() as cursor:
-        cmdchar = config['core']['cmdchar']
-        ctrlchan = config['core']['ctrlchan']
-        try:
-            cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
-            build_markov(cursor, cmdchar, ctrlchan)
-        except OperationalError as ex:
-            # If we can't lock the table, silently fail and wait for the next time we're called.
-            if 'could not obtain lock on relation "babble"' not in str(ex):
-                raise ex
+def update_markov(cursor, config):
+    cmdchar = config['core']['cmdchar']
+    ctrlchan = config['core']['ctrlchan']
+    try:
+        cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
+        cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
+        cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+        build_markov(cursor, cmdchar, ctrlchan)
+    except OperationalError as ex:
+        # If we can't lock the table, silently fail and wait for the next time we're called.
+        if 'could not obtain lock on relation "babble"' in str(ex):
+            logging.info('Babble table locked, skipping update.')
+        else:
+            raise ex
 
 
-@Hook('babble', ['pubmsg', 'privmsg'], ['db', 'handler', 'config'])
+@Hook('babble', ['pubmsg', 'privmsg'], ['db', 'config'])
 def hook(send, msg, args):
     # No babble cache, so nothing to update
     if not args['db'].query(Babble).count():
         return
     # FIXME: move to check_babble?
-    args['handler'].workers.defer(0, False, update_markov, args['handler'], args['config'])
+    update_markov(args['db'], args['config'])
