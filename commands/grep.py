@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from time import strftime, localtime
 from helpers.orm import Log
 from helpers.command import Command
@@ -22,13 +23,22 @@ from helpers.command import Command
 @Command(['grep', 'loggrep'], ['config', 'db'])
 def cmd(send, msg, args):
     """Greps the log for a string.
-    Syntax: !grep <string>
+    Syntax: !grep (--nick <nick>) <string>
     """
     if not msg:
         send('Please specify a search term.')
         return
     cmdchar = args['config']['core']['cmdchar']
-    row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%'+msg+'%')).order_by(Log.id.desc()).first()
+    nickregex = args['config']['core']['nickregex']
+    match = re.match('--nick (%s+) (.*)' % nickregex, msg)
+    if match:
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == match.group(1), ~Log.msg.startswith(cmdchar),
+                                           Log.msg.like('%'+match.group(2)+'%')).order_by(Log.id.desc()).first()
+    else:
+        if re.match('--nick (%s+)' % nickregex, msg):
+            send('Please specify a search term.')
+            return
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%'+msg+'%')).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
