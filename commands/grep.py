@@ -14,10 +14,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import argparse
 import re
 from time import strftime, localtime
 from helpers.orm import Log
 from helpers.command import Command
+
+
+class NickException(Exception):
+    pass
+
+
+class NickParser(argparse.Action):
+    def __call__(self, parser, namespace, value, option_strings):
+        if re.match(namespace.config['core']['nickregex'], value):
+            namespace.nick = value
+        else:
+            raise NickException(value)
 
 
 @Command(['grep', 'loggrep'], ['config', 'db'])
@@ -28,19 +41,26 @@ def cmd(send, msg, args):
     if not msg:
         send('Please specify a search term.')
         return
+    namespace = argparse.Namespace()
+    namespace.config = args['config']
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nick', action=NickParser)
+    parser.add_argument('string')
+    try:
+        cmdargs = parser.parse_args(msg.split(), namespace=namespace)
+    except NickException as e:
+        send('%s is not a valid nick.' % e)
+        return
     cmdchar = args['config']['core']['cmdchar']
-    nickregex = args['config']['core']['nickregex']
-    match = re.match('--nick (%s+) (.*)' % nickregex, msg)
-    if match:
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == match.group(1), ~Log.msg.startswith(cmdchar),
-                                           Log.msg.like('%'+match.group(2)+'%')).order_by(Log.id.desc()).first()
+    if cmdargs.nick:
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
+                                           Log.msg.like('%'+cmdargs.string+'%')).order_by(Log.id.desc()).first()
     else:
-        if re.match('--nick (%s+)' % nickregex, msg):
-            send('Please specify a search term.')
-            return
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%'+msg+'%')).order_by(Log.id.desc()).first()
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%'+cmdargs.string+'%')).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
+    elif cmdargs.nick:
+        send('%s has never said %s.' % (cmdargs.nick, cmdargs.string))
     else:
-        send('%s not found.' % msg)
+        send('%s has never been said.' % cmdargs.string)
