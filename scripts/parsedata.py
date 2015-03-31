@@ -16,9 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
+import collections
 from time import strftime, mktime
 from datetime import datetime, timedelta
-from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
 from os.path import dirname, exists
 from os import mkdir
@@ -28,8 +28,8 @@ from configparser import ConfigParser
 # HACK: allow sibling imports
 path.append(dirname(__file__) + '/..')
 
-from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls  # noqa
-from helpers.sql import get_session  # noqa
+from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
+from helpers.sql import get_session
 
 
 def get_quotes(session):
@@ -53,7 +53,7 @@ def get_urls(session):
 
 def get_polls(session):
     rows = session.query(Polls).filter(Polls.deleted == 0, Polls.active == 1).order_by(Polls.id).all()
-    polls = OrderedDict()
+    polls = collections.OrderedDict()
     for row in rows:
         polls[row.id] = row.question
     return polls
@@ -62,23 +62,19 @@ def get_polls(session):
 def get_responses(session, polls):
     responses = {}
     for pid in polls.keys():
-        responses[pid] = {}
-        rows = session.query(Poll_responses).filter(Poll_responses.pid == pid).all()
+        responses[pid] = collections.OrderedDict()
+        rows = session.query(Poll_responses).filter(Poll_responses.pid == pid).order_by(Poll_responses.response).all()
         for row in rows:
-            if row.response not in responses[pid]:
-                responses[pid][row.response] = []
-            responses[pid][row.response].append(row.voter)
+            responses[pid].setdefault(row.response, []).append(row.voter)
     return responses
 
 
 def get_winners(polls, responses):
     winners = {}
     for pid in polls.keys():
-        ranking = {}
+        ranking = collections.defaultdict(list)
         for response, voters in responses[pid].items():
             num = len(voters)
-            if num not in ranking:
-                ranking[num] = []
             ranking[num].append(response)
         if ranking:
             high = max(ranking)
