@@ -17,6 +17,7 @@
 from random import choice
 from helpers.command import Command
 from helpers.misc import get_fortune, get_urban
+from helpers.textutils import gen_lenny
 
 
 def gen_fortune(send):
@@ -29,6 +30,8 @@ def cmd(send, msg, args):
     """Abuses the bot.
     Syntax: !botspam
     """
-    cmds = [lambda: gen_fortune(send),
-            lambda: send(get_urban())]
+    def lenny_send(msg):
+        send(gen_lenny(msg))
+    cmds = [lambda: gen_fortune(lenny_send),
+            lambda: lenny_send(get_urban())]
     choice(cmds)()
