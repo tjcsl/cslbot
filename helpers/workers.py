@@ -69,7 +69,7 @@ class Workers():
         with self.lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
-                self.events[eventid].event.function(*self.events[eventid].event.args)
+                self.events[eventid].event.function(**self.events[eventid].event.kwargs)
             del self.events[eventid]
 
     def stop_workers(self):
