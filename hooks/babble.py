@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
+from datetime import datetime
 from sqlalchemy.exc import OperationalError
 from helpers.hook import Hook
 from helpers.orm import Babble
@@ -32,7 +33,7 @@ def update_markov(cursor, config):
     except OperationalError as ex:
         # If we can't lock the table, silently fail and wait for the next time we're called.
         if 'could not obtain lock on relation "babble' in str(ex):
-            logging.info('Babble table locked, skiping update.')
+            logging.info('%s Babble table locked, skipping update.' % datetime.now())
         else:
             raise ex
 
