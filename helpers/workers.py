@@ -74,7 +74,7 @@ class Workers():
 
     def check_babble(self, handler, send):
         # Re-schedule check_babble
-        self.defer(3600, False, self.handle_pending, handler, send)
+        self.defer(3600, False, self.check_babble, handler, send)
         cmdchar = handler.config['core']['cmdchar']
         ctrlchan = handler.config['core']['ctrlchan']
         with handler.db.session_scope() as session:
