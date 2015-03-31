@@ -44,7 +44,7 @@ def do_config(config):
 
     admins = ""
     while not check_admins(admins, nickregex):
-        admins = input(prompttext % "coma-delimited list of admins")
+        admins = input(prompttext % "comma-delimited list of admins")
     config['auth']['admins'] = admins
 
 
