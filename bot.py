@@ -23,6 +23,7 @@ try:
     import atexit
     import ssl
     import handler
+    import multiprocessing
     import helpers.server as server
     import helpers.config as config
     import helpers.traceback as traceback
@@ -279,6 +280,7 @@ def main(args):
     bot.start()
 
 if __name__ == '__main__':
+    multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     args = parser.parse_args()

@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import multiprocessing
 from collections import namedtuple
 from threading import Lock, Timer
 from .traceback import handle_traceback
@@ -29,6 +30,7 @@ class Workers():
 
     def __init__(self, handler):
         self.lock = Lock()
+        self.pool = multiprocessing.Pool(1)
         self.events = {}
         self.handler = handler
         # Set-up notifications for pending admin approval.
@@ -37,6 +39,14 @@ class Workers():
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
+
+    def run_pool(self, func, args):
+        return self.pool.apply_async(func, args)
+
+    def restart_pool(self):
+        self.pool.terminate()
+        self.pool.join()
+        self.pool = multiprocessing.Pool(1)
 
     def run_action(self, func, args):
         try:
@@ -60,6 +70,8 @@ class Workers():
             del self.events[eventid]
 
     def stop_workers(self):
+        self.pool.close()
+        self.pool.join()
         with self.lock:
             for x in self.events.values():
                 x.event.cancel()
