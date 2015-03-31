@@ -31,7 +31,7 @@ def update_markov(cursor, config):
         build_markov(cursor, cmdchar, ctrlchan)
     except OperationalError as ex:
         # If we can't lock the table, silently fail and wait for the next time we're called.
-        if 'could not obtain lock on relation "babble"' in str(ex):
+        if 'could not obtain lock on relation "babble' in str(ex):
             logging.info('Babble table locked, skiping update.')
         else:
             raise ex
