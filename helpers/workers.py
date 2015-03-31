@@ -41,12 +41,15 @@ class Workers():
         self.defer(3600, False, self.check_babble, handler, send)
 
     def run_pool(self, func, args):
-        return self.pool.apply_async(func, args)
+        with self.lock:
+            result = self.pool.apply_async(func, args)
+        return result
 
     def restart_pool(self):
-        self.pool.terminate()
-        self.pool.join()
-        self.pool = multiprocessing.Pool()
+        with self.lock:
+            self.pool.terminate()
+            self.pool.join()
+            self.pool = multiprocessing.Pool()
 
     def run_action(self, func, args):
         try:
@@ -70,9 +73,9 @@ class Workers():
             del self.events[eventid]
 
     def stop_workers(self):
-        self.pool.close()
-        self.pool.join()
         with self.lock:
+            self.pool.close()
+            self.pool.join()
             for x in self.events.values():
                 x.event.cancel()
             self.events.clear()
