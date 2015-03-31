@@ -46,7 +46,7 @@ class Workers():
     def restart_pool(self):
         self.pool.terminate()
         self.pool.join()
-        self.pool = multiprocessing.Pool(1)
+        self.pool = multiprocessing.Pool()
 
     def run_action(self, func, args):
         try:
