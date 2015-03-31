@@ -7,7 +7,7 @@ ipv6: False
 nick: exampleBot
 channel: #channel
 ctrlchan: #channel-control
-extrachans: #chan1, #chan2
+extrachans:
 cmdchar: !
 altcmdchars: fwil, @, ~
 url: http://example.com/irc/

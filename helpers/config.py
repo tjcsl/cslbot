@@ -63,4 +63,5 @@ def do_setup(configfile):
     config.read_file(open(configfile))
     do_config(config)
     config.write(open(configfile, 'w'))
+    print('WARNING: you must set the db.engine option for the bot to work.')
     print("Configuration succeded, please review config.cfg and restart the bot.")
