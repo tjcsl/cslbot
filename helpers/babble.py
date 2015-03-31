@@ -99,7 +99,7 @@ def build_rows(cursor, markov, initial_run):
                     count_target[target] += 1
                 else:
                     update_count(cursor, source, target)
-                data.append({'source': source, 'target': target, 'key': key, 'word': word, 'freq': freq})
+                data.append((source, target, key, word, freq))
     count_data = []
     for source, count in count_source.items():
         count_data.append({'type': 'source', 'key': source, 'count': count})
@@ -135,7 +135,19 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
             print('Created index in %f' % (time.time()-t))
     if debug:
         t = time.time()
-    cursor.bulk_insert_mappings(Babble, data)
+    if initial_run and cursor.bind.dialect.name == 'postgresql':
+        # Crazy magic to insert a ton of data really fast.
+        raw_cursor = cursor.connection().connection.cursor()
+        prev = 0
+        for i in range(20000, len(data), 20000):
+            args_str = '\n'.join([raw_cursor.mogrify("INSERT INTO babble (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);", x).decode() for x in data[prev:i]])
+            raw_cursor.execute(args_str)
+            prev = i
+        args_str = '\n'.join([raw_cursor.mogrify("INSERT INTO babble (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);", x).decode() for x in data[prev:]])
+        raw_cursor.execute(args_str)
+    else:
+        data = [{'source': x[0], 'target': x[1], 'key': x[2], 'word': x[3], 'freq': x[4]} for x in data]
+        cursor.bulk_insert_mappings(Babble, data)
     cursor.bulk_insert_mappings(Babble_count, count_data)
     if debug:
         print('Inserted rows in %f' % (time.time()-t))
