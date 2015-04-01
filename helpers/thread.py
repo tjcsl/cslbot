@@ -22,9 +22,9 @@ _lock = Lock()
 _executor = ThreadPoolExecutor(_threadcount)
 
 
-def start(*args):
+def start(func, *args, **kwargs):
     with _lock:
-        _executor.submit(*args)
+        _executor.submit(func, *args, **kwargs)
 
 
 def shutdown(reload):
