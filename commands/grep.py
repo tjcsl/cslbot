@@ -15,22 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import re
 from time import strftime, localtime
 from helpers.orm import Log
+from helpers import arguments
+from helpers.exception import NickException
 from helpers.command import Command
-
-
-class NickException(Exception):
-    pass
-
-
-class NickParser(argparse.Action):
-    def __call__(self, parser, namespace, value, option_strings):
-        if re.match(namespace.config['core']['nickregex'], value):
-            namespace.nick = value
-        else:
-            raise NickException(value)
 
 
 @Command(['grep', 'loggrep'], ['config', 'db'])
@@ -41,13 +30,11 @@ def cmd(send, msg, args):
     if not msg:
         send('Please specify a search term.')
         return
-    namespace = argparse.Namespace()
-    namespace.config = args['config']
     parser = argparse.ArgumentParser()
-    parser.add_argument('--nick', action=NickParser)
+    parser.add_argument('--nick', action=arguments.NickParser)
     parser.add_argument('string')
     try:
-        cmdargs = parser.parse_args(msg.split(), namespace=namespace)
+        cmdargs = arguments.parse_args(parser, args['config'], msg)
     except NickException as e:
         send('%s is not a valid nick.' % e)
         return

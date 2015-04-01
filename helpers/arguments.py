@@ -14,11 +14,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import argparse
+import re
+from .exception import NickException
 
-# Pretty error messages.
-class CommandFailedException(Exception):
-    pass
+
+class NickParser(argparse.Action):
+    def __call__(self, parser, namespace, value, option_strings):
+        if re.match(namespace.config['core']['nickregex'], value):
+            namespace.nick = value
+        else:
+            raise NickException(value)
 
 
-class NickException(Exception):
-    pass
+def parse_args(parser, config, msg):
+    namespace = argparse.Namespace()
+    namespace.config = config
+    return parser.parse_args(msg.split(), namespace=namespace)
