@@ -119,14 +119,14 @@ class Command():
         def wrapper(send, msg, args):
             try:
                 thread = threading.current_thread()
-                thread_id = re.match('Thread-[0-9]+', thread.name).group(0)
-                thread.name = thread_id + " running command." + self.names[0]
+                thread_id = re.match('Thread-\d+', thread.name).group(0)
+                thread.name = "%s running command.%s" % (thread_id, self.names[0])
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
             except Exception as ex:
                 handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
             finally:
-                thread.name =  thread_id + " last ran command." + self.names[0]
+                thread.name = "%s last ran command.%s" % (thread_id, self.names[0])
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")

@@ -25,15 +25,15 @@ def cmd(send, msg, args):
     Syntax: !threads
     """
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
-        #Handle the threads with a 'func' kwarg (handle_pending and check_babble)
+        # Handle the threads with a 'func' kwarg (handle_pending and check_babble)
         if hasattr(x, 'kwargs') and 'func' in x.kwargs:
-            send(re.match('Thread-[0-9]+', x.name).group(0) + " running " + x.kwargs['func'].__name__)
-        #Handle the main server thread (permanently listed as _worker)
-        elif re.match('Thread-[0-9]+$', x.name) and x._target.__name__ == '_worker':
-            send(x.name + " running main server")
-        #Handle the pool threads (they don't have names beyond Thread-x)
-        elif re.match('Thread-[0-9]+$', x.name):
-            send(x.name + " running " + x._target.__name__)
-        #Handle everything else (these are threads which we name elsewhere and MainThread)
+            send("%s running %s" % (re.match('Thread-\d+', x.name).group(0), x.kwargs['func'].__name__))
+        # Handle the main server thread (permanently listed as _worker)
+        elif re.match('Thread-\d+$', x.name) and x._target.__name__ == '_worker':
+            send("%s running server" % x.name)
+        # Handle the pool threads (they don't have names beyond Thread-x)
+        elif re.match('Thread-\d+$', x.name):
+            send("%s running %s" % (x.name, x._target.__name__))
+        # Handle everything else (these are threads which we name elsewhere and MainThread)
         else:
             send(x.name)
