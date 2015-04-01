@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import threading
+import re
 from helpers.command import Command
 
 
@@ -24,4 +25,15 @@ def cmd(send, msg, args):
     Syntax: !threads
     """
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
-        send(x.name)
+        #Handle the threads with a 'func' kwarg (handle_pending and check_babble)
+        if hasattr(x, 'kwargs') and 'func' in x.kwargs:
+            send(re.match('Thread-[0-9]+', x.name).group(0) + " running " + x.kwargs['func'].__name__)
+        #Handle the main server thread (permanently listed as _worker)
+        elif re.match('Thread-[0-9]+$', x.name) and x._target.__name__ == '_worker':
+            send(x.name + " running main server")
+        #Handle the pool threads (they don't have names beyond Thread-x)
+        elif re.match('Thread-[0-9]+$', x.name):
+            send(x.name + " running " + x._target.__name__)
+        #Handle everything else (these are threads which we name elsewhere and MainThread)
+        else:
+            send(x.name)

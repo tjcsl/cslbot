@@ -19,6 +19,8 @@
 
 import sys
 import functools
+import re
+import threading
 from . import modutils
 from .traceback import handle_traceback
 from .thread import start
@@ -89,10 +91,15 @@ class Hook():
         def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:
                 try:
+                    thread = threading.current_thread()
+                    thread_id = re.match('Thread-[0-9]+', thread.name).group(0)
+                    thread.name = thread_id + " running " + func.__module__
                     with self.handler.db.session_scope() as args['db']:
                         func(send, msg, args)
                 except Exception as ex:
                     handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
+                finally:
+                    thread.name = thread_id + " last ran " + func.__module__
         self.exe = wrapper
         return wrapper
 
