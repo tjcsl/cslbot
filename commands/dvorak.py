@@ -15,7 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import re
 from helpers.orm import Log
 from helpers import arguments
 from helpers.exception import NickException
@@ -31,8 +30,8 @@ def get_log(conn, user, target):
 
 
 def translate(msg, encode=True):
-    dv_orig = '-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
-    dv_dvor = '[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'
+    dv_orig = r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
+    dv_dvor = r'[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'
     dv_encode = str.maketrans(dv_orig, dv_dvor)
     dv_decode = str.maketrans(dv_dvor, dv_orig)
     return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
