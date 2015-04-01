@@ -27,16 +27,16 @@ def cmd(send, msg, args):
     """Greps the log for a string.
     Syntax: !grep (--nick <nick>) <string>
     """
-    if not msg:
-        send('Please specify a search term.')
-        return
     parser = argparse.ArgumentParser()
     parser.add_argument('--nick', action=arguments.NickParser)
-    parser.add_argument('string')
+    parser.add_argument('string', nargs='?', default=None)
     try:
         cmdargs = arguments.parse_args(parser, args['config'], msg)
     except NickException as e:
         send('%s is not a valid nick.' % e)
+        return
+    if not cmdargs.string:
+        send('Please specify a search term.')
         return
     cmdchar = args['config']['core']['cmdchar']
     if cmdargs.nick:

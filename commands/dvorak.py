@@ -14,8 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import argparse
 import re
 from helpers.orm import Log
+from helpers import arguments
+from helpers.exception import NickException
 from helpers.command import Command
 
 
@@ -35,18 +38,24 @@ def translate(msg, encode=True):
     return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
 
 
-@Command(['dvorak', 'sdamashek'], ['db', 'target'])
+@Command(['dvorak', 'sdamashek'], ['db', 'config', 'target'])
 def cmd(send, msg, args):
     """Converts a message to/from dvorak.
-    Syntax: !dvorak --<nick>
+    Syntax: !dvorak (--nick <nick>)
     """
-    conn = args['db']
-    user = msg[2:] if re.search("^--", msg) else None
-    if msg and not user:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nick', action=arguments.NickParser)
+    parser.add_argument('msg', nargs='?', default=None)
+    try:
+        cmdargs = arguments.parse_args(parser, args['config'], msg)
+    except NickException as e:
+        send('%s is not a valid nick.' % e)
+        return
+    if cmdargs.msg and not cmdargs.nick:
         send(translate(msg, False).strip())
         return
-    log = get_log(conn, user, args['target'])
-    if user and not log:
-        send("Couldn't find a message from %s :(" % user)
+    log = get_log(args['db'], cmdargs.nick, args['target'])
+    if not log:
+        send("Couldn't find a message from %s :(" % cmdargs.nick)
     else:
         send(translate(log))
