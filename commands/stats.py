@@ -14,9 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 from random import choice
 from helpers.orm import Commands
+from helpers import arguments
 from helpers.command import Command, is_registered
 
 
@@ -53,56 +53,58 @@ def get_nick_totals(session, command=None):
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
-    Syntax: !stats <--high|--low|--userhigh|--user <nick>|command>
+    Syntax: !stats <--high|--low|--userhigh|--nick <nick>|command>
     """
+    parser = arguments.ArgParser(args['config'])
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--high', action='store_true')
+    group.add_argument('--low', action='store_true')
+    group.add_argument('--userhigh', action='store_true')
+    group.add_argument('--nick', action=arguments.NickParser)
+    group.add_argument('command', nargs='?')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     session = args['db']
-    nickregex = args['config']['core']['nickregex']
     commands = get_commands(session)
     totals = get_command_totals(session, commands)
-    if is_registered(msg):
-        nicktotals = get_nick_totals(session, msg)
+    sortedtotals = sorted(totals, key=totals.get)
+    if is_registered(cmdargs.command):
+        nicktotals = get_nick_totals(session, cmdargs.command)
         maxuser = sorted(nicktotals, key=nicktotals.get)
         if not maxuser:
             send("Nobody has used that command.")
         else:
             maxuser = maxuser[-1]
-            send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, msg, nicktotals[maxuser], totals[msg]))
-    elif re.match('--(.*)', msg):
-        match = re.match('--(.*)', msg)
+            send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, cmdargs.command, nicktotals[maxuser], totals[cmdargs.command]))
+    elif cmdargs.high:
+        send('Most Used Commands:')
+        high = list(reversed(sortedtotals))
+        for x in range(3):
+            if x < len(high):
+                send("%s: %s" % (high[x], totals[high[x]]))
+    elif cmdargs.low:
+        send('Least Used Commands:')
+        low = sortedtotals
+        for x in range(3):
+            if x < len(low):
+                send("%s: %s" % (low[x], totals[low[x]]))
+    elif cmdargs.userhigh:
+        totals = get_nick_totals(session)
         sortedtotals = sorted(totals, key=totals.get)
-        if match.group(1) == 'high':
-            send('Most Used Commands:')
-            high = list(reversed(sortedtotals))
-            for x in range(3):
-                if x < len(high):
-                    send("%s: %s" % (high[x], totals[high[x]]))
-        elif match.group(1) == 'low':
-            send('Least Used Commands:')
-            low = sortedtotals
-            for x in range(3):
-                if x < len(low):
-                    send("%s: %s" % (low[x], totals[low[x]]))
-        elif match.group(1) == 'userhigh':
-            totals = get_nick_totals(session)
-            sortedtotals = sorted(totals, key=totals.get)
-            high = list(reversed(sortedtotals))
-            send('Most active bot users:')
-            for x in range(3):
-                if x < len(high):
-                    send("%s: %s" % (high[x], totals[high[x]]))
+        high = list(reversed(sortedtotals))
+        send('Most active bot users:')
+        for x in range(3):
+            if x < len(high):
+                send("%s: %s" % (high[x], totals[high[x]]))
+    elif cmdargs.nick:
+        totals = get_nick_totals(session)
+        if cmdargs.nick not in totals.keys():
+            send("%s has never used a bot command." % cmdargs.nick)
         else:
-            match = re.match('--user (%s+)' % nickregex, msg)
-            if match:
-                msg = match.group(1)
-                totals = get_nick_totals(session)
-                if msg not in totals.keys():
-                    send("%s has never used a bot command." % msg)
-                else:
-                    send("%s has used %d bot commands." % (msg, totals[msg]))
-            else:
-                send("%s is not a valid flag" % match.group(1))
-    elif msg:
-        send("Non-existant command.")
+            send("%s has used %d bot commands." % (cmdargs.nick, totals[cmdargs.nick]))
     else:
         cmd = choice(list(totals.keys()))
         send("%s has been used %s times." % (cmd, totals[cmd]))
