@@ -18,6 +18,7 @@ import multiprocessing
 from collections import namedtuple
 from threading import Lock, Timer
 from .traceback import handle_traceback
+from .babble import update_markov
 from .control import show_pending
 from .orm import Babble_last, Log
 from sqlalchemy import or_
@@ -93,6 +94,8 @@ class Workers():
         cmdchar = handler.config['core']['cmdchar']
         ctrlchan = handler.config['core']['ctrlchan']
         with handler.db.session_scope() as session:
+            if not update_markov(session, handler.config):
+                raise Exception("Failed to update markov.")
             last = session.query(Babble_last).first()
             row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:

@@ -21,7 +21,10 @@ import re
 import time
 import collections
 import string
+import logging
+from datetime import datetime
 from sqlalchemy import Index, or_
+from sqlalchemy.exc import OperationalError
 from helpers.orm import Log, Babble, Babble_last, Babble_count
 
 
@@ -165,3 +168,21 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     cursor.commit()
     if debug:
         print('Commited in %f' % (time.time()-t))
+
+
+def update_markov(cursor, config):
+    cmdchar = config['core']['cmdchar']
+    ctrlchan = config['core']['ctrlchan']
+    try:
+        cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
+        cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
+        cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+        build_markov(cursor, cmdchar, ctrlchan)
+        return True
+    except OperationalError as ex:
+        # If we can't lock the table, silently fail and wait for the next time we're called.
+        if 'could not obtain lock on relation "babble' in str(ex):
+            logging.info('%s Babble table locked, skipping update.' % datetime.now())
+            return False
+        else:
+            raise ex
