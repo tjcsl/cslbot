@@ -126,7 +126,7 @@ class Command():
             except Exception as ex:
                 handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
             finally:
-                thread.name = "%s last ran command.%s" % (thread_id, self.names[0])
+                thread.name = "%s idle, last ran command.%s" % (thread_id, self.names[0])
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")

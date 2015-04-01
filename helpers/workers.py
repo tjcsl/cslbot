@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
+import threading
 import multiprocessing
 from collections import namedtuple
 from threading import Lock, Timer
@@ -54,13 +56,17 @@ class Workers():
 
     def run_action(self, func, args):
         try:
-                func(*args)
+            thread = threading.current_thread()
+            thread_id = re.match('Thread-\d+', thread.name).group(0)
+            thread.name = '%s running %s' % (thread_id, func.__name__)
+            func(*args)
         except Exception as ex:
             ctrlchan = self.handler.config['core']['ctrlchan']
             handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
 
     def defer(self, t, run_on_cancel, func, *args):
         event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
+        event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
         with self.lock:
             self.events[event.ident] = Event(event, run_on_cancel)

@@ -99,7 +99,7 @@ class Hook():
                 except Exception as ex:
                     handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
                 finally:
-                    thread.name = "%s last ran %s" % (thread_id, func.__module__)
+                    thread.name = "%s idle, last ran %s" % (thread_id, func.__module__)
         self.exe = wrapper
         return wrapper
 
