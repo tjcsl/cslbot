@@ -14,11 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import argparse
 from time import strftime, localtime
 from helpers.orm import Log
 from helpers import arguments
-from helpers.exception import NickException
 from helpers.command import Command
 
 
@@ -27,13 +25,13 @@ def cmd(send, msg, args):
     """Greps the log for a string.
     Syntax: !grep (--nick <nick>) <string>
     """
-    parser = argparse.ArgumentParser()
+    parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)
-    parser.add_argument('string', nargs='?', default=None)
+    parser.add_argument('string', nargs='?')
     try:
-        cmdargs = arguments.parse_args(parser, args['config'], msg)
-    except NickException as e:
-        send('%s is not a valid nick.' % e)
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
     if not cmdargs.string:
         send('Please specify a search term.')

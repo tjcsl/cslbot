@@ -18,7 +18,3 @@
 # Pretty error messages.
 class CommandFailedException(Exception):
     pass
-
-
-class NickException(Exception):
-    pass

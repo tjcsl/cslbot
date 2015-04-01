@@ -16,18 +16,30 @@
 
 import argparse
 import re
-from .exception import NickException
+
+
+class ArgumentException(Exception):
+    pass
 
 
 class NickParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
+        if value is None:
+            return
         if re.match(namespace.config['core']['nickregex'], value):
             namespace.nick = value
         else:
-            raise NickException(value)
+            raise ArgumentException("Invalid nick %s." % value)
 
 
-def parse_args(parser, config, msg):
-    namespace = argparse.Namespace()
-    namespace.config = config
-    return parser.parse_args(msg.split(), namespace=namespace)
+class ArgParser(argparse.ArgumentParser):
+    def __init__(self, config):
+        super().__init__()
+        self.namespace = argparse.Namespace()
+        self.namespace.config = config
+
+    def error(self, message):
+        raise ArgumentException(message)
+
+    def parse_args(self, msg):
+        return super().parse_args(msg.split(), namespace=self.namespace)

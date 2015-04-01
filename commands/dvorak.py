@@ -14,10 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import argparse
 from helpers.orm import Log
 from helpers import arguments
-from helpers.exception import NickException
 from helpers.command import Command
 
 
@@ -42,13 +40,14 @@ def cmd(send, msg, args):
     """Converts a message to/from dvorak.
     Syntax: !dvorak (--nick <nick>)
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nick', action=arguments.NickParser)
-    parser.add_argument('msg', nargs='?', default=None)
+    parser = arguments.ArgParser(args['config'])
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--nick', action=arguments.NickParser)
+    group.add_argument('msg', nargs='?')
     try:
-        cmdargs = arguments.parse_args(parser, args['config'], msg)
-    except NickException as e:
-        send('%s is not a valid nick.' % e)
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
     if cmdargs.msg and not cmdargs.nick:
         send(translate(msg, False).strip())

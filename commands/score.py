@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 from random import randint
+from helpers import arguments
 from helpers.orm import Scores
 from helpers.command import Command
 
@@ -29,24 +29,28 @@ def cmd(send, msg, args):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
         return
     session = args['db']
-    match = re.match('--(.+)', msg)
-    if match:
-        if match.group(1) == 'high':
-            data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
-            send('High Scores:')
-            for x in data:
-                send("%s: %s" % (x.nick, x.score))
-        elif match.group(1) == 'low':
-            data = session.query(Scores).order_by(Scores.score).limit(3).all()
-            send('Low Scores:')
-            for x in data:
-                send("%s: %s" % (x.nick, x.score))
-        else:
-            send("%s is not a valid flag" % match.group(1))
+    parser = arguments.ArgParser(args['config'])
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--high', action='store_true')
+    group.add_argument('--low', action='store_true')
+    group.add_argument('nick', nargs='?', action=arguments.NickParser)
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
-    match = re.match('(%s+)$' % args['config']['core']['nickregex'], msg)
-    if match:
-        name = match.group(1).lower()
+    if cmdargs.high:
+        data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
+        send('High Scores:')
+        for x in data:
+            send("%s: %s" % (x.nick, x.score))
+    elif cmdargs.low:
+        data = session.query(Scores).order_by(Scores.score).limit(3).all()
+        send('Low Scores:')
+        for x in data:
+            send("%s: %s" % (x.nick, x.score))
+    elif cmdargs.nick:
+        name = cmdargs.nick.lower()
         if name == 'c':
             send("We all know you love C better than anything else, so why rub it in?")
             return
@@ -59,8 +63,6 @@ def cmd(send, msg, args):
                 send("%s has %i points!" % (name, score.score))
         else:
             send("Nobody cares about %s" % name)
-    elif msg:
-        send("Invalid nick")
     else:
         count = session.query(Scores).count()
         if count == 0:
