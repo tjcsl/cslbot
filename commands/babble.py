@@ -14,10 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 import bisect
 import random
 from sqlalchemy.sql.expression import func
+from helpers import arguments
 from helpers.command import Command
 from helpers.orm import Babble, Babble_count
 
@@ -66,22 +66,15 @@ def cmd(send, msg, args):
     """Babbles like a user
     Syntax: !babble (--start <word>) (nick)
     """
-    corecfg = args['config']['core']
-    match = re.match('--start (.+) (.+)', msg)
-    start = None
-    if match:
-        start = match.group(1)
-        speaker = match.group(2)
-    elif msg:
-        match = re.match('--start (.+)', msg)
-        if match:
-            start = match.group(1)
-            speaker = corecfg['channel']
-        else:
-            speaker = msg.split()[0]
-    else:
-        speaker = corecfg['channel']
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--start')
+    parser.add_argument('speaker', nargs='?', default=args['config']['core']['channel'])
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     if args['db'].query(Babble).count():
-        send(build_msg(args['db'], speaker, start))
+        send(build_msg(args['db'], cmdargs.speaker, cmdargs.start))
     else:
         send("Please run ./scripts/gen_babble.py to initialize the babble cache")
