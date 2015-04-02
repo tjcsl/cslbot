@@ -43,7 +43,7 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--nick', action=arguments.NickParser)
-    group.add_argument('msg', nargs='?')
+    group.add_argument('msg', nargs='+')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
