@@ -14,167 +14,153 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 import logging
-from . import command, hook
+from . import command, hook, arguments
 from .orm import Quotes, Issues, Polls
 from commands.issue import create_issue
 
 
-def handle_chanserv(c, cmd, send):
-    if len(cmd) < 3:
-        send("Missing arguments.")
-        return
-    if cmd[1] == "op" or cmd[1] == "o":
-        action = "OP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-    elif cmd[1] == "deop" or cmd[1] == "do":
-        action = "DEOP %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-    elif cmd[1] == "voice" or cmd[1] == "v":
-        action = "VOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-    elif cmd[1] == "devoice" or cmd[1] == "dv":
-        action = "DEVOICE %s %s" % (cmd[2], cmd[3] if len(cmd) > 3 else "")
-    else:
-        send("Invalid action.")
-        return
-    send(action, target="ChanServ")
+def handle_chanserv(args):
+    args.send("%s %s" % (args.cmd, " ".join(args.args)), target="ChanServ")
 
 
-def handle_disable(handler, cmd):
-    if len(cmd) < 2:
-        return "Missing argument."
-    if cmd[1] == "kick":
-        if not handler.kick_enabled:
-            return "Kick already disabled."
+def handle_disable(args):
+    if args.cmd == "kick":
+        if not args.handler.kick_enabled:
+            args.send("Kick already disabled.")
         else:
-            handler.kick_enabled = False
-            return "Kick disabled."
-    elif cmd[1] == "command":
-        if len(cmd) < 3:
-            return "Missing argument."
-        return command.disable_command(cmd[2])
-    elif cmd[1] == "hook":
-        if len(cmd) < 3:
-            return "Missing argument."
-        return hook.disable_hook(cmd[2])
-    elif cmd[1] == "logging":
+            args.handler.kick_enabled = False
+            args.send("Kick disabled.")
+    elif args.cmd == "command":
+        if args.args:
+            args.send(command.disable_command(args.args[0]))
+        else:
+            args.send("Missing argument.")
+    elif args.cmd == "hook":
+        if args.args:
+            args.send(hook.disable_hook(args.args[0]))
+        else:
+            args.send("Missing argument.")
+    elif args.cmd == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.INFO:
-            return "logging already disabled."
+            args.send("logging already disabled.")
         else:
             logging.getLogger().setLevel(logging.INFO)
-            return "Logging disabled."
-    elif cmd[1] == "chanlog":
-        if handler.log_to_ctrlchan:
-            handler.log_to_ctrlchan = False
-            return "Control channel logging disabled."
+            args.send("Logging disabled.")
+    elif args.cmd == "chanlog":
+        if args.handler.log_to_ctrlchan:
+            args.handler.log_to_ctrlchan = False
+            args.send("Control channel logging disabled.")
         else:
-            return "Control channel logging is already disabled."
-    else:
-        return "Invalid argument."
+            args.send("Control channel logging is already disabled.")
 
 
-def handle_enable(handler, cmd):
-    if len(cmd) < 2:
-        return "Missing argument."
-    if cmd[1] == "kick":
-        if handler.kick_enabled:
-            return "Kick already enabled."
+def handle_enable(args):
+    if args.cmd == "kick":
+        if args.handler.kick_enabled:
+            args.send("Kick already enabled.")
         else:
-            handler.kick_enabled = True
-            return "Kick enabled."
-    elif cmd[1] == "command":
-        if len(cmd) < 3:
-            return "Missing argument."
-        return command.enable_command(cmd[2])
-    elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "commands":
-        return command.enable_command(cmd[1])
-    elif cmd[1] == "hook":
-        if len(cmd) < 3:
-            return "Missing argument."
-        return hook.enable_hook(cmd[2])
-    elif len(cmd) > 2 and cmd[1] == "all" and cmd[2] == "hooks":
-        return hook.enable_hook(cmd[1])
-    elif cmd[1] == "logging":
+            args.handler.kick_enabled = True
+            args.send("Kick enabled.")
+    elif args.cmd == "command":
+        if args.args:
+            args.send(command.enable_command(args.args[0]))
+        else:
+            args.send("Missing argument.")
+    elif args.cmd == "all":
+        if not args.args:
+            args.send("Missing argument.")
+        elif args.args[0] == "commands":
+            args.send(command.enable_command(args.cmd))
+        elif args.args[0] == "hooks":
+            args.send(hook.enable_hook(args.cmd))
+        else:
+            args.send("Invalid argument.")
+    elif args.cmd == "hook":
+        if args.args:
+            args.send(hook.enable_hook(args.args[0]))
+        else:
+            args.send("Missing argument.")
+    elif args.cmd == "logging":
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-            return "logging already enabled."
+            args.send("logging already enabled.")
         else:
             logging.getLogger().setLevel(logging.DEBUG)
-            return "Logging enabled."
-    elif cmd[1] == "chanlog":
-        if not handler.log_to_ctrlchan:
-            handler.log_to_ctrlchan = True
-            return "Control channel logging enabled."
+            args.send("Logging enabled.")
+    elif args.cmd == "chanlog":
+        if not args.handler.log_to_ctrlchan:
+            args.handler.log_to_ctrlchan = True
+            args.send("Control channel logging enabled.")
         else:
-            return "Control channel logging is already enabled."
+            args.send("Control channel logging is already enabled.")
+
+
+def handle_guard(args):
+    if args.nick in args.handler.guarded:
+        return "Already guarding %s" % args.nick
     else:
-        return "Invalid argument."
+        args.handler.guarded.append(args.nick)
+        return "Guarding %s" % args.nick
 
 
-def handle_guard(handler, cmd):
-    if len(cmd) < 2:
-        return "Missing argument."
-    if cmd[1] in handler.guarded:
-        return "Already guarding " + cmd[1]
+def handle_unguard(args):
+    if args.nick not in args.handler.guarded:
+        return "%s is not being guarded" % args.nick
     else:
-        handler.guarded.append(cmd[1])
-        return "Guarding " + cmd[1]
+        args.handler.guarded.remove(args.nick)
+        return "No longer guarding %s" % args.nick
 
 
-def handle_unguard(handler, cmd):
-    if len(cmd) < 2:
-        return "Missing argument."
-    if cmd[1] not in handler.guarded:
-        return "%s is not being guarded" % cmd[1]
-    else:
-        handler.guarded.remove(cmd[1])
-        return "No longer guarding %s" % cmd[1]
-
-
-def handle_show(handler, db, cmd, send):
-    if len(cmd) < 2:
-        send("Missing argument.")
-        return
-    elif cmd[1] == "guarded":
-        if handler.guarded:
-            send(", ".join(handler.guarded))
+def handle_show(args):
+    if args.cmd == "guarded":
+        if args.handler.guarded:
+            args.send(", ".join(args.handler.guarded))
         else:
-            send("Nobody is guarded.")
-    elif cmd[1] == "issues":
-        issues = db.query(Issues).filter(Issues.accepted == 0).all()
+            args.send("Nobody is guarded.")
+    elif args.cmd == "issues":
+        issues = args.db.query(Issues).filter(Issues.accepted == 0).all()
         if issues:
-            show_issues(issues, send)
+            show_issues(issues, args.send)
         else:
-            send("No outstanding issues.")
-    elif cmd[1] == "quotes":
-        quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
+            args.send("No outstanding issues.")
+    elif args.cmd == "quotes":
+        quotes = args.db.query(Quotes).filter(Quotes.approved == 0).all()
         if quotes:
-            show_quotes(quotes, send)
+            show_quotes(quotes, args.send)
         else:
-            send("No quotes pending.")
-    elif cmd[1] == "polls":
-        polls = db.query(Polls).filter(Polls.accepted == 0).all()
+            args.send("No quotes pending.")
+    elif args.cmd == "polls":
+        polls = args.db.query(Polls).filter(Polls.accepted == 0).all()
         if polls:
-            show_polls(polls, send)
+            show_polls(polls, args.send)
         else:
-            send("No polls pending.")
-    elif cmd[1] == "pending":
-        admins = ": ".join(handler.admins)
-        show_pending(db, admins, send)
-    elif len(cmd) == 3:
-        if cmd[1] == "disabled" and cmd[2] == "commands":
-            mods = ", ".join(sorted(command.get_disabled_commands()))
-            send(mods if mods else "No disabled commands.")
-        elif cmd[1] == "disabled" and cmd[2] == "hooks":
-            mods = ", ".join(sorted(hook.get_disabled_hooks()))
-            send(mods if mods else "No disabled hooks.")
-        elif cmd[1] == "enabled" and cmd[2] == "commands":
+            args.send("No polls pending.")
+    elif args.cmd == "pending":
+        admins = ": ".join(args.handler.admins)
+        show_pending(args.db, admins, args.send)
+    elif args.cmd == "enabled":
+        if not args.args:
+            args.send("Missing argument.")
+        elif args[0] == "commands":
             mods = ", ".join(sorted(command.get_enabled_commands()))
-            send(mods)
-        elif cmd[1] == "enabled" and cmd[2] == "hooks":
+            args.send(mods)
+        elif args[0] == "hooks":
             mods = ", ".join(sorted(hook.get_enabled_hooks()))
-            send(mods)
+            args.send(mods)
         else:
-            send("Invalid Argument.")
-    else:
-        send("Invalid Argument.")
+            args.send("Invalid argument.")
+    elif args.cmd == "disabled":
+        if not args.args:
+            args.send("Missing argument.")
+        elif args[0] == "commands":
+            mods = ", ".join(sorted(command.get_disabled_commands()))
+            args.send(mods if mods else "No disabled commands.")
+        elif args[0] == "hooks":
+            mods = ", ".join(sorted(hook.get_disabled_hooks()))
+            args.send(mods if mods else "No disabled hooks.")
+        else:
+            args.send("Invalid argument.")
 
 
 def show_quotes(quotes, send):
@@ -213,24 +199,17 @@ def show_pending(db, admins, send, ping=False):
         show_polls(polls, send)
 
 
-def handle_accept(handler, db, cmd):
-    if len(cmd) < 3:
-        return "Missing argument."
-    if cmd[1] == 'issue':
-        return accept_issue(handler, db, cmd[1:])
-    elif cmd[1] == 'quote':
-        return accept_quote(handler, db, cmd[1:])
-    elif cmd[1] == 'poll':
-        return accept_poll(handler, db, cmd[1:])
-    else:
-        return "Valid arguments are issue and quote"
+def handle_accept(args):
+    if args.cmd == 'issue':
+        args.send(accept_issue(args.handler, args.db, args.num))
+    elif args.cmd == 'quote':
+        args.send(accept_quote(args.handler, args.db, args.num))
+    elif args.cmd == 'poll':
+        args.send(accept_poll(args.handler, args.db, args.num))
 
 
-def accept_issue(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    num = int(cmd[1])
-    issue = db.query(Issues).get(num)
+def accept_issue(handler, db, num):
+    issue = db.query(Issues).filter(Issues.accepted == 0, Issues.id == num).first()
     if issue is None:
         return "Not a valid issue"
     repo = handler.config['api']['githubrepo']
@@ -247,11 +226,8 @@ def accept_issue(handler, db, cmd):
     return ""
 
 
-def accept_quote(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    qid = int(cmd[1])
-    quote = db.query(Quotes).get(qid)
+def accept_quote(handler, db, qid):
+    quote = db.query(Quotes).filter(Quotes.approved == 0, Quotes.id == qid).first()
     if quote is None:
         return "Not a valid quote"
     quote.approved = 1
@@ -265,11 +241,8 @@ def accept_quote(handler, db, cmd):
     return ""
 
 
-def accept_poll(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    pid = int(cmd[1])
-    poll = db.query(Polls).get(pid)
+def accept_poll(handler, db, pid):
+    poll = db.query(Polls).filter(Polls.accepted == 0, Polls.id == pid).first()
     if poll is None:
         return "Not a valid poll"
     poll.accepted = 1
@@ -283,26 +256,21 @@ def accept_poll(handler, db, cmd):
     return ""
 
 
-def handle_reject(handler, db, cmd):
-    if len(cmd) < 3:
-        return "Missing argument."
-    if cmd[1] == 'issue':
-        return reject_issue(handler, db, cmd[1:])
-    elif cmd[1] == 'quote':
-        return reject_quote(handler, db, cmd[1:])
-    elif cmd[1] == 'poll':
-        return reject_poll(handler, db, cmd[1:])
-    else:
-        return "Valid arguments are issue and quote"
+def handle_reject(args):
+    if args.cmd == 'issue':
+        args.send(reject_issue(args.handler, args.db, args.num))
+    elif args.cmd == 'quote':
+        args.send(reject_quote(args.handler, args.db, args.num))
+    elif args.cmd == 'poll':
+        args.send(reject_poll(args.handler, args.db, args.num))
 
 
-def reject_issue(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    num = int(cmd[1])
+def reject_issue(handler, db, num):
     issue = db.query(Issues).get(num)
     if issue is None:
         return "Not a valid issue"
+    if issue.accepted == 1:
+        return "Issue already accepted"
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -314,10 +282,7 @@ def reject_issue(handler, db, cmd):
     return ""
 
 
-def reject_quote(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    qid = int(cmd[1])
+def reject_quote(handler, db, qid):
     quote = db.query(Quotes).get(qid)
     if quote is None:
         return "Not a valid quote"
@@ -334,13 +299,12 @@ def reject_quote(handler, db, cmd):
     return ""
 
 
-def reject_poll(handler, db, cmd):
-    if not cmd[1].isdigit():
-        return "Not A Valid Positive Integer"
-    pid = int(cmd[1])
+def reject_poll(handler, db, pid):
     poll = db.query(Polls).get(pid)
     if poll is None:
         return "Not a valid poll"
+    if poll.accepted == 1:
+        return "Poll already accepted."
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']
@@ -352,41 +316,85 @@ def reject_poll(handler, db, cmd):
     return ""
 
 
-def handle_quote(handler, cmd):
-    if len(cmd) == 1:
-        return "quote needs arguments."
-    if cmd[1] == "join":
-        return "quote join is not suported, use !join."
-    handler.connection.send_raw(" ".join(cmd[1:]))
-    return ""
+def handle_quote(args):
+    if args.cmd[0] == "join":
+        args.send("quote join is not suported, use !join.")
+    else:
+        args.handler.connection.send_raw(" ".join(args.cmd))
+
+
+def handle_help(args):
+    args.send("quote <raw command>")
+    args.send("cs|chanserv <chanserv command>")
+    args.send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
+    args.send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <commands|hooks>")
+    args.send("accept|reject <issue|quote|poll> <num>")
+    args.send("guard|unguard <nick>")
+
+
+def init_parser(send, handler, db):
+    parser = arguments.ArgParser(handler.config)
+    parser.set_defaults(send=send, handler=handler, db=db)
+    subparser = parser.add_subparsers()
+
+    quote_parser = subparser.add_parser('quote')
+    quote_parser.add_argument('cmd', nargs='+')
+    quote_parser.set_defaults(func=handle_quote)
+
+    help_parser = subparser.add_parser('help')
+    help_parser.set_defaults(func=handle_help)
+
+    cs_parser = subparser.add_parser('chanserv', aliases=['cs'])
+    cs_parser.add_argument('cmd', choices=['op', 'deop', 'voice', 'devoice'])
+    cs_parser.add_argument('args', nargs='+')
+    cs_parser.set_defaults(func=handle_chanserv)
+
+    disable_parser = subparser.add_parser('disable')
+    disable_parser.add_argument('cmd', choices=['kick', 'command', 'hook', 'logging', 'chanlog'])
+    disable_parser.add_argument('args', nargs='*')
+    disable_parser.set_defaults(func=handle_disable)
+
+    enable_parser = subparser.add_parser('enable')
+    enable_parser.add_argument('cmd', choices=['kick', 'command', 'hook', 'logging', 'chanlog', 'all'])
+    enable_parser.add_argument('args', nargs='*')
+    enable_parser.set_defaults(func=handle_enable)
+
+    guard_parser = subparser.add_parser('guard')
+    guard_parser.add_argument('nick', action=arguments.NickParser)
+    guard_parser.set_defaults(func=handle_guard)
+
+    unguard_parser = subparser.add_parser('unguard')
+    unguard_parser.add_argument('nick', action=arguments.NickParser)
+    unguard_parser.set_defaults(func=handle_unguard)
+
+    show_parser = subparser.add_parser('show')
+    show_parser.add_argument('cmd', choices=['guarded', 'issues', 'quotes', 'polls', 'pending', 'disabled', 'enabled'])
+    show_parser.add_argument('args', nargs='*')
+    show_parser.set_defaults(func=handle_show)
+
+    show_parser = subparser.add_parser('accept')
+    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll'])
+    show_parser.add_argument('num', type=int)
+    show_parser.set_defaults(func=handle_accept)
+
+    show_parser = subparser.add_parser('reject')
+    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll'])
+    show_parser.add_argument('num', type=int)
+    show_parser.set_defaults(func=handle_reject)
+
+    return parser
 
 
 def handle_ctrlchan(handler, msg, c, send):
     """ Handle the control channel."""
     with handler.db.session_scope() as db:
-        cmd = msg.split()
-        if cmd[0] == "quote":
-            send(handle_quote(handler, cmd))
-        elif cmd[0] == "cs" or cmd[0] == "chanserv":
-            handle_chanserv(c, cmd, send)
-        elif cmd[0] == "disable":
-            send(handle_disable(handler, cmd))
-        elif cmd[0] == "enable":
-            send(handle_enable(handler, cmd))
-        elif cmd[0] == "help":
-            send("quote <raw command>")
-            send("cs|chanserv <chanserv command>")
-            send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
-            send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <commands|hooks>")
-            send("accept|reject <issue|quote|poll> <num>")
-            send("guard|unguard <nick>")
-        elif cmd[0] == "guard":
-            send(handle_guard(handler, cmd))
-        elif cmd[0] == "unguard":
-            send(handle_unguard(handler, cmd))
-        elif cmd[0] == "show":
-            handle_show(handler, db, cmd, send)
-        elif cmd[0] == "accept":
-            send(handle_accept(handler, db, cmd))
-        elif cmd[0] == "reject":
-            send(handle_reject(handler, db, cmd))
+        parser = init_parser(send, handler, db)
+        try:
+            cmdargs = parser.parse_args(msg)
+        except arguments.ArgumentException as e:
+            # FIXME: figure out a better way to allow non-commands without spamming the channel.
+            err_str = "invalid choice: '.*' \(choose from 'quote', 'help', 'chanserv', 'cs', 'disable', 'enable', 'guard', 'unguard', 'show', 'accept', 'reject'\)"
+            if not re.match(err_str, str(e)):
+                send(str(e))
+            return
+        cmdargs.func(cmdargs)
