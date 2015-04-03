@@ -12,6 +12,14 @@ helpers.admin module
     :undoc-members:
     :show-inheritance:
 
+helpers.arguments module
+------------------------
+
+.. automodule:: helpers.arguments
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.babble module
 ---------------------
 
