@@ -178,11 +178,9 @@ def update_markov(cursor, config):
         cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
         build_markov(cursor, cmdchar, ctrlchan)
-        return True
     except OperationalError as ex:
         # If we can't lock the table, silently fail and wait for the next time we're called.
         if 'could not obtain lock on relation "babble' in str(ex):
             logging.info('%s Babble table locked, skipping update.' % datetime.now())
-            return False
         else:
             raise ex

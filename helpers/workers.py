@@ -100,8 +100,7 @@ class Workers():
         cmdchar = handler.config['core']['cmdchar']
         ctrlchan = handler.config['core']['ctrlchan']
         with handler.db.session_scope() as session:
-            if not update_markov(session, handler.config):
-                send("Failed to update markov, babble may not be up-to-date for the subsequent check.", target=ctrlchan)
+            update_markov(session, handler.config)
             last = session.query(Babble_last).first()
             row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:
