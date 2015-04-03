@@ -33,8 +33,8 @@ class NickParser(argparse.Action):
 
 
 class ArgParser(argparse.ArgumentParser):
-    def __init__(self, config):
-        super().__init__()
+    def __init__(self, config=None, **kwargs):
+        super().__init__(**kwargs)
         self.namespace = argparse.Namespace()
         self.namespace.config = config
 
