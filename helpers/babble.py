@@ -174,9 +174,11 @@ def update_markov(cursor, config):
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
     try:
-        cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-        cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-        cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+        # FIXME: support locking for other dialects?
+        if cursor.bind.dialect.name == 'postgresql':
+            cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
+            cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
+            cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
         build_markov(cursor, cmdchar, ctrlchan)
     except OperationalError as ex:
         # If we can't lock the table, silently fail and wait for the next time we're called.
