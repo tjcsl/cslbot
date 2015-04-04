@@ -41,7 +41,7 @@ def get_quotes_nick(session, nick):
     if not rows:
         return "No quotes for %s" % nick
     row = choice(rows)
-    return "Quote #%d: %s -- %s" % (row.id, row.quote, nick)
+    return "Quote #%d (out of %d): %s -- %s" % (row.id, len(rows), row.quote, nick)
 
 
 def do_add_quote(cmd, session, isadmin, send, args):
@@ -99,6 +99,7 @@ def cmd(send, msg, args):
     """Handles quotes.
     Syntax: !quote (number|nick), !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
     """
+    # FIXME: use argparse
     session = args['db']
     cmd = msg.split()
     isadmin = args['is_admin'](args['nick'])
