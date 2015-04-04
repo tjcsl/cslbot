@@ -479,7 +479,7 @@ class BotHandler():
         cmdlen = len(cmd) + 1
         if cmd.startswith('%ss' % cmdchar):
             # escape special regex chars
-            raw_cmdchar = '\\' + cmdchar if re.match('[.^$*+?]', cmdchar) else cmdchar
+            raw_cmdchar = '\\' + cmdchar if re.match('[\[\].^$*+?]', cmdchar) else cmdchar
             match = re.match('%ss(\W)' % raw_cmdchar, cmd)
             if match:
                 cmd = cmd.split(match.group(1))[0]
