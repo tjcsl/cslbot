@@ -15,14 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import multiprocessing
 import sre_constants
 from helpers.exception import CommandFailedException
 from helpers.orm import Log
 from helpers.command import Command
 
 
-def get_log(conn, target, user):
-    query = conn.query(Log).filter(Log.target == target).order_by(Log.time.desc())
+def get_log(conn, config, char, target, user):
+    query = conn.query(Log).filter(Log.target == target, ~Log.msg.like('%ss%s%%' % (config['cmdchar'], char)),
+                                   ~Log.msg.like('%s: s%s%%' % (config['nick'], char))).order_by(Log.time.desc())
     if user is None:
         return query.offset(1).limit(50).all()
     else:
@@ -49,7 +51,17 @@ def get_modifiers(msg, nick, nickregex):
     return mods
 
 
-@Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target'])
+def do_replace(log, regex, replacement):
+    for line in log:
+        if regex.search(line.msg):
+            output = regex.sub(replacement, line.msg)
+            if line.type == 'action':
+                return "correction: * %s %s" % (line.source, output)
+            elif line.type != 'mode':
+                return "%s actually meant: %s" % (line.source, output)
+
+
+@Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])
 def cmd(send, msg, args):
     """Corrects a previous message.
     Syntax: !s/<msg>/<replacement>/<ig|nick>
@@ -78,20 +90,18 @@ def cmd(send, msg, args):
 
     try:
         regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-        log = get_log(args['db'], args['target'], modifiers['nick'])
-        for line in log:
-            # ignore previous !s calls.
-            if line.msg.startswith('%ss%s' % (args['config']['core']['cmdchar'], char)):
-                continue
-            if line.msg.startswith('%s: s%s' % (args['config']['core']['nick'], char)):
-                continue
-            if regex.search(line.msg):
-                output = regex.sub(replacement, line.msg)
-                if line.type == 'action':
-                    send("correction: * %s %s" % (line.source, output))
-                elif line.type != 'mode':
-                    send("%s actually meant: %s" % (line.source, output))
-                return
+        log = get_log(args['db'], args['config']['core'], char, args['target'], modifiers['nick'])
+        workers = args['handler'].workers
+        result = workers.run_pool(do_replace, [log, regex, replacement])
+        try:
+            msg = result.get(5)
+        except multiprocessing.TimeoutError:
+            workers.restart_pool()
+            send("Regex timed out.")
+            return
+        if msg:
+            send(msg)
+        else:
+            send("No match found.")
     except sre_constants.error as ex:
         raise CommandFailedException(ex)
-    send("No match found.")
