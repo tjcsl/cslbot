@@ -30,20 +30,19 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    if cmdargs.chan:
-        target = cmdargs.chan
-    else:
-        target = args['target']
-    mode = ' '.join(extra)
+    target = cmdargs.chan if cmdargs.chan else args['target']
+    mode = " ".join(extra)
     if not mode:
-        send("What mode?")
-    if target == 'private':
+        send('Please specify a mode.')
+    elif target == 'private':
         send("Modes don't work in a PM!")
-    if not args['is_admin'](args['nick']):
+    elif not args['is_admin'](args['nick']):
         send("Admins only")
-    if target not in args['handler'].channels:
-        send("Bot not in channel " + target)
-    if args['botnick'] not in list(args['handler'].channels[target].opers()):
-        send("Bot must be opped in channel " + target)
-    args['handler'].connection.mode(target, " %s" % mode)
-    send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])
+    elif target not in args['handler'].channels:
+        send("Bot not in channel %s" % target)
+    elif args['botnick'] not in list(args['handler'].channels[target].opers()):
+        send("Bot must be opped in channel %s" % target)
+    else:
+        args['handler'].connection.mode(target, mode)
+        if args['target'] != args['config']['core']['ctrlchan']:
+            send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])
