@@ -14,25 +14,36 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from helpers import arguments
 from helpers.command import Command
 
 
-def set_mode(args, mode):
-    if not mode:
-        return "What mode?"
-    if args['target'] == 'private':
-        return "Modes don't work in a PM!"
-    if not args['is_admin'](args['nick']):
-        return "Admins only"
-    if args['botnick'] not in list(args['handler'].channels[args['target']].opers()):
-        return "Bot must be opped"
-    args['handler'].connection.mode(args['target'], " %s" % mode)
-    return ""
-
-
-@Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target'])
+@Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target', 'config'])
 def cmd(send, msg, args):
     """Sets a mode.
-    Syntax: !mode <mode>
+    Syntax: !mode (--chan <chan>) <mode>
     """
-    send(set_mode(args, msg))
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--chan', '--channel', action=arguments.ChanParser)
+    try:
+        cmdargs, extra = parser.parse_known_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    if cmdargs.chan:
+        target = cmdargs.chan
+    else:
+        target = args['target']
+    mode = ' '.join(extra)
+    if not mode:
+        send("What mode?")
+    if target == 'private':
+        send("Modes don't work in a PM!")
+    if not args['is_admin'](args['nick']):
+        send("Admins only")
+    if target not in args['handler'].channels:
+        send("Bot not in channel " + target)
+    if args['botnick'] not in list(args['handler'].channels[target].opers()):
+        send("Bot must be opped in channel " + target)
+    args['handler'].connection.mode(target, " %s" % mode)
+    send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])

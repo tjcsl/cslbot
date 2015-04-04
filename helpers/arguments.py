@@ -32,6 +32,16 @@ class NickParser(argparse.Action):
             raise ArgumentException("Invalid nick %s." % value)
 
 
+class ChanParser(argparse.Action):
+    def __call__(self, parser, namespace, value, option_strings):
+        if value is None:
+            return
+        if re.match(namespace.config['core']['chanregex'], value):
+            namespace.chan = value
+        else:
+            raise ArgumentException("Invalid chan %s." % value)
+
+
 class ArgParser(argparse.ArgumentParser):
     def __init__(self, config=None, **kwargs):
         super().__init__(**kwargs)
@@ -43,3 +53,6 @@ class ArgParser(argparse.ArgumentParser):
 
     def parse_args(self, msg):
         return super().parse_args(msg.split(), namespace=self.namespace)
+
+    def parse_known_args(self, msg):
+        return super().parse_known_args(msg.split(), namespace=self.namespace)
