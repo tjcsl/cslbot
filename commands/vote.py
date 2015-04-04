@@ -172,7 +172,7 @@ def retract(session, pid, nick):
 
 
 def list_polls(session, poll_url):
-    num = session.query(Polls).count()
+    num = session.query(Polls).filter(Polls.active == 1).count()
     return "There are %d polls. Check them out at %spolls.html" % (num, poll_url)
 
 
