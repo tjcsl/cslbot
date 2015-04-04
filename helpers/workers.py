@@ -33,7 +33,8 @@ class Workers():
 
     def __init__(self, handler):
         self.lock = Lock()
-        self.pool = multiprocessing.Pool()
+        with self.lock:
+            self.pool = multiprocessing.Pool()
         self.events = {}
         self.handler = handler
         # Set-up notifications for pending admin approval.
