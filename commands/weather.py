@@ -68,9 +68,10 @@ def get_weather(msg, send, apikey):
             return False
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
     send("Current weather for %s:" % data['display_location']['full'])
-    current = '%s, Temp: %s, Humidity: %s, Pressure: %s", Wind: %s' % (
+    current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],
         data['temp_f'],
+        data['feelslike_f'],
         data['relative_humidity'],
         data['pressure_in'],
         data['wind_string'])
