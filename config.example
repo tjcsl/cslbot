@@ -25,6 +25,7 @@ ctrlkey:
 admins: admin1, admin2
 [db]
 engine:
+geoip:
 [feature]
 nickserv: True
 server: True
