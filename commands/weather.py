@@ -18,14 +18,23 @@ import re
 from requests import get
 from helpers.orm import Weather_prefs
 from helpers.command import Command
+from helpers.geoip import get_zipcode
 
-
-def get_default(nick, session, send):
+def get_default(nick, session, send, config, source):
     location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
     if location is None:
-        # default to TJHSST
-        location = '22312'
-        send("No default location for %s, defaulting to TJ (%s)." % (nick, location))
+        try:
+            # attempt to get GeoIP location, can fail if the DB isn't available, hostmask doesn't have
+            # an IP, etc.
+            hostmask = source.split('@')[1]
+            hostip = re.search("\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask).group()
+            hostip = re.sub('-', '.', hostip)
+            location = get_zipcode(config, hostip)
+            send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
+        except:
+            # default to TJHSST
+            location = '22312'
+            send("No default location for %s and unable to guess a location, defaulting to TJ (%s)." % (nick, location))
     return location
 
 
@@ -95,7 +104,7 @@ def get_weather(msg, send, apikey):
     return True
 
 
-@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name'])
+@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather <location|set default>
@@ -107,5 +116,5 @@ def cmd(send, msg, args):
         return
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not msg:
-        msg = get_default(nick, args['db'], send)
+        msg = get_default(nick, args['db'], send, args['config'], args['source'])
     get_weather(msg, send, apikey)
