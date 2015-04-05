@@ -125,6 +125,7 @@ def get_forecast(cmdargs, send, apikey):
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather [--date date] <location|--set default>
+    Powered by Weather Underground, www.wunderground.com
     """
     apikey = args['config']['api']['weatherapikey']
     parser = arguments.ArgParser(args['config'])
