@@ -16,6 +16,7 @@
 
 import re
 from requests import get
+from helpers import arguments
 from helpers.orm import Weather_prefs
 from helpers.command import Command
 from helpers.geoip import get_zipcode
@@ -57,20 +58,20 @@ def set_default(nick, location, session, send, apikey):
         send("Invalid or Ambiguous Location")
 
 
-def get_weather(msg, send, apikey):
-    if msg.startswith("-"):
-        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg[1:])).json()
+def get_weather(cmdargs, send, apikey):
+    if cmdargs.string.startswith("-"):
+        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdarg.string[1:])).json()
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
             return False
-        data = {'display_location': {'full': msg[1:]},
+        data = {'display_location': {'full': cmdargs.string[1:]},
                 'weather': 'Sunny', 'temp_f': '94.8', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
         forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
                         'high': {'fahrenheit': '-3841'}, 'low': {'fahrenheit': '-6666'}}
     else:
-        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg)).json()
-        forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, msg)).json()
-        alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, msg)).json()
+        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
+        forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
+        alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, cmdargs.string)).json()
         if 'current_observation' in data:
             data = data['current_observation']
         else:
@@ -103,17 +104,45 @@ def get_weather(msg, send, apikey):
     return True
 
 
+def get_forecast(cmdargs, send, apikey):
+    forecastdata = get('http://api.wunderground.com/api/%s/forecast10day/q/%s.json' % (apikey, cmdargs.string)).json()
+    if 'forecast' not in forecastdata:
+        send("Invalid or Ambiguous Location")
+        return False
+    forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
+    for day in forecastdata:
+        if day['date']['day'] == cmdargs.date.day and day['date']['month'] == cmdargs.date.month and day['date']['year'] == cmdargs.date.year:
+            forecast = '%s, High: %s, Low: %s' % (
+                day['conditions'],
+                day['high']['fahrenheit'],
+                day['low']['fahrenheit'])
+            send("Forecast for %s on %s: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), forecast))
+            return
+    send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime("%x")))
+
+
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
 def cmd(send, msg, args):
     """Gets the weather.
-    Syntax: !weather <location|set default>
+    Syntax: !weather <location|--set default>
     """
     apikey = args['config']['api']['weatherapikey']
-    match = re.match("set (.*)", msg)
-    if match:
-        set_default(args['nick'], match.group(1), args['db'], send, apikey)
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--date', action=arguments.DateParser)
+    parser.add_argument('--set', action='store_true')
+    parser.add_argument('string', nargs='?')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    if cmdargs.set:
+        set_default(args['nick'], cmdargs.string, args['db'], send, apikey)
         return
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
-    if not msg:
-        msg = get_default(nick, args['db'], send, args['config'], args['source'])
-    get_weather(msg, send, apikey)
+    if not cmdargs.string:
+        cmdargs.string = get_default(nick, args['db'], send, args['config'], args['source'])
+    if cmdargs.date:
+        get_forecast(cmdargs, send, apikey)
+    else:
+        get_weather(cmdargs, send, apikey)
