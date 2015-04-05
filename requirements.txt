@@ -6,3 +6,4 @@ lxml>=3.4.2
 requests>=2.6.0
 simplejson>=3.6.5
 psycopg2>=2.6
+python_dateutil>=2.4.2
