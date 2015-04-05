@@ -22,9 +22,8 @@ from helpers.orm import Log
 from helpers.command import Command
 
 
-def get_log(conn, config, char, target, user):
-    query = conn.query(Log).filter(Log.target == target, ~Log.msg.like('%ss%s%%' % (config['cmdchar'], char)),
-                                   ~Log.msg.like('%s: s%s%%' % (config['nick'], char))).order_by(Log.time.desc())
+def get_log(conn, target, user):
+    query = conn.query(Log).filter(Log.target == target).order_by(Log.time.desc())
     if user is None:
         return query.offset(1).limit(50).all()
     else:
@@ -51,8 +50,13 @@ def get_modifiers(msg, nick, nickregex):
     return mods
 
 
-def do_replace(log, regex, replacement):
+def do_replace(log, config, char, regex, replacement):
     for line in log:
+        # ignore previous !s calls.
+        if line.msg.startswith('%ss%s' % (config['cmdchar'], char)):
+            continue
+        if line.msg.startswith('%s: s%s' % (config['nick'], char)):
+            continue
         if regex.search(line.msg):
             output = regex.sub(replacement, line.msg)
             if line.type == 'action':
@@ -90,9 +94,9 @@ def cmd(send, msg, args):
 
     try:
         regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-        log = get_log(args['db'], args['config']['core'], char, args['target'], modifiers['nick'])
+        log = get_log(args['db'], args['target'], modifiers['nick'])
         workers = args['handler'].workers
-        result = workers.run_pool(do_replace, [log, regex, replacement])
+        result = workers.run_pool(do_replace, [log, args['config']['core'], char, regex, replacement])
         try:
             msg = result.get(5)
         except multiprocessing.TimeoutError:

@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Index
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 
@@ -40,13 +40,11 @@ def setup_db(session):
 
 class Log(Base):
     source = Column(String)
-    target = Column(String)
+    target = Column(String, index=True)
     flags = Column(Integer)
     msg = Column(String)
     type = Column(String)
     time = Column(Float)
-
-Index('ix_log_target_msg', Log.target, Log.msg)
 
 
 class Quotes(Base):
