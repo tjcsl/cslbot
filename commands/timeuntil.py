@@ -20,6 +20,7 @@ import datetime
 from helpers import arguments
 from helpers.command import Command
 
+
 @Command(['timeuntil', 'timetill'], ['config'])
 def cmd(send, msg, args):
     """Reports the difference between now and some specified time.
@@ -37,11 +38,11 @@ def cmd(send, msg, args):
         return
     delta = dateutil.relativedelta.relativedelta(cmdargs.date, datetime.datetime.now())
     diff = "%s is " % (cmdargs.date.strftime("%x"))
-    if delta.years: diff+= "%d years " % (delta.years)
-    if delta.months: diff+="%d months " % (delta.months)
-    if delta.days: diff+="%d days " % (delta.days)
-    if delta.hours: diff+="%d hours " % (delta.hours)
-    if delta.minutes: diff+="%d minutes " % (delta.minutes)
-    if delta.seconds: diff+="%d seconds " % (delta.seconds)
+    if delta.years: diff += "%d years " % (delta.years)
+    if delta.months: diff += "%d months " % (delta.months)
+    if delta.days: diff += "%d days " % (delta.days)
+    if delta.hours: diff += "%d hours " % (delta.hours)
+    if delta.minutes: diff += "%d minutes " % (delta.minutes)
+    if delta.seconds: diff += "%d seconds " % (delta.seconds)
     diff += "away"
     send(diff)
