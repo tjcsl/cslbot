@@ -47,7 +47,10 @@ class DateParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        namespace.date = dateutil.parser.parse(value)
+        try:
+            namespace.date = dateutil.parser.parse(value)
+        except:
+            return
 
 class ArgParser(argparse.ArgumentParser):
     def __init__(self, config=None, **kwargs):
