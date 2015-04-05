@@ -69,7 +69,7 @@ to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
 GeoIP
 -----
 To get GeoIP support, download the free database (in MMDB format) from http://dev.maxmind.com/geoip/geoip2/geolite2/.
-You will then need to put this in the bot's root directory and specify the database name in commands.cfg.
+You will then need to store the db at static/geoip.db.
 
 parsedata.py
 ------------

@@ -15,11 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import geoip2
 from requests import get
 from helpers import arguments
 from helpers.orm import Weather_prefs
 from helpers.command import Command
 from helpers.geoip import get_zipcode
+
 
 def get_default(nick, session, send, config, source):
     location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
@@ -28,15 +30,19 @@ def get_default(nick, session, send, config, source):
             # attempt to get GeoIP location, can fail if the DB isn't available, hostmask doesn't have
             # an IP, etc.
             hostmask = source.split('@')[1]
-            hostip = re.search("\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask).group()
-            hostip = re.sub('-', '.', hostip)
-            location = get_zipcode(config, hostip)
-            send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
-        except:
-            # default to TJHSST
-            location = '22312'
-            send("No default location for %s and unable to guess a location, defaulting to TJ (%s)." % (nick, location))
-    return location
+            hostip = re.search("\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask)
+            if hostip:
+                hostip = re.sub('-', '.', hostip.group())
+                location = get_zipcode(config['db']['geoip'], hostip)
+                send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
+                return location
+        except (FileNotFoundError, geoip2.errors.AddressNotFoundError):
+            pass
+        # default to TJHSST
+        send("No default location for %s and unable to guess a location, defaulting to TJ (22312)." % nick)
+        return '22312'
+    else:
+        return location
 
 
 def valid_location(location, apikey):
@@ -60,14 +66,15 @@ def set_default(nick, location, session, send, apikey):
 
 def get_weather(cmdargs, send, apikey):
     if cmdargs.string.startswith("-"):
-        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdarg.string[1:])).json()
+        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string[1:])).json()
         if 'current_observation' not in data:
             send("Invalid or Ambiguous Location")
             return False
         data = {'display_location': {'full': cmdargs.string[1:]},
-                'weather': 'Sunny', 'temp_f': '94.8', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
+                'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
         forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
                         'high': {'fahrenheit': '-3841'}, 'low': {'fahrenheit': '-6666'}}
+        alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
     else:
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
         forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
@@ -99,8 +106,6 @@ def get_weather(cmdargs, send, apikey):
                 alert['description'],
                 alert['expires']))
         send("Weather Alerts: " + ', '.join(alertlist))
-
-
     return True
 
 
@@ -111,7 +116,7 @@ def get_forecast(cmdargs, send, apikey):
         return False
     forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
     for day in forecastdata:
-        if day['date']['day'] == cmdargs.date.day and day['date']['month'] == cmdargs.date.month and day['date']['year'] == cmdargs.date.year:
+        if (day['date']['day'], day['date']['month'], day['date']['year']) == (cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
             forecast = '%s, High: %s, Low: %s' % (
                 day['conditions'],
                 day['high']['fahrenheit'],

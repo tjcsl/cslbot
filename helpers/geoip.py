@@ -16,8 +16,9 @@
 
 import geoip2.database
 
-def get_zipcode(config, ip):
-    reader = geoip2.database.Reader(config['db']['geoip'])
+
+def get_zipcode(db, ip):
+    reader = geoip2.database.Reader(db)
     response = reader.city(ip)
     reader.close()
     return response.postal.code

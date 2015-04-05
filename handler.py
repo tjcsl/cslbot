@@ -505,10 +505,3 @@ class BotHandler():
             # everything below this point requires admin
             if not found and self.is_admin(send, nick):
                 self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
-
-
-    def whois(self, nick):
-        """
-        Run whois against a nick and return the result
-        """
-        return self.connection.whois(nick)
