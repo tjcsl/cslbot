@@ -47,7 +47,7 @@ class DateParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        namespace.date = dateutil.parser.parse(value)
+        namespace.date = dateutil.parser.parse(' '.join(value))
 
 
 class ArgParser(argparse.ArgumentParser):
