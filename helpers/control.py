@@ -393,7 +393,7 @@ def handle_ctrlchan(handler, msg, c, send):
             cmdargs = parser.parse_args(msg)
         except arguments.ArgumentException as e:
             # FIXME: figure out a better way to allow non-commands without spamming the channel.
-            err_str = "invalid choice: '.*' \(choose from 'quote', 'help', 'chanserv', 'cs', 'disable', 'enable', 'guard', 'unguard', 'show', 'accept', 'reject'\)"
+            err_str = "invalid choice: .* \(choose from 'quote', 'help', 'chanserv', 'cs', 'disable', 'enable', 'guard', 'unguard', 'show', 'accept', 'reject'\)"
             if not re.match(err_str, str(e)):
                 send(str(e))
             return
