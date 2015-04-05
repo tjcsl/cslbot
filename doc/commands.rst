@@ -643,6 +643,14 @@ commands.timeout module
     :undoc-members:
     :show-inheritance:
 
+commands.timeuntil module
+-------------------------
+
+.. automodule:: commands.timeuntil
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.tjbash module
 ----------------------
 
