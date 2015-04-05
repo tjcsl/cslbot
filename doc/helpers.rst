@@ -60,6 +60,14 @@ helpers.exception module
     :undoc-members:
     :show-inheritance:
 
+helpers.geoip module
+--------------------
+
+.. automodule:: helpers.geoip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.hook module
 -------------------
 
