@@ -61,12 +61,14 @@ def get_weather(msg, send, apikey):
     else:
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, msg)).json()
         forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, msg)).json()
+        alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, msg)).json()
         if 'current_observation' in data:
             data = data['current_observation']
         else:
             send("Invalid or Ambiguous Location")
             return False
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
+        print(alertdata)
     send("Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],
@@ -81,6 +83,15 @@ def get_weather(msg, send, apikey):
         forecastdata['low']['fahrenheit'])
     send(current)
     send("Forecast: " + forecast)
+    if alertdata['alerts']:
+        alertlist = []
+        for alert in alertdata['alerts']:
+            alertlist.append("%s, expires %s" % (
+                alert['description'],
+                alert['expires']))
+        send("Weather Alerts: " + ', '.join(alertlist))
+
+
     return True
 
 
