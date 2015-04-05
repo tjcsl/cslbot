@@ -47,7 +47,13 @@ class DateParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        namespace.date = dateutil.parser.parse(value)
+        if type(value) is list:
+            value = ' '.join(value)
+        print(value)
+        try:
+            namespace.date = dateutil.parser.parse(value)
+        except ValueError as e:
+            raise ArgumentException("Couldn't parse a date from %s: %s" % (value, e))
 
 
 class ArgParser(argparse.ArgumentParser):
