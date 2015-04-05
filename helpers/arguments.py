@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
+import dateutil.parser
 import re
 
 
@@ -41,6 +42,12 @@ class ChanParser(argparse.Action):
         else:
             raise ArgumentException("Invalid chan %s." % value)
 
+
+class DateParser(argparse.Action):
+    def __call__(self, parser, namespace, value, option_strings):
+        if value is None:
+            return
+        namespace.date = dateutil.parser.parse(value)
 
 class ArgParser(argparse.ArgumentParser):
     def __init__(self, config=None, **kwargs):

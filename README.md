@@ -66,6 +66,11 @@ to STEAMID64. An example steamid mapping file is provided in the static folder.
 For this reason the !steam command is disabled by default;  
 to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
 
+GeoIP
+-----
+To get GeoIP support, download the free database (in MMDB format) from http://dev.maxmind.com/geoip/geoip2/geolite2/.
+You will then need to put this in the bot's root directory and specify the database name in commands.cfg.
+
 parsedata.py
 ------------
 This python script parses the db and generates jinja2-templated
@@ -79,7 +84,9 @@ It is intended to be used as a cronjob to generate and optionally make available
 
 Credits
 -------
-Licensed under the GPL v2  
+Licensed under the GPL v2
+This product may use GeoLite2 data created by MaxMind, available from
+http://www.maxmind.com.
 Created by fwilson (Fox Wilson, Class of 2016).  
 Rewritten by pfoley (Peter Foley, Class of 2013).  
 Improved by sdamashek (Samuel Damashek, Class of 2017).  
