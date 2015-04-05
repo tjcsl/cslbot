@@ -124,7 +124,7 @@ def get_forecast(cmdargs, send, apikey):
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
 def cmd(send, msg, args):
     """Gets the weather.
-    Syntax: !weather <location|--set default>
+    Syntax: !weather [--date date] <location|--set default>
     """
     apikey = args['config']['api']['weatherapikey']
     parser = arguments.ArgParser(args['config'])
