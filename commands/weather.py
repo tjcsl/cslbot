@@ -77,7 +77,6 @@ def get_weather(msg, send, apikey):
             send("Invalid or Ambiguous Location")
             return False
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
-        print(alertdata)
     send("Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'],
