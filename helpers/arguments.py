@@ -51,7 +51,7 @@ class DateParser(argparse.Action):
             value = ' '.join(value)
         try:
             namespace.date = dateutil.parser.parse(value)
-        except ValueError as e:
+        except (ValueError, OverflowError) as e:
             raise ArgumentException("Couldn't parse a date from %s: %s" % (value, e))
 
 
