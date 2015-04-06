@@ -15,8 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import time
 import multiprocessing
-from time import time, strftime, localtime
 from helpers.urlutils import get_title, get_short
 from helpers.orm import Urls
 from helpers.hook import Hook
@@ -49,10 +49,10 @@ def handle(send, msg, args):
         short = get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
-            #604800 is seconds in a week, it forgets old links after a week :)
-            if last and (time.time() - last.time < 604800):
-                lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last.time))
+            # 604800 is the number of seconds in a week.
+            if last and (time.time() - last.time) < 604800:
+                lasttime = time.strftime('at %H:%M:%S on %Y-%m-%d', time.localtime(last.time))
                 send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last.nick, title))
             else:
                 send('** %s - %s' % (title, short))
-        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time()))
+        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time.time()))
