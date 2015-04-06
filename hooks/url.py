@@ -49,7 +49,8 @@ def handle(send, msg, args):
         short = get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
-            if last:
+            #604800 is seconds in a week, it forgets old links after a week :)
+            if last and (time.time() - last.time < 604800):
                 lasttime = strftime('at %H:%M:%S on %Y-%m-%d', localtime(last.time))
                 send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last.nick, title))
             else:
