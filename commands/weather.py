@@ -16,6 +16,7 @@
 
 import re
 import geoip2
+import os.path
 from requests import get
 from helpers import arguments
 from helpers.orm import Weather_prefs
@@ -23,7 +24,7 @@ from helpers.command import Command
 from helpers.geoip import get_zipcode
 
 
-def get_default(nick, session, send, config, source):
+def get_default(nick, session, handler, send, config, source):
     location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
     if location is None:
         try:
@@ -33,7 +34,8 @@ def get_default(nick, session, send, config, source):
             hostip = re.search("\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask)
             if hostip:
                 hostip = re.sub('-', '.', hostip.group())
-                location = get_zipcode(config['db']['geoip'], hostip)
+                db_file = os.path.join(handler.srcdir, config['db']['geoip'])
+                location = get_zipcode(db_file, hostip)
                 send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
                 return location
         except (FileNotFoundError, geoip2.errors.AddressNotFoundError):
@@ -126,7 +128,7 @@ def get_forecast(cmdargs, send, apikey):
     send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime("%x")))
 
 
-@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
+@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: !weather [--date date] <location|--set default>
@@ -147,7 +149,7 @@ def cmd(send, msg, args):
         return
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not cmdargs.string:
-        cmdargs.string = get_default(nick, args['db'], send, args['config'], args['source'])
+        cmdargs.string = get_default(nick, args['db'], args['handler'], send, args['config'], args['source'])
     if cmdargs.date:
         get_forecast(cmdargs, send, apikey)
     else:
