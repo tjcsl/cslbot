@@ -106,6 +106,5 @@ class Workers():
             row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:
                 return
-            if last.last != row.id:
-                # FIXME: make this less sensitive?
+            if abs(last.last - row.id) > 1:
                 raise Exception("Last row in babble cache (%d) does not match last row in log (%d)." % (last.last, row.id))
