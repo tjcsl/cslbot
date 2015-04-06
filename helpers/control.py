@@ -142,10 +142,10 @@ def handle_show(args):
     elif args.cmd == "enabled":
         if not args.args:
             args.send("Missing argument.")
-        elif args[0] == "commands":
+        elif args.args[0] == "commands":
             mods = ", ".join(sorted(command.get_enabled_commands()))
             args.send(mods)
-        elif args[0] == "hooks":
+        elif args.args[0] == "hooks":
             mods = ", ".join(sorted(hook.get_enabled_hooks()))
             args.send(mods)
         else:
@@ -153,10 +153,10 @@ def handle_show(args):
     elif args.cmd == "disabled":
         if not args.args:
             args.send("Missing argument.")
-        elif args[0] == "commands":
+        elif args.args[0] == "commands":
             mods = ", ".join(sorted(command.get_disabled_commands()))
             args.send(mods if mods else "No disabled commands.")
-        elif args[0] == "hooks":
+        elif args.args[0] == "hooks":
             mods = ", ".join(sorted(hook.get_disabled_hooks()))
             args.send(mods if mods else "No disabled hooks.")
         else:
