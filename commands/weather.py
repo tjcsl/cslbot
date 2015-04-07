@@ -138,12 +138,14 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--date', action=arguments.DateParser)
     parser.add_argument('--set', action='store_true')
-    parser.add_argument('string', nargs='?')
+    parser.add_argument('string', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
+    if isinstance(cmdargs.string, list):
+        cmdargs.string = " ".join(cmdargs.string)
     if cmdargs.set:
         set_default(args['nick'], cmdargs.string, args['db'], send, apikey)
         return
