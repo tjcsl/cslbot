@@ -60,8 +60,10 @@ def do_setup(configfile):
     examplefile = configfile.replace('cfg', 'example')
     copyfile(examplefile, configfile)
     config = ConfigParser()
-    config.read_file(open(configfile))
+    with open(configfile) as cfgfile:
+        config.read_file(cfgfile)
     do_config(config)
-    config.write(open(configfile, 'w'))
+    with open(configfile, 'w') as cfgfile:
+        config.write(cfgfile)
     print('WARNING: you must set the db.engine option for the bot to work.')
     print("Configuration succeded, please review config.cfg and restart the bot.")
