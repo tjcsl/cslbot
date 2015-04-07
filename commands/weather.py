@@ -36,8 +36,9 @@ def get_default(nick, session, handler, send, config, source):
                 hostip = re.sub('-', '.', hostip.group())
                 db_file = os.path.join(handler.srcdir, config['db']['geoip'])
                 location = get_zipcode(db_file, hostip)
-                send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
-                return location
+                if location is not None:
+                    send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
+                    return location
         except (FileNotFoundError, geoip2.errors.AddressNotFoundError):
             pass
         # default to TJHSST
