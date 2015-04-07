@@ -231,8 +231,12 @@ class IrcBot(SingleServerIRCBot):
         c.privmsg(self.config['core']['ctrlchan'], msg)
 
     def on_bannedfromchan(self, c, e):
-        # FIXME: Implement auto-rejoin on ban.
-        self.handler.workers.defer(5, False, c.join, e.arguments[0])
+        self.handler.workers.defer(5, False, self.do_rejoin, c, e)
+
+    def do_rejoin(self, c, e):
+        if e.arguments[0] in self.channels:
+            return
+        c.join(e.arguments[0])
 
     def on_ctcpreply(self, c, e):
         if len(e.arguments) == 2:
