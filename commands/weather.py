@@ -73,7 +73,7 @@ def get_weather(cmdargs, send, apikey):
             send("Invalid or Ambiguous Location")
             return False
         data = {'display_location': {'full': cmdargs.string[1:]},
-                'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
+                'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92.6', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
         forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
                         'high': {'fahrenheit': '-3841'}, 'low': {'fahrenheit': '-6666'}}
         alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
