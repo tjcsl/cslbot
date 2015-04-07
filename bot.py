@@ -37,6 +37,7 @@ try:
     from os.path import dirname, join, exists
     from time import time
     from random import getrandbits
+    from threading import Lock
 except ImportError as e:
     raise Exception("%s, are you using Python 3.4 or higher?" % e)
 if sys.version_info < (3, 4):
@@ -54,8 +55,9 @@ class IrcBot(SingleServerIRCBot):
         | Connect to the server.
         """
         atexit.register(self.do_shutdown)
+        self.pool_lock = Lock()
         self.handler = handler.BotHandler(botconfig)
-        self.handler.workers = workers.Workers(self.handler)
+        self.handler.workers = workers.Workers(self.handler, self.pool_lock)
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
@@ -139,7 +141,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self.handler)
+        self.handler.workers = workers.Workers(self.handler, self.pool_lock)
         if output:
             return output
 

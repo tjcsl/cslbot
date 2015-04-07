@@ -18,7 +18,7 @@ import re
 import threading
 import multiprocessing
 from collections import namedtuple
-from threading import Lock, Timer
+from threading import Timer
 from .traceback import handle_traceback
 from .babble import update_markov
 from .control import show_pending
@@ -27,13 +27,13 @@ from sqlalchemy import or_
 
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
-worker_lock = Lock()
 
 
 class Workers():
 
-    def __init__(self, handler):
-        with worker_lock:
+    def __init__(self, handler, pool_lock):
+        self.pool_lock = pool_lock
+        with self.pool_lock:
             self.pool = multiprocessing.Pool()
             self.events = {}
         self.handler = handler
@@ -45,12 +45,12 @@ class Workers():
         self.defer(3600, False, self.check_babble, handler, send)
 
     def run_pool(self, func, args):
-        with worker_lock:
+        with self.pool_lock:
             result = self.pool.apply_async(func, args)
         return result
 
     def restart_pool(self):
-        with worker_lock:
+        with self.pool_lock:
             self.pool.terminate()
             self.pool.join()
             self.pool = multiprocessing.Pool()
@@ -69,19 +69,19 @@ class Workers():
         event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
-        with worker_lock:
+        with self.pool_lock:
             self.events[event.ident] = Event(event, run_on_cancel)
         return event.ident
 
     def cancel(self, eventid):
-        with worker_lock:
+        with self.pool_lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
                 self.events[eventid].event.function(**self.events[eventid].event.kwargs)
             del self.events[eventid]
 
     def stop_workers(self):
-        with worker_lock:
+        with self.pool_lock:
             self.pool.close()
             self.pool.join()
             for x in self.events.values():
