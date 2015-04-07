@@ -277,7 +277,8 @@ def main(args):
         print("Setting up config file")
         config.do_setup(configfile)
         return
-    botconfig.read_file(open(configfile))
+    with open(configfile) as conf:
+        botconfig.read_file(conf)
     bot = IrcBot(botconfig)
     if botconfig['feature'].getboolean('server'):
         bot.server = server.init_server(bot)

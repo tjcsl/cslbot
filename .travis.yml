@@ -8,3 +8,4 @@ install:
 
 script:
     flake8 --max-line-length=1000 .
+    ./scripts/test.py

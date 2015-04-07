@@ -36,6 +36,14 @@ scripts.parselogs module
     :undoc-members:
     :show-inheritance:
 
+scripts.test module
+-------------------
+
+.. automodule:: scripts.test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
