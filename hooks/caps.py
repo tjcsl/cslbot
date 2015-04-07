@@ -26,7 +26,7 @@ _caps_lock = Lock()
 def handle(send, msg, args):
     """ Check for capslock abuse.
 
-    | Check if a line is more than :const:`THRESHOLD` percent uppercase.
+    | Check if a line is more than THRESHOLD percent uppercase.
     | If this is the second line in a row, kick the user.
     """
     # SHUT CAPS LOCK OFF, MORON

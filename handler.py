@@ -69,7 +69,7 @@ class BotHandler():
         self.db = sql.Sql(config)
 
     def get_data(self):
-        """Saves the handler's data for :func:`bot.do_reload`"""
+        """Saves the handler's data for :func:`bot.IrcBot.do_reload`"""
         data = {}
         data['caps'] = list(self.caps)
         data['ignored'] = list(self.ignored)
@@ -80,7 +80,7 @@ class BotHandler():
         return data
 
     def set_data(self, data):
-        """Called from :func:`bot.do_reload` to restore the handler's data."""
+        """Called from :func:`bot.IrcBot.do_reload` to restore the handler's data."""
         for key, val in data.items():
             setattr(self, key, val)
         return
@@ -114,7 +114,7 @@ class BotHandler():
     def is_admin(self, send, nick, complain=True):
         """Checks if a nick is a admin.
 
-        | If the nick is not in :const:`ADMINS` then it's not a admin.
+        | If the nick is not in self.admins then it's not a admin.
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
@@ -151,7 +151,7 @@ class BotHandler():
 
         | If a nick uses commands with the limit attr set, record the time
         | at which they were used.
-        | If the command is used more than :data:`limit` times in a
+        | If the command is used more than `limit` times in a
         | minute, ignore the nick.
         """
         if nick not in self.abuselist:
