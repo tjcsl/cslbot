@@ -45,11 +45,17 @@ def build_msg(cursor, speaker, start):
         prev = markov.key
     else:
         # FIXME: use Babble_count?
-        markov = cursor.query(Babble).filter(Babble.key.like(start + ' %'), getattr(Babble, location) == speaker).order_by(func.random()).first()
+        if len(start) == 1:
+            markov = cursor.query(Babble).filter(Babble.key.like(start[0] + ' %'))
+        elif len(start) == 2:
+            markov = cursor.query(Babble).filter(Babble.key == " ".join(start))
+        else:
+            return "Please specify either one or two words for --start"
+        markov = markov.filter(getattr(Babble, location) == speaker).order_by(func.random()).first()
         if markov:
             prev = markov.key
         else:
-            return "%s hasn't said %s" % (speaker, start)
+            return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
     while len(msg) < 256:
         data = cursor.query(Babble).filter(Babble.key == prev, getattr(Babble, location) == speaker).all()
@@ -64,11 +70,11 @@ def build_msg(cursor, speaker, start):
 @Command('babble', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
-    Syntax: !babble (--start <word>) (nick)
+    Syntax: !babble (nick) (--start <word>)
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--start')
     parser.add_argument('speaker', nargs='?', default=args['config']['core']['channel'])
+    parser.add_argument('--start', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
