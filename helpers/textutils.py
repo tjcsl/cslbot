@@ -86,7 +86,7 @@ def gen_slogan(msg, count=0):
     if count > 5:
         return "Failed to get slogan"
     else:
-        return gen_slogan(msg, count+1)
+        return gen_slogan(msg, count + 1)
 
 
 def gen_morse(msg):

@@ -38,7 +38,7 @@ def main(config, speaker):
     session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE')
     t = time.time()
     build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True, debug=True)
-    print('Finished markov in %f' % (time.time()-t))
+    print('Finished markov in %f' % (time.time() - t))
 
 
 if __name__ == '__main__':

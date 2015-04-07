@@ -39,9 +39,9 @@ def cmd(send, msg, args):
     cmdchar = args['config']['core']['cmdchar']
     if cmdargs.nick:
         row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
-                                           Log.msg.like('%'+cmdargs.string+'%')).order_by(Log.id.desc()).first()
+                                           Log.msg.like('%' + cmdargs.string + '%')).order_by(Log.id.desc()).first()
     else:
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%'+cmdargs.string+'%')).order_by(Log.id.desc()).first()
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%' + cmdargs.string + '%')).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))

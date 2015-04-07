@@ -30,10 +30,10 @@ def cmd(send, msg, args):
         url = 'http://tjbash.org/search?query='
         targs = msg.split(' ')
         if len(targs) == 1 and targs[0].isnumeric():
-            url = 'http://tjbash.org/'+targs[0]
+            url = 'http://tjbash.org/' + targs[0]
         else:
             for tag in targs:
-                url += 'tag:'+tag+' '
+                url += 'tag:' + tag + ' '
     html = get(url)
     soup = BeautifulSoup(html.text)
     quotes = soup.findAll('blockquote')

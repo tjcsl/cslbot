@@ -40,12 +40,12 @@ def build_msg(cursor, speaker, start):
     count = cursor.query(Babble_count).filter(Babble_count.type == location, Babble_count.key == speaker).first()
     if count is None:
         return "%s hasn't said anything =(" % speaker
-    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random()*count.count).first()
+    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random() * count.count).first()
     if start is None:
         prev = markov.key
     else:
         # FIXME: use Babble_count?
-        markov = cursor.query(Babble).filter(Babble.key.like(start+' %'), getattr(Babble, location) == speaker).order_by(func.random()).first()
+        markov = cursor.query(Babble).filter(Babble.key.like(start + ' %'), getattr(Babble, location) == speaker).order_by(func.random()).first()
         if markov:
             prev = markov.key
         else:

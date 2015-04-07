@@ -24,6 +24,7 @@ class ArgumentException(Exception):
 
 
 class NickParser(argparse.Action):
+
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -34,6 +35,7 @@ class NickParser(argparse.Action):
 
 
 class ChanParser(argparse.Action):
+
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -44,6 +46,7 @@ class ChanParser(argparse.Action):
 
 
 class DateParser(argparse.Action):
+
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -56,6 +59,7 @@ class DateParser(argparse.Action):
 
 
 class ArgParser(argparse.ArgumentParser):
+
     def __init__(self, config=None, **kwargs):
         super().__init__(**kwargs)
         self.namespace = argparse.Namespace()

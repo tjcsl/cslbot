@@ -123,11 +123,11 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         t = time.time()
     curr, markov = generate_markov(cursor, cmdchar, ctrlchan, speaker, lastrow, initial_run)
     if debug:
-        print('Generated markov in %f' % (time.time()-t))
+        print('Generated markov in %f' % (time.time() - t))
         t = time.time()
     data, count_data = build_rows(cursor, markov, initial_run)
     if debug:
-        print('Rows built in %f' % (time.time()-t))
+        print('Rows built in %f' % (time.time() - t))
     if initial_run:
         if debug:
             t = time.time()
@@ -135,7 +135,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
         if debug:
-            print('Created index in %f' % (time.time()-t))
+            print('Created index in %f' % (time.time() - t))
     if debug:
         t = time.time()
     if initial_run and cursor.bind.dialect.name == 'postgresql':
@@ -153,7 +153,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         cursor.bulk_insert_mappings(Babble, data)
     cursor.bulk_insert_mappings(Babble_count, count_data)
     if debug:
-        print('Inserted rows in %f' % (time.time()-t))
+        print('Inserted rows in %f' % (time.time() - t))
     if curr is not None:
         lastrow.last = curr
     if initial_run:
@@ -162,12 +162,12 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         key_index = Index('ix_babble_key', Babble.key)
         key_index.create(cursor.connection())
         if debug:
-            print('Created index in %f' % (time.time()-t))
+            print('Created index in %f' % (time.time() - t))
     if debug:
         t = time.time()
     cursor.commit()
     if debug:
-        print('Commited in %f' % (time.time()-t))
+        print('Commited in %f' % (time.time() - t))
 
 
 def update_markov(cursor, config):

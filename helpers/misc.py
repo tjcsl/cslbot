@@ -157,21 +157,21 @@ def list_fortunes(offensive=False):
 
 
 def get_fortune(msg, name='fortune'):
-        fortunes = list_fortunes() + list_fortunes(True)
-        cmd = ['fortune', '-s']
-        match = re.match('(-[ao])( .+|$)', msg)
-        if match:
-            cmd.append(match.group(1))
-            msg = match.group(2).strip()
-        if 'bofh' in name or 'excuse' in name:
-            if random() < 0.05:
-                return "BOFH Excuse #1337:\nYou don't exist, go away!"
-            cmd.append('bofh-excuses')
-        elif msg in fortunes:
-            cmd.append(msg)
-        elif msg:
-            return "%s is not a valid fortune module" % msg
-        return subprocess.check_output(cmd).decode()
+    fortunes = list_fortunes() + list_fortunes(True)
+    cmd = ['fortune', '-s']
+    match = re.match('(-[ao])( .+|$)', msg)
+    if match:
+        cmd.append(match.group(1))
+        msg = match.group(2).strip()
+    if 'bofh' in name or 'excuse' in name:
+        if random() < 0.05:
+            return "BOFH Excuse #1337:\nYou don't exist, go away!"
+        cmd.append('bofh-excuses')
+    elif msg in fortunes:
+        cmd.append(msg)
+    elif msg:
+        return "%s is not a valid fortune module" % msg
+    return subprocess.check_output(cmd).decode()
 
 
 def get_rand_word():
@@ -207,6 +207,6 @@ def get_urban_definition(msg):
     elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
         output = "Invalid Index"
     else:
-        output = data[int(index)-1]['definition']
+        output = data[int(index) - 1]['definition']
     output = output.splitlines()
     return ' '.join(output)
