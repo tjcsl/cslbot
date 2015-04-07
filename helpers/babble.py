@@ -21,8 +21,6 @@ import re
 import time
 import collections
 import string
-import logging
-from datetime import datetime
 from sqlalchemy import Index, or_
 from sqlalchemy.exc import OperationalError
 from helpers.orm import Log, Babble, Babble_last, Babble_count
@@ -139,7 +137,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     if debug:
         t = time.time()
     if initial_run and cursor.bind.dialect.name == 'postgresql':
-        # Crazy magic to insert a ton of data really fast.
+        # Crazy magic to insert a ton of data really fast, drops runtime in half on large datasets.
         raw_cursor = cursor.connection().connection.cursor()
         prev = 0
         for i in range(20000, len(data), 20000):
@@ -181,8 +179,6 @@ def update_markov(cursor, config):
             cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
         build_markov(cursor, cmdchar, ctrlchan)
     except OperationalError as ex:
-        # If we can't lock the table, silently fail and wait for the next time we're called.
-        if 'could not obtain lock on relation "babble' in str(ex):
-            logging.info('%s Babble table locked, skipping update.' % datetime.now())
-        else:
-            raise ex
+        # If we can't lock the table, silently skip updating and wait for the next time we're called.
+        if 'could not obtain lock on relation "babble' not in str(ex):
+            raise
