@@ -27,7 +27,7 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     data = post('https://www.googleapis.com/urlshortener/v1/url?key=%s' % key, data=json.dumps({'longUrl': msg}),
-                headers={'Content-Type': 'application/json'}, timeout=5).json()
+                headers={'Content-Type': 'application/json'}, timeout=10).json()
     if 'error' in data:
         return msg
     else:
@@ -45,7 +45,7 @@ def get_title(url):
         url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = urlopen(Request(url, headers=headers), timeout=5)
+        req = urlopen(Request(url, headers=headers), timeout=10)
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
