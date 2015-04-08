@@ -30,7 +30,7 @@ class BotTest(unittest.TestCase):
     @mock.patch('irc.bot.SingleServerIRCBot')
     @mock.patch('multiprocessing.Pool')
     @mock.patch('threading.Timer')
-    @mock.patch('helpers.server.BotNetServer')
+    @mock.patch('socket.socket')
     def test_bot_init(self, *args):
         bot = importlib.import_module('bot')
         bot.main(mock.MagicMock())
