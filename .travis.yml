@@ -16,6 +16,7 @@ install:
 before_script:
     - psql -U postgres -c 'create database ircbot'
     - sed "s#engine:#\0 postgresql://postgres@/ircbot#" config.example > config.cfg
+    - git clone git://github.com/tjcsl/cslbot-tjhsst.git commands/tjhsst
 
 script:
     - flake8 --max-line-length=1000 .
