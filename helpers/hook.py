@@ -70,7 +70,7 @@ def enable_hook(hook):
         return "Enabled all hooks."
     elif hook in _disabled_hooks:
         _disabled_hooks.remove(hook)
-        return "%s reenabled" % hook
+        return "Enabled hook %s" % hook
     elif ("hooks.%s" % hook) in sys.modules:
         return "That hook isn't disabled!"
     else:
