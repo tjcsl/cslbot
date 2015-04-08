@@ -20,6 +20,7 @@ from unittest import mock
 from os.path import dirname
 import importlib
 import sys
+import irc.client
 
 # FIXME: sibling imports
 sys.path.append(dirname(__file__) + '/..')
@@ -27,13 +28,14 @@ sys.path.append(dirname(__file__) + '/..')
 
 class BotTest(unittest.TestCase):
 
-    @mock.patch('irc.bot.SingleServerIRCBot')
     @mock.patch('multiprocessing.Pool')
     @mock.patch('threading.Timer')
     @mock.patch('socket.socket')
+    @mock.patch.object(irc.client.Reactor, 'process_forever')
     def test_bot_init(self, *args):
+        """Make sure the bot starts up correctly."""
         bot = importlib.import_module('bot')
-        bot.main(mock.MagicMock())
+        bot.main(mock.MagicMock(debug=False))
 
 if __name__ == '__main__':
     unittest.main()
