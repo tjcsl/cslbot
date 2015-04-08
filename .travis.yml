@@ -5,13 +5,12 @@ addons:
 
 python:
     - 3.4
-
-cache:
-    directories:
-        - $HOME/.cache/pip
+env:
+    global:
+        secure: lj+VOYMzDqhCTVpnGtkBEBRRCi5nQHgK6SR88tZLI34sn1eQQGyc8hM/BStIBF9iaC0+5b3GaRrEtfRQ3jwxUrcm1fPMOhFlkqb/WH3Yaidp0goEzlvE8UDdfZSO3UpjfgnYTpqBCKskGcfb9iz1CRI02+PtgzSfGuZ8sntgOLM= 
 
 install:
-    - pip install flake8
+    - pip install flake8 sphinx
     - pip install -r requirements.txt
 
 before_script:
@@ -21,3 +20,7 @@ before_script:
 script:
     - flake8 --max-line-length=1000 .
     - ./scripts/test.py
+    - ./scripts/gendocs.sh
+
+after_success:
+    ./scripts/deploy_docs.sh
