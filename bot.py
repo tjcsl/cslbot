@@ -20,7 +20,6 @@ try:
     import logging
     import importlib
     import argparse
-    import atexit
     import ssl
     import handler
     import multiprocessing
@@ -29,7 +28,6 @@ try:
     import helpers.traceback as traceback
     import helpers.misc as misc
     import helpers.modutils as modutils
-    import helpers.thread as thread
     import helpers.workers as workers
     from configparser import ConfigParser
     from irc.bot import ServerSpec, SingleServerIRCBot
@@ -37,7 +35,6 @@ try:
     from os.path import dirname, join, exists
     from time import time
     from random import getrandbits
-    from threading import Lock
 except ImportError as e:
     raise Exception("%s, are you using Python 3.4 or higher?" % e)
 if sys.version_info < (3, 4):
@@ -54,10 +51,8 @@ class IrcBot(SingleServerIRCBot):
         | Setup the server.
         | Connect to the server.
         """
-        atexit.register(self.do_shutdown)
-        self.pool_lock = Lock()
         self.handler = handler.BotHandler(botconfig)
-        self.handler.workers = workers.Workers(self.handler, self.pool_lock)
+        self.handler.workers = workers.Workers(self.handler)
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
@@ -106,13 +101,14 @@ class IrcBot(SingleServerIRCBot):
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs, 'irc')
 
-    def do_shutdown(self, reload=False):
+    def shutdown_server(self):
         if hasattr(self, 'server'):
             self.server.socket.close()
             self.server.shutdown()
-        if hasattr(self, 'handler') and hasattr(self.handler, 'workers'):
+
+    def shutdown_workers(self):
+        if hasattr(self, 'handler'):
             self.handler.workers.stop_workers()
-        thread.shutdown(reload)
 
     def do_reload(self, c, target, cmdargs, msgtype):
         """The reloading magic.
@@ -134,20 +130,21 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         # preserve data
         data = self.handler.get_data()
-        self.do_shutdown(True)
+        # FIXME: thread.shutdown(reload)
         self.handler = handler.BotHandler(self.config)
         if self.config['feature'].getboolean('server'):
+            self.shutdown_server()
             self.server = server.init_server(self)
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self.handler, self.pool_lock)
+        self.handler.workers = workers.Workers(self.handler)
         if output:
             return output
 
     def get_version(self):
         """Get the version."""
-        return "cslbot - v0.5"
+        return "cslbot - v0.8"
 
     def do_welcome(self, c):
         """Do setup when connected to server.
@@ -214,7 +211,8 @@ class IrcBot(SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_disconnect(self, c, e):
-        self.do_shutdown(True)
+        self.shutdown_server()
+        self.shutdown_workers()
 
     def on_join(self, c, e):
         """Handle joins."""

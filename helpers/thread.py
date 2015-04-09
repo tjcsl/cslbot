@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 _threadcount = 4
 _lock = Lock()
+# FIXME: merge this w/ the workers.py multiprocessing Pool?
 _executor = ThreadPoolExecutor(_threadcount)
 
 

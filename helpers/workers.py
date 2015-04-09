@@ -25,15 +25,15 @@ from .control import show_pending
 from .orm import Babble_last, Log
 from sqlalchemy import or_
 
+pool_lock = threading.Lock()
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
 class Workers():
 
-    def __init__(self, handler, pool_lock):
-        self.pool_lock = pool_lock
-        with self.pool_lock:
+    def __init__(self, handler):
+        with pool_lock:
             self.pool = multiprocessing.Pool()
             self.events = {}
         self.handler = handler
@@ -45,12 +45,12 @@ class Workers():
         self.defer(3600, False, self.check_babble, handler, send)
 
     def run_pool(self, func, args):
-        with self.pool_lock:
+        with pool_lock:
             result = self.pool.apply_async(func, args)
         return result
 
     def restart_pool(self):
-        with self.pool_lock:
+        with pool_lock:
             self.pool.terminate()
             self.pool.join()
             self.pool = multiprocessing.Pool()
@@ -69,21 +69,22 @@ class Workers():
         event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
-        with self.pool_lock:
+        with pool_lock:
             self.events[event.ident] = Event(event, run_on_cancel)
         return event.ident
 
     def cancel(self, eventid):
-        with self.pool_lock:
+        with pool_lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
                 self.events[eventid].event.function(**self.events[eventid].event.kwargs)
             del self.events[eventid]
 
     def stop_workers(self):
-        with self.pool_lock:
+        with pool_lock:
             self.pool.close()
             self.pool.join()
+            del self.pool
             for x in self.events.values():
                 x.event.cancel()
             self.events.clear()
