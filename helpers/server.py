@@ -19,7 +19,7 @@ from .traceback import get_traceback
 
 WELCOME = """
 Welcome to the IRCbot console.
-Copyright (c) 2013-2015 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, and James Forcier.
+Copyright (C) 2013-2015 Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser
 Licensed under the GNU GPL version 2.
 
 Type "help" for a list of commands.

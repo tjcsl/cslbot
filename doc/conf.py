@@ -52,8 +52,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'IrcBot'
-copyright = '2013-2015, Peter Foley'
-author = 'Peter Foley'
+copyright = '2013-2015, Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser'
+author = 'Fox Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
