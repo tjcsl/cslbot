@@ -28,9 +28,8 @@ def start(func, *args, **kwargs):
         _executor.submit(func, *args, **kwargs)
 
 
-def shutdown(reload):
+def restart_executor():
     global _executor
     with _lock:
-        _executor.shutdown(False)
-        if reload:
-            _executor = ThreadPoolExecutor(_threadcount)
+        _executor.shutdown(True)
+        _executor = ThreadPoolExecutor(_threadcount)

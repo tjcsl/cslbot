@@ -27,8 +27,8 @@ try:
     import helpers.config as config
     import helpers.traceback as traceback
     import helpers.misc as misc
+    import helpers.thread as thread
     import helpers.modutils as modutils
-    import helpers.workers as workers
     from configparser import ConfigParser
     from irc.bot import ServerSpec, SingleServerIRCBot
     from irc.connection import Factory
@@ -52,7 +52,6 @@ class IrcBot(SingleServerIRCBot):
         | Connect to the server.
         """
         self.handler = handler.BotHandler(botconfig)
-        self.handler.workers = workers.Workers(self.handler)
         self.config = botconfig
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
@@ -130,15 +129,16 @@ class IrcBot(SingleServerIRCBot):
         self.config.read_file(open(configfile))
         # preserve data
         data = self.handler.get_data()
-        # FIXME: thread.shutdown(reload)
-        self.handler = handler.BotHandler(self.config)
+        self.shutdown_workers()
+        thread.restart_executor()
         if self.config['feature'].getboolean('server'):
             self.shutdown_server()
             self.server = server.init_server(self)
+        del self.handler
+        self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
         self.handler.channels = self.channels
-        self.handler.workers = workers.Workers(self.handler)
         if output:
             return output
 

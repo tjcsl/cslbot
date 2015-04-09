@@ -29,6 +29,7 @@ import helpers.textutils as textutils
 import helpers.admin as admin
 import helpers.identity as identity
 import helpers.misc as misc
+import helpers.workers as workers
 from os.path import dirname
 from random import choice, random
 
@@ -49,6 +50,7 @@ class BotHandler():
         | db - Is a db wrapper for data storage.
         """
         self.config = config
+        self.workers = workers.Workers(self)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
