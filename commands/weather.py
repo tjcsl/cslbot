@@ -14,9 +14,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 import geoip2
 import os.path
+import datetime
+import re
 from requests import get
 from helpers import arguments
 from helpers.orm import Weather_prefs
@@ -129,15 +130,35 @@ def get_forecast(cmdargs, send, apikey):
     send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime("%x")))
 
 
+def get_hourly(cmdargs, send, apikey):
+    forecastdata = get('http://api.wunderground.com/api/%s/hourly10day/q/%s.json' % (apikey, cmdargs.string)).json()
+    if 'hourly_forecast' not in forecastdata:
+        send("Invalid or Ambiguous Location")
+        return False
+    if not cmdargs.date:
+        cmdargs.date = datetime.datetime.now()
+    forecastdata = forecastdata['hourly_forecast']
+    for hour in forecastdata:
+        # wunderground's API returns strings rather than ints for the date for some reason, so casting is needed here
+        if (int(hour['FCTTIME']['hour']), int(hour['FCTTIME']['mday']), int(hour['FCTTIME']['mon']), int(hour['FCTTIME']['year'])) == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
+            forecast = '%s, Temperature: %s' % (
+                hour['condition'],
+                hour['temp']['english'])
+            send("Forecast for %s on %s at %s00: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), cmdargs.hour, forecast))
+            return
+    send("Couldn't find data for %s hour %s in the 10-day hourly forecast" % (cmdargs.date.strftime("%x"), cmdargs.hour))
+
+
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
 def cmd(send, msg, args):
     """Gets the weather.
-    Syntax: !weather [--date date] <location|--set default>
+    Syntax: !weather [--date date] [--hour hour] <location|--set default>
     Powered by Weather Underground, www.wunderground.com
     """
     apikey = args['config']['api']['weatherapikey']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--date', action=arguments.DateParser)
+    parser.add_argument('--hour', type=int)
     parser.add_argument('--set', action='store_true')
     parser.add_argument('string', nargs='*')
     try:
@@ -150,10 +171,15 @@ def cmd(send, msg, args):
     if cmdargs.set:
         set_default(args['nick'], cmdargs.string, args['db'], send, apikey)
         return
+    if cmdargs.hour > 24:
+        send("Invalid Hour")
+        cmdargs.hour = 0
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not cmdargs.string:
         cmdargs.string = get_default(nick, args['db'], args['handler'], send, args['config'], args['source'])
-    if cmdargs.date:
+    if cmdargs.hour:
+        get_hourly(cmdargs, send, apikey)
+    elif cmdargs.date:
         get_forecast(cmdargs, send, apikey)
     else:
         get_weather(cmdargs, send, apikey)
