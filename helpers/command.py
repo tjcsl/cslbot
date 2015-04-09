@@ -25,7 +25,6 @@ from . import modutils
 from inspect import getdoc
 from datetime import datetime, timedelta
 from .traceback import handle_traceback
-from .thread import start
 from .orm import Commands, Log
 
 _known_commands = {}
@@ -141,7 +140,7 @@ class Command():
             self.handler = handler
             with handler.db.session_scope() as session:
                 record_command(session, nick, command, target)
-            start(self.exe, send, msg, args)
+            handler.workers.start_thread(self.exe, send, msg, args)
 
     def get_doc(self):
         return self.doc

@@ -23,7 +23,6 @@ import re
 import threading
 from . import modutils
 from .traceback import handle_traceback
-from .thread import start
 
 _known_hooks = {}
 _disabled_hooks = set()
@@ -114,4 +113,4 @@ class Hook():
             return
         self.handler = handler
         self.target = target
-        start(self.exe, send, msg, msgtype, args)
+        handler.workers.start_thread(self.exe, send, msg, msgtype, args)

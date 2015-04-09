@@ -132,14 +132,6 @@ helpers.textutils module
     :undoc-members:
     :show-inheritance:
 
-helpers.thread module
----------------------
-
-.. automodule:: helpers.thread
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 helpers.traceback module
 ------------------------
 

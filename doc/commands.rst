@@ -251,6 +251,14 @@ commands.gcc module
     :undoc-members:
     :show-inheritance:
 
+commands.gizoogle module
+------------------------
+
+.. automodule:: commands.gizoogle
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.google module
 ----------------------
 

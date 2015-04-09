@@ -16,7 +16,6 @@
 
 import socketserver
 from .traceback import get_traceback
-from .thread import start
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -39,7 +38,7 @@ def init_server(bot):
     port = bot.config.getint('core', 'serverport')
     server = BotNetServer(('', port), BotNetHandler)
     server.bot = bot
-    start(server.serve_forever)
+    bot.handler.workers.start_thread(server.serve_forever)
     return server
 
 

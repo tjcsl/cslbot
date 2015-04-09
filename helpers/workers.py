@@ -17,6 +17,7 @@
 import re
 import threading
 import multiprocessing
+import concurrent.futures
 from collections import namedtuple
 from threading import Timer
 from .traceback import handle_traceback
@@ -25,7 +26,8 @@ from .control import show_pending
 from .orm import Babble_last, Log
 from sqlalchemy import or_
 
-pool_lock = threading.Lock()
+worker_lock = threading.Lock()
+executor_lock = threading.Lock()
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
@@ -33,9 +35,11 @@ Event = namedtuple('Event', ['event', 'run_on_cancel'])
 class Workers():
 
     def __init__(self, handler):
-        with pool_lock:
+        with worker_lock:
             self.pool = multiprocessing.Pool()
             self.events = {}
+        with executor_lock:
+            self.executor = concurrent.futures.ThreadPoolExecutor(4)
         self.handler = handler
         # Set-up notifications for pending admin approval.
 
@@ -44,13 +48,17 @@ class Workers():
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
 
+    def start_thread(self, func, *args, **kwargs):
+        with executor_lock:
+            self.executor.submit(func, *args, **kwargs)
+
     def run_pool(self, func, args):
-        with pool_lock:
+        with worker_lock:
             result = self.pool.apply_async(func, args)
         return result
 
     def restart_pool(self):
-        with pool_lock:
+        with worker_lock:
             self.pool.terminate()
             self.pool.join()
             self.pool = multiprocessing.Pool()
@@ -69,19 +77,22 @@ class Workers():
         event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
-        with pool_lock:
+        with worker_lock:
             self.events[event.ident] = Event(event, run_on_cancel)
         return event.ident
 
     def cancel(self, eventid):
-        with pool_lock:
+        with worker_lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
                 self.events[eventid].event.function(**self.events[eventid].event.kwargs)
             del self.events[eventid]
 
     def stop_workers(self):
-        with pool_lock:
+        with executor_lock:
+            self.executor.shutdown(True)
+            del self.executor
+        with worker_lock:
             self.pool.close()
             self.pool.join()
             del self.pool
