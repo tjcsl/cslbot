@@ -33,9 +33,11 @@ def main(config, speaker):
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
     print('Generating markov.')
-    session.execute('LOCK TABLE babble IN EXCLUSIVE MODE')
-    session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE')
-    session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE')
+    # FIXME: support locking for other dialects?
+    if session.bind.dialect.name == 'postgresql':
+        session.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
+        session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
+        session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
     build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True, debug=True)
     print('Finished markov in %f' % (time.time() - t))
