@@ -171,13 +171,13 @@ def cmd(send, msg, args):
     if cmdargs.set:
         set_default(args['nick'], cmdargs.string, args['db'], send, apikey)
         return
-    if cmdargs.hour > 24:
+    if cmdargs.hour is not None and cmdargs.hour > 23:
         send("Invalid Hour")
-        cmdargs.hour = 0
+        cmdargs.hour = None
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not cmdargs.string:
         cmdargs.string = get_default(nick, args['db'], args['handler'], send, args['config'], args['source'])
-    if cmdargs.hour:
+    if cmdargs.hour is not None:
         get_hourly(cmdargs, send, apikey)
     elif cmdargs.date:
         get_forecast(cmdargs, send, apikey)
