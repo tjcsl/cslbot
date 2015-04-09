@@ -20,7 +20,7 @@
 import re
 import string
 from requests import get, post
-from lxml.html import fromstring
+from lxml.html import fromstring, tostring
 from html.parser import HTMLParser
 from random import random, choice, randrange
 
@@ -43,6 +43,14 @@ def gen_hashtag(msg):
 def gen_yoda(msg):
     html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
     return fromstring(html.text).findtext('.//textarea[@readonly]')
+
+
+def gen_gizoogle(msg):
+    html = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': msg})
+    # This mess is needed because gizoogle has a malformed textarea, so the text isn't within the tag
+    response = tostring(fromstring(html.text).find('.//textarea')).decode('utf-8').strip()
+    response = re.sub(".*</textarea>", '', response)
+    return response
 
 
 def gen_praise(msg):
