@@ -38,7 +38,6 @@ def gen_stock(msg):
         quote = quote['quote']
     else:
         return "No Results"
-    print(quote)
     if quote['Name'] is None:
         return "Invalid Symbol."
     else:
