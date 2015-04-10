@@ -208,4 +208,4 @@ def get_urban_definition(msg):
     else:
         output = data[int(index) - 1]['definition']
     output = output.splitlines()
-    return ' '.join(output)
+    return ' '.join(output).strip()
