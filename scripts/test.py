@@ -29,7 +29,6 @@ sys.path.append(dirname(__file__) + '/..')
 
 class BotTest(unittest.TestCase):
 
-    @mock.patch('socket.socket')
     @mock.patch.object(irc.client.Reactor, 'process_forever')
     def test_bot_init(self, *args):
         """Make sure the bot starts up correctly."""
@@ -38,8 +37,12 @@ class BotTest(unittest.TestCase):
         configfile = join(dirname(__file__), '../config.cfg')
         with open(configfile) as conf:
             botconfig.read_file(conf)
+        port = botconfig.getint('core', 'serverport')
+        # Avoid port conflicts with running bot
+        botconfig['core']['serverport'] = str(port + 1000)
         bot = bot_mod.IrcBot(botconfig)
         bot.start()
+        bot.shutdown_server()
         bot.shutdown_workers()
 
 if __name__ == '__main__':
