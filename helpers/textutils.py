@@ -21,7 +21,6 @@ import string
 from requests import get, post
 from lxml.html import fromstring, tostring
 from html import unescape
-from html.parser import HTMLParser
 from random import random, choice, randrange
 
 
@@ -84,11 +83,9 @@ def gen_creffett(msg):
 
 
 def gen_slogan(msg, count=0):
-    html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg})
+    html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg.encode('utf-7')})
     slogan = re.search('>(.*)<', html.text).group(1)
-    parser = HTMLParser()
-    slogan = parser.unescape(parser.unescape(slogan))
-    slogan = slogan.replace('\\', '').strip()
+    slogan = slogan.encode().decode('utf-7').strip()
     if len(slogan) > len(msg):
         return slogan
     if count > 5:

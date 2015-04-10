@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers.textutils import gen_slogan, gen_word
+from helpers import textutils
 
 
 @Command('slogan')
@@ -24,5 +24,5 @@ def cmd(send, msg, args):
     Syntax: !slogan <text>
     """
     if not msg:
-        msg = gen_word()
-    send(gen_slogan(msg))
+        msg = textutils.gen_word()
+    send(textutils.gen_slogan(msg))
