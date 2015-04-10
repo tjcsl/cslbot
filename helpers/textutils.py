@@ -86,6 +86,7 @@ def gen_slogan(msg, count=0):
     html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg.encode('utf-7')})
     slogan = re.search('>(.*)<', html.text).group(1)
     slogan = slogan.encode().decode('utf-7').strip()
+    slogan = unescape(unescape(slogan)).replace('\\', '')
     if len(slogan) > len(msg):
         return slogan
     if count > 5:
