@@ -99,9 +99,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
                     ctrlchan = bot.config['core']['ctrlchan']
                     output = bot.do_reload(bot.connection, ctrlchan, cmdargs)
-                    bot.handler.do_reload()
                     if output:
-                        send(output + '\n')
+                        send("%s\n" % output)
                     send("Aye Aye Capt'n\n")
                     bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
                     self.request.close()

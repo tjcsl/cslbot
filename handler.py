@@ -84,7 +84,7 @@ class BotHandler():
         """Called from :func:`bot.IrcBot.do_reload` to restore the handler's data."""
         for key, val in data.items():
             setattr(self, key, val)
-        return
+        self.uptime['reloaded'] = time.time()
 
     def loadmodules(self):
         """Load all the commands.
@@ -395,11 +395,6 @@ class BotHandler():
                 raise Exception("Invalid Argument: %s" % arg)
         return realargs
 
-    def do_reload(self):
-        self.uptime['reloaded'] = time.time()
-        self.loadmodules()
-        self.loadhooks()
-
     def is_ignored(self, target, nick):
         return nick in self.ignored
 
@@ -501,7 +496,6 @@ class BotHandler():
             if cmd[len(cmdchar):] == 'reload':
                 if nick in admins:
                     found = True
-                    self.do_reload()
                     send("Aye Aye Capt'n")
             # everything below this point requires admin
             if not found and self.is_admin(send, nick):
