@@ -36,7 +36,7 @@ quit\t\t\tquit the console session
 
 def init_server(bot):
     port = bot.config.getint('core', 'serverport')
-    server = BotNetServer(('', port), BotNetHandler)
+    server = BotNetServer(('localhost', port), BotNetHandler)
     server.bot = bot
     bot.handler.workers.start_thread(server.serve_forever)
     return server
@@ -85,7 +85,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     try:
                         send("ircbot> ")
                         cmd = self.get_data().strip().split()
-                    except Exception:
+                    except BrokenPipeError:
                         # connection has been closed
                         return
                 if not cmd:
@@ -94,9 +94,10 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     send(HELP)
                 elif cmd[0] == "admins":
                     admins = ", ".join(bot.handler.admins.keys())
-                    send(admins + '\n')
+                    send("%s\n" % admins)
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
+                    bot.reload_event.wait()
                     ctrlchan = bot.config['core']['ctrlchan']
                     output = bot.do_reload(bot.connection, ctrlchan, cmdargs)
                     if output:
@@ -122,5 +123,5 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         except Exception as ex:
             msg, _ = get_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']
-            send(msg + '\n')
+            send('%s\n' % msg)
             bot.connection.privmsg(ctrlchan, msg)

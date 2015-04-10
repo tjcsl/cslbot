@@ -22,6 +22,7 @@ try:
     import argparse
     import ssl
     import handler
+    import threading
     import multiprocessing
     import helpers.server as server
     import helpers.config as config
@@ -50,6 +51,8 @@ class IrcBot(SingleServerIRCBot):
         | Setup the server.
         | Connect to the server.
         """
+        self.reload_event = threading.Event()
+        self.reload_event.set()
         self.config = botconfig
         self.handler = handler.BotHandler(botconfig)
         if botconfig['feature'].getboolean('server'):
@@ -81,6 +84,7 @@ class IrcBot(SingleServerIRCBot):
         else:
             target = e.source.nick
         try:
+            self.reload_event.wait()
             if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
                 self.check_reload(target, c, e, msgtype)
             self.handler.handle_msg(msgtype, c, e)
@@ -117,6 +121,7 @@ class IrcBot(SingleServerIRCBot):
         | Then make copies of all the handler data we want to keep.
         | Create a new handler and restore all the data.
         """
+        self.reload_event.clear()
         output = None
         if cmdargs == 'pull':
             output = misc.do_pull(dirname(__file__), c.real_nickname)
@@ -139,6 +144,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.channels = self.channels
         if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
+        self.reload_event.set()
         if output:
             return output
 
