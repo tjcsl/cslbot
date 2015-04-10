@@ -99,7 +99,7 @@ class IrcBot(SingleServerIRCBot):
                 c.privmsg(target, "Nope, not gonna do it.")
             else:
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
-                self.do_reload(c, target, cmdargs, 'irc')
+                self.do_reload(c, target, cmdargs)
 
     def shutdown_server(self):
         if hasattr(self, 'server'):
@@ -110,7 +110,7 @@ class IrcBot(SingleServerIRCBot):
         if hasattr(self, 'handler'):
             self.handler.workers.stop_workers()
 
-    def do_reload(self, c, target, cmdargs, msgtype):
+    def do_reload(self, c, target, cmdargs):
         """The reloading magic.
 
         | First, reload handler.py.
@@ -127,7 +127,8 @@ class IrcBot(SingleServerIRCBot):
         importlib.reload(handler)
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
-        self.config.read_file(open(configfile))
+        with open(configfile) as cfgfile:
+            self.config.read_file(cfgfile)
         # preserve data
         data = self.handler.get_data()
         self.shutdown_server()

@@ -98,7 +98,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
                     ctrlchan = bot.config['core']['ctrlchan']
-                    output = bot.do_reload(bot.connection, ctrlchan, cmdargs, 'server')
+                    output = bot.do_reload(bot.connection, ctrlchan, cmdargs)
                     bot.handler.do_reload()
                     if output:
                         send(output + '\n')
