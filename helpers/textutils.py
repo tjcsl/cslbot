@@ -41,7 +41,7 @@ def gen_hashtag(msg):
 
 def gen_yoda(msg):
     html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
-    return fromstring(html.text).findtext('.//textarea[@readonly]')
+    return fromstring(html.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip()
 
 
 def gen_gizoogle(msg):
