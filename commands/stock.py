@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 def get_quote(symbol):
-    params = {'q': "select BidRealtime,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
+    params = {'q': "select BidRealtime,Bid,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
               'format': 'json', 'env': 'store://datatables.org/alltableswithkeys'}
     data = get("http://query.yahooapis.com/v1/public/yql", params=params).json()
     return data['query']['results']
@@ -38,10 +38,16 @@ def gen_stock(msg):
         quote = quote['quote']
     else:
         return "No Results"
-    if quote['BidRealtime'] is None:
+    if quote['Name'] is None:
         return "Invalid Symbol."
     else:
-        return "%s (%s) -- %s %s 52wk: %s" % (quote['Name'], msg, quote['BidRealtime'], quote['ChangeinPercent'], quote['YearRange'])
+        if quote['BidRealtime']:
+            val = quote['BidRealtime']
+        elif quote['Bid']:
+            val = quote['Bid']
+        else:
+            val = "No Data"
+        return "%s (%s) -- %s %s 52wk: %s" % (quote['Name'], msg, val, quote['ChangeinPercent'], quote['YearRange'])
 
 
 def random_stock():
