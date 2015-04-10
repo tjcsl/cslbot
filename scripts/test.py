@@ -34,15 +34,13 @@ class BotTest(unittest.TestCase):
     def test_bot_init(self, *args):
         """Make sure the bot starts up correctly."""
         bot_mod = importlib.import_module('bot')
-        server_mod = importlib.import_module('helpers.server')
         botconfig = configparser.ConfigParser()
         configfile = join(dirname(__file__), '../config.cfg')
         with open(configfile) as conf:
             botconfig.read_file(conf)
         bot = bot_mod.IrcBot(botconfig)
-        bot.server = server_mod.init_server(bot)
         bot.start()
-        bot.handler.workers.stop_workers()
+        bot.shutdown_workers()
 
 if __name__ == '__main__':
     unittest.main()

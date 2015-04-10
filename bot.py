@@ -50,8 +50,10 @@ class IrcBot(SingleServerIRCBot):
         | Setup the server.
         | Connect to the server.
         """
-        self.handler = handler.BotHandler(botconfig)
         self.config = botconfig
+        self.handler = handler.BotHandler(botconfig)
+        if botconfig['feature'].getboolean('server'):
+            self.server = server.init_server(self)
         serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
         nick = botconfig['core']['nick']
         self.handle_connect(serverinfo, nick, botconfig['core'])
@@ -277,8 +279,6 @@ def main(args):
     with open(configfile) as conf:
         botconfig.read_file(conf)
     bot = IrcBot(botconfig)
-    if botconfig['feature'].getboolean('server'):
-        bot.server = server.init_server(bot)
     bot.start()
 
 if __name__ == '__main__':
