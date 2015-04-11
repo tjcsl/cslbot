@@ -23,12 +23,12 @@ import importlib
 import sys
 import socket
 import irc.client
+import threading
 
 # FIXME: sibling imports
 sys.path.append(dirname(__file__) + '/..')
 
 
-@mock.patch.object(irc.client.Reactor, 'process_forever')
 class BotTest(unittest.TestCase):
 
     @classmethod
@@ -38,25 +38,43 @@ class BotTest(unittest.TestCase):
         configfile = join(dirname(__file__), '../config.cfg')
         with open(configfile) as conf:
             botconfig.read_file(conf)
-        port = botconfig.getint('core', 'serverport')
-        # Avoid port conflicts with running bot
-        botconfig['core']['serverport'] = str(port + 1000)
-        cls.bot = bot_mod.IrcBot(botconfig)
+        cls.config = botconfig
+        with mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock):
+            cls.bot = bot_mod.IrcBot(botconfig)
+        cls.setup_handler()
+        # We don't actually connect to an irc server, so fake the event loop
+        with mock.patch.object(irc.client.Reactor, 'process_forever'):
+            cls.bot.start()
 
     @classmethod
     def tearDownClass(cls):
         cls.bot.shutdown_server()
         cls.bot.shutdown_workers()
 
-    def test_bot_init(self, *args):
-        """Make sure the bot starts up correctly."""
-        self.bot.start()
-        # FIXME: run some commands or something?
+    @classmethod
+    def setup_handler(cls):
+        cls.bot.handler.connection = mock.MagicMock(real_nickname='testBot')
+        cls.bot.handler.channels = {'#test-channel': mock.MagicMock()}
+        cls.bot.handler.db = mock.MagicMock()
 
-    def test_bot_reload(self, *args):
-        return
-        # FIXME: this needs to run in a seperate thread to work.
-        self.bot.reload_event.wait()
+    @classmethod
+    def config_mock(cls, section, option):
+        ret = int(cls.config[section][option])
+        # Avoid port conflicts with running bot
+        if section == 'core' and option == 'serverport':
+            return ret + 1000
+        return ret
+
+    def restart_workers(self):
+        """Force all the workers to restart so we get the log message."""
+        self.bot.shutdown_server()
+        self.bot.shutdown_workers()
+        self.bot.handler.workers.__init__(self.bot.handler)
+        server_mod = importlib.import_module('helpers.server')
+        with mock.patch.object(configparser.ConfigParser, 'getint', self.config_mock):
+            self.bot.server = server_mod.init_server(self.bot)
+
+    def do_reload(self):
         sock = socket.socket()
         port = self.bot.config.getint('core', 'serverport')
         passwd = self.bot.config['auth']['serverpass']
@@ -64,12 +82,29 @@ class BotTest(unittest.TestCase):
         msg = '%s\nreload' % passwd
         sock.send(msg.encode())
         output = []
-        while len(output) < 2:
+        while len(output) < 3:
             resp = sock.recv(4096)
             output.append(resp)
         sock.close()
-        output = "".join([x.decode() for x in output])
-        self.assertEqual(output, 'Aye')
+        self.reload_output = "".join([x.decode() for x in output])
+
+    def test_handle_msg(self):
+        """Make sure the bot can handle a simple message."""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        self.bot.connection._handle_event(e)
+        self.restart_workers()
+        calls = [x[0] for x in self.bot.handler.db.log.call_args_list]
+        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!morse bob', 'pubmsg'), ('testBot', '#test-channel', 0, '-... --- -...', 'privmsg')])
+
+    def test_bot_reload(self):
+        """Make sure the bod can reload without errors."""
+        # We need to run this in a seperate thread for it to work correctly.
+        thread = threading.Thread(target=self.do_reload)
+        thread.start()
+        thread.join()
+        self.setup_handler()
+        self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
 
 if __name__ == '__main__':
     unittest.main()
