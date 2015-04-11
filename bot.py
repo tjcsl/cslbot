@@ -217,8 +217,10 @@ class IrcBot(SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
     def on_disconnect(self, c, e):
-        self.shutdown_server()
-        self.shutdown_workers()
+        # Don't kill everything if we just ping timed-out
+        if e.arguments[0] == 'Goodbye, Cruel World!':
+            self.shutdown_server()
+            self.shutdown_workers()
 
     def on_join(self, c, e):
         """Handle joins."""
