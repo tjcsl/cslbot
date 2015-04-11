@@ -23,6 +23,7 @@ def cmd(send, msg, args):
     """Changes the output filter.
     Syntax: !filter <filter|show|list|reset|chain filter>
     """
+    # FIXME: use argparse
     output_filters = {
         "hashtag": textutils.gen_hashtag,
         "fwilson": textutils.gen_fwilson,
@@ -60,10 +61,13 @@ def cmd(send, msg, args):
         else:
             send("Nope, not gonna do it!")
     elif msg.startswith('chain'):
-        next_filter = msg.split()[1]
-        if next_filter in output_filters.keys():
-            args['handler'].outputfilter.append(output_filters[next_filter])
-            send("Okay!")
+        if args['is_admin'](args['nick']):
+            next_filter = msg.split()[1]
+            if next_filter in output_filters.keys():
+                args['handler'].outputfilter.append(output_filters[next_filter])
+                send("Okay!")
+            else:
+                send("Invalid filter.")
         else:
             send("Nope, not gonna do it.")
     elif msg in output_filters.keys():
