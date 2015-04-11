@@ -39,8 +39,8 @@ class BotTest(unittest.TestCase):
         with open(configfile) as conf:
             botconfig.read_file(conf)
         cls.config = botconfig
-        with mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock):
-            cls.bot = bot_mod.IrcBot(botconfig)
+        mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock).start()
+        cls.bot = bot_mod.IrcBot(botconfig)
         cls.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
@@ -71,13 +71,11 @@ class BotTest(unittest.TestCase):
         self.bot.shutdown_workers()
         self.bot.handler.workers.__init__(self.bot.handler)
         server_mod = importlib.import_module('helpers.server')
-        with mock.patch.object(configparser.ConfigParser, 'getint', self.config_mock):
-            self.bot.server = server_mod.init_server(self.bot)
+        self.bot.server = server_mod.init_server(self.bot)
 
     def do_reload(self):
         sock = socket.socket()
-        with mock.patch.object(configparser.ConfigParser, 'getint', self.config_mock):
-            port = self.bot.config.getint('core', 'serverport')
+        port = self.bot.config.getint('core', 'serverport')
         passwd = self.bot.config['auth']['serverpass']
         sock.connect(('localhost', port))
         msg = '%s\nreload' % passwd
