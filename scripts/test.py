@@ -76,7 +76,8 @@ class BotTest(unittest.TestCase):
 
     def do_reload(self):
         sock = socket.socket()
-        port = self.bot.config.getint('core', 'serverport')
+        with mock.patch.object(configparser.ConfigParser, 'getint', self.config_mock):
+            port = self.bot.config.getint('core', 'serverport')
         passwd = self.bot.config['auth']['serverpass']
         sock.connect(('localhost', port))
         msg = '%s\nreload' % passwd
