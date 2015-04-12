@@ -11,5 +11,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   cp -r ../doc/build/* .
   git add -A .
   git commit -m "Update docs, build $TRAVIS_BUILD_NUMBER"
-  git push origin gh-pages && echo "Pushed docs to Github Pages" || echo "Failed to push docs to Github Pages"
+  git push origin gh-pages | sed s/${GH_TOKEN}/[secure]/g
+  echo "Pushed docs to Github Pages"
 fi
