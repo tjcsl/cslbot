@@ -18,6 +18,7 @@
 
 import re
 import string
+from os.path import dirname
 from requests import get, post
 from lxml.html import fromstring, tostring
 from html import unescape
@@ -82,17 +83,12 @@ def gen_creffett(msg):
     return '\x02\x038,4%s!!!' % msg.upper()
 
 
-def gen_slogan(msg, count=0):
-    html = get('http://www.sloganizer.net/en/outbound.php', params={'slogan': msg.encode('utf-7')})
-    slogan = re.search('>(.*)<', html.text).group(1)
-    slogan = slogan.encode().decode('utf-7').strip()
-    slogan = unescape(unescape(slogan)).replace('\\', '')
-    if len(slogan) > len(msg):
-        return slogan
-    if count > 5:
-        return "Failed to get slogan"
-    else:
-        return gen_slogan(msg, count + 1)
+def gen_slogan(msg):
+    # Originally from sloganizer.com
+    # FIXME: cache this somewhere
+    with open(dirname(__file__) + '/../static/slogans.txt') as f:
+        slogans = f.read().splitlines()
+    return choice(slogans) % msg
 
 
 def gen_morse(msg):
