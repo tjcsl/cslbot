@@ -1,4 +1,4 @@
 #!/bin/bash
-PASSWORD=`sed -ne 's/ctrlpass: //p' config.cfg`
-PORT=`sed -ne 's/serverport: //p' config.cfg`
+PASSWORD=`sed -ne 's/ctrlpass =//p' config.cfg`
+PORT=`sed -ne 's/serverport = //p' config.cfg`
 echo -e "$PASSWORD\nreload" | nc localhost $PORT
