@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import ssl
 from lxml.html import parse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -45,7 +46,9 @@ def get_title(url):
         url = "://".join(url)
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = urlopen(Request(url, headers=headers), timeout=10)
+        # We don't care if the cert is valid or not.
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        req = urlopen(Request(url, headers=headers), context=context, timeout=10)
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
             title = 'Image'

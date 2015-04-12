@@ -17,7 +17,7 @@
 import re
 import time
 import multiprocessing
-from helpers.urlutils import get_title, get_short
+from helpers import urlutils
 from helpers.orm import Urls
 from helpers.hook import Hook
 
@@ -44,9 +44,9 @@ def handle(send, msg, args):
         send('Regex timed out.')
         return
     for url in urls:
-        title = get_title(url)
+        title = urlutils.get_title(url)
         key = args['config']['api']['googleapikey']
-        short = get_short(url, key)
+        short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
             # 604800 is the number of seconds in a week.
