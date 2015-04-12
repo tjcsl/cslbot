@@ -24,20 +24,20 @@ try:
     import importlib
     import argparse
     import ssl
-    import handler
+    import time
     import threading
+    import random
     import multiprocessing
-    import helpers.server as server
-    import helpers.config as config
-    import helpers.traceback as traceback
-    import helpers.misc as misc
-    import helpers.modutils as modutils
+    import handler
+    from helpers import server
+    from helpers import config
+    from helpers import traceback
+    from helpers import misc
+    from helpers import modutils
     from configparser import ConfigParser
     from irc.bot import ServerSpec, SingleServerIRCBot
     from irc.connection import Factory
     from os.path import dirname, join, exists
-    from time import time
-    from random import getrandbits
 except ImportError as e:
     raise Exception("Unable to import all required modules: %s" % e)
 
@@ -248,10 +248,10 @@ class IrcBot(SingleServerIRCBot):
 
     def on_ctcpreply(self, c, e):
         if len(e.arguments) == 2:
-            misc.ping(c, e, time())
+            misc.ping(c, e, time.time())
 
     def on_nicknameinuse(self, c, e):
-        self.connection.nick('Guest%d' % getrandbits(20))
+        self.connection.nick('Guest%d' % random.getrandbits(20))
         self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
         self.handler.workers.defer(5, False, self.do_welcome, c)
 
