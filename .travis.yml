@@ -7,7 +7,7 @@ python:
     - 3.4
 env:
     global:
-        secure: lj+VOYMzDqhCTVpnGtkBEBRRCi5nQHgK6SR88tZLI34sn1eQQGyc8hM/BStIBF9iaC0+5b3GaRrEtfRQ3jwxUrcm1fPMOhFlkqb/WH3Yaidp0goEzlvE8UDdfZSO3UpjfgnYTpqBCKskGcfb9iz1CRI02+PtgzSfGuZ8sntgOLM= 
+        secure: UmNKNYhivdYf9Nm85vnvkPz2ZCEI9GuoQVBwj32alqq1PjUNyIqiGn1pp+J9m/KEyyJTGh8Hlm+57SE0LM7U1/sfu4Rx7hDJNzAbwFo1SJN98nksIPz9CexeaYcKK6z2Cx5rcHi+x39rNNrykXXOMFhwrLuQmKcMrbecylW65j0=
 
 install:
     - pip install flake8 sphinx psycopg2
