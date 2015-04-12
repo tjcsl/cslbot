@@ -17,6 +17,9 @@
 
 try:
     import sys
+    if sys.version_info < (3, 4):
+        # Dependency on importlib.reload
+        raise Exception("Need Python 3.4 or higher.")
     import logging
     import importlib
     import argparse
@@ -36,10 +39,7 @@ try:
     from time import time
     from random import getrandbits
 except ImportError as e:
-    raise Exception("%s, are you using Python 3.4 or higher?" % e)
-if sys.version_info < (3, 4):
-    # Dependency on importlib.reload
-    raise Exception("Need Python 3.4 or higher.")
+    raise Exception("Unable to import all required modules: %s" % e)
 
 
 class IrcBot(SingleServerIRCBot):
