@@ -19,16 +19,16 @@
 import re
 import time
 import sys
-import helpers.control as control
-import helpers.sql as sql
-import helpers.hook as hook
-import helpers.modutils as modutils
-import helpers.command as command
-import helpers.textutils as textutils
-import helpers.admin as admin
-import helpers.identity as identity
-import helpers.misc as misc
-import helpers.workers as workers
+from helpers import control
+from helpers import sql
+from helpers import hook
+from helpers import modutils
+from helpers import command
+from helpers import textutils
+from helpers import admin
+from helpers import identity
+from helpers import misc
+from helpers import workers
 from os.path import dirname
 from random import choice, random
 
@@ -86,7 +86,8 @@ class BotHandler():
             setattr(self, key, val)
         self.uptime['reloaded'] = time.time()
 
-    def loadmodules(self):
+    @staticmethod
+    def loadmodules():
         """Load all the commands.
 
         | Globs over all the .py files in the commands dir.
@@ -95,7 +96,8 @@ class BotHandler():
         """
         command.scan_for_commands('commands')
 
-    def loadhooks(self):
+    @staticmethod
+    def loadhooks():
         """Load all the hooks.
 
         | Globs over all the .py files in the hooks dir.
@@ -197,7 +199,8 @@ class BotHandler():
             else:
                 self.connection.privmsg(target, i)
 
-    def get_split_pos(self, message):
+    @staticmethod
+    def get_split_pos(message):
         """Gets the proper split position at or around position 400 of
            a message."""
         for i in range(385, 415):
@@ -372,7 +375,7 @@ class BotHandler():
             c.disconnect('Goodbye, Cruel World!')
             sys.exit(0)
 
-    def do_args(self, modargs, send, nick, target, source, c, name, msgtype):
+    def do_args(self, modargs, send, nick, target, source, name, msgtype):
         """ Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -433,7 +436,7 @@ class BotHandler():
 
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(target, nick):
             for h in self.hooks.values():
-                realargs = self.do_args(h.args, send, nick, target, e.source, c, h, msgtype)
+                realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
                 h.run(send, msg, msgtype, self, target, realargs)
 
         if msgtype == 'nick':
@@ -475,8 +478,8 @@ class BotHandler():
         cmdlen = len(cmd) + 1
         if cmd.startswith('%ss' % cmdchar):
             # escape special regex chars
-            raw_cmdchar = '\\' + cmdchar if re.match('[\[\].^$*+?]', cmdchar) else cmdchar
-            match = re.match('%ss(\W)' % raw_cmdchar, cmd)
+            raw_cmdchar = '\\' + cmdchar if re.match(r'[\[\].^$*+?]', cmdchar) else cmdchar
+            match = re.match(r'%ss(\W)' % raw_cmdchar, cmd)
             if match:
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
@@ -489,7 +492,7 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, c, cmd_name, msgtype)
+                args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
         # special commands
         if cmd.startswith(cmdchar):
