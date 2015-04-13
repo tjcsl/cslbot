@@ -18,6 +18,7 @@ import re
 import logging
 from . import command, hook, arguments
 from .orm import Quotes, Issues, Polls
+# FIXME: move to helpers
 from commands.issue import create_issue
 
 
@@ -385,7 +386,7 @@ def init_parser(send, handler, db):
     return parser
 
 
-def handle_ctrlchan(handler, msg, c, send):
+def handle_ctrlchan(handler, msg, send):
     """ Handle the control channel."""
     with handler.db.session_scope() as db:
         parser = init_parser(send, handler, db)
@@ -393,7 +394,7 @@ def handle_ctrlchan(handler, msg, c, send):
             cmdargs = parser.parse_args(msg)
         except arguments.ArgumentException as e:
             # FIXME: figure out a better way to allow non-commands without spamming the channel.
-            err_str = "invalid choice: .* \(choose from 'quote', 'help', 'chanserv', 'cs', 'disable', 'enable', 'guard', 'unguard', 'show', 'accept', 'reject'\)"
+            err_str = r"invalid choice: .* \(choose from 'quote', 'help', 'chanserv', 'cs', 'disable', 'enable', 'guard', 'unguard', 'show', 'accept', 'reject'\)"
             if not re.match(err_str, str(e)):
                 send(str(e))
             return

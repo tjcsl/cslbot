@@ -398,7 +398,7 @@ class BotHandler():
                 raise Exception("Invalid Argument: %s" % arg)
         return realargs
 
-    def is_ignored(self, target, nick):
+    def is_ignored(self, nick):
         return nick in self.ignored
 
     def handle_msg(self, msgtype, c, e):
@@ -434,7 +434,7 @@ class BotHandler():
         if msgtype == 'pubnotice':
             return
 
-        if self.config['feature'].getboolean('hooks') and not self.is_ignored(target, nick):
+        if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
             for h in self.hooks.values():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
                 h.run(send, msg, msgtype, self, target, realargs)
@@ -464,9 +464,9 @@ class BotHandler():
             return
 
         if e.target == self.config['core']['ctrlchan']:
-            control.handle_ctrlchan(self, msg, c, send)
+            control.handle_ctrlchan(self, msg, send)
 
-        if self.is_ignored(target, nick) and not self.is_admin(send, nick, False):
+        if self.is_ignored(nick) and not self.is_admin(send, nick, False):
             return
 
         msg = misc.get_cmdchar(self.config, c, msg, msgtype)

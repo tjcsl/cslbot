@@ -32,8 +32,8 @@ _disabled_commands = set()
 
 def scan_for_commands(folder):
     """ Scans folder for commands """
-    global _known_commands, _disabled_commands
-    _known_commands = {}
+    global _disabled_commands
+    _known_commands.clear()
     _disabled_commands = modutils.get_disabled("commands")
     modutils.scan_and_reimport(folder, "commands")
     return _known_commands
@@ -61,25 +61,23 @@ def get_disabled_commands():
 
 def disable_command(command):
     """ adds a command to the disabled comands list"""
-    global _disabled_commands
-    if ("commands." + command) not in sys.modules:
-        return command + " is not a loaded module"
+    if ("commands.%s" % command) not in sys.modules:
+        return "%s is not a loaded module" % command
     if command not in _disabled_commands:
         _disabled_commands.add(command)
-        return "Disabled command " + command
+        return "Disabled command %s" % command
     else:
         return "That command is already disabled!"
 
 
 def enable_command(command):
     """ removes a command from the disabled commands list"""
-    global _disabled_commands
     if command == "all":
-        _disabled_commands = []
+        _disabled_commands.clear()
         return "Enabled all modules."
     elif command in _disabled_commands:
         _disabled_commands.remove(command)
-        return command + " reenabled"
+        return "%s reenabled" % command
     else:
         return "That command isn't disabled!"
 
@@ -117,7 +115,7 @@ class Command():
         def wrapper(send, msg, args):
             try:
                 thread = threading.current_thread()
-                thread_id = re.match('Thread-\d+', thread.name).group(0)
+                thread_id = re.match(r'Thread-\d+', thread.name).group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
