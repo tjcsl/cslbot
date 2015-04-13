@@ -113,7 +113,9 @@ class Workers():
         cmdchar = handler.config['core']['cmdchar']
         ctrlchan = handler.config['core']['ctrlchan']
         with handler.db.session_scope() as session:
-            update_markov(session, handler.config)
+            # If we don't actually update anything, don't bother checking the last row.
+            if not update_markov(session, handler.config):
+                return
             last = session.query(Babble_last).first()
             row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:
