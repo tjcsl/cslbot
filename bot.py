@@ -38,8 +38,8 @@ try:
     from irc.bot import ServerSpec, SingleServerIRCBot
     from irc.connection import Factory
     from os.path import dirname, join, exists
-except ImportError as e:
-    raise Exception("Unable to import all required modules: %s" % e)
+except ImportError as ex:
+    raise Exception("Unable to import all required modules: %s" % ex)
 
 
 class IrcBot(SingleServerIRCBot):
@@ -148,7 +148,8 @@ class IrcBot(SingleServerIRCBot):
         if output:
             return output
 
-    def get_version(self):
+    @staticmethod
+    def get_version():
         """Get the version."""
         return "cslbot - v0.8"
 
@@ -159,7 +160,7 @@ class IrcBot(SingleServerIRCBot):
         | Join the primary channel.
         | Join the control channel.
         """
-        logging.info("Connected to server %s" % self.config['core']['host'])
+        logging.info("Connected to server %s", self.config['core']['host'])
         self.handler.connection = c
         self.handler.channels = self.channels
         self.handler.get_admins(c)
@@ -187,7 +188,7 @@ class IrcBot(SingleServerIRCBot):
         """Pass private notices to :func:`handle_msg`."""
         self.handle_msg('privnotice', c, e)
 
-    def on_welcome(self, c, e):
+    def on_welcome(self, c, _):
         self.do_welcome(c)
 
     def on_pubnotice(self, c, e):
@@ -204,19 +205,19 @@ class IrcBot(SingleServerIRCBot):
         """Pass mode changes to :func:`handle_msg`."""
         self.handle_msg('mode', c, e)
 
-    def on_error(self, c, e):
+    def on_error(self, _, e):
         """Handle ping timeouts."""
         logging.error(e.target)
         # trigger channel joining, etc. on reconnection.
         if hasattr(self.handler, 'connection'):
             delattr(self.handler, 'connection')
 
-    def handle_quit(self, c, e):
+    def handle_quit(self, _, e):
         """Log quits."""
         for channel in misc.get_channels(self.channels, e.source.split('!')[0]):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
 
-    def on_disconnect(self, c, e):
+    def on_disconnect(self, _, e):
         # Don't kill everything if we just ping timed-out
         if e.arguments[0] == 'Goodbye, Cruel World!':
             self.shutdown_server()
@@ -246,11 +247,12 @@ class IrcBot(SingleServerIRCBot):
             return
         c.join(e.arguments[0])
 
-    def on_ctcpreply(self, c, e):
+    @staticmethod
+    def on_ctcpreply(c, e):
         if len(e.arguments) == 2:
             misc.ping(c, e, time.time())
 
-    def on_nicknameinuse(self, c, e):
+    def on_nicknameinuse(self, c, _):
         self.connection.nick('Guest%d' % random.getrandbits(20))
         self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
         self.handler.workers.defer(5, False, self.do_welcome, c)
@@ -266,7 +268,7 @@ class IrcBot(SingleServerIRCBot):
         # we don't care about other people.
         if e.arguments[0] != c.real_nickname:
             return
-        logging.info("Kicked from channel %s" % e.target)
+        logging.info("Kicked from channel %s", e.target)
         self.handler.workers.defer(5, False, c.join, e.target)
 
 
@@ -294,5 +296,5 @@ if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
-    args = parser.parse_args()
-    main(args)
+    parser_args = parser.parse_args()
+    main(parser_args)
