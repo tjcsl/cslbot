@@ -114,7 +114,7 @@ class BotHandler():
             self.ignored.append(nick)
             send("Now ignoring %s." % nick)
 
-    def is_admin(self, send, nick, complain=True):
+    def is_admin(self, send, nick):
         """Checks if a nick is a admin.
 
         | If the nick is not in self.admins then it's not a admin.
@@ -131,7 +131,8 @@ class BotHandler():
             self.admins[nick] = -1
         if self.admins[nick] == -1:
             self.connection.send_raw('NS ACC %s' % nick)
-            if complain:
+            # We don't necessarily want to complain in all cases.
+            if send is not None:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
@@ -463,10 +464,10 @@ class BotHandler():
         if not msg:
             return
 
-        if e.target == self.config['core']['ctrlchan']:
+        if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):
             control.handle_ctrlchan(self, msg, send)
 
-        if self.is_ignored(nick) and not self.is_admin(send, nick, False):
+        if self.is_ignored(nick) and not self.is_admin(None, nick):
             return
 
         msg = misc.get_cmdchar(self.config, c, msg, msgtype)
