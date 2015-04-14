@@ -41,7 +41,7 @@ def cmd(send, msg, args):
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif cmdargs.get or cmdargs.title.isdigit():
-        issue = get('https://api.github.com/repos/%s/issues/%d' % (repo, int(title))).json()
+        issue = get('https://api.github.com/repos/%s/issues/%d' % (repo, int(cmdargs.title))).json()
         if 'message' in issue:
             send("Invalid Issue Number")
         else:
