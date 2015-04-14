@@ -20,20 +20,7 @@ from random import choice
 from helpers import arguments
 from helpers.orm import Issues
 from helpers.command import Command
-
-
-def create_issue(cmdargs, nick, repo, apikey):
-    body = {"title": cmdargs.title, "body": "%s\nIssue created by %s" % (cmdargs.desc, nick), "labels": ["bot"]}
-    headers = {'Authorization': 'token %s' % apikey}
-    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
-    data = req.json()
-    if 'html_url' in data.keys():
-        return data['html_url'], True
-    elif 'message' in data.keys():
-        return data['message'], False
-    else:
-        return "Unknown error", False
-
+from helpers.misc import create_issue
 
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
@@ -78,7 +65,7 @@ def cmd(send, msg, args):
             send("There are %d open issues, here's one." % num_issues)
             send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif cmdargs.create and args['is_admin'](args['nick']):
-        url, success = create_issue(cmdargs, args['source'], repo, apikey)
+        url, success = create_issue(cmdargs.title, cmdargs.desc, args['source'], repo, apikey)
         if success:
             send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
         else:
