@@ -24,23 +24,6 @@ from lxml.html import fromstring, tostring
 from html import unescape
 from random import random, choice, randrange
 
-output_filters = {
-    "hashtag": textutils.gen_hashtag,
-    "fwilson": textutils.gen_fwilson,
-    "creffett": textutils.gen_creffett,
-    "slogan": textutils.gen_slogan,
-    "insult": textutils.gen_insult,
-    "morse": textutils.gen_morse,
-    "removevowels": textutils.removevowels,
-    "binary": textutils.gen_binary,
-    "xkcd": textutils.do_xkcd_sub,
-    "praise": textutils.gen_praise,
-    "reverse": textutils.reverse,
-    "lenny": textutils.gen_lenny,
-    "yoda": textutils.gen_yoda,
-    "gizoogle": textutils.gen_gizoogle
-}
-
 
 def removevowels(msg):
     return re.sub('[aeiouy]', '', msg, flags=re.I)
@@ -228,3 +211,21 @@ def reverse(msg):
 
 def gen_lenny(msg):
     return "%s ( ͡° ͜ʖ ͡°)" % msg
+
+output_filters = {
+    "hashtag": gen_hashtag,
+    "fwilson": gen_fwilson,
+    "creffett": gen_creffett,
+    "slogan": gen_slogan,
+    "insult": gen_insult,
+    "morse": gen_morse,
+    "removevowels": removevowels,
+    "binary": gen_binary,
+    "xkcd": do_xkcd_sub,
+    "praise": gen_praise,
+    "reverse": reverse,
+    "lenny": gen_lenny,
+    "yoda": gen_yoda,
+    "gizoogle": gen_gizoogle,
+    "shakespeare": gen_shakespeare
+}
