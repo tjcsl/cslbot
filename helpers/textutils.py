@@ -53,6 +53,10 @@ def gen_gizoogle(msg):
     return unescape(response)
 
 
+def gen_shakespeare(msg):
+    html = post("http://www.shmoop.com/shakespeare-translator/", data={'shakespeareInput': msg})
+    return fromstring(html.content.decode(errors='ignore')).findtext('.//textarea[@shakespeareResult]').strip()
+
 def gen_praise(msg):
     praise = get_praise()
     while not praise:
