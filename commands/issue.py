@@ -65,10 +65,13 @@ def cmd(send, msg, args):
                 issues += page
             else:
                 break
-        issue = choice(issues)
-        num_issues = len([x for x in issues if 'pull_request' not in x])
-        send("There are %d open issues, here's one." % num_issues)
-        send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
+        if len(issues) == 0:
+            send("No open issues to choose from!")
+        else:
+            issue = choice(issues)
+            num_issues = len([x for x in issues if 'pull_request' not in x])
+            send("There are %d open issues, here's one." % num_issues)
+            send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif cmdargs.create and args['is_admin'](args['nick']):
         url = create_issue(cmdargs, args['source'], repo, apikey)
         send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
