@@ -32,12 +32,13 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--create', action='store_true')
     parser.add_argument('--get', action='store_true')
-    parser.add_argument('title', nargs='?')
+    parser.add_argument('title', nargs='*', default = '')
     parser.add_argument('--desc', '--description', nargs='+', default="No description given")
     cmdargs = parser.parse_args(msg)
-    print(cmdargs)
-    cmdargs.title = ' '.join(cmdargs.title) if cmdargs.title is not None else ''
-    cmdargs.desc = ' '.join(cmdargs.desc) if cmdargs.desc is not None else ''
+    if isinstance(cmdargs.title, list):
+        cmdargs.title = ' '.join(cmdargs.title)
+    if isinstance(cmdargs.desc, list):
+        cmdargs.desc = ' '.join(cmdargs.desc)
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif cmdargs.get or cmdargs.title.isdigit():
