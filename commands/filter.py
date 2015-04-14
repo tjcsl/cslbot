@@ -24,22 +24,6 @@ def cmd(send, msg, args):
     Syntax: !filter <filter|show|list|reset|chain filter>
     """
     # FIXME: use argparse
-    output_filters = {
-        "hashtag": textutils.gen_hashtag,
-        "fwilson": textutils.gen_fwilson,
-        "creffett": textutils.gen_creffett,
-        "slogan": textutils.gen_slogan,
-        "insult": textutils.gen_insult,
-        "morse": textutils.gen_morse,
-        "removevowels": textutils.removevowels,
-        "binary": textutils.gen_binary,
-        "xkcd": textutils.do_xkcd_sub,
-        "praise": textutils.gen_praise,
-        "reverse": textutils.reverse,
-        "lenny": textutils.gen_lenny,
-        "yoda": textutils.gen_yoda,
-        "gizoogle": textutils.gen_gizoogle
-    }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')
     elif not msg or msg == 'show':
@@ -53,7 +37,7 @@ def cmd(send, msg, args):
             names.append(name)
         send("Current filter(s): %s" % ", ".join(names))
     elif msg == 'list':
-        send("Available filters are %s" % ", ".join(output_filters.keys()))
+        send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough' or msg == 'clear':
         if args['is_admin'](args['nick']):
             args['handler'].outputfilter = [lambda x: x]
@@ -63,16 +47,16 @@ def cmd(send, msg, args):
     elif msg.startswith('chain'):
         if args['is_admin'](args['nick']):
             next_filter = msg.split()[1]
-            if next_filter in output_filters.keys():
-                args['handler'].outputfilter.append(output_filters[next_filter])
+            if next_filter in textutils.output_filters.keys():
+                args['handler'].outputfilter.append(textutils.output_filters[next_filter])
                 send("Okay!")
             else:
                 send("Invalid filter.")
         else:
             send("Nope, not gonna do it.")
-    elif msg in output_filters.keys():
+    elif msg in textutils.output_filters.keys():
         if args['is_admin'](args['nick']):
-            args['handler'].outputfilter = [output_filters[msg]]
+            args['handler'].outputfilter = [textutils.output_filters[msg]]
             send("Okay!")
         else:
             send("Nope, not gonna do it!")
