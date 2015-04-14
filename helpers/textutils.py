@@ -55,6 +55,7 @@ def gen_gizoogle(msg):
 
 
 def gen_shakespeare(msg):
+    # Originally from http://www.shmoop.com/shakespeare-translator/
     msg = msg.lower()
     table = json.load(open('static/shakespeare-dictionary.json'))
     replist = sorted(table.keys(), key=len)
