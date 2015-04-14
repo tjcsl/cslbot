@@ -14,13 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
-from requests import post, get
+from requests import get
 from random import choice
 from helpers import arguments
 from helpers.orm import Issues
 from helpers.command import Command
 from helpers.misc import create_issue
+
 
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
@@ -32,7 +32,7 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--create', action='store_true')
     parser.add_argument('--get', action='store_true')
-    parser.add_argument('title', nargs='*', default = '')
+    parser.add_argument('title', nargs='*', default='')
     parser.add_argument('--desc', '--description', nargs='+', default="No description given")
     cmdargs = parser.parse_args(msg)
     if isinstance(cmdargs.title, list):
@@ -78,4 +78,4 @@ def cmd(send, msg, args):
         send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.desc, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
     else:
-        send("Invalid arguments -- did you forget to set --create or --get?")
+        send("Invalid arguments -- did you forget --create or --get?")

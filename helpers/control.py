@@ -16,10 +16,8 @@
 
 import re
 import logging
-from . import command, hook, arguments
+from . import command, hook, arguments, misc
 from .orm import Quotes, Issues, Polls
-from .misc import create_issue
-# FIXME: move to helpers
 
 
 def handle_chanserv(args):
@@ -215,7 +213,9 @@ def accept_issue(handler, db, num):
         return "Not a valid issue"
     repo = handler.config['api']['githubrepo']
     apikey = handler.config['api']['githubapikey']
-    msg = create_issue(issue.title, issue.desc, issue.source, repo, apikey)
+    msg = misc.create_issue(issue.title, issue.desc, issue.source, repo, apikey)
+    if msg is None:
+        return "Unknown Issue"
     issue.accepted = 1
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']

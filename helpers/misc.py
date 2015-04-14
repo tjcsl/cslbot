@@ -23,7 +23,7 @@ from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
-from requests import post,get
+from requests import post, get
 from requests.exceptions import ReadTimeout
 
 _pinglist = {}
@@ -218,8 +218,8 @@ def create_issue(title, desc, nick, repo, apikey):
     req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
     data = req.json()
     if 'html_url' in data.keys():
-        return data['html_url'], True
+        return data['html_url']
     elif 'message' in data.keys():
-        return data['message'], False
+        return data['message']
     else:
-        return "Unknown error", False
+        return None
