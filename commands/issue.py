@@ -25,14 +25,13 @@ from helpers.misc import create_issue
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Files a github issue or gets a open one.
-    Syntax: !issue (--create title (--desc description)) (--get number)
+    Syntax: !issue (title (--desc description)|--get number)
     """
     repo = args['config']['api']['githubrepo']
     apikey = args['config']['api']['githubapikey']
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--create', action='store_true')
-    parser.add_argument('--get', action='store_true')
     parser.add_argument('title', nargs='*', default='')
+    parser.add_argument('--get', action='store_true')
     parser.add_argument('--desc', '--description', nargs='+', default="No description given")
     cmdargs = parser.parse_args(msg)
     if isinstance(cmdargs.title, list):
@@ -65,17 +64,17 @@ def cmd(send, msg, args):
             num_issues = len([x for x in issues if 'pull_request' not in x])
             send("There are %d open issues, here's one." % num_issues)
             send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
-    elif cmdargs.create and args['is_admin'](args['nick']):
+    elif cmdargs.title and args['is_admin'](args['nick']):
         url, success = create_issue(cmdargs.title, cmdargs.desc, args['source'], repo, apikey)
         if success:
             send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
         else:
             send("Error creating issue: %s" % (url))
-    elif cmdargs.create:
-        row = Issues(title=cmdargs.title, desc=cmdargs.desc, source=args['source'])
+    elif cmdargs.title:
+        row = Issues(title=cmdargs.title, description=cmdargs.desc, source=args['source'])
         args['db'].add(row)
         args['db'].flush()
         send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.desc, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
     else:
-        send("Invalid arguments -- did you forget --create or --get?")
+        send("Invalid arguments.")
