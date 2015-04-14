@@ -18,10 +18,10 @@ from helpers.textutils import gen_shakespeare
 from helpers.command import Command
 
 
-@Command('shakespeare')
+@Command(['bard', 'shakespeare'])
 def cmd(send, msg, args):
     """Translates something into Shakespearese.
-    Syntax: !shakespeare <something>
+    Syntax: !bard <something>
     """
     if not msg:
         send("Forsooth! What shalt I translate?")
