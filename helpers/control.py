@@ -213,9 +213,9 @@ def accept_issue(handler, db, num):
         return "Not a valid issue"
     repo = handler.config['api']['githubrepo']
     apikey = handler.config['api']['githubapikey']
-    msg = misc.create_issue(issue.title, issue.description, issue.source, repo, apikey)
-    if msg is None:
-        return "Unknown Issue"
+    msg, success = misc.create_issue(issue.title, issue.description, issue.source, repo, apikey)
+    if not success:
+        return msg
     issue.accepted = 1
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']

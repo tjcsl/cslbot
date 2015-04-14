@@ -218,8 +218,8 @@ def create_issue(title, desc, nick, repo, apikey):
     req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
     data = req.json()
     if 'html_url' in data.keys():
-        return data['html_url']
+        return data['html_url'], True
     elif 'message' in data.keys():
-        return data['message']
+        return data['message'], False
     else:
-        return None
+        return "Unknown error", False

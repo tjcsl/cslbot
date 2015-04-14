@@ -69,7 +69,7 @@ def cmd(send, msg, args):
         if success:
             send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
         else:
-            send("Error creating issue: %s" % (url))
+            send("Error creating issue: %s" % url)
     elif cmdargs.title:
         row = Issues(title=cmdargs.title, description=cmdargs.desc, source=args['source'])
         args['db'].add(row)
