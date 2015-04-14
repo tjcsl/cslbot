@@ -72,12 +72,12 @@ class BotHandler():
     def get_data(self):
         """Saves the handler's data for :func:`bot.IrcBot.do_reload`"""
         data = {}
-        data['caps'] = list(self.caps)
-        data['ignored'] = list(self.ignored)
-        data['admins'] = dict(self.admins)
-        data['uptime'] = dict(self.uptime)
-        data['abuselist'] = dict(self.abuselist)
-        data['guarded'] = list(self.guarded)
+        data['caps'] = self.caps[:]
+        data['ignored'] = self.ignored[:]
+        data['guarded'] = self.guarded[:]
+        data['admins'] = self.admins.copy()
+        data['uptime'] = self.uptime.copy()
+        data['abuselist'] = self.abuselist.copy()
         return data
 
     def set_data(self, data):
