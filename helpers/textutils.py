@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import json
 import re
 import string
 from os.path import dirname
@@ -51,6 +52,16 @@ def gen_gizoogle(msg):
     response = tostring(fromstring(html.text).find('.//textarea')).decode('utf-7').strip()
     response = re.sub(".*</textarea>", '', response)
     return unescape(response)
+
+
+def gen_shakespeare(msg):
+    msg = msg.lower()
+    table = json.load(open('static/shakespeare-dictionary.json'))
+    replist = sorted(table.keys(), key=len)
+    replist.reverse()
+    pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b')
+    result = pattern.sub(lambda x: table[x.group()], msg)
+    return result
 
 
 def gen_praise(msg):
@@ -211,3 +222,22 @@ def reverse(msg):
 
 def gen_lenny(msg):
     return "%s ( ͡° ͜ʖ ͡°)" % msg
+
+output_filters = {
+    "hashtag": gen_hashtag,
+    "fwilson": gen_fwilson,
+    "creffett": gen_creffett,
+    "slogan": gen_slogan,
+    "insult": gen_insult,
+    "morse": gen_morse,
+    "removevowels": removevowels,
+    "binary": gen_binary,
+    "xkcd": do_xkcd_sub,
+    "praise": gen_praise,
+    "reverse": reverse,
+    "lenny": gen_lenny,
+    "yoda": gen_yoda,
+    "gizoogle": gen_gizoogle,
+    "shakespeare": gen_shakespeare,
+    "bard": gen_shakespeare
+}
