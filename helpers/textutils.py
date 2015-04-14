@@ -56,12 +56,10 @@ def gen_gizoogle(msg):
 
 def gen_shakespeare(msg):
     # Originally from http://www.shmoop.com/shakespeare-translator/
-    msg = msg.lower()
     table = json.load(open(dirname(__file__) + '/../static/shakespeare-dictionary.json'))
-    replist = sorted(table.keys(), key=len)
-    replist.reverse()
-    pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b')
-    result = pattern.sub(lambda x: table[x.group()], msg)
+    replist = reversed(sorted(table.keys(), key=len))
+    pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
+    result = pattern.sub(lambda x: table[x.group().lower()], msg)
     return result
 
 
