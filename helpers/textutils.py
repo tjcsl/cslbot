@@ -55,6 +55,7 @@ def gen_gizoogle(msg):
 
 
 def gen_shakespeare(msg):
+    msg = msg.lower()
     table = json.load(open('static/shakespeare-dictionary.json'))
     replist = sorted(table.keys(), key=len)
     replist.reverse()
@@ -237,5 +238,6 @@ output_filters = {
     "lenny": gen_lenny,
     "yoda": gen_yoda,
     "gizoogle": gen_gizoogle,
-    "shakespeare": gen_shakespeare
+    "shakespeare": gen_shakespeare,
+    "bard": gen_shakespeare
 }
