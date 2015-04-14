@@ -17,12 +17,13 @@
 import json
 from requests import post, get
 from random import choice
+from helpers import arguments
 from helpers.orm import Issues
 from helpers.command import Command
 
 
-def create_issue(msg, nick, repo, apikey):
-    body = {"title": msg, "body": "Issue created by %s" % nick, "labels": ["bot"]}
+def create_issue(cmdargs, nick, repo, apikey):
+    body = {"title": cmdargs.title, "body": "%s\nIssue created by %s" % (cmdargs.desc, nick), "labels": ["bot"]}
     headers = {'Authorization': 'token %s' % apikey}
     req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
     data = req.json()
@@ -32,19 +33,28 @@ def create_issue(msg, nick, repo, apikey):
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Files a github issue or gets a open one.
-    Syntax: !issue (description)
+    Syntax: !issue (--create title (--desc description)) (--get number)
     """
     repo = args['config']['api']['githubrepo']
     apikey = args['config']['api']['githubapikey']
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--create', action='store_true')
+    parser.add_argument('--get', action='store_true')
+    parser.add_argument('title', nargs='?')
+    parser.add_argument('--desc', '--description', nargs='+', default="No description given")
+    cmdargs = parser.parse_args(msg)
+    print(cmdargs)
+    cmdargs.title = ' '.join(cmdargs.title) if cmdargs.title is not None else ''
+    cmdargs.desc = ' '.join(cmdargs.desc) if cmdargs.desc is not None else ''
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
-    elif msg.isdigit():
-        issue = get('https://api.github.com/repos/%s/issues/%d' % (repo, int(msg))).json()
+    elif cmdargs.get or cmdargs.title.isdigit():
+        issue = get('https://api.github.com/repos/%s/issues/%d' % (repo, int(title))).json()
         if 'message' in issue:
             send("Invalid Issue Number")
         else:
             send("%s -- %s" % (issue['title'], issue['html_url']))
-    elif not msg:
+    elif not cmdargs.title:
         issues = []
         n = 1
         while True:
@@ -59,12 +69,14 @@ def cmd(send, msg, args):
         num_issues = len([x for x in issues if 'pull_request' not in x])
         send("There are %d open issues, here's one." % num_issues)
         send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
-    elif args['is_admin'](args['nick']):
-        url = create_issue(msg, args['source'], repo, apikey)
-        send("Issue created -- %s -- %s" % (url, msg))
-    else:
-        row = Issues(title=msg, source=args['source'])
+    elif cmdargs.create and args['is_admin'](args['nick']):
+        url = create_issue(cmdargs, args['source'], repo, apikey)
+        send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
+    elif cmdargs.create:
+        row = Issues(title=cmdargs.title, desc=cmdargs.desc, source=args['source'])
         args['db'].add(row)
         args['db'].flush()
-        send("New Issue: #%d -- %s, Submitted by %s" % (row.id, msg, args['nick']), target=args['config']['core']['ctrlchan'])
+        send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.desc, args['nick']), target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
+    else:
+        send("Invalid arguments -- did you forget to set --create or --get?")
