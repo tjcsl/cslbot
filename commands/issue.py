@@ -27,7 +27,12 @@ def create_issue(cmdargs, nick, repo, apikey):
     headers = {'Authorization': 'token %s' % apikey}
     req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
     data = req.json()
-    return data['html_url']
+    if 'html_url' in data.keys():
+        return data['html_url'], True
+    elif 'message' in data.keys():
+        return data['message'], False
+    else:
+        return "Unknown error", False
 
 
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
@@ -73,8 +78,11 @@ def cmd(send, msg, args):
             send("There are %d open issues, here's one." % num_issues)
             send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif cmdargs.create and args['is_admin'](args['nick']):
-        url = create_issue(cmdargs, args['source'], repo, apikey)
-        send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
+        url, success = create_issue(cmdargs, args['source'], repo, apikey)
+        if success:
+            send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.desc))
+        else:
+            send("Error creating issue: %s" % (url))
     elif cmdargs.create:
         row = Issues(title=cmdargs.title, desc=cmdargs.desc, source=args['source'])
         args['db'].add(row)
