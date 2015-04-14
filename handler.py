@@ -48,6 +48,8 @@ class BotHandler():
         | srcdir is the path to the directory where the bot is stored.
         | db - Is a db wrapper for data storage.
         """
+        self.connection = None
+        self.channels = None
         self.config = config
         self.workers = workers.Workers(self)
         start = time.time()

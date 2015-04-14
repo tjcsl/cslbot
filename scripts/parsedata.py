@@ -114,8 +114,8 @@ def output_urls(env, session, outdir, time):
     open(outdir + '/urls.html', 'w', encoding='utf8').write(output)
 
 
-def main(config, outdir):
-    session = get_session(config)()
+def main(cfg, outdir):
+    session = get_session(cfg)()
     env = Environment(loader=FileSystemLoader(dirname(__file__) + '/../static/templates'))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
@@ -133,5 +133,5 @@ if __name__ == '__main__':
     config.read_file(open(dirname(__file__) + '/../config.cfg'))
     parser = argparse.ArgumentParser()
     parser.add_argument('output', help='The output dir.')
-    args = parser.parse_args()
-    main(config, args.output)
+    cmdargs = parser.parse_args()
+    main(config, cmdargs.output)

@@ -28,10 +28,10 @@ from helpers.babble import build_markov
 from helpers.sql import get_session
 
 
-def main(config, speaker):
-    session = get_session(config)()
-    cmdchar = config['core']['cmdchar']
-    ctrlchan = config['core']['ctrlchan']
+def main(cfg, speaker):
+    session = get_session(cfg)()
+    cmdchar = cfg['core']['cmdchar']
+    ctrlchan = cfg['core']['ctrlchan']
     print('Generating markov.')
     # FIXME: support locking for other dialects?
     if session.bind.dialect.name == 'postgresql':

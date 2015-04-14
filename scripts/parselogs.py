@@ -33,7 +33,7 @@ logs = {}
 day = False
 
 
-def get_id(config, outdir):
+def get_id(outdir):
     outfile = "%s/.dbid" % outdir
     if not exists(outfile):
         return 0
@@ -49,7 +49,6 @@ def save_id(outdir, new_id):
 
 
 def write_log(name, outdir, msg):
-    global logs
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
         logs[name] = open(outfile, 'a')
@@ -100,13 +99,13 @@ def gen_log(row):
     return log
 
 
-def main(config, outdir):
-    session = get_session(config)()
-    current_id = get_id(config, outdir)
+def main(cfg, outdir):
+    session = get_session(cfg)()
+    current_id = get_id(outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
     save_id(outdir, new_id)
     for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.id).all():
-        check_day(row, outdir, config['core']['channel'])
+        check_day(row, outdir, cfg['core']['channel'])
         write_log(row.target, outdir, gen_log(row))
     for x in logs.values():
         x.close()
@@ -117,5 +116,5 @@ if __name__ == '__main__':
     config.read_file(open(dirname(__file__) + '/../config.cfg'))
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The directory to write logs too.')
-    args = parser.parse_args()
-    main(config, args.outdir)
+    cmdargs = parser.parse_args()
+    main(config, cmdargs.outdir)

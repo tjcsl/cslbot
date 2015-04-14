@@ -29,7 +29,7 @@ class IrcClient(SimpleIRCClient):
         self.loading = False
         SimpleIRCClient.__init__(self)
 
-    def on_welcome(self, c, e):
+    def on_welcome(self, c, _):
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
 
     def on_mode(self, c, e):
@@ -40,7 +40,7 @@ class IrcClient(SimpleIRCClient):
             c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
-    def on_join(self, c, e):
+    def on_join(self, c, _):
         c.mode(self.config['core']['ctrlchan'], "")
 
     def on_channelmodeis(self, c, e):
