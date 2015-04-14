@@ -97,6 +97,7 @@ class Urls(Base):
 class Issues(Base):
     title = Column(String)
     source = Column(String)
+    desc = Column(String)
     accepted = Column(Integer, default=0)
 
 
