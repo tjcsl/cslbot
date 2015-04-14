@@ -16,13 +16,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import json
 import subprocess
 import re
 from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
-from requests import get
+from requests import post,get
 from requests.exceptions import ReadTimeout
 
 _pinglist = {}
@@ -209,3 +210,16 @@ def get_urban_definition(msg):
         output = data[int(index) - 1]['definition']
     output = output.splitlines()
     return ' '.join(output).strip()
+
+
+def create_issue(title, desc, nick, repo, apikey):
+    body = {"title": title, "body": "%s\nIssue created by %s" % (desc, nick), "labels": ["bot"]}
+    headers = {'Authorization': 'token %s' % apikey}
+    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
+    data = req.json()
+    if 'html_url' in data.keys():
+        return data['html_url'], True
+    elif 'message' in data.keys():
+        return data['message'], False
+    else:
+        return "Unknown error", False
