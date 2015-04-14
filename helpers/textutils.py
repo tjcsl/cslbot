@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import json
 import re
 import string
 from os.path import dirname
@@ -54,8 +55,13 @@ def gen_gizoogle(msg):
 
 
 def gen_shakespeare(msg):
-    html = post("http://www.shmoop.com/shakespeare-translator/", data={'shakespeareInput': msg})
-    return fromstring(html.content.decode(errors='ignore')).findtext('.//textarea[@shakespeareResult]').strip()
+    table = json.load(open('static/shakespeare-dictionary.json'))
+    replist = sorted(table.keys(), key=len)
+    replist.reverse()
+    pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b')
+    result = pattern.sub(lambda x: table[x.group()], msg)
+    return result
+
 
 def gen_praise(msg):
     praise = get_praise()
