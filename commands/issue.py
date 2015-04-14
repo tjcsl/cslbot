@@ -32,7 +32,7 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('title', nargs='*', default='')
     parser.add_argument('--get', action='store_true')
-    parser.add_argument('--desc', '--description', nargs='+', default="No description given")
+    parser.add_argument('--desc', '--description', nargs='+', default="No description given.")
     cmdargs = parser.parse_args(msg)
     if isinstance(cmdargs.title, list):
         cmdargs.title = ' '.join(cmdargs.title)
