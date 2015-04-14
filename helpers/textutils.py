@@ -98,7 +98,7 @@ def gen_slogan(msg):
     # FIXME: cache this somewhere
     with open(dirname(__file__) + '/../static/slogans.txt') as f:
         slogans = f.read().splitlines()
-    return choice(slogans) % msg
+    return re.sub('%s', msg, choice(slogans))
 
 
 def gen_morse(msg):
