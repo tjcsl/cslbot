@@ -491,22 +491,18 @@ class BotHandler():
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
         cmdargs = msg[cmdlen:]
-        found = False
         if cmd.startswith(cmdchar):
             cmd_name = cmd[len(cmdchar):]
             if command.is_registered(cmd_name):
-                found = True
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
+                if cmd_obj.is_adminonly() and not self.is_admin(send, nick):
+                    send("This command requires admin privileges")
+                    return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
-        # special commands
-        if cmd.startswith(cmdchar):
-            if cmd[len(cmdchar):] == 'reload':
+            # special commands
+            elif cmd[len(cmdchar):] == 'reload':
                 if nick in admins:
-                    found = True
                     send("Aye Aye Capt'n")
-            # everything below this point requires admin
-            if not found and self.is_admin(send, nick):
-                self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
