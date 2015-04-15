@@ -335,14 +335,7 @@ class BotHandler():
                 self.connection.kick(target, nick, msg)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'abuse':
-            if cmdargs == 'clear':
-                self.abuselist = {}
-                send("Abuse list cleared.")
-            elif cmdargs == 'show':
-                abusers = [x for x in self.abuselist.keys() if x in self.ignored]
-                send(", ".join(abusers))
-        elif cmd == 'cadmin':
+        if cmd == 'cadmin':
             admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
             self.admins = {nick: False for nick in admins}
             self.get_admins(c)
@@ -497,7 +490,7 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                if cmd_obj.is_adminonly() and not self.is_admin(send, nick):
+                if cmd_obj.is_admin_only() and not self.is_admin(send, nick):
                     send("This command requires admin privileges")
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)

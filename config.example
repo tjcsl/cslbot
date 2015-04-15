@@ -17,7 +17,7 @@ chanregex: [#&+!][a-zA-Z0-9_-!#]*
 extracommands:
 [groups]
 hooks: core, optional
-commands: core, useful, optional
+commands: admin, core, useful, optional
 [auth]
 ctrlpass:
 serverpass:
