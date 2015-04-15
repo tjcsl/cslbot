@@ -18,7 +18,7 @@ from helpers.command import Command
 
 
 @Command('bike')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """I've got a bike, you can ride it if you like. It's got a basket, a bell that rings and things to make it look good.
     I'd give it to you if I could but I borrowed it.
     Syntax: !bike

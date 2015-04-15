@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 @Command('praise')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Praises something.
     Syntax: !praise <something>
     """

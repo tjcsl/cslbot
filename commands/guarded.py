@@ -18,7 +18,7 @@ from helpers.command import Command
 
 
 @Command('guarded', ['handler'])
-def cmd(send, msg, args):
+def cmd(send, _, args):
     """Shows the currently guarded nicks.
     Syntax: !guarded
     """

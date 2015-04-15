@@ -42,7 +42,7 @@ ingverb = ["backing up", "bypassing", "hacking", "overriding", "compressing",
 
 
 @Command('jargon')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Causes the bot to generate some jargon.
     Syntax: !jargon
     """

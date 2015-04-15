@@ -32,7 +32,7 @@ def get_default(nick, session, handler, send, config, source):
             # attempt to get GeoIP location, can fail if the DB isn't available, hostmask doesn't have
             # an IP, etc.
             hostmask = source.split('@')[1]
-            hostip = re.search("\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask)
+            hostip = re.search(r"\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask)
             if hostip:
                 hostip = re.sub('-', '.', hostip.group())
                 db_file = os.path.join(handler.srcdir, config['db']['geoip'])

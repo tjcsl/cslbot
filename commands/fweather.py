@@ -20,14 +20,14 @@ from helpers.command import Command
 
 
 @Command('fweather')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Gets the F***ING weather!
     Syntax: !fweather <location>
     """
     try:
         html = get('http://thefuckingweather.com/', params={'where': msg})
         soup = BeautifulSoup(html.text)
-        temp, remark, flavor = soup.findAll('p')
+        temp, remark, _ = soup.findAll('p')
         send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
     except ValueError:
         send('NO FSCKING RESULTS.')

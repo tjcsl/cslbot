@@ -26,7 +26,7 @@ def gen_fortune(send):
 
 
 @Command('botspam')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Abuses the bot.
     Syntax: !botspam
     """

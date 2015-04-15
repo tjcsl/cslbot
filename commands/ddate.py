@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 @Command('ddate')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Returns the Discordian date.
     Syntax: !ddate
     """

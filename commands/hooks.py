@@ -20,7 +20,7 @@ from helpers.command import Command
 
 
 @Command('hooks')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Lists loaded hooks
     Syntax: !hooks
     """

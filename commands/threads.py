@@ -20,12 +20,12 @@ from helpers.command import Command
 
 
 @Command('threads')
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Enumerate threads.
     Syntax: !threads
     """
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
-        if re.match('Thread-\d+$', x.name):
+        if re.match(r'Thread-\d+$', x.name):
             # Handle the main server thread (permanently listed as _worker)
             if x._target.__name__ == '_worker':
                 send("%s running server thread" % x.name)

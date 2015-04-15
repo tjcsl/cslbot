@@ -18,7 +18,7 @@ from helpers.command import Command
 
 
 @Command('channels', ['handler', 'type'])
-def cmd(send, msg, args):
+def cmd(send, _, args):
     """Returns a listing of the current channels.
     Syntax: !channels
     """

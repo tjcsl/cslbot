@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 @Command('sha512')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """SHA512 hashes something.
     Syntax: !sha512 <msg>
     """

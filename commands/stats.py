@@ -35,8 +35,8 @@ def get_nicks(session, command):
 
 def get_command_totals(session, commands):
     totals = {}
-    for cmd in commands:
-        totals[cmd] = session.query(Commands).filter(Commands.command == cmd).count()
+    for c in commands:
+        totals[c] = session.query(Commands).filter(Commands.command == c).count()
     return totals
 
 
@@ -106,5 +106,5 @@ def cmd(send, msg, args):
         else:
             send("%s has used %d bot commands." % (cmdargs.nick, totals[cmdargs.nick]))
     else:
-        cmd = choice(list(totals.keys()))
-        send("%s has been used %s times." % (cmd, totals[cmd]))
+        command = choice(list(totals.keys()))
+        send("%s has been used %s times." % (command, totals[command]))

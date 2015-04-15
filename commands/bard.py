@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 @Command(['bard', 'shakespeare'])
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Translates something into Shakespearese.
     Syntax: !bard <something>
     """

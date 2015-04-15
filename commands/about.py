@@ -18,7 +18,7 @@ from helpers.command import Command
 
 
 @Command('about', ['config'])
-def cmd(send, msg, args):
+def cmd(send, _, args):
     """Returns info about the bot.
     Syntax: !about
     """

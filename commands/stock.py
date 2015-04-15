@@ -52,11 +52,11 @@ def gen_stock(msg):
 
 def random_stock():
     html = get('http://www.openicon.com/rsp/rsp_n100.php').text
-    return re.search('\((.*)\)', html).group(1)
+    return re.search(r'\((.*)\)', html).group(1)
 
 
 @Command('stock')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Gets a stock quote.
     Syntax: !stock <symbol>
     """

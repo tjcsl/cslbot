@@ -19,7 +19,7 @@ from helpers.command import Command
 
 
 @Command('wtf')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Tells you what acronyms mean.
     Syntax: !wtf <term>
     """

@@ -37,7 +37,7 @@ def gen_roman(num):
 
 
 @Command('roman')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Convert a number to the roman numeral equivalent.
     Syntax: !roman <number>
     """

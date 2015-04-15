@@ -19,7 +19,7 @@ from random import choice
 
 
 @Command(['wai', 'why'])
-def cmd(send, msg, args):
+def cmd(send, *_):
     """Gives a reason for something.
     Syntax: !wai
     """

@@ -53,27 +53,27 @@ def delete_poll(session, pid):
 
 def edit_poll(session, msg):
     """ Edits a poll """
-    cmd = msg.split(maxsplit=1)
-    if len(cmd) < 2:
+    msg = msg.split(maxsplit=1)
+    if len(msg) < 2:
         return "Syntax: !vote edit <pollnum> <question>"
-    if not cmd[0].isdigit():
+    if not msg[0].isdigit():
         return "Not A Valid Positive Integer."
-    pid = int(cmd[0])
+    pid = int(msg[0])
     poll = session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
     if poll is None:
         return "That poll was deleted or does not exist!"
-    poll.question = cmd[1]
+    poll.question = msg[1]
     return "Poll updated!"
 
 
 def reopen(session, msg):
     """ reopens a closed poll."""
-    cmd = msg.split()
-    if not cmd:
+    msg = msg.split()
+    if not msg:
         return "Syntax: !poll reopen <pollnum>"
-    if not cmd[0].isdigit():
+    if not msg[0].isdigit():
         return "Not a valid positve integer."
-    pid = int(cmd[0])
+    pid = int(msg[0])
     poll = session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
     if poll is None:
         return "That poll doesn't exist or has been deleted!"
@@ -110,10 +110,10 @@ def tally_poll(session, pid, send, target):
     votes = session.query(Poll_responses).filter(Poll_responses.pid == pid).all()
     send("%s poll: %s, %d total votes" % (state, poll.question, len(votes)))
     votemap = {}
-    for vote in votes:
-        if vote.response not in votemap:
-            votemap[vote.response] = []
-        votemap[vote.response].append(vote.voter)
+    for v in votes:
+        if v.response not in votemap:
+            votemap[v.response] = []
+        votemap[v.response].append(v.voter)
     for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])), target=target)
     if not votemap:
@@ -134,27 +134,27 @@ def tally_poll(session, pid, send, target):
         send("Tie between %s with %d votes." % winners)
 
 
-def vote(session, nick, pid, vote):
+def vote(session, nick, pid, response):
     """ Votes on a poll"""
-    if not vote:
+    if not response:
         return "You have to vote something!"
-    if vote == "n" or vote == "nay":
-        vote = "no"
-    elif vote == "y" or vote == "aye":
-        vote = "yes"
+    if response == "n" or response == "nay":
+        response = "no"
+    elif response == "y" or response == "aye":
+        response = "yes"
     poll = session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
     if poll is None:
         return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
     old_vote = session.query(Poll_responses).filter(Poll_responses.pid == pid, Poll_responses.voter == nick).first()
     if old_vote is None:
-        session.add(Poll_responses(pid=pid, response=vote, voter=nick))
-        return "%s voted %s." % (nick, vote)
+        session.add(Poll_responses(pid=pid, response=response, voter=nick))
+        return "%s voted %s." % (nick, response)
     else:
-        if vote == old_vote.response:
-            return "You've already voted %s." % vote
+        if response == old_vote.response:
+            return "You've already voted %s." % response
         else:
-            msg = "%s changed his/her vote from %s to %s." % (nick, old_vote.response, vote)
-            old_vote.response = vote
+            msg = "%s changed his/her vote from %s to %s." % (nick, old_vote.response, response)
+            old_vote.response = response
             return msg
 
 
@@ -182,49 +182,49 @@ def cmd(send, msg, args):
     Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
     """
     session = args['db']
-    cmd = msg.split()
-    msg = " ".join(cmd[1:])
-    if not cmd:
+    command = msg.split()
+    msg = " ".join(command[1:])
+    if not command:
         send("Which poll?")
         return
     else:
-        cmd = cmd[0]
+        command = command[0]
     isadmin = args['is_admin'](args['nick'])
-    if cmd == 'start' or cmd == 'open' or cmd == 'add' or cmd == 'create':
+    if command == 'start' or command == 'open' or command == 'add' or command == 'create':
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
             start_poll(session, msg, isadmin, send, args['nick'], args['config']['core']['ctrlchan'])
-    elif cmd == 'tally':
+    elif command == 'tally':
         tally_poll(session, msg, send, args['nick'])
-    elif cmd == 'list':
+    elif command == 'list':
         send(list_polls(session, args['config']['core']['url']))
-    elif cmd == 'retract':
+    elif command == 'retract':
         send(retract(session, msg, args['nick']))
-    elif cmd.isdigit():
+    elif command.isdigit():
         if args['type'] == 'privmsg':
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
-            send(vote(session, args['nick'], int(cmd), msg))
-    elif cmd == 'end' or cmd == 'close':
+            send(vote(session, args['nick'], int(command), msg))
+    elif command == 'end' or command == 'close':
         if isadmin:
             send(end_poll(session, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd == 'delete':
+    elif command == 'delete':
         if isadmin:
             send(delete_poll(session, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd == 'edit':
+    elif command == 'edit':
         if isadmin:
             send(edit_poll(session, msg))
         else:
             send("Nope, not gonna do it.")
-    elif cmd == 'reopen':
+    elif command == 'reopen':
         if isadmin:
             send(reopen(session, msg))
         else:
             send("Nope, not gonna do it.")
     else:
-        send('Command %s invalid.' % cmd)
+        send('Command %s invalid.' % command)

@@ -21,9 +21,8 @@ from helpers.command import Command
 
 
 @Command('tjbash')
-def cmd(send, msg, args):
-    """Finds a random quote from tjbash.org given search criteria
-    """
+def cmd(send, msg, _):
+    """Finds a random quote from tjbash.org given search criteria."""
     if len(msg) == 0:
         url = 'http://tjbash.org/random1'
     else:
@@ -41,9 +40,7 @@ def cmd(send, msg, args):
         send("There were no results.")
         return
     quote = choice(quotes)
-    text = quote.text.splitlines()
-    text = list(filter(None, text))
-    snipped = (len(text) > 3)
+    text = [x for x in quote.text.splitlines() if x]
     text = text[:3]
     for line in text:
         send(line.rstrip())
@@ -55,6 +52,6 @@ def cmd(send, msg, args):
         tags = []
         for tag in tagitems:
             tags.append(tag.text.rstrip())
-        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if snipped else "", postid))
+        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if (len(text) > 3) else "", postid))
     else:
         send(" -- http://tjbash.org/{}".format(postid))

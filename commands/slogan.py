@@ -19,7 +19,7 @@ from helpers import textutils
 
 
 @Command('slogan')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Gets a slogan.
     Syntax: !slogan <text>
     """

@@ -20,7 +20,7 @@ from helpers.misc import do_pull
 
 
 @Command('pull', ['handler', 'is_admin', 'nick', 'botnick'])
-def cmd(send, msg, args):
+def cmd(send, _, args):
     """Pull changes.
     Syntax: !pull <branch>
     """

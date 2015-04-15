@@ -37,7 +37,7 @@ def cmd(send, msg, args):
             return
         elements.pop(0)
     # The first digit field should be exactly four digits long, the second is 4+
-    if not re.search("^[\d]{4}$", elements[0]) or not re.search("^[\d]{4,}$", elements[1]):
+    if not re.search(r"^[\d]{4}$", elements[0]) or not re.search(r"^[\d]{4,}$", elements[1]):
         send("Invalid CVE format")
         return
     search = "%s-%s" % (elements[0], elements[1])

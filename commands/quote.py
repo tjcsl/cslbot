@@ -44,12 +44,12 @@ def get_quotes_nick(session, nick):
     return "Quote #%d (out of %d): %s -- %s" % (row.id, len(rows), row.quote, nick)
 
 
-def do_add_quote(cmd, session, isadmin, send, args):
+def do_add_quote(msg, session, isadmin, send, args):
     # FIXME: have better parsing.
-    if '--' not in cmd:
+    if '--' not in msg:
         send("To add a quote, it must be in the format <quote> -- <nick>")
         return
-    quote = cmd.split('--')
+    quote = msg.split('--')
     # strip off excess leading/ending spaces
     quote = [x.strip() for x in quote]
     row = Quotes(quote=quote[0], nick=quote[1], submitter=args['nick'])
@@ -101,35 +101,35 @@ def cmd(send, msg, args):
     """
     # FIXME: use argparse
     session = args['db']
-    cmd = msg.split()
+    msg = msg.split()
     isadmin = args['is_admin'](args['nick'])
 
-    if not cmd:
+    if not msg:
         send(do_get_quote(session))
-    elif cmd[0].isdigit():
-        send(do_get_quote(session, int(cmd[0])))
-    elif cmd[0] == 'add':
+    elif msg[0].isdigit():
+        send(do_get_quote(session, int(msg[0])))
+    elif msg[0] == 'add':
         if args['type'] == 'privmsg':
             send("You want everybody to know about your witty sayings, right?")
         else:
-            msg = " ".join(cmd[1:])
+            msg = " ".join(msg[1:])
             do_add_quote(msg, session, isadmin, send, args)
-    elif cmd[0] == 'list':
+    elif msg[0] == 'list':
         send(do_list_quotes(session, args['config']['core']['url']))
-    elif cmd[0] == 'remove' or cmd[0] == 'delete':
+    elif msg[0] == 'remove' or msg[0] == 'delete':
         if isadmin:
-            if len(cmd) == 1:
+            if len(msg) == 1:
                 send("Which quote?")
             else:
-                send(do_delete_quote(session, cmd[1]))
+                send(do_delete_quote(session, msg[1]))
         else:
             send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
-    elif cmd[0] == 'edit':
-        if len(cmd) == 1:
+    elif msg[0] == 'edit':
+        if len(msg) == 1:
             send("Which quote?")
         elif isadmin:
-            msg = " ".join(cmd[2:])
-            send(do_update_quote(session, cmd[1], msg))
+            msg = " ".join(msg[2:])
+            send(do_update_quote(session, msg[1], msg))
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:

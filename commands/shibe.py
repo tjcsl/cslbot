@@ -20,7 +20,7 @@ from helpers.textutils import gen_word
 
 
 @Command('shibe')
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Generates a shibe reaction.
     Syntax: !shibe (topic1)...(topicn)
     """

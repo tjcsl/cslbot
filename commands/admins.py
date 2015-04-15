@@ -18,7 +18,7 @@ from helpers.command import Command
 
 
 @Command('admins', ['handler', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, _, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
     Syntax: !admins
