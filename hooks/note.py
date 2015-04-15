@@ -20,7 +20,7 @@ from helpers.orm import Notes
 
 
 @Hook('note', ['pubmsg', 'action'], ['nick', 'db'])
-def handle(send, msg, args):
+def handle(send, _, args):
     nick = args['nick']
     notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:

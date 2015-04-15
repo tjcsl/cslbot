@@ -19,7 +19,7 @@ import re
 
 
 @Hook('autodeop', ['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
-def handle(send, msg, args):
+def handle(_, msg, args):
     if 'autodeop' not in args['config']['core']:
         return
 

@@ -23,7 +23,7 @@ _caps_lock = Lock()
 
 
 @Hook('caps', 'pubmsg', ['nick', 'do_kick', 'target', 'config'])
-def handle(send, msg, args):
+def handle(_, msg, args):
     """ Check for capslock abuse.
 
     | Check if a line is more than THRESHOLD percent uppercase.
