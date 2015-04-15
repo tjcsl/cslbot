@@ -45,7 +45,7 @@ def cmd(send, msg, args):
         if 'message' in issue:
             send("Invalid Issue Number")
         else:
-            send("%s -- %s" % (issue['title'], issue['html_url']))
+            send("%s (%s) -- %s" % (issue['title'], issue['state'], issue['html_url']))
     elif not cmdargs.title:
         issues = []
         n = 1
