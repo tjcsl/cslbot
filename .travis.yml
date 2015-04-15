@@ -28,3 +28,4 @@ after_success:
 
 notifications:
   irc: "chat.freenode.net#tjcsl-cslbot"
+    skip_join: true
