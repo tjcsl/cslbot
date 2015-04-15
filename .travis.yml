@@ -27,5 +27,6 @@ after_success:
     ./scripts/deploy_docs.sh
 
 notifications:
-  irc: "chat.freenode.net#tjcsl-cslbot"
-    skip_join: true
+  irc:
+      channels: "chat.freenode.net#tjcsl-cslbot"
+      skip_join: true
