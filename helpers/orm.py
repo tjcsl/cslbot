@@ -116,7 +116,7 @@ class Nicks(Base):
 
 
 class Babble(Base):
-    key = Column(String)
+    key = Column(String, index=True)
     source = Column(String)
     target = Column(String)
     word = Column(String)
