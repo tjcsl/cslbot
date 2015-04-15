@@ -52,7 +52,7 @@ See the SQLAlchemy documentation if you want to use another backend.
 Migrations
 ----------
 In order to set up migrations, copy alembic.ini.default to alembic.ini and edit sqlalchemy.url to use the same address as you
-used on the "engine" line in the previous step. From there, you can run alembic migrate head at any time to ensure that you have
+used on the "engine" line in the previous step. From there, you can run alembic upgrade head at any time to ensure that you have
 the latest database migration.
 
 Adding Modules
