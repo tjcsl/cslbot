@@ -17,7 +17,7 @@
 import json
 import ssl
 from lxml.html import parse
-from urllib.request import Request, urlopen
+from urllib import request
 from urllib.error import URLError, HTTPError
 from requests import post
 from socket import timeout
@@ -39,6 +39,7 @@ def get_title(url):
     title = 'No Title Found'
     try:
         # Strip unicode
+        # FIXME: do we want to do this?
         url = url.encode('ascii', 'ignore').decode()
         url = url.split('://', maxsplit=1)
         if len(url) == 1:
@@ -48,7 +49,9 @@ def get_title(url):
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         # We don't care if the cert is valid or not.
         context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        req = urlopen(Request(url, headers=headers), context=context, timeout=10)
+        # FIXME: use urlopen(context=context) once 3.4.3 is released to travis.
+        opener = request.build_opener(request.HTTPSHandler(context=context))
+        req = opener.open(request.Request(url, headers=headers), timeout=10)
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
