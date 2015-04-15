@@ -19,6 +19,7 @@
 import re
 import time
 import sys
+from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -347,29 +348,32 @@ class BotHandler():
             self.get_admins(c)
             send("Verified admins reset.")
         elif cmd == 'ignore':
-            cmdargs = cmdargs.split()
-            if not cmdargs:
-                send("Ignore who?")
-            elif cmdargs[0] == 'clear':
+            parser = arguments.ArgParser(self.config)
+            parser.add_argument('nick', nargs='?')
+            parser.add_argument('--clear', action='store_true')
+            parser.add_argument('--show', '--list', action='store_true')
+            parser.add_argument('--delete', action='store_true')
+            cmdargs = parser.parse_args(cmdargs)
+            if cmdargs.clear:
                 self.ignored = []
                 send("Ignore list cleared.")
-            elif cmdargs[0] == 'show' or cmdargs[0] == 'list':
+            elif cmdargs.show:
                 if self.ignored:
                     send(", ".join(self.ignored))
                 else:
                     send("Nobody is ignored.")
-            elif cmdargs[0] == 'delete':
-                if len(cmdargs) == 1:
+            elif cmdargs.delete:
+                if not cmdargs.nick:
                     send("Unignore who?")
-                elif cmdargs[1] not in self.ignored:
-                    send("%s is not ignored." % cmdargs[1])
+                elif cmdargs.nick not in self.ignored:
+                    send("%s is not ignored." % cmdargs.nick)
                 else:
-                    self.ignored.remove(cmdargs[1])
-                    send("%s is no longer ignored." % cmdargs[1])
-            elif cmdargs[0] in self.ignored:
-                send("%s is already ignored." % cmdargs[0])
+                    self.ignored.remove(cmdargs.nick)
+                    send("%s is no longer ignored." % cmdargs.nick)
+            elif cmdargs.nick:
+                self.ignore(send, cmdargs.nick)
             else:
-                self.ignore(send, cmdargs[0])
+                send("Ignore who?")
         elif cmd == 'join':
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
