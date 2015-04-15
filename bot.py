@@ -21,6 +21,7 @@ try:
         # Dependency on importlib.reload
         raise Exception("Need Python 3.4 or higher.")
     import logging
+    import base64
     import importlib
     import argparse
     import ssl
@@ -55,9 +56,13 @@ class IrcBot(SingleServerIRCBot):
             factory = Factory(wrapper=ssl.wrap_socket, ipv6=botconfig.getboolean('core', 'ipv6'))
         else:
             factory = Factory(ipv6=botconfig.getboolean('core', 'ipv6'))
-        serverinfo = ServerSpec(botconfig['core']['host'], int(botconfig['core']['ircport']), botconfig['auth']['serverpass'])
+        passwd = None if botconfig.getboolean('core', 'sasl') else botconfig['auth']['serverpass']
+        serverinfo = ServerSpec(botconfig['core']['host'], botconfig.getint('core', 'ircport'), passwd)
         nick = botconfig['core']['nick']
         super().__init__([serverinfo], nick, nick, connect_factory=factory)
+        if passwd is None:
+            # FIXME: make this less hacky
+            self.reactor._on_connect = self.do_sasl
         self.reload_event = threading.Event()
         self.reload_event.set()
         self.config = botconfig
@@ -68,6 +73,9 @@ class IrcBot(SingleServerIRCBot):
         self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
+
+    def do_sasl(self, _):
+        self.connection.cap('REQ', 'sasl')
 
     def handle_msg(self, msgtype, c, e):
         """Handles all messages.
@@ -187,6 +195,22 @@ class IrcBot(SingleServerIRCBot):
 
     def on_welcome(self, c, _):
         self.do_welcome(c)
+
+    def on_cap(self, c, e):
+        if 'ACK sasl' == ' '.join(e.arguments).strip():
+            self.connection.send_raw('AUTHENTICATE PLAIN')
+
+    def on_authenticate(self, c, e):
+        if e.target == '+':
+            passwd = self.config['auth']['serverpass']
+            user = self.config['core']['nick']
+            token = base64.b64encode('\0'.join([user, user, passwd]).encode())
+            self.connection.send_raw('AUTHENTICATE %s' % token.decode())
+
+    def on_903(self, c, e):
+        # SASL Successful doesn't have a pretty name.
+        if e.arguments[0] == 'SASL authentication successful':
+            self.connection.cap('END')
 
     def on_pubnotice(self, c, e):
         """Pass public notices to :func:`handle_msg`."""
