@@ -1,4 +1,5 @@
 #!/bin/bash
+cd $(dirname $0)/..
 PASSWORD=`python -c 'import configparser;cfg=configparser.ConfigParser();cfg.read("config.cfg");print(cfg["auth"]["ctrlpass"])'`
 PORT=`python -c 'import configparser;cfg=configparser.ConfigParser();cfg.read("config.cfg");print(cfg["core"]["serverport"])'`
 echo -e "$PASSWORD\nreload" | nc localhost $PORT
