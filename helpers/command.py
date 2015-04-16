@@ -100,12 +100,12 @@ def check_command(cursor, nick, msg, target):
 
 class Command():
 
-    def __init__(self, names, args=[], limit=0, adminonly=False):
+    def __init__(self, names, args=[], limit=0, admin=False):
         global _known_commands
         self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
-        self.adminonly = adminonly
+        self.admin = admin
         for t in self.names:
             if t in _known_commands:
                 raise ValueError("There is already a command registered with the name %s" % t)
@@ -146,5 +146,5 @@ class Command():
     def is_limited(self):
         return self.limit != 0
 
-    def is_admin_only(self):
-        return self.adminonly
+    def requires_admin(self):
+        return self.admin

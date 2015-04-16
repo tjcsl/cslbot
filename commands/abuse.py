@@ -18,7 +18,7 @@ from helpers import arguments
 from helpers.command import Command
 
 
-@Command('abuse', ['config', 'handler'], adminonly=True)
+@Command('abuse', ['config', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Shows or clears the abuse list
     Syntax: !abuse (--clear) (--show)
