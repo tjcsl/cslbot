@@ -29,6 +29,9 @@ def cmd(send, msg, args):
     """
     repo = args['config']['api']['githubrepo']
     apikey = args['config']['api']['githubapikey']
+    if not repo:
+        send("GitHub repository undefined in config.cfg!")
+        return
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('title', nargs='*', default='')
     parser.add_argument('--get', action='store_true')
