@@ -133,4 +133,4 @@ def cmd(send, msg, args):
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:
-        send(get_quotes_nick(session, msg))
+        send(get_quotes_nick(session, msg[0]))
