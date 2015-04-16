@@ -275,7 +275,7 @@ class IrcBot(SingleServerIRCBot):
 
     def on_nicknameinuse(self, c, _):
         self.connection.nick('Guest%d' % random.getrandbits(20))
-        self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['nickpass']))
+        self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['serverpass']))
         self.handler.workers.defer(5, False, self.do_welcome, c)
 
     def on_kick(self, c, e):

@@ -20,7 +20,6 @@ hooks: core, optional
 commands: core, useful, optional
 [auth]
 ctrlpass:
-nickpass:
 serverpass:
 ctrlkey:
 admins: admin1, admin2
