@@ -18,7 +18,6 @@
 
 import re
 import time
-import sys
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -332,11 +331,6 @@ class BotHandler():
             else:
                 msg = textutils.gen_slogan(msg).upper() if slogan else msg
                 self.connection.kick(target, nick, msg)
-
-    def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'quit':
-            c.disconnect('Goodbye, Cruel World!')
-            sys.exit(0)
 
     def do_args(self, modargs, send, nick, target, source, name, msgtype):
         """ Handle the various args that modules need."""
