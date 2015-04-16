@@ -334,9 +334,7 @@ class BotHandler():
                 self.connection.kick(target, nick, msg)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'join':
-            self.do_join(cmdargs, nick, msgtype, send, c)
-        elif cmd == 'part':
+        if cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
         elif cmd == 'quit':
             c.disconnect('Goodbye, Cruel World!')
