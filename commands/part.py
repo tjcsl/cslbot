@@ -24,7 +24,11 @@ def cmd(send, msg, args):
     Syntax: !part (channel)
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('channel', nargs='+')
-    cmdargs = parser.parse_args(msg)
-    for chan in cmdargs.channel:
+    parser.add_argument('channel', nargs='+', action=arguments.ChanParser)
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    for chan in cmdargs.channels:
         args['handler'].do_part(chan, args['nick'], args['type'], args['target'], send, args['handler'].connection)

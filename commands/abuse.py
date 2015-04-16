@@ -24,12 +24,22 @@ def cmd(send, msg, args):
     Syntax: !abuse (--clear) (--show)
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--clear', action='store_true')
-    parser.add_argument('--show', action='store_true')
-    cmdargs = parser.parse_args(msg)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--clear', action='store_true')
+    group.add_argument('--show', action='store_true')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     if cmdargs.clear:
-        args['handler'].abuselist = {}
+        args['handler'].abuselist.clear()
         send("Abuse list cleared.")
     elif cmdargs.show:
         abusers = [x for x in args['handler'].abuselist.keys() if x in args['handler'].ignored]
-        send(", ".join(abusers))
+        if abusers:
+            send(", ".join(abusers))
+        else:
+            send("No abusers.")
+    else:
+        send("Please specify an option.")

@@ -27,6 +27,14 @@ commands.about module
     :undoc-members:
     :show-inheritance:
 
+commands.abuse module
+---------------------
+
+.. automodule:: commands.abuse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.acronym module
 -----------------------
 
@@ -47,6 +55,14 @@ commands.babble module
 ----------------------
 
 .. automodule:: commands.babble
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.bard module
+--------------------
+
+.. automodule:: commands.bard
     :members:
     :undoc-members:
     :show-inheritance:
@@ -87,6 +103,14 @@ commands.botspam module
 -----------------------
 
 .. automodule:: commands.botspam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.cadmin module
+----------------------
+
+.. automodule:: commands.cadmin
     :members:
     :undoc-members:
     :show-inheritance:
@@ -307,6 +331,14 @@ commands.hooks module
     :undoc-members:
     :show-inheritance:
 
+commands.ignore module
+----------------------
+
+.. automodule:: commands.ignore
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.imdb module
 --------------------
 
@@ -359,6 +391,14 @@ commands.jargon module
 ----------------------
 
 .. automodule:: commands.jargon
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.join module
+--------------------
+
+.. automodule:: commands.join
     :members:
     :undoc-members:
     :show-inheritance:
@@ -443,6 +483,14 @@ commands.nuke module
     :undoc-members:
     :show-inheritance:
 
+commands.part module
+--------------------
+
+.. automodule:: commands.part
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.pester module
 ----------------------
 
@@ -471,6 +519,14 @@ commands.pull module
 --------------------
 
 .. automodule:: commands.pull
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+commands.quit module
+--------------------
+
+.. automodule:: commands.quit
     :members:
     :undoc-members:
     :show-inheritance:

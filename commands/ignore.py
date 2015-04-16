@@ -24,13 +24,18 @@ def cmd(send, msg, args):
     Syntax: !ignore (--clear) (--show/--list) (--delete) nick
     """
     parser = arguments.ArgParser(args['config'])
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--clear', action='store_true')
+    group.add_argument('--show', '--list', action='store_true')
+    group.add_argument('--delete', action='store_true')
     parser.add_argument('nick', nargs='?')
-    parser.add_argument('--clear', action='store_true')
-    parser.add_argument('--show', '--list', action='store_true')
-    parser.add_argument('--delete', action='store_true')
-    cmdargs = parser.parse_args(msg)
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     if cmdargs.clear:
-        args['handler'].ignored = []
+        args['handler'].ignored.clear()
         send("Ignore list cleared.")
     elif cmdargs.show:
         if args['handler'].ignored:

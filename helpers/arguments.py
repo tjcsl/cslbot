@@ -39,10 +39,14 @@ class ChanParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        if re.match(namespace.config['core']['chanregex'], value):
-            namespace.chan = value
-        else:
-            raise ArgumentException("Invalid chan %s." % value)
+        if isinstance(value, str):
+            value = [value]
+        namespace.channels = []
+        for v in value:
+            if re.match(namespace.config['core']['chanregex'], v):
+                namespace.channels.append(v)
+            else:
+                raise ArgumentException("Invalid chan %s." % v)
 
 
 class DateParser(argparse.Action):

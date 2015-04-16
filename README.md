@@ -99,4 +99,4 @@ Improved by sdamashek (Samuel Damashek, Class of 2017).
 Improved by bob_twinkles (Reed Koser, Class of 2015).  
 Improved by csssuf.  
 Improved by skasturi. (Srijay Kasturi)  
-Criticized by creffett. (Chris Reffett, Class of 2011).
+Criticized and subsequently improved by creffett. (Chris Reffett, Class of 2011).
