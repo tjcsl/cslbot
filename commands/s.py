@@ -51,9 +51,14 @@ def get_modifiers(msg, nick, nickregex):
 
 
 def do_replace(log, config, char, regex, replacement):
+    startchars = [config['cmdchar']]
+    startchars += config['altcmdchars'].split(',')
+    startchars = [x.strip() for x in startchars]
+    # pre-generate the possible start strings
+    starttuple = tuple(['%ss%s' % (startchar, char) for startchar in startchars])
     for line in log:
         # ignore previous !s calls.
-        if line.msg.startswith('%ss%s' % (config['cmdchar'], char)):
+        if line.msg.startswith(starttuple):
             continue
         if line.msg.startswith('%s: s%s' % (config['nick'], char)):
             continue
