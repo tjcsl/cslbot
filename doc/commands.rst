@@ -419,6 +419,14 @@ commands.lmgtfy module
     :undoc-members:
     :show-inheritance:
 
+commands.metar module
+---------------------
+
+.. automodule:: commands.metar
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.microwave module
 -------------------------
 

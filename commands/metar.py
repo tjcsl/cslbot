@@ -32,9 +32,13 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
+    if not cmdargs.stations:
+        send("What station?")
+        return
     if isinstance(cmdargs.stations, list):
         cmdargs.stations = ','.join(cmdargs.stations)
-    req = get('https://aviationweather.gov/adds/dataserver_current/httpparam?datasource=metars&requestType=retrieve&format=xml&mostRecentForEachStation=constraint&hoursBeforeNow=1.25&stationString=%s' % cmdargs.stations)
+    req = get('https://aviationweather.gov/adds/dataserver_current/httpparam', params={'datasource': 'metars', 'requestType': 'retrieve',
+              'format': 'xml', 'mostRecentForEachStation': 'constraint', 'hoursBeforeNow': '1.25', 'stationString': cmdargs.stations})
     xml = ElementTree.fromstring(req.text)
     errors = xml.find('./errors')
     if len(errors):
@@ -42,7 +46,7 @@ def cmd(send, msg, args):
         send('Error: %s' % errstring)
         return
     data = xml.find('./data')
-    if data.attrib['num_results'] == 0:
+    if data.attrib['num_results'] == '0':
         send('No results found.')
     else:
         for station in data:
