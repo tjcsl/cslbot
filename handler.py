@@ -335,12 +335,7 @@ class BotHandler():
                 self.connection.kick(target, nick, msg)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'cadmin':
-            admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
-            self.admins = {nick: False for nick in admins}
-            self.get_admins(c)
-            send("Verified admins reset.")
-        elif cmd == 'ignore':
+        if cmd == 'ignore':
             parser = arguments.ArgParser(self.config)
             parser.add_argument('nick', nargs='?')
             parser.add_argument('--clear', action='store_true')
