@@ -40,7 +40,6 @@ def handle(send, msg, args):
         output += data['display_name']
     output = output.strip()
     key = args['config']['api']['googleapikey']
-    print(data)
     if subreddit == 'random':
         output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
     else:
