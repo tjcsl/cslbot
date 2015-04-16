@@ -19,7 +19,6 @@
 import re
 import time
 import sys
-from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -335,34 +334,7 @@ class BotHandler():
                 self.connection.kick(target, nick, msg)
 
     def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'ignore':
-            parser = arguments.ArgParser(self.config)
-            parser.add_argument('nick', nargs='?')
-            parser.add_argument('--clear', action='store_true')
-            parser.add_argument('--show', '--list', action='store_true')
-            parser.add_argument('--delete', action='store_true')
-            cmdargs = parser.parse_args(cmdargs)
-            if cmdargs.clear:
-                self.ignored = []
-                send("Ignore list cleared.")
-            elif cmdargs.show:
-                if self.ignored:
-                    send(", ".join(self.ignored))
-                else:
-                    send("Nobody is ignored.")
-            elif cmdargs.delete:
-                if not cmdargs.nick:
-                    send("Unignore who?")
-                elif cmdargs.nick not in self.ignored:
-                    send("%s is not ignored." % cmdargs.nick)
-                else:
-                    self.ignored.remove(cmdargs.nick)
-                    send("%s is no longer ignored." % cmdargs.nick)
-            elif cmdargs.nick:
-                self.ignore(send, cmdargs.nick)
-            else:
-                send("Ignore who?")
-        elif cmd == 'join':
+        if cmd == 'join':
             self.do_join(cmdargs, nick, msgtype, send, c)
         elif cmd == 'part':
             self.do_part(cmdargs, nick, target, msgtype, send, c)
