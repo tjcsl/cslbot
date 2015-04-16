@@ -490,8 +490,8 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                if cmd_obj.is_admin_only() and not self.is_admin(send, nick):
-                    send("This command requires admin privileges")
+                if cmd_obj.requires_admin() and not self.is_admin(send, nick):
+                    send("This command requires admin privileges.")
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
