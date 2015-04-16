@@ -18,8 +18,6 @@
 
 import re
 import time
-import sys
-from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -334,54 +332,6 @@ class BotHandler():
                 msg = textutils.gen_slogan(msg).upper() if slogan else msg
                 self.connection.kick(target, nick, msg)
 
-    def do_admin(self, c, cmd, cmdargs, send, nick, msgtype, target):
-        if cmd == 'abuse':
-            if cmdargs == 'clear':
-                self.abuselist = {}
-                send("Abuse list cleared.")
-            elif cmdargs == 'show':
-                abusers = [x for x in self.abuselist.keys() if x in self.ignored]
-                send(", ".join(abusers))
-        elif cmd == 'cadmin':
-            admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
-            self.admins = {nick: False for nick in admins}
-            self.get_admins(c)
-            send("Verified admins reset.")
-        elif cmd == 'ignore':
-            parser = arguments.ArgParser(self.config)
-            parser.add_argument('nick', nargs='?')
-            parser.add_argument('--clear', action='store_true')
-            parser.add_argument('--show', '--list', action='store_true')
-            parser.add_argument('--delete', action='store_true')
-            cmdargs = parser.parse_args(cmdargs)
-            if cmdargs.clear:
-                self.ignored = []
-                send("Ignore list cleared.")
-            elif cmdargs.show:
-                if self.ignored:
-                    send(", ".join(self.ignored))
-                else:
-                    send("Nobody is ignored.")
-            elif cmdargs.delete:
-                if not cmdargs.nick:
-                    send("Unignore who?")
-                elif cmdargs.nick not in self.ignored:
-                    send("%s is not ignored." % cmdargs.nick)
-                else:
-                    self.ignored.remove(cmdargs.nick)
-                    send("%s is no longer ignored." % cmdargs.nick)
-            elif cmdargs.nick:
-                self.ignore(send, cmdargs.nick)
-            else:
-                send("Ignore who?")
-        elif cmd == 'join':
-            self.do_join(cmdargs, nick, msgtype, send, c)
-        elif cmd == 'part':
-            self.do_part(cmdargs, nick, target, msgtype, send, c)
-        elif cmd == 'quit':
-            c.disconnect('Goodbye, Cruel World!')
-            sys.exit(0)
-
     def do_args(self, modargs, send, nick, target, source, name, msgtype):
         """ Handle the various args that modules need."""
         realargs = {}
@@ -491,22 +441,18 @@ class BotHandler():
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
         cmdargs = msg[cmdlen:]
-        found = False
         if cmd.startswith(cmdchar):
             cmd_name = cmd[len(cmdchar):]
             if command.is_registered(cmd_name):
-                found = True
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
+                if cmd_obj.requires_admin() and not self.is_admin(send, nick):
+                    send("This command requires admin privileges.")
+                    return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
                 cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
-        # special commands
-        if cmd.startswith(cmdchar):
-            if cmd[len(cmdchar):] == 'reload':
+            # special commands
+            elif cmd[len(cmdchar):] == 'reload':
                 if nick in admins:
-                    found = True
                     send("Aye Aye Capt'n")
-            # everything below this point requires admin
-            if not found and self.is_admin(send, nick):
-                self.do_admin(c, cmd[len(cmdchar):], cmdargs, send, nick, msgtype, target)
