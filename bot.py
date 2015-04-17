@@ -213,8 +213,8 @@ class IrcBot(SingleServerIRCBot):
             self.connection.cap('END')
 
     def on_pubnotice(self, c, e):
-        """Pass public notices to :func:`handle_msg`."""
-        self.handle_msg('pubnotice', c, e)
+        """This is mostly informational stuff from the server that we don't do anything with right now."""
+        # self.handle_msg('pubnotice', c, e)
 
     def on_nick(self, c, e):
         """Log nick changes."""

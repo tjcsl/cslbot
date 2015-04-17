@@ -361,17 +361,17 @@ class BotHandler():
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
 
-        # actions don't have the nick attr for some reason
-        if msgtype == 'action':
-            nick = e.source.split('!')[0]
-        else:
-            nick = e.source.nick
+        nick = e.source.nick
 
         # modes have separate arguments, everything else just one
         if msgtype == 'mode' or msgtype == 'nick' or msgtype == 'join':
             msg = " ".join(e.arguments)
         else:
             msg = e.arguments[0].strip()
+
+        # ignore empty messages
+        if not msg:
+            return
 
         # Send the response to private messages to the sending nick.
         if msgtype == 'privmsg' or msgtype == 'privnotice':
@@ -388,9 +388,6 @@ class BotHandler():
                 admin.set_admin(msg, self)
             return
 
-        if msgtype == 'pubnotice':
-            return
-
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
             for h in self.hooks.values():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
@@ -404,7 +401,8 @@ class BotHandler():
                     self.do_kick(send, x, e.target, "identity crisis")
             return
 
-        # must come after set_admin to prevent spam
+        # must come after set_admin to prevent spam from all the NickServ ACC responses
+        # We log nick changes in bot.py so that they show up for all channels.
         self.do_log(target, nick, msg, msgtype)
 
         if msgtype == 'mode':
@@ -414,10 +412,6 @@ class BotHandler():
         if msgtype == 'join':
             if nick == c.real_nickname:
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
-            return
-
-        # ignore empty messages
-        if not msg:
             return
 
         if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):
