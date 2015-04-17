@@ -22,7 +22,7 @@ import string
 from os.path import dirname
 from requests import get, post
 from lxml.html import fromstring, tostring
-from html import unescape
+from html import escape, unescape
 from random import random, choice, randrange
 
 
@@ -47,9 +47,9 @@ def gen_yoda(msg):
 
 
 def gen_gizoogle(msg):
-    html = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': msg.encode('utf-7')})
+    html = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})
     # This mess is needed because gizoogle has a malformed textarea, so the text isn't within the tag
-    response = tostring(fromstring(html.text).find('.//textarea')).decode('utf-7').strip()
+    response = unescape(tostring(fromstring(html.text).find('.//textarea')).decode('utf-7')).strip()
     response = re.sub(".*</textarea>", '', response)
     return unescape(response)
 
