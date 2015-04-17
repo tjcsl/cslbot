@@ -95,7 +95,7 @@ def gen_log(row):
             nick = '+' + nick
         log = '%s <%s> %s\n' % (logtime, nick, row.msg)
     else:
-        raise Exception("Invalid type.")
+        raise Exception("Invalid type %s." % row.type)
     return log
 
 
