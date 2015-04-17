@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    target = cmdargs.channels[0] if cmdargs.channels else args['target']
+    target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
     mode = " ".join(extra)
     if not mode:
         send('Please specify a mode.')
