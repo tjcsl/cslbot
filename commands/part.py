@@ -20,7 +20,7 @@ from helpers.command import Command
 
 @Command('part', ['handler', 'config', 'nick', 'type', 'target'], admin=True)
 def cmd(send, msg, args):
-    """Orders the bot to join a channel
+    """Orders the bot to leave a channel
     Syntax: !part (channel)
     """
     parser = arguments.ArgParser(args['config'])
@@ -31,4 +31,4 @@ def cmd(send, msg, args):
         send(str(e))
         return
     for chan in cmdargs.channels:
-        args['handler'].do_part(chan, args['nick'], args['type'], args['target'], send, args['handler'].connection)
+        args['handler'].do_part(chan, args['nick'], args['target'], args['type'], send, args['handler'].connection)

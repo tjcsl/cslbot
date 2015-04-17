@@ -267,7 +267,7 @@ class BotHandler():
         if cmdargs == self.config['core']['ctrlchan']:
             send("%s must remain under control, or bad things will happen." % botnick)
             return
-        self.send(cmdargs, nick, "Leaving at the request of " + nick, msgtype)
+        self.send(cmdargs, nick, "Leaving at the request of %s" % nick, msgtype)
         c.part(cmdargs)
 
     def do_join(self, cmdargs, nick, msgtype, send, c):
