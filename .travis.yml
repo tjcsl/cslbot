@@ -31,3 +31,7 @@ notifications:
   irc:
       channels: "chat.freenode.net#tjcsl-cslbot"
       skip_join: true
+
+cache:
+    directories:
+        - $HOME/.cache/pip
