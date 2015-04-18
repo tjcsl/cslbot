@@ -18,6 +18,7 @@ See http://tjcsl.github.io/cslbot for api docs.
 Setup
 -----
 Run ./bot.py to setup the initial configuration and change values in config.cfg as needed.
+You must copy helpers/groups.example to helpers/groups.cfg and make any needed changes to configure the commands and/or hooks you want.
 
 Python must be at least 3.4.
 
