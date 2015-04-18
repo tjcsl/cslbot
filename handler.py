@@ -187,7 +187,8 @@ class BotHandler():
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
         for i in self.outputfilter:
-            msg = i(msg)
+            if target != self.config['core']['ctrlchan']:
+                msg = i(msg)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
             msgs.append(msg[:split_pos].strip())
