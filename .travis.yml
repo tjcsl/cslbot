@@ -33,5 +33,6 @@ notifications:
       skip_join: true
 
 cache:
+    pip: true
     directories:
         - $HOME/.cache/pip
