@@ -2,12 +2,11 @@ alembic.ini
 b
 deploy
 db.sqlite
-config.cfg
+*.cfg
 __pycache__
 *.py[co]
 *.sw?
 *.*~
-helpers/groups.cfg
 doc/build
 scripts/fixperms.sh
 static/templates/analytics.html
