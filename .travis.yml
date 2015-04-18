@@ -36,3 +36,4 @@ cache:
     pip: true
     directories:
         - $HOME/.cache/pip
+        - $HOME/virtualenv/
