@@ -1,4 +1,6 @@
-cslbot
+# cslbot
+
+[![Build Status](https://travis-ci.org/tjcsl/cslbot.svg?branch=master)](https://travis-ci.org/tjcsl/cslbot)
 ======
 
 A bot written by the TJHSST CSL for IRC. 
