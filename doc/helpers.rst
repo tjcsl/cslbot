@@ -108,6 +108,14 @@ helpers.orm module
     :undoc-members:
     :show-inheritance:
 
+helpers.reddit module
+---------------------
+
+.. automodule:: helpers.reddit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.server module
 ---------------------
 
