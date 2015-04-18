@@ -41,7 +41,7 @@ def handle(send, msg, args):
         urls = result.get(5)
     except multiprocessing.TimeoutError:
         worker.restart_pool()
-        send('Regex timed out.')
+        send('Url regex timed out.')
         return
     for url in urls:
         title = urlutils.get_title(url)

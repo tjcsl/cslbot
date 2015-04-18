@@ -105,7 +105,7 @@ def cmd(send, msg, args):
             msg = result.get(5)
         except multiprocessing.TimeoutError:
             workers.restart_pool()
-            send("Regex timed out.")
+            send("Sed regex timed out.")
             return
         if msg:
             send(msg)
