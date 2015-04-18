@@ -334,7 +334,7 @@ def handle_help(args):
 
 
 def init_parser(send, handler, db):
-    parser = arguments.ArgParser(handler.config, )
+    parser = arguments.ArgParser(handler.config)
     parser.set_defaults(send=send, handler=handler, db=db)
     subparser = parser.add_subparsers()
 

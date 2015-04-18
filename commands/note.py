@@ -48,6 +48,6 @@ def cmd(send, msg, args):
         else:
             failedNicks.append(nick)
     if successfulNicks:
-        send("Note left for %s." % (", ".join([n for n in successfulNicks])))
+        send("Note left for %s." % ", ".join(successfulNicks))
     if failedNicks:
-        send("Invalid nick(s): %s." % (", ".join([n for n in failedNicks])))
+        send("Invalid nick(s): %s." % ", ".join(failedNicks))

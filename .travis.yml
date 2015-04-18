@@ -20,8 +20,8 @@ before_cache:
     - rm -f ~/.cache/pip/log/debug.log
 
 install:
-    - pip install flake8 sphinx psycopg2
-    - pip install -r requirements.txt
+    - pip install -U flake8 sphinx psycopg2
+    - pip install -U -r requirements.txt
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
