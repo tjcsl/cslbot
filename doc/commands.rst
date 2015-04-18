@@ -635,26 +635,10 @@ commands.slogan module
     :undoc-members:
     :show-inheritance:
 
-commands.ssearch module
------------------------
-
-.. automodule:: commands.ssearch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 commands.stats module
 ---------------------
 
 .. automodule:: commands.stats
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-commands.steam module
----------------------
-
-.. automodule:: commands.steam
     :members:
     :undoc-members:
     :show-inheritance:
