@@ -28,6 +28,14 @@ commands.tjhsst.fwilson module
     :undoc-members:
     :show-inheritance:
 
+commands.tjhsst.srepetsk module
+-------------------------------
+
+.. automodule:: commands.tjhsst.srepetsk
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
