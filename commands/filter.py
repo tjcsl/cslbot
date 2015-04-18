@@ -25,7 +25,7 @@ def cmd(send, msg, args):
     """
     # FIXME: use argparse
     if args['type'] == 'privmsg':
-        send('Ahamilto wants to know all about your doings!')
+        send('Filters must be set in channels, not via private message.')
     elif not msg or msg == 'show':
         names = []
         for i in args['handler'].outputfilter:
