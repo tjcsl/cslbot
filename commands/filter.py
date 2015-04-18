@@ -46,6 +46,9 @@ def cmd(send, msg, args):
             send("Nope, not gonna do it!")
     elif msg.startswith('chain'):
         if args['is_admin'](args['nick']):
+            if args['handler'].outputfilter[0].__name__ == '<lambda>':
+                send("Must have a filter set in order to chain.")
+                return
             next_filter = msg.split()[1]
             if next_filter in textutils.output_filters.keys():
                 args['handler'].outputfilter.append(textutils.output_filters[next_filter])
