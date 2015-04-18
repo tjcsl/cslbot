@@ -16,6 +16,9 @@ cache:
     - ~/.cache/pip
     - ~/virtualenv
 
+before_cache:
+    - rm -f ~/.cache/pip/log/debug.log
+
 install:
     - pip install flake8 sphinx psycopg2
     - pip install -r requirements.txt
