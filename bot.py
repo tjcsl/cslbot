@@ -142,7 +142,7 @@ class IrcBot(SingleServerIRCBot):
         if not reload_ok:
             controlchan = self.config['core']['ctrlchan']
             self.connection.privmsg(controlchan,
-                    "Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
+                                    "Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
             self.connection.privmsg(controlchan, "Failures: " + ", ".join(failed_modules))
         modutils.safe_reload(handler)
         self.config = ConfigParser()

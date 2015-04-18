@@ -95,6 +95,7 @@ def get_enabled(moddir, mod_type):
             raise Exception("%s must be either enabled or disabled in groups.cfg" % mod_name)
     return enabled, disabled
 
+
 def get_modules(folder, mod_type):
     core_enabled, core_disabled = get_enabled(folder, mod_type)
     for aux in AUX[mod_type]:
@@ -121,6 +122,7 @@ def safe_reload(modname):
         for line in errmsg.split('\n'):
             logging.error(errmsg)
         return False
+
 
 def scan_and_reimport(folder, mod_type):
     """ Scans folder for modules."""
