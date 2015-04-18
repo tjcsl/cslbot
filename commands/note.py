@@ -38,10 +38,16 @@ def cmd(send, msg, args):
         send("Not enough arguments.")
         return
     nickregex = args['config']['core']['nickregex'] + '+$'
+    successfulNicks = []
+    failedNicks = []
     for nick in nicks:
         if re.match(nickregex, nick):
             row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
             args['db'].add(row)
-            send("Note left for %s." % nick)
+            successfulNicks.append(nick)
         else:
-            send("Invalid nick: %s" % nick)
+            failedNicks.append(nick)
+    if successfulNicks:
+        send("Note left for %s." % (", ".join([n for n in successfulNicks])))
+    if failedNicks:
+        send("Invalid nick(s): %s." % (", ".join([n for n in failedNicks])))
