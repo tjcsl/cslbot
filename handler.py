@@ -437,7 +437,7 @@ class BotHandler():
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
         cmdargs = msg[cmdlen:]
-        if cmd.startswith(cmdchar):
+        if cmd.startswith(cmdchar) and not msgtype == 'action':
             cmd_name = cmd[len(cmdchar):]
             if command.is_registered(cmd_name):
                 cmd_obj = command.get_command(cmd_name)
