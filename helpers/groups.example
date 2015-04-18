@@ -1,18 +1,18 @@
 [hooks]
 core: caps,
-    babble
+    babble,
     note,
     scores,
-    url,
+    url
 optional: band,
     butt,
-    reddit
-    understanding,
+    reddit,
+    understanding
 disabled: bob,
-    autodeop
+    autodeop,
     ctf,
     stallman,
-    xkcd,
+    xkcd
 [commands]
 admin: abuse,
     cadmin,
@@ -52,7 +52,7 @@ useful: quote,
     grep,
     issue,
     isup,
-    metar
+    metar,
     ping,
     reddit,
     slogan,
@@ -62,7 +62,7 @@ useful: quote,
     urban,
     weather,
     wiki,
-    wolf,
+    wolf
 optional: 8ball,
     acronym,
     ahamilto,
@@ -121,4 +121,3 @@ optional: 8ball,
     wtf,
     xkcd,
     yoda
-
