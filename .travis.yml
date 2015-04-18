@@ -13,8 +13,6 @@ env:
 
 cache:
     directories:
-    - $HOME/.cache/pip
-    - $HOME/virtualenv
     - ~/.cache/pip
     - ~/virtualenv
 
