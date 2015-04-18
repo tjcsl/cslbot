@@ -9,6 +9,13 @@ env:
     global:
         secure: UmNKNYhivdYf9Nm85vnvkPz2ZCEI9GuoQVBwj32alqq1PjUNyIqiGn1pp+J9m/KEyyJTGh8Hlm+57SE0LM7U1/sfu4Rx7hDJNzAbwFo1SJN98nksIPz9CexeaYcKK6z2Cx5rcHi+x39rNNrykXXOMFhwrLuQmKcMrbecylW65j0=
 
+cache:
+    directories:
+    - $HOME/.cache/pip
+    - $HOME/virtualenv
+    - ~/.cache/pip
+    - ~/virtualenv
+
 install:
     - pip install flake8 sphinx psycopg2
     - pip install -r requirements.txt
@@ -31,11 +38,3 @@ notifications:
   irc:
       channels: "chat.freenode.net#tjcsl-cslbot"
       skip_join: true
-
-cache:
-    pip: true
-    directories:
-        - $HOME/.cache/pip
-        - $HOME/virtualenv
-        - ~/.cache/pip
-        - ~/virtualenv
