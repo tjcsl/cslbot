@@ -22,7 +22,6 @@ try:
         raise Exception("Need Python 3.4 or higher.")
     import logging
     import base64
-    import importlib
     import argparse
     import ssl
     import time
@@ -132,10 +131,20 @@ class IrcBot(SingleServerIRCBot):
             srcdir = dirname(abspath(__file__))
             output = misc.do_pull(srcdir, c.real_nickname)
             c.privmsg(target, output)
+        reload_ok = True
+        failed_modules = []
         for name in modutils.get_enabled('helpers', 'helpers')[0]:
             if name in sys.modules:
-                importlib.reload(sys.modules[name])
-        importlib.reload(handler)
+                mod_reload_ok = modutils.safe_reload(sys.modules[name])
+                if not mod_reload_ok:
+                    failed_modules.append(name)
+                    reload_ok = False
+        if not reload_ok:
+            controlchan = self.config['core']['ctrlchan']
+            self.connection.privmsg(controlchan,
+                    "Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
+            self.connection.privmsg(controlchan, "Failures: " + ", ".join(failed_modules))
+        modutils.safe_reload(handler)
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
         with open(configfile) as cfgfile:
