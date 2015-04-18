@@ -65,16 +65,6 @@ The file must contain a method that is decorated with the @Command decorator;
 this is used in the form ```@Command(['command_name_1', 'command_name_2'], ['arg_required_1', 'arg_required_2'])```.
 The file will only be run if it is added to helpers/groups.cfg.
 
-
-Steam
------
-*PLEASE NOTE!*  
-The !steam command will not work without a valid Steam API key  
-and a file steamids.pickle which contains a dictionary mapping username  
-to STEAMID64. An example steamid mapping file is provided in the static folder.  
-For this reason the !steam command is disabled by default;  
-to re-enable it add your Steam API key as STEAMAPIKEY in config.py.
-
 GeoIP
 -----
 To get GeoIP support, download the free database (in MMDB format) from http://dev.maxmind.com/geoip/geoip2/geolite2/.

@@ -36,7 +36,6 @@ capskick: True
 nickkick: True
 linkread: True
 [api]
-steamapikey:
 dictionaryapikey:
 weatherapikey:
 ebayapikey:
