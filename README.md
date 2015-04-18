@@ -22,6 +22,8 @@ Setup
 Run ./bot.py to setup the initial configuration and change values in config.cfg as needed.
 You must copy helpers/groups.example to helpers/groups.cfg and make any needed changes to configure the commands and/or hooks you want.
 
+If you want the tjhsst-specific commands, clone github.com/tjcsl/cslbot-tjhsst into commands/tjhsst and add it to extracommands.
+
 Python must be at least 3.4.
 
 Run `pip install -r requirements.txt`
