@@ -305,7 +305,9 @@ class BotHandler():
         match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".
                           join(self.guarded), msg)
         if match:
-            self.connection.mode(target, " +voe-qb %s" % (match.group(3) * 5))
+            modestring = " +voe-qb %s" % (" ".join([match.group(3)] * 5))
+            self.connection.mode(target, modestring)
+            send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
 
     def do_kick(self, send, target, nick, msg, slogan=True):
         """ Kick users.

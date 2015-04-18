@@ -97,18 +97,18 @@ def handle_enable(args):
 
 def handle_guard(args):
     if args.nick in args.handler.guarded:
-        return "Already guarding %s" % args.nick
+        args.send("Already guarding %s" % args.nick)
     else:
         args.handler.guarded.append(args.nick)
-        return "Guarding %s" % args.nick
+        args.send("Guarding %s" % args.nick)
 
 
 def handle_unguard(args):
     if args.nick not in args.handler.guarded:
-        return "%s is not being guarded" % args.nick
+        args.send("%s is not being guarded" % args.nick)
     else:
         args.handler.guarded.remove(args.nick)
-        return "No longer guarding %s" % args.nick
+        args.send("No longer guarding %s" % args.nick)
 
 
 def handle_show(args):
@@ -334,7 +334,7 @@ def handle_help(args):
 
 
 def init_parser(send, handler, db):
-    parser = arguments.ArgParser(handler.config)
+    parser = arguments.ArgParser(handler.config, )
     parser.set_defaults(send=send, handler=handler, db=db)
     subparser = parser.add_subparsers()
 
@@ -367,6 +367,12 @@ def init_parser(send, handler, db):
     unguard_parser = subparser.add_parser('unguard')
     unguard_parser.add_argument('nick', action=arguments.NickParser)
     unguard_parser.set_defaults(func=handle_unguard)
+
+    # We need the config in the guard_parser and unguard_parser namespaces but there's no way to pass arbitrary
+    # arguments to subparser.add_parser, and now way to talk to the parent parser from subparsers. Thus, we must
+    # fall back on hacky crap like this
+    guard_parser.namespace.config = handler.config
+    unguard_parser.namespace.config = handler.config
 
     show_parser = subparser.add_parser('show')
     show_parser.add_argument('cmd', choices=['guarded', 'issues', 'quotes', 'polls', 'pending', 'disabled', 'enabled'])
