@@ -38,7 +38,7 @@ try:
     from configparser import ConfigParser
     from irc.bot import ServerSpec, SingleServerIRCBot
     from irc.connection import Factory
-    from os.path import dirname, join, exists
+    from os.path import dirname, abspath, join, exists
 except ImportError as ex:
     raise Exception("Unable to import all required modules: %s" % ex)
 
@@ -129,7 +129,8 @@ class IrcBot(SingleServerIRCBot):
         self.reload_event.clear()
         output = None
         if cmdargs == 'pull':
-            output = misc.do_pull(dirname(__file__), c.real_nickname)
+            srcdir = dirname(abspath(__file__))
+            output = misc.do_pull(srcdir, c.real_nickname)
             c.privmsg(target, output)
         for name in modutils.get_enabled('helpers', 'helpers')[0]:
             if name in sys.modules:
