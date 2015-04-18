@@ -29,14 +29,6 @@ from requests.exceptions import ReadTimeout
 _pinglist = {}
 
 
-def check_exists(subreddit):
-    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    if req.json().get('kind') == 'Listing':
-        # no subreddit exists, search results page is shown
-        return False
-    return req.status_code == 200
-
-
 def parse_time(time):
     time, unit = time[:-1], time[-1].lower()
     if time.isdigit():

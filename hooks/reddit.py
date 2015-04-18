@@ -17,7 +17,7 @@
 import re
 from requests import get
 from helpers.hook import Hook
-from helpers.misc import check_exists
+from helpers.reddit import check_exists
 from helpers.urlutils import get_short
 
 
