@@ -89,25 +89,30 @@ class IrcBot(SingleServerIRCBot):
             target = e.source.nick
         try:
             self.reload_event.wait()
+            reloading = False
             if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
-                self.check_reload(target, c, e, msgtype)
+                reloading = self.check_reload(target, c, e, msgtype)
             self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
+            if reloading:
+                self.reload_event.set()
             traceback.handle_traceback(ex, c, target, self.config)
 
     def check_reload(self, target, c, e, msgtype):
         cmd = e.arguments[0].strip()
         if not cmd:
-            return
+            return False
         cmd = misc.get_cmdchar(self.config, c, cmd, msgtype)
         cmdchar = self.config['core']['cmdchar']
         if cmd.split()[0] == '%sreload' % cmdchar:
             admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
             if e.source.nick not in admins:
                 c.privmsg(target, "Nope, not gonna do it.")
+                return False
             else:
                 cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
                 self.do_reload(c, target, cmdargs)
+                return True
 
     def shutdown_server(self):
         if hasattr(self, 'server'):
