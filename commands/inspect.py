@@ -17,11 +17,10 @@
 from helpers.command import Command
 
 
-@Command('inspect', ['handler', 'nick'], admin=True)
+@Command('inspect', ['handler'], admin=True)
 def cmd(send, msg, args):
     """'Inspect' a bot attribute."""
-    nick, handler = args['nick'], args['handler']
-    if not hasattr(handler, msg):
+    if not hasattr(args['handler'], msg):
         send("That attribute was not found in the handler.")
         return
-    send(str(getattr(handler, msg)))
+    send(str(getattr(args['handler'], msg)))
