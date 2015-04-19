@@ -24,14 +24,23 @@ def cmd(send, *_):
     """Enumerate threads.
     Syntax: !threads
     """
+    thread_names = []
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
-        if re.match(r'Thread-\d+$', x.name):
+        res = re.match(r'Thread-(\d+$)', x.name)
+        if res:
+            tid = int(res.group(1))
             # Handle the main server thread (permanently listed as _worker)
             if x._target.__name__ == '_worker':
-                send("%s running server thread" % x.name)
+                thread_names.append((tid, "%s running server thread" % x.name))
             # Handle the multiprocessing pool worker threads (they don't have names beyond Thread-x)
             elif x._target.__module__ == 'multiprocessing.pool':
-                send("%s running multiprocessing pool worker thread" % x.name)
+                thread_names.append((tid, "%s running multiprocessing pool worker thread" % x.name))
         # Handle everything else including MainThread and deferred threads
         else:
-            send(x.name)
+            res = re.match(r'Thread-(\d+)', x.name)
+            tid = 0
+            if res:
+                tid = int(res.group(1))
+            thread_names.append((tid, x.name))
+    for x in sorted(thread_names, key=lambda k: k[0]):
+        send(x[1])
