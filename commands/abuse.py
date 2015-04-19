@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('abuse', ['config', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Shows or clears the abuse list
-    Syntax: !abuse (--clear) (--show)
+    Syntax: !abuse <--clear|--show>
     """
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()

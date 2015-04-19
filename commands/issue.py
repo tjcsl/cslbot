@@ -25,7 +25,7 @@ from helpers.misc import create_issue
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Files a github issue or gets a open one.
-    Syntax: !issue (title (--desc description)|--get number)
+    Syntax: !issue <title [--desc description]|--get <number>>
     """
     repo = args['config']['api']['githubrepo']
     apikey = args['config']['api']['githubapikey']

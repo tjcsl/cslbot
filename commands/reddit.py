@@ -21,7 +21,7 @@ from helpers.reddit import check_exists, random_post
 @Command(['reddit'], ['name', 'config'])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
-    Syntax: !reddit <subreddit>
+    Syntax: !reddit [subreddit]
     """
     if msg and not check_exists(msg):
         send("Non-existant subreddit.")

@@ -21,6 +21,6 @@ from helpers.command import Command
 @Command('urban')
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
-    Syntax: !urban (#<num>) <term>
+    Syntax: !urban [#<num>] <term>
     """
     send(get_urban(msg))

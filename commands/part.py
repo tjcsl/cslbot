@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('part', ['handler', 'config', 'nick', 'type', 'target'], admin=True)
 def cmd(send, msg, args):
     """Orders the bot to leave a channel
-    Syntax: !part (channel)
+    Syntax: !part <channel>
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('channel', nargs='+', action=arguments.ChanParser)

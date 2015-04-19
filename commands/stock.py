@@ -58,7 +58,7 @@ def random_stock():
 @Command('stock')
 def cmd(send, msg, _):
     """Gets a stock quote.
-    Syntax: !stock <symbol>
+    Syntax: !stock [symbol]
     """
     if not msg:
         msg = random_stock()

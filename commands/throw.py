@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('throw', ['handler', 'target'])
 def cmd(send, msg, args):
     """Throw something.
-    Syntax: !throw <object> at <target>
+    Syntax: !throw <object> [at <target>]
     """
     users = (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
     if "into" in msg and msg != "into":

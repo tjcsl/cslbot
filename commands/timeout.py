@@ -22,7 +22,7 @@ from helpers.misc import parse_time
 @Command('timeout', ['nick', 'handler', 'target', 'botnick', 'config'], admin=True)
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
-    Syntax: !timeout timespec nickname
+    Syntax: !timeout <timespec> <nickname>
     timespec is in the format: {number}{unit}, where unit is s, m, h, or d.
     """
     nickregex = args['config']['core']['nickregex']

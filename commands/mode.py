@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('mode', ['nick', 'handler', 'botnick', 'target', 'config'], admin=True)
 def cmd(send, msg, args):
     """Sets a mode.
-    Syntax: !mode (--chan <chan>) <mode>
+    Syntax: !mode [--chan <chan>] <mode>
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--chan', '--channel', action=arguments.ChanParser)

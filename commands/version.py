@@ -23,7 +23,7 @@ from helpers.command import Command
 @Command('version', ['config'])
 def cmd(send, msg, args):
     """Check the git revison.
-    Syntax: !version <check|master>
+    Syntax: !version [check|master]
     """
     apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
     gitdir = dirname(__file__) + "/../.git"

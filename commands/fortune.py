@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command(['fortune', 'bofh', 'excuse'], ['name'])
 def cmd(send, msg, args):
     """Returns a fortune.
-    Syntax: !fortune <list|(-a|-o) (module)>
+    Syntax: !fortune <list|[-a|-o] [module]>
     """
     if msg == 'list':
         fortunes = list_fortunes() + list_fortunes(True)
