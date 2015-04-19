@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('join', ['handler', 'config', 'nick', 'type'], admin=True)
 def cmd(send, msg, args):
     """Orders the bot to join a channel
-    Syntax: !join (channel)
+    Syntax: !join <channel> [channel] ...
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('channel', nargs='+', action=arguments.ChanParser)

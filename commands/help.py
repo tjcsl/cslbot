@@ -20,7 +20,7 @@ from helpers.command import Command, get_commands, get_command, is_registered
 @Command('help', ['nick', 'config'])
 def cmd(send, msg, args):
     """Gives help.
-    Syntax: !help <command>
+    Syntax: !help [command]
     """
     cmdchar = args['config']['core']['cmdchar']
     if msg:

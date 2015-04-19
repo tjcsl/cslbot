@@ -23,7 +23,7 @@ from helpers.command import Command
 @Command(['grep', 'loggrep'], ['config', 'db'])
 def cmd(send, msg, args):
     """Greps the log for a string.
-    Syntax: !grep (--nick <nick>) <string>
+    Syntax: !grep [--nick <nick>] <string>
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)

@@ -70,7 +70,7 @@ def build_msg(cursor, speaker, start):
 @Command('babble', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
-    Syntax: !babble (nick) (--start <word>)
+    Syntax: !babble [nick] [--start <word>]
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('speaker', nargs='?', default=args['config']['core']['channel'])

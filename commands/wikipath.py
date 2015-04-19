@@ -44,7 +44,7 @@ def get_articles():
 @Command('wikipath')
 def cmd(send, msg, args):
     """Find a path between two wikipedia articles.
-    Syntax: !wikipath <article> <article>
+    Syntax: !wikipath [<article> <article>]
     """
     msg = msg.split()
     if len(msg) != 2:

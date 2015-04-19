@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('ignore', ['config', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
-    Syntax: !ignore (--clear) (--show/--list) (--delete) nick
+    Syntax: !ignore <--clear|--show/--list|--delete|nick>
     """
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()

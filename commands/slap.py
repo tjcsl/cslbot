@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('slap', ['handler', 'target', 'config'])
 def cmd(send, msg, args):
     """Slap somebody.
-    Syntax: !slap <nick> for <reason>
+    Syntax: !slap <nick> [for <reason>]
     """
     implements = ['the golden gate bridge', 'a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
     methods = ['around a bit', 'upside the head']
