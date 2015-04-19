@@ -18,7 +18,6 @@
 
 import re
 import time
-import sys
 from helpers import control
 from helpers import sql
 from helpers import hook
