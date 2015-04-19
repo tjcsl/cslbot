@@ -18,14 +18,11 @@ from helpers.command import Command
 from helpers.misc import parse_time
 
 
-@Command('defersay', ['nick', 'is_admin', 'handler'])
+@Command('defersay', ['nick', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Says something at a later time.
     Syntax: !defersay <delay> <msg>
     """
-    if not args['is_admin'](args['nick']):
-        send("Admins only")
-        return
     msg = msg.split(maxsplit=1)
     if len(msg) != 2:
         send("Not enough arguments")

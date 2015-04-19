@@ -18,7 +18,7 @@ from helpers import arguments
 from helpers.command import Command
 
 
-@Command('mode', ['nick', 'is_admin', 'handler', 'botnick', 'target', 'config'])
+@Command('mode', ['nick', 'handler', 'botnick', 'target', 'config'], admin=True)
 def cmd(send, msg, args):
     """Sets a mode.
     Syntax: !mode (--chan <chan>) <mode>
@@ -36,8 +36,6 @@ def cmd(send, msg, args):
         send('Please specify a mode.')
     elif target == 'private':
         send("Modes don't work in a PM!")
-    elif not args['is_admin'](args['nick']):
-        send("Admins only")
     elif target not in args['handler'].channels:
         send("Bot not in channel %s" % target)
     elif args['botnick'] not in list(args['handler'].channels[target].opers()):

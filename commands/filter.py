@@ -18,7 +18,7 @@ from helpers.command import Command
 from helpers import textutils
 
 
-@Command('filter', ['handler', 'is_admin', 'nick', 'type'])
+@Command('filter', ['handler', 'nick', 'type'], admin=True)
 def cmd(send, msg, args):
     """Changes the output filter.
     Syntax: !filter <filter|show|list|reset|chain filter>
@@ -39,29 +39,20 @@ def cmd(send, msg, args):
     elif msg == 'list':
         send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
     elif msg == 'reset' or msg == 'passthrough' or msg == 'clear':
-        if args['is_admin'](args['nick']):
-            args['handler'].outputfilter = [lambda x: x]
-            send("Okay!")
-        else:
-            send("Nope, not gonna do it!")
+        args['handler'].outputfilter = [lambda x: x]
+        send("Okay!")
     elif msg.startswith('chain'):
-        if args['is_admin'](args['nick']):
-            if args['handler'].outputfilter[0].__name__ == '<lambda>':
-                send("Must have a filter set in order to chain.")
-                return
-            next_filter = msg.split()[1]
-            if next_filter in textutils.output_filters.keys():
-                args['handler'].outputfilter.append(textutils.output_filters[next_filter])
-                send("Okay!")
-            else:
-                send("Invalid filter.")
-        else:
-            send("Nope, not gonna do it.")
-    elif msg in textutils.output_filters.keys():
-        if args['is_admin'](args['nick']):
-            args['handler'].outputfilter = [textutils.output_filters[msg]]
+        if args['handler'].outputfilter[0].__name__ == '<lambda>':
+            send("Must have a filter set in order to chain.")
+            return
+        next_filter = msg.split()[1]
+        if next_filter in textutils.output_filters.keys():
+            args['handler'].outputfilter.append(textutils.output_filters[next_filter])
             send("Okay!")
         else:
-            send("Nope, not gonna do it!")
+            send("Invalid filter.")
+    elif msg in textutils.output_filters.keys():
+        args['handler'].outputfilter = [textutils.output_filters[msg]]
+        send("Okay!")
     else:
         send("Invalid filter.")

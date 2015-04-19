@@ -18,7 +18,7 @@ from helpers.command import Command
 from helpers.misc import do_nuke
 
 
-@Command('nuke', ['nick', 'is_admin', 'handler', 'target', 'config', 'botnick'])
+@Command('nuke', ['nick', 'handler', 'target', 'config', 'botnick'], admin=True)
 def cmd(send, msg, args):
     """Nukes somebody.
     Syntax: !nuke target
@@ -28,12 +28,9 @@ def cmd(send, msg, args):
     if not msg:
         send("Nuke who?")
         return
-    if args['is_admin'](args['nick']):
-        if msg in args['handler'].channels[channel].users():
-            do_nuke(c, nick, msg, channel)
-        elif msg == args['botnick']:
-            send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
-        else:
-            send("I'm sorry. Anonymous Nuking is not allowed")
+    if msg in args['handler'].channels[channel].users():
+        do_nuke(c, nick, msg, channel)
+    elif msg == args['botnick']:
+        send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
     else:
-        send("I'm sorry. Nukes are a admin-only feature")
+        send("I'm sorry. Anonymous Nuking is not allowed")

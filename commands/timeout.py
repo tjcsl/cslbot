@@ -19,7 +19,7 @@ from helpers.command import Command
 from helpers.misc import parse_time
 
 
-@Command('timeout', ['nick', 'is_admin', 'handler', 'target', 'botnick', 'config'])
+@Command('timeout', ['nick', 'handler', 'target', 'botnick', 'config'], admin=True)
 def cmd(send, msg, args):
     """Quiets a user, then unquiets them after the specified period of time.
     Syntax: !timeout timespec nickname
@@ -29,9 +29,6 @@ def cmd(send, msg, args):
     setmode = args['handler'].connection.mode
     channel = args['target']
     ops = list(args['handler'].channels[channel].opers())
-    if not args['is_admin'](args['nick']):
-        send("Ops only")
-        return
     if args['botnick'] not in ops:
         send("Bot must be an op.")
         return

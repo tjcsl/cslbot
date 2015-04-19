@@ -19,16 +19,13 @@ from helpers.command import Command
 from helpers.misc import do_pull
 
 
-@Command('pull', ['handler', 'is_admin', 'nick', 'botnick'])
+@Command('pull', ['handler', 'nick', 'botnick'], admin=True)
 def cmd(send, _, args):
     """Pull changes.
     Syntax: !pull <branch>
     """
-    if not args['is_admin'](args['nick']):
-        send("Nope, not gonna do it.")
-    else:
-        try:
-            send(do_pull(args['handler'].srcdir, args['botnick']))
-        except subprocess.CalledProcessError as e:
-            for line in e.output.decode().splitlines():
-                send(line)
+    try:
+        send(do_pull(args['handler'].srcdir, args['botnick']))
+    except subprocess.CalledProcessError as e:
+        for line in e.output.decode().splitlines():
+            send(line)
