@@ -89,11 +89,25 @@ class Workers():
             del self.events[eventid]
 
     def stop_workers(self):
+        """ Cleanly stop workers and deferred events """
         with executor_lock:
             self.executor.shutdown(True)
             del self.executor
         with worker_lock:
             self.pool.close()
+            self.pool.join()
+            del self.pool
+            for x in self.events.values():
+                x.event.cancel()
+            self.events.clear()
+
+    def kill_workers(self):
+        """ Forcibly kill all worker threads """
+        with executor_lock:
+            self.executor.shutdown(False)
+            del self.executor
+        with worker_lock:
+            self.pool.terminate()
             self.pool.join()
             del self.pool
             for x in self.events.values():

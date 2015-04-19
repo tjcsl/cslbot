@@ -123,6 +123,17 @@ class IrcBot(SingleServerIRCBot):
         if hasattr(self, 'handler'):
             self.handler.workers.stop_workers()
 
+    def shutdown_mp(self):
+        """ Shutdown all the multiprocessing that we know about, uncleanly """
+        self.shutdown_server()
+        self.shutdown_workers()
+
+    def kill(self):
+        """ forcibly kills everything """
+        if hasattr(self, 'handler'):
+            self.handler.workers.kill_workers()
+        self.shutdown_server()
+
     def do_reload(self, c, target, cmdargs):
         """The reloading magic.
 
@@ -156,8 +167,7 @@ class IrcBot(SingleServerIRCBot):
             self.config.read_file(cfgfile)
         # preserve data
         data = self.handler.get_data()
-        self.shutdown_server()
-        self.shutdown_workers()
+        self.shutdown_mp()
         self.handler = handler.BotHandler(self.config)
         self.handler.set_data(data)
         self.handler.connection = c
@@ -256,8 +266,7 @@ class IrcBot(SingleServerIRCBot):
     def on_disconnect(self, _, e):
         # Don't kill everything if we just ping timed-out
         if e.arguments[0] == 'Goodbye, Cruel World!':
-            self.shutdown_server()
-            self.shutdown_workers()
+            self.shutdown_mp()
 
     def on_join(self, c, e):
         """Handle joins."""
@@ -326,7 +335,20 @@ def main(args):
     with open(configfile) as conf:
         botconfig.read_file(conf)
     bot = IrcBot(botconfig)
-    bot.start()
+    try:
+        bot.start()
+    except KeyboardInterrupt:
+        # keyboard interrupt means someone tried to ^C, shut down the bot
+        bot.kill()
+        sys.exit(0)
+    except Exception as e:
+        bot.kill()
+        logging.error("The bot died! %s" % (e))
+        (typ3, value, tb) = sys.exc_info()
+        errmsg = "".join(traceback.format_exception(typ3, value, tb))
+        for line in errmsg.split('\n'):
+            logging.error(errmsg)
+        sys.exit(1)
 
 if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
