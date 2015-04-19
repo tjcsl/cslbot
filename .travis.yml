@@ -22,7 +22,7 @@ before_cache:
 install:
     - pip install -U flake8 sphinx psycopg2
     # Hack to prevent setuptools being upgraded and screwing up the cache.
-    - pip install -U -r requirements.txt setuptools==$(pip info setuptools|sed -n "s#^Version. \(.*\)#\1#p")
+    - pip install -U -r requirements.txt setuptools==$(pip show setuptools|sed -n "s#^Version. \(.*\)#\1#p")
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
