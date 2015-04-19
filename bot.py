@@ -131,7 +131,7 @@ class IrcBot(SingleServerIRCBot):
     def kill(self):
         """ forcibly kills everything """
         if hasattr(self, 'handler'):
-            self.handler.workers.kill_workers()
+            self.handler.kill()
         self.shutdown_server()
 
     def do_reload(self, c, target, cmdargs):

@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import sys
 from helpers.command import Command
 
 
@@ -23,5 +22,4 @@ def cmd(send, msg, args):
     """Makes the bot disconnect and shut off
     Syntax: !quit
     """
-    args['handler'].connection.disconnect('Goodbye, Cruel World!')
-    sys.exit(0)
+    args['handler'].shutdown()

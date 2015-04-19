@@ -18,6 +18,7 @@ import re
 import threading
 import multiprocessing
 import concurrent.futures
+import logging
 from collections import namedtuple
 from threading import Timer
 from .traceback import handle_traceback
@@ -104,10 +105,13 @@ class Workers():
     def kill_workers(self):
         """ Forcibly kill all worker threads """
         with executor_lock:
+            logging.info("Forcibly shutting down executor")
             self.executor.shutdown(False)
             del self.executor
         with worker_lock:
+            logging.info("Killing pool")
             self.pool.terminate()
+            logging.info("Joining pool")
             self.pool.join()
             del self.pool
             for x in self.events.values():

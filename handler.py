@@ -18,6 +18,7 @@
 
 import re
 import time
+import sys
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -357,6 +358,16 @@ class BotHandler():
             else:
                 raise Exception("Invalid Argument: %s" % arg)
         return realargs
+
+    def shutdown(self):
+        """ Cleanly shut ourself down """
+        self.send(self.config['core']['ctrlchan'], self.connection.real_nickname, 'Please ^C me, I won\'t die all the way =(', 'privmsg')
+        self.connection.disconnect('Goodbye, Cruel World!')
+        self.workers.stop_workers()
+
+    def kill(self):
+        """ Forcibly kill ourself """
+        self.workers.kill_workers()
 
     def is_ignored(self, nick):
         return nick in self.ignored
