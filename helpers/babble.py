@@ -141,10 +141,14 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         prev = 0
         for i in range(20000, len(data), 20000):
             args_str = '\n'.join([raw_cursor.mogrify("INSERT INTO babble (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);", x).decode() for x in data[prev:i]])
-            raw_cursor.execute(args_str)
+            # Don't die on empty log table.
+            if args_str:
+                raw_cursor.execute(args_str)
             prev = i
         args_str = '\n'.join([raw_cursor.mogrify("INSERT INTO babble (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);", x).decode() for x in data[prev:]])
-        raw_cursor.execute(args_str)
+        # Don't die on empty log table.
+        if args_str:
+            raw_cursor.execute(args_str)
     else:
         data = [{'source': x[0], 'target': x[1], 'key': x[2], 'word': x[3], 'freq': x[4]} for x in data]
         cursor.bulk_insert_mappings(Babble, data)
