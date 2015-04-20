@@ -293,7 +293,7 @@ class BotHandler():
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
     def do_mode(self, target, msg, nick, send):
-        """ reop"""
+        """ reop and handle guard violations """
         # reop
         botnick = self.config['core']['nick']
         match = re.search(r".*(-o|\+b).*%s" % botnick, msg)
@@ -302,13 +302,14 @@ class BotHandler():
             send("OP %s" % target, target='ChanServ')
             send("UNBAN %s" % target, target='ChanServ')
 
-        # if user is guarded and quieted, devoiced, or deopped, fix that
-        match = re.search(r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".
-                          join(self.guarded), msg)
-        if match:
-            modestring = " +voe-qb %s" % (" ".join([match.group(3)] * 5))
-            self.connection.mode(target, modestring)
-            send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
+        if len(self.guarded) > 0:
+            # if user is guarded and quieted, devoiced, or deopped, fix that
+            regex = r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded)
+            match = re.search(regex, msg)
+            if match and len(match) > 0:
+                modestring = " +voe-qb %s" % (" ".join([match.group(3)] * 5))
+                self.connection.mode(target, modestring)
+                send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
 
     def do_kick(self, send, target, nick, msg, slogan=True):
         """ Kick users.
