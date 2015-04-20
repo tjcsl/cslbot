@@ -103,6 +103,9 @@ def main(cfg, outdir):
     session = get_session(cfg)()
     current_id = get_id(outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
+    # Don't die on empty log table.
+    if new_id is None:
+        new_id = 0
     save_id(outdir, new_id)
     for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.id).all():
         check_day(row, outdir, cfg['core']['channel'])
