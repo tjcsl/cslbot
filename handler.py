@@ -178,7 +178,7 @@ class BotHandler():
             self.do_kick(send, target, nick, msg, False)
             return True
 
-    def send(self, target, nick, msg, msgtype, ignore_length, filters=None):
+    def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
         """ Send a message.
 
         Records the message in the log.
