@@ -25,7 +25,7 @@ import socket
 import irc.client
 import threading
 
-# FIXME: sibling imports
+# FIXME: hack to allow sibling imports
 sys.path.append(dirname(__file__) + '/..')
 
 

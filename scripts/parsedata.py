@@ -25,7 +25,7 @@ from os import mkdir
 from sys import path
 from configparser import ConfigParser
 
-# HACK: allow sibling imports
+# FIXME: hack to allow sibling imports
 path.append(dirname(__file__) + '/..')
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls

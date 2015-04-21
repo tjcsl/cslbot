@@ -25,6 +25,8 @@ from lxml.html import fromstring, tostring
 from html import escape, unescape
 from random import random, choice, randrange
 
+slogan_cache = []
+
 
 def removevowels(msg):
     return re.sub('[aeiouy]', '', msg, flags=re.I)
@@ -95,10 +97,10 @@ def gen_creffett(msg):
 
 def gen_slogan(msg):
     # Originally from sloganizer.com
-    # FIXME: cache this somewhere
-    with open(dirname(__file__) + '/../static/slogans.txt') as f:
-        slogans = f.read().splitlines()
-    return re.sub('%s', msg, choice(slogans))
+    if not slogan_cache:
+        with open(dirname(__file__) + '/../static/slogans.txt') as f:
+            slogan_cache.extend(f.read().splitlines())
+    return re.sub('%s', msg, choice(slogan_cache))
 
 
 def gen_morse(msg):

@@ -21,7 +21,7 @@ from configparser import ConfigParser
 from os.path import dirname
 from sys import path
 
-# HACK: allow sibling imports
+# FIXME: hack to allow sibling imports
 path.append(dirname(__file__) + '/..')
 
 from helpers.babble import build_markov

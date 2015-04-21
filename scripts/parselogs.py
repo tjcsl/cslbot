@@ -22,7 +22,7 @@ from os.path import dirname, exists
 from os import makedirs
 from sys import path
 
-# HACK: allow sibling imports
+# FIXME: hack to allow sibling imports
 path.append(dirname(__file__) + '/..')
 
 from helpers.orm import Log  # noqa
