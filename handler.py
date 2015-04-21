@@ -468,7 +468,7 @@ class BotHandler():
                 else:
                     send("Invalid filter %s." % next_filter)
 
-        #define a new send to handle filter chaining
+        # define a new send to handle filter chaining
         def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
 
@@ -478,7 +478,7 @@ class BotHandler():
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(filtersend, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
-                if cmd_obj.requires_admin() and not self.is_admin(rsend, nick):
+                if cmd_obj.requires_admin() and not self.is_admin(send, nick):
                     send("This command requires admin privileges.")
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
