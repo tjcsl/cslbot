@@ -467,6 +467,7 @@ class BotHandler():
                     filter_list.append(textutils.output_filters[next_filter])
                 else:
                     send("Invalid filter %s." % next_filter)
+                    return
 
         # define a new send to handle filter chaining
         def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
