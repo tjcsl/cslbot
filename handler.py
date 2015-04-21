@@ -186,7 +186,7 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
-        if not filters:
+        if filters is None:
             filters = self.outputfilter
         for i in filters:
             if target != self.config['core']['ctrlchan']:
@@ -476,7 +476,7 @@ class BotHandler():
             cmd_name = cmd[len(cmdchar):]
             if command.is_registered(cmd_name):
                 cmd_obj = command.get_command(cmd_name)
-                if cmd_obj.is_limited() and self.abusecheck(filtersend, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
+                if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
                 if cmd_obj.requires_admin() and not self.is_admin(send, nick):
                     send("This command requires admin privileges.")
