@@ -54,7 +54,7 @@ class BotHandler():
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
-        self.outputfilter = [lambda x: x]
+        self.outputfilter = []
         self.kick_enabled = True
         self.caps = []
         self.ignored = []

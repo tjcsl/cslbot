@@ -15,44 +15,62 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers import textutils
+from helpers import arguments, textutils
 
 
-@Command('filter', ['handler', 'nick', 'type'], admin=True)
+def get_filters(handler):
+    names = [x.__name__[4:] for x in handler.outputfilter]
+    if not names:
+        names = ['passthrough']
+    return "Current filter(s): %s" % ", ".join(names)
+
+
+def append_filters(handler, filters):
+    filter_list = []
+    for next_filter in filters.split(','):
+        if next_filter in textutils.output_filters.keys():
+            filter_list.append(textutils.output_filters[next_filter])
+        else:
+            return "Invalid filter %s." % next_filter
+    handler.outputfilter.extend(filter_list)
+    return "Okay!"
+
+
+@Command('filter', ['config', 'handler', 'nick', 'type'], admin=True)
 def cmd(send, msg, args):
     """Changes the output filter.
-    Syntax: !filter <filter|show|list|reset|chain filter>
+    Syntax: !filter <filter|--show|--list|--reset|--chain filter,[filter2,...]>
     """
-    # FIXME: use argparse
     if args['type'] == 'privmsg':
         send('Filters must be set in channels, not via private message.')
-    elif not msg or msg == 'show':
-        names = []
-        for i in args['handler'].outputfilter:
-            name = i.__name__
-            if name == '<lambda>':
-                name = 'passthrough'
-            else:
-                name = name[4:]
-            names.append(name)
-        send("Current filter(s): %s" % ", ".join(names))
-    elif msg == 'list':
+    parser = arguments.ArgParser(args['config'])
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('filter', nargs='?')
+    group.add_argument('--show', action='store_true')
+    group.add_argument('--list', action='store_true')
+    group.add_argument('--reset', '--clear', action='store_true')
+    group.add_argument('--chain')
+    if not msg:
+        send(get_filters(args['handler']))
+        return
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    if cmdargs.list:
         send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
-    elif msg == 'reset' or msg == 'passthrough' or msg == 'clear':
-        args['handler'].outputfilter = [lambda x: x]
+    elif cmdargs.reset:
+        args['handler'].outputfilter.clear()
         send("Okay!")
-    elif msg.startswith('chain'):
-        if args['handler'].outputfilter[0].__name__ == '<lambda>':
+    elif cmdargs.chain:
+        if not args['handler'].outputfilter:
             send("Must have a filter set in order to chain.")
             return
-        next_filter = msg.split()[1]
-        if next_filter in textutils.output_filters.keys():
-            args['handler'].outputfilter.append(textutils.output_filters[next_filter])
-            send("Okay!")
-        else:
-            send("Invalid filter.")
-    elif msg in textutils.output_filters.keys():
-        args['handler'].outputfilter = [textutils.output_filters[msg]]
-        send("Okay!")
+        send(append_filters(args['handler'], cmdargs.chain))
+    elif cmdargs.show:
+        send(get_filters(args['handler']))
     else:
-        send("Invalid filter.")
+        # If we're just adding a filter without chain, blow away any existing filters.
+        args['handler'].outputfilter.clear()
+        send(append_filters(args['handler'], msg))
