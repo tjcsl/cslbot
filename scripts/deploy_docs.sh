@@ -7,7 +7,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
 
   git clone --depth=50 --branch=gh-pages https://${GH_TOKEN}@github.com/tjcsl/cslbot.git gh-pages
   latest=$(git log -1 --pretty=%s|sed "s/Update docs, build \([0-9]\+\)/\1/")
-  if [ $latest -gt $TRAVIS_BUILD_NUMBER ]; then
+  if [ "$latest" -gt "$TRAVIS_BUILD_NUMBER" ]; then
       echo "Not overwriting newer docs."
       exit
   fi
