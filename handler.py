@@ -61,8 +61,7 @@ class BotHandler():
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
-        # FIXME: add hooks/helpers
-        modutils.init_aux(self.config['core']['extracommands'])
+        modutils.init_aux(self.config['core'])
         modutils.init_groups(self.config['groups'])
         self.loadmodules()
         self.hooks = self.loadhooks()
@@ -230,14 +229,12 @@ class BotHandler():
                 flags |= 2
         else:
             target = 'private'
+        # FIXME: should we special-case this?
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
         self.db.log(nick, target, flags, msg, msgtype)
 
         if self.log_to_ctrlchan:
-            # strip non-printable chars
-            # FIXME: do we care about unicode?
-            msg = ''.join(c for c in msg if ord(c) > 31 and ord(c) < 127)
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
                 ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)

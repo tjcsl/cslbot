@@ -15,6 +15,7 @@ url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`\^-]
 chanregex: [#&+!][a-zA-Z0-9_\-!#]*
 extracommands:
+extrahooks:
 [groups]
 hooks: core, optional
 commands: admin, core, useful, optional

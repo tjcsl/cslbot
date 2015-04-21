@@ -26,11 +26,12 @@ from glob import glob
 
 GROUPS = {'commands': set(), 'hooks': set()}
 DISABLED = {'commands': set(), 'hooks': set()}
-AUX = {'commands': [], 'hooks': [], 'helpers': []}
+AUX = {'commands': [], 'hooks': []}
 
 
-def init_aux(commands):
-    AUX['commands'] = [x.strip() for x in commands.split(',')]
+def init_aux(config):
+    AUX['commands'] = [x.strip() for x in config['extracommands'].split(',')]
+    AUX['hooks'] = [x.strip() for x in config['extrahooks'].split(',')]
 
 
 def init_groups(groups):
