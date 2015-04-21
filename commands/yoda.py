@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('yoda')
 def cmd(send, msg, _):
     """Convert a message to Yoda-speak.
-    Syntax: !yoda <msg>
+    Syntax: {command} <msg>
     """
     if not msg:
         send("A message, Yoda did not receive, hmmmmmm.")

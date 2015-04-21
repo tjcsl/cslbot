@@ -21,7 +21,7 @@ from helpers.command import Command
 def cmd(send, _, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
-    Syntax: !admins
+    Syntax: {command}
     """
     admins = args['handler'].admins
     adminlist = []

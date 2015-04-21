@@ -23,7 +23,7 @@ from helpers.command import Command
 @Command('gcc', ['type', 'nick'])
 def cmd(send, msg, args):
     """Compiles stuff.
-    Syntax: !gcc <code>
+    Syntax: {command} <code>
     """
     if args['type'] == 'privmsg':
         send('GCC is a group exercise!')

@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('threads')
 def cmd(send, *_):
     """Enumerate threads.
-    Syntax: !threads
+    Syntax: {command}
     """
     thread_names = []
     for x in sorted(threading.enumerate(), key=lambda k: k.name):

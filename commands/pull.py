@@ -22,7 +22,7 @@ from helpers.misc import do_pull
 @Command('pull', ['handler', 'nick', 'botnick'], admin=True)
 def cmd(send, _, args):
     """Pull changes.
-    Syntax: !pull <branch>
+    Syntax: {command} <branch>
     """
     try:
         send(do_pull(args['handler'].srcdir, args['botnick']))

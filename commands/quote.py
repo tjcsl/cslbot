@@ -85,7 +85,7 @@ def do_delete_quote(session, qid):
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
-    Syntax: !quote <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
+    Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
     """
     session = args['db']
     parser = arguments.ArgParser(args['config'])

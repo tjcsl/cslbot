@@ -23,7 +23,7 @@ from helpers.command import Command
 @Command('tjbash')
 def cmd(send, msg, _):
     """Finds a random quote from tjbash.org given search criteria.
-    Syntax: !tjbash [searchstring]
+    Syntax: {command} [searchstring]
     """
     if len(msg) == 0:
         url = 'http://tjbash.org/random1'

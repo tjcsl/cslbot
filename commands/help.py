@@ -20,7 +20,7 @@ from helpers.command import Command, get_commands, get_command, is_registered
 @Command('help', ['nick', 'config'])
 def cmd(send, msg, args):
     """Gives help.
-    Syntax: !help [command]
+    Syntax: {command} [command]
     """
     cmdchar = args['config']['core']['cmdchar']
     if msg:
@@ -36,7 +36,7 @@ def cmd(send, msg, args):
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
-                    send(line)
+                    send(line.format(command=cmdchar + msg))
     else:
         modules = sorted(get_commands())
         cmdlist = (' %s' % cmdchar).join(modules)

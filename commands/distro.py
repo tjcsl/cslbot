@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('distro')
 def cmd(send, *_):
     """Gets a random distro.
-    Syntax: !distro
+    Syntax: {command}
     """
     url = get('http://distrowatch.com/random.php').url
     match = re.search('=(.*)', url)

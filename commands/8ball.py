@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('8ball', ['nick', 'handler'], limit=5)
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
-    Syntax: !8ball <question>
+    Syntax: {command} <question>
     """
     if not msg:
         send("What is your question?")

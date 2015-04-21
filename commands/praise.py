@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('praise')
 def cmd(send, msg, _):
     """Praises something.
-    Syntax: !praise <something>
+    Syntax: {command} <something>
     """
     if not msg:
         send("Praise what?")
