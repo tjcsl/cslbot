@@ -18,6 +18,7 @@
 
 import re
 import time
+from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
@@ -177,7 +178,7 @@ class BotHandler():
             self.do_kick(send, target, nick, msg, False)
             return True
 
-    def send(self, target, nick, msg, msgtype, ignore_length):
+    def send(self, target, nick, msg, msgtype, ignore_length, filters=None):
         """ Send a message.
 
         Records the message in the log.
@@ -185,7 +186,9 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
-        for i in self.outputfilter:
+        if not filters:
+            filters = self.outputfilter
+        for i in filters:
             if target != self.config['core']['ctrlchan']:
                 msg = i(msg)
         while len(msg) > 400:
@@ -451,17 +454,35 @@ class BotHandler():
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
         cmdargs = msg[cmdlen:]
+
+        # parse out any filters
+        parser = arguments.ArgParser(self.config)
+        parser.add_argument('--filter')
+        parsedfilters, remainder = parser.parse_known_args(cmdargs)
+        cmdargs = ' '.join(remainder)
+        filter_list = []
+        if parsedfilters.filter:
+            for next_filter in parsedfilters.filter.split(','):
+                if next_filter in textutils.output_filters.keys():
+                    filter_list.append(textutils.output_filters[next_filter])
+                else:
+                    send("Invalid filter %s." % next_filter)
+
+        # define a new send to handle filter chaining
+        def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
+            self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
+
         if cmd.startswith(cmdchar) and not msgtype == 'action':
             cmd_name = cmd[len(cmdchar):]
             if command.is_registered(cmd_name):
                 cmd_obj = command.get_command(cmd_name)
-                if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
+                if cmd_obj.is_limited() and self.abusecheck(filtersend, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                     return
                 if cmd_obj.requires_admin() and not self.is_admin(send, nick):
                     send("This command requires admin privileges.")
                     return
                 args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
-                cmd_obj.run(send, cmdargs, args, cmd_name, nick, target, self)
+                cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
             # special commands
             elif cmd[len(cmdchar):] == 'reload':
                 if nick in admins:
