@@ -177,7 +177,7 @@ class BotHandler():
             self.do_kick(send, target, nick, msg, False)
             return True
 
-    def send(self, target, nick, msg, msgtype):
+    def send(self, target, nick, msg, msgtype, ignore_length):
         """ Send a message.
 
         Records the message in the log.
@@ -193,8 +193,9 @@ class BotHandler():
             msgs.append(msg[:split_pos].strip())
             msg = msg[split_pos:]
         msgs.append(msg.strip())
-        # Never send more then two lines to avoid Excess Flood errors
-        for i in msgs[:2]:
+        # Avoid sending more then two lines to avoid Excess Flood errors and spam
+        msgs = msgs if ignore_length else msgs[:2]
+        for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':
                 self.connection.action(target, i)
@@ -394,8 +395,8 @@ class BotHandler():
         else:
             target = e.target
 
-        def send(msg, mtype='privmsg', target=target):
-            self.send(target, self.connection.real_nickname, msg, mtype)
+        def send(msg, mtype='privmsg', target=target, ignore_length=False):
+            self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
         if msgtype == 'privnotice':
             # FIXME: come up with a better way to prevent admin abuse.

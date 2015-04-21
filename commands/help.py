@@ -39,9 +39,6 @@ def cmd(send, msg, args):
                     send(line)
     else:
         modules = sorted(get_commands())
-        num = int(len(modules) / 2)
-        cmdlist1 = (' %s' % cmdchar).join([x for x in modules[:num]])
-        cmdlist2 = (' %s' % cmdchar).join([x for x in modules[num:]])
-        send('Commands: %s%s' % (cmdchar, cmdlist1), target=args['nick'])
-        send('%s%s' % (cmdchar, cmdlist2), target=args['nick'])
+        cmdlist = (' %s' % cmdchar).join(modules)
+        send('Commands: %s%s' % (cmdchar, cmdlist), target=args['nick'], ignore_length=True)
         send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])
