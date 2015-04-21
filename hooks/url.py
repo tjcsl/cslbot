@@ -44,6 +44,9 @@ def handle(send, msg, args):
         send('Url regex timed out.')
         return
     for url in urls:
+        # Prevent botloops
+        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count():
+            return
         title = urlutils.get_title(url)
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
