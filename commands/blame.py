@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('blame', ['handler', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Blames a random user for something.
-    Syntax: !blame [reason]
+    Syntax: {command} [reason]
     """
     users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
     user = choice(users)

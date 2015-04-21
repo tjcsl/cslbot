@@ -21,7 +21,7 @@ from random import choice
 @Command(['wai', 'why'])
 def cmd(send, *_):
     """Gives a reason for something.
-    Syntax: !wai
+    Syntax: {command}
     """
     a = ["primary", "secondary", "tertiary", "hydraulic", "compressed",
          "required", "pseudo", "intangible", "flux"]

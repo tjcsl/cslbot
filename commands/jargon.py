@@ -44,7 +44,7 @@ ingverb = ["backing up", "bypassing", "hacking", "overriding", "compressing",
 @Command('jargon')
 def cmd(send, *_):
     """Causes the bot to generate some jargon.
-    Syntax: !jargon
+    Syntax: {command}
     """
     msgtype = ["If we %s the %s, we can get to the %s %s through the %s %s %s!" % (choice(verb), choice(noun), choice(abbrev), choice(noun), choice(adj), choice(abbrev), choice(noun)),
                "We need to %s the %s %s %s!" % (choice(verb), choice(adj), choice(abbrev), choice(noun)),

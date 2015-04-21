@@ -56,7 +56,7 @@ def get_item(category, apikey):
 @Command('ebay', ['config'])
 def cmd(send, _, args):
     """Implements xkcd 576.
-    Syntax: !ebay
+    Syntax: {command}
     """
     apikey = args['config']['api']['ebayapikey']
     categories = get_categories(apikey)

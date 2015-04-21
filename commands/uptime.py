@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('uptime', ['handler'])
 def cmd(send, _, args):
     """Shows the bot's uptime.
-    Syntax: !uptime
+    Syntax: {command}
     """
     curr = time()
     uptime = args['handler'].uptime

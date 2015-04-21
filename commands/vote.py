@@ -179,7 +179,7 @@ def list_polls(session, poll_url):
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: !vote <start|end|list|tally|edit|delete|vote|retract>
+    Syntax: {command} <start|end|list|tally|edit|delete|vote|retract>
     """
     session = args['db']
     command = msg.split()

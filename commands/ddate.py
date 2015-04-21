@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('ddate')
 def cmd(send, *_):
     """Returns the Discordian date.
-    Syntax: !ddate
+    Syntax: {command}
     """
     try:
         toSend = subprocess.check_output(['ddate']).decode().rstrip()

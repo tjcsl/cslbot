@@ -21,7 +21,7 @@ from helpers.misc import parse_time
 @Command('defersay', ['nick', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Says something at a later time.
-    Syntax: !defersay <delay> <msg>
+    Syntax: {command} <delay> <msg>
     """
     msg = msg.split(maxsplit=1)
     if len(msg) != 2:

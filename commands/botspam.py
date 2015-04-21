@@ -28,7 +28,7 @@ def gen_fortune(send):
 @Command('botspam')
 def cmd(send, *_):
     """Abuses the bot.
-    Syntax: !botspam
+    Syntax: {command}
     """
     def lenny_send(msg):
         send(gen_lenny(msg))

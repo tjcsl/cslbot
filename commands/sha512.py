@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('sha512')
 def cmd(send, msg, _):
     """SHA512 hashes something.
-    Syntax: !sha512 <msg>
+    Syntax: {command} <msg>
     """
     msg = msg.encode('utf-8')
     send(hashlib.sha512(msg).hexdigest())

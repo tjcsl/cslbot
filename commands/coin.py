@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('coin')
 def cmd(send, msg, _):
     """Flips a coin a number of times.
-    Syntax: !coin [number]
+    Syntax: {command} [number]
     """
     coin = ['heads', 'tails']
     if not msg:

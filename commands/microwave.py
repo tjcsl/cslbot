@@ -22,7 +22,7 @@ from helpers.misc import do_nuke
 @Command('microwave', ['nick', 'botnick', 'handler', 'is_admin', 'target', 'config'], limit=5)
 def cmd(send, msg, args):
     """Microwaves something.
-    Syntax: !microwave <level> <target>
+    Syntax: {command} <level> <target>
     """
     nick = args['nick']
     channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']

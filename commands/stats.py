@@ -53,7 +53,7 @@ def get_nick_totals(session, command=None):
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
-    Syntax: !stats <--high|--low|--userhigh|--nick <nick>|command>
+    Syntax: {command} <--high|--low|--userhigh|--nick <nick>|command>
     """
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()

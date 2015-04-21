@@ -20,6 +20,6 @@ from helpers.command import Command
 @Command('quit', ['handler'], admin=True)
 def cmd(send, msg, args):
     """Makes the bot disconnect and shut off
-    Syntax: !quit
+    Syntax: {command}
     """
     args['handler'].shutdown()

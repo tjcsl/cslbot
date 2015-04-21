@@ -20,7 +20,7 @@ from helpers.command import Command
 @Command('cadmin', ['handler'], admin=True)
 def cmd(send, msg, args):
     """Clears the verified admin list
-    Syntax: !cadmin
+    Syntax: {command}
     """
     admins = [x.strip() for x in args['handler'].config['auth']['admins'].split(',')]
     args['handler'].admins = {nick: False for nick in admins}

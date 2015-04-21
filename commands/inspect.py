@@ -20,7 +20,7 @@ from helpers.command import Command
 @Command('inspect', ['handler'], admin=True)
 def cmd(send, msg, args):
     """'Inspects a bot attribute.
-    Syntax: !inspect <attr>
+    Syntax: {command} <attr>
     """
     if not hasattr(args['handler'], msg):
         send("That attribute was not found in the handler.")

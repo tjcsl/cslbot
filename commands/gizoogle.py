@@ -21,7 +21,7 @@ from helpers.command import Command
 @Command('gizoogle')
 def cmd(send, msg, args):
     """Translates something into gangsta.
-    Syntax: !gizoogle <something>
+    Syntax: {command} <something>
     """
     if not msg:
         send("Gizoogle what all up in here?")

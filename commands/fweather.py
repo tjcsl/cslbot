@@ -22,7 +22,7 @@ from helpers.command import Command
 @Command('fweather')
 def cmd(send, msg, _):
     """Gets the F***ING weather!
-    Syntax: !fweather <location>
+    Syntax: {command} <location>
     """
     try:
         html = get('http://thefuckingweather.com/', params={'where': msg})

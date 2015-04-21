@@ -39,7 +39,7 @@ def append_filters(handler, filters):
 @Command('filter', ['config', 'handler', 'nick', 'type'], admin=True)
 def cmd(send, msg, args):
     """Changes the output filter.
-    Syntax: !filter <filter|--show|--list|--reset|--chain filter,[filter2,...]>
+    Syntax: {command} <filter|--show|--list|--reset|--chain filter,[filter2,...]>
     """
     if args['type'] == 'privmsg':
         send('Filters must be set in channels, not via private message.')
