@@ -98,7 +98,7 @@ class IrcBot(SingleServerIRCBot):
 
         | If a exception is thrown, catch it and display a nice traceback instead of crashing.
         | If we receive a !reload command, do the reloading magic.
-GROUPS)       | Call the appropriate handler method for processing.
+        | Call the appropriate handler method for processing.
         """
         if e.target[0] == '#' or e.target[0] == '@' or e.target[0] == '+':
             target = e.target
