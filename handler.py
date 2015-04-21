@@ -22,7 +22,6 @@ from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
-from helpers import modutils
 from helpers import command
 from helpers import textutils
 from helpers import admin
@@ -62,10 +61,6 @@ class BotHandler():
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
-        modutils.init_aux(self.config['core'])
-        modutils.init_groups(self.config['groups'])
-        self.loadmodules()
-        self.hooks = self.loadhooks()
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
         self.db = sql.Sql(config)
@@ -86,26 +81,6 @@ class BotHandler():
         for key, val in data.items():
             setattr(self, key, val)
         self.uptime['reloaded'] = time.time()
-
-    @staticmethod
-    def loadmodules():
-        """Load all the commands.
-
-        | Globs over all the .py files in the commands dir.
-        | Skips file without the executable bit set
-        | Imports the modules into a dict
-        """
-        command.scan_for_commands('commands')
-
-    @staticmethod
-    def loadhooks():
-        """Load all the hooks.
-
-        | Globs over all the .py files in the hooks dir.
-        | Skips file without the executable bit set
-        | Imports the hooks into a dict
-        """
-        return hook.scan_for_hooks('hooks')
 
     def ignore(self, send, nick):
         """Ignores a nick."""
@@ -408,7 +383,8 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
-            for h in self.hooks.values():
+            enabled_hooks = [h for h in hook.get_known_hooks().values() if h not in hook.get_disabled_hooks()]
+            for h in enabled_hooks:
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
                 h.run(send, msg, msgtype, self, target, realargs)
 

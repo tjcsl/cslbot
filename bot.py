@@ -31,9 +31,11 @@ try:
     import handler
     from helpers import server
     from helpers import config
+    from helpers import command
     from helpers import traceback
     from helpers import misc
     from helpers import modutils
+    from helpers import hook
     from configparser import ConfigParser
     from irc.bot import ServerSpec, SingleServerIRCBot
     from irc.connection import Factory
@@ -65,7 +67,22 @@ class IrcBot(SingleServerIRCBot):
         self.reload_event = threading.Event()
         self.reload_event.set()
         self.config = botconfig
+
+        modutils.init_aux(self.config['core'])
+        modutils.init_groups(self.config['groups'])
+        commands, errored_commands = command.scan_for_commands('commands')
+        if len(errored_commands) > 0:
+            print("Failed to reload some commands, things may not work as expected")
+            print(", ".join(errored_commands))
+            sys.exit(1)
+        hooks, errored_hooks = hook.scan_for_hooks('hooks')
+        if len(errored_hooks) > 0:
+            print("Failed to reload some hooks, there may be significant spam or silent bot failures")
+            print(", ".join(errored_hooks))
+            sys.exit(1)
+
         self.handler = handler.BotHandler(botconfig)
+
         if botconfig['feature'].getboolean('server'):
             self.server = server.init_server(self)
         # properly log quits.
@@ -81,7 +98,7 @@ class IrcBot(SingleServerIRCBot):
 
         | If a exception is thrown, catch it and display a nice traceback instead of crashing.
         | If we receive a !reload command, do the reloading magic.
-        | Call the appropriate handler method for processing.
+GROUPS)       | Call the appropriate handler method for processing.
         """
         if e.target[0] == '#' or e.target[0] == '@' or e.target[0] == '+':
             target = e.target
@@ -134,6 +151,13 @@ class IrcBot(SingleServerIRCBot):
             self.handler.kill()
         self.shutdown_server()
 
+    def debug_send(self, msg):
+        """ Send a message to the control channel, with no dependency on anything but
+                our state being valid
+        """
+        controlchan = self.config['core']['ctrlchan']
+        self.connection.privmsg(controlchan, msg)
+
     def do_reload(self, c, target, cmdargs):
         """The reloading magic.
 
@@ -148,6 +172,7 @@ class IrcBot(SingleServerIRCBot):
             output = misc.do_pull(srcdir, c.real_nickname)
             c.privmsg(target, output)
         reload_ok = True
+        # Reimport helpers
         failed_modules = []
         for name in modutils.get_enabled('helpers', 'helpers')[0]:
             if name in sys.modules:
@@ -156,11 +181,25 @@ class IrcBot(SingleServerIRCBot):
                     failed_modules.append(name)
                     reload_ok = False
         if not reload_ok:
-            controlchan = self.config['core']['ctrlchan']
-            self.connection.privmsg(controlchan,
-                                    "Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
-            self.connection.privmsg(controlchan, "Failures: " + ", ".join(failed_modules))
-        modutils.safe_reload(handler)
+            self.debug_send("Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
+            self.debug_send("Failures: " + ", ".join(failed_modules))
+        # reimport the handler
+        if not modutils.safe_reload(handler):
+            self.debug_send("Failed to reload the helper module, dying")
+            self.debug_send("Failures: " + ", ".join(failed_modules))
+            sys.exit(1)
+        # reimport the commands and hooks
+        modutils.init_aux(self.config['core'])
+        modutils.init_groups(self.config['groups'])
+        commands, errored_commands = command.scan_for_commands('commands')
+        if len(errored_commands) > 0:
+            self.debug_send("Failed to reload some commands, things may not work as expected")
+            self.debug_send(", ".join(errored_commands))
+        hooks, errored_hooks = hook.scan_for_hooks('hooks')
+        if len(errored_hooks) > 0:
+            self.debug_send("Failed to reload some hooks, there may be significant spam or silent bot failures")
+            self.debug_send(", ".join(errored_hooks))
+
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
         with open(configfile) as cfgfile:

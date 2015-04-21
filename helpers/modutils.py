@@ -111,7 +111,8 @@ def get_modules(folder, mod_type):
 def safe_reload(modname):
     """ Catch and log any errors that arise from reimporting a module, but do not die.
 
-    | Returns True when import was successful
+    :rtype: bool
+    :return: True when import was successful
     """
     try:
         importlib.reload(modname)
@@ -124,12 +125,33 @@ def safe_reload(modname):
             logging.error(errmsg)
         return False
 
+def safe_load(modname):
+    """ Load a module, logging errors instead of dying if it fails to load
+
+    :rtype: bool
+    :return: True when import was successful
+    """
+    try:
+        importlib.import_module(modname)
+        return True
+    except Exception as e:
+        logging.error("Failed to import module: %s" % (e))
+        (typ3, value, tb) = sys.exc_info()
+        errmsg = "".join(traceback.format_exception(typ3, value, tb))
+        for line in errmsg.split('\n'):
+            logging.error(errmsg)
+        return False
+
 
 def scan_and_reimport(folder, mod_type):
     """ Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(folder, mod_type)
+    errors = []
     for mod in (mod_enabled + mod_disabled):
         if mod in sys.modules:
-            safe_reload(sys.modules[mod])
+            if not safe_reload(sys.modules[mod]):
+                errors.append(mod)
         else:
-            importlib.import_module(mod)
+            if not safe_load(mod):
+                errors.append(mod)
+    return errors
