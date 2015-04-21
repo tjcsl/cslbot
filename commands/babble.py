@@ -37,24 +37,21 @@ def weighted_next(data):
 
 def build_msg(cursor, speaker, start):
     location = 'target' if speaker.startswith('#') else 'source'
-    count = cursor.query(Babble_count).filter(Babble_count.type == location, Babble_count.key == speaker).first()
+    count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.key == speaker).scalar()
     if count is None:
         return "%s hasn't said anything =(" % speaker
-    markov = cursor.query(Babble).filter(getattr(Babble, location) == speaker).offset(random.random() * count.count).first()
     if start is None:
-        prev = markov.key
+        prev = cursor.query(Babble.key).filter(getattr(Babble, location) == speaker).offset(random.random() * count).limit(1).scalar()
     else:
         # FIXME: use Babble_count?
         if len(start) == 1:
-            markov = cursor.query(Babble).filter(Babble.key.like(start[0] + ' %'))
+            markov = cursor.query(Babble.key).filter(Babble.key.like('%s %%' % start[0]))
         elif len(start) == 2:
-            markov = cursor.query(Babble).filter(Babble.key == " ".join(start))
+            markov = cursor.query(Babble.key).filter(Babble.key == " ".join(start))
         else:
             return "Please specify either one or two words for --start"
-        markov = markov.filter(getattr(Babble, location) == speaker).order_by(func.random()).first()
-        if markov:
-            prev = markov.key
-        else:
+        prev = markov.filter(getattr(Babble, location) == speaker).order_by(func.random()).limit(1).scalar()
+        if prev is None:
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
     while len(msg) < 256:
