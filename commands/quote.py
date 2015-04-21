@@ -99,6 +99,7 @@ def cmd(send, msg, args):
 
     if not msg:
         send(do_get_quote(session))
+        return
 
     try:
         cmdargs = parser.parse_args(msg)
