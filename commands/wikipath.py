@@ -17,12 +17,13 @@
 from datetime import datetime
 from lxml.html import fromstring
 from requests import get
+from helpers import arguments
 from helpers.command import Command
 
 
-def gen_path(msg):
+def gen_path(cmdargs):
     epoch = datetime.now().timestamp()
-    params = {'a1': msg[0], 'linktype': 1, 'a2': msg[1], 'allowsideboxes': 1, 'submit': epoch}
+    params = {'a1': cmdargs.first, 'linktype': 1, 'a2': cmdargs.second, 'allowsideboxes': 1, 'submit': epoch}
     html = get('http://beta.degreesofwikipedia.com/', params=params).text
     path = fromstring(html).find('pre')
     if path is None:
@@ -34,23 +35,50 @@ def gen_path(msg):
     return " -> ".join(output)
 
 
-def get_articles():
-    params = {'action': 'query', 'list': 'random', 'rnlimit': 2, 'rnnamespace': 0, 'format': 'json'}
+def get_article():
+    params = {'action': 'query', 'list': 'random', 'rnlimit': 1, 'rnnamespace': 0, 'format': 'json'}
     data = get('http://en.wikipedia.org/w/api.php', params=params).json()
     data = data['query']['random']
-    return [data[0]['title'].replace(' ', '_'), data[1]['title'].replace(' ', '_')]
+    return data[0]['title'].replace(' ', '_')
 
 
-@Command('wikipath')
+def check_article(name):
+    params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': name}
+    data = get('http://en.wikipedia.org/w/api.php', params=params).json()
+    if data['query']['search']:
+        return True
+    else:
+        return False
+
+
+@Command('wikipath', ['config'])
 def cmd(send, msg, args):
     """Find a path between two wikipedia articles.
-    Syntax: !wikipath [<article> <article>]
+    Syntax: !wikipath [article] [article]
     """
-    msg = msg.split()
-    if len(msg) != 2:
-        msg = get_articles()
-    path = gen_path(msg)
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('first', nargs='?')
+    parser.add_argument('second', nargs='?')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    if not cmdargs.first:
+        cmdargs.first = get_article()
+    else:
+        if not check_article(cmdargs.first):
+            send("%s isn't a valid wikipedia article, fetching a random one..." % cmdargs.first)
+            cmdargs.first = get_article()
+    if not cmdargs.second:
+        cmdargs.second = get_article()
+    else:
+        if not check_article(cmdargs.second):
+            send("%s isn't a valid wikipedia article, fetching a random one..." % cmdargs.second)
+            cmdargs.second = get_article()
+
+    path = gen_path(cmdargs)
     if path:
         send(path.replace('_', ' '))
     else:
-        send("No path found between %s and %s. Do you need to add more links?" % (msg[0], msg[1]))
+        send("No path found between %s and %s. Do you need to add more links?" % (cmdargs.first.replace('_', ' '), cmdargs.second.replace('_', ' ')))
