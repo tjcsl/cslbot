@@ -14,7 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from random import choice
+from helpers import arguments
 from helpers.command import Command
 from helpers.orm import Quotes
 
@@ -44,15 +46,8 @@ def get_quotes_nick(session, nick):
     return "Quote #%d (out of %d): %s -- %s" % (row.id, len(rows), row.quote, nick)
 
 
-def do_add_quote(msg, session, isadmin, send, args):
-    # FIXME: have better parsing.
-    if '--' not in msg:
-        send("To add a quote, it must be in the format <quote> -- <nick>")
-        return
-    quote = msg.split('--')
-    # strip off excess leading/ending spaces
-    quote = [x.strip() for x in quote]
-    row = Quotes(quote=quote[0], nick=quote[1], submitter=args['nick'])
+def do_add_quote(nick, quote, session, isadmin, send, args):
+    row = Quotes(quote=quote, nick=nick, submitter=args['nick'])
     session.add(row)
     session.flush()
     if isadmin:
@@ -60,21 +55,17 @@ def do_add_quote(msg, session, isadmin, send, args):
         send("Added quote %d!" % row.id)
     else:
         send("Quote submitted for approval.", target=args['nick'])
-        send("New Quote: #%d %s -- %s, Submitted by %s" % (row.id, quote[0], quote[1], args['nick']), target=args['config']['core']['ctrlchan'])
+        send("New Quote: #%d %s -- %s, Submitted by %s" % (row.id, quote, nick, args['nick']), target=args['config']['core']['ctrlchan'])
 
 
-def do_update_quote(session, qid, msg):
-    if not qid.isdigit():
-        return "The first argument to !quote edit must be a number!"
-    if '--' not in msg:
-        return "To add a quote, it must be in the format <quote> -- <nick>"
-    quote = msg.split('--')
-    # strip off excess leading/trailing spaces
-    quote = [x.strip() for x in quote]
+def do_update_quote(session, qid, nick, quote):
     row = session.query(Quotes).get(qid)
     if row is None:
         return "That quote doesn't exist!"
-    row.update(quote=quote[0], nick=quote[1])
+    if quote:
+        row.quote = " ".join(quote)
+    if nick is not None:
+        row.nick = nick
     return "Updated quote!"
 
 
@@ -84,9 +75,6 @@ def do_list_quotes(session, quote_url):
 
 
 def do_delete_quote(session, qid):
-    if not qid.isdigit():
-        return "Second argument to !quote remove must be a number!"
-    qid = int(qid)
     quote = session.query(Quotes).get(qid)
     if quote is None:
         return "That quote doesn't exist!"
@@ -97,40 +85,56 @@ def do_delete_quote(session, qid):
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
-    Syntax: !quote <number|nick>, !quote add <quote> -- <nick>, !quote list, !quote remove <number>, !quote edit <number> <quote> -- <nick>
+    Syntax: !quote <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
     """
-    # FIXME: use argparse
     session = args['db']
-    msg = msg.split()
-    isadmin = args['is_admin'](args['nick'])
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--nick', nargs='?')
+    parser.add_argument('quote', nargs='*')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--list', action='store_true')
+    group.add_argument('--add', action='store_true')
+    group.add_argument('--delete', '--remove', type=int)
+    group.add_argument('--edit', type=int)
 
     if not msg:
         send(do_get_quote(session))
-    elif msg[0].isdigit():
-        send(do_get_quote(session, int(msg[0])))
-    elif msg[0] == 'add':
+
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+
+    isadmin = args['is_admin'](args['nick'])
+
+    if cmdargs.add:
         if args['type'] == 'privmsg':
             send("You want everybody to know about your witty sayings, right?")
         else:
-            msg = " ".join(msg[1:])
-            do_add_quote(msg, session, isadmin, send, args)
-    elif msg[0] == 'list':
-        send(do_list_quotes(session, args['config']['core']['url']))
-    elif msg[0] == 'remove' or msg[0] == 'delete':
-        if isadmin:
-            if len(msg) == 1:
-                send("Which quote?")
+            if cmdargs.nick is None:
+                send('You must specify a nick.')
+            elif not cmdargs.quote:
+                send('You must specify a quote.')
             else:
-                send(do_delete_quote(session, msg[1]))
+                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, send, args)
+    elif cmdargs.list:
+        send(do_list_quotes(session, args['config']['core']['url']))
+    elif cmdargs.delete:
+        if isadmin:
+            send(do_delete_quote(session, cmdargs.delete))
         else:
             send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
-    elif msg[0] == 'edit':
-        if len(msg) == 1:
-            send("Which quote?")
-        elif isadmin:
-            msg = " ".join(msg[2:])
-            send(do_update_quote(session, msg[1], msg))
+    elif cmdargs.edit:
+        if isadmin:
+            send(do_update_quote(session, cmdargs.edit, cmdargs.nick, cmdargs.quote))
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     else:
-        send(get_quotes_nick(session, msg[0]))
+        if msg.isdigit():
+            send(do_get_quote(session, int(msg)))
+        else:
+            if not re.match(args['config']['core']['nickregex'], msg):
+                send('Invalid nick %s.' % msg)
+            else:
+                send(get_quotes_nick(session, msg))
