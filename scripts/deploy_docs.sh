@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   echo "Pushing docs to Github Pages"
 
@@ -10,8 +10,8 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   cd gh-pages
   cp -r ../doc/build/* .
   git add -A .
-  git commit -m "Update docs, build $TRAVIS_BUILD_NUMBER"
   latest=$(git log -1 --pretty=%s|sed "s/Update docs, build \([0-9]\+\)/\1/")
+  git commit -m "Update docs, build $TRAVIS_BUILD_NUMBER"
   if [ "$latest" -gt "$TRAVIS_BUILD_NUMBER" ]; then
       echo "Not overwriting newer docs."
   else
