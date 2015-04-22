@@ -161,7 +161,7 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
-        if filters is None:
+        if not filters:
             filters = self.outputfilter
         for i in filters:
             if target != self.config['core']['ctrlchan']:
