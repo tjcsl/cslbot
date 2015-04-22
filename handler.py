@@ -282,7 +282,7 @@ class BotHandler():
             # if user is guarded and quieted, devoiced, or deopped, fix that
             regex = r"(.*(-v|-o|\+q|\+b)[^ ]*) (%s)" % "|".join(self.guarded)
             match = re.search(regex, msg)
-            if match and len(match) > 0:
+            if match and match.group(3) != '':
                 modestring = " +voe-qb %s" % (" ".join([match.group(3)] * 5))
                 self.connection.mode(target, modestring)
                 send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
