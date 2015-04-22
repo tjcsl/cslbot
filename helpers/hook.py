@@ -28,12 +28,18 @@ _disabled_hooks = set()
 
 
 def scan_for_hooks(folder):
-    """ Scans folder for hooks """
+    """
+    Scans folder for hooks
+
+    :param str folder: The folder in which to look for hooks
+    :rtype: dict, list
+    :return: The dict represents a list of known hooks, while the list is a list of modules that failed to reload
+    """
     global _known_hooks, _disabled_hooks
     _known_hooks = {}
     _disabled_hooks = modutils.get_disabled("hooks")
-    modutils.scan_and_reimport(folder, "hooks")
-    return _known_hooks
+    errors = modutils.scan_and_reimport(folder, "hooks")
+    return _known_hooks, errors
 
 
 def get_known_hooks():

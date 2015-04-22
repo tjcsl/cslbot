@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-from .traceback import get_traceback
+from .traceback import output_traceback
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -121,7 +121,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 else:
                     send("Unknown command. Type help for more info.\n")
         except Exception as ex:
-            msg, _ = get_traceback(ex)
+            msg, _ = output_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']
             send('%s\n' % msg)
             bot.connection.privmsg(ctrlchan, msg)
