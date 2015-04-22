@@ -13,11 +13,11 @@ env:
 
 cache:
     directories:
-    - ~/.cache/pip
-    - ~/virtualenv
+        #- ~/.cache/pip
+    - $HOME/virtualenv
 
-before_cache:
-    - rm -f ~/.cache/pip/log/debug.log
+    #before_cache:
+    #- rm -f ~/.cache/pip/log/debug.log
 
 install:
     - pip install -U flake8 sphinx psycopg2
