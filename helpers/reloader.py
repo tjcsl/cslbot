@@ -24,20 +24,20 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(config):
+def load_modules(config, send=logging.error):
     modutils.init_aux(config['core'])
     modutils.init_groups(config['groups'])
     errored_commands = command.scan_for_commands('commands')
     if errored_commands:
         logging.error("Failed to load some commands.")
         for error in errored_commands:
-            logging.error("%s: %s" % error)
+            send("%s: %s" % error)
         return False
     errored_hooks = hook.scan_for_hooks('hooks')
     if errored_hooks:
         logging.error("Failed to reload some hooks.")
         for error in errored_hooks:
-            logging.error("%s: %s" % error)
+            send("%s: %s" % error)
         return False
     return True
 
@@ -65,7 +65,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
         for error in errored_helpers:
             send("%s: %s" % error)
         return False
-    if not load_modules(bot.config):
+    if not load_modules(bot.config, send):
         return False
 
     bot.config = configparser.ConfigParser()

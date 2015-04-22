@@ -76,7 +76,9 @@ class IrcBot(bot.SingleServerIRCBot):
         if e.type not in handled_types:
             return
         if self.reload_event.is_set():
-            self.event_queue.put(e)
+            # Don't queue up failed reloads.
+            if self.is_reload(e) is None:
+                self.event_queue.put(e)
         else:
             # Handle any queued events first.
             while not self.event_queue.empty():
@@ -183,22 +185,29 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             raise Exception('Un-handled event type %s' % e.type)
 
+    def is_reload(self, e):
+        cmd = e.arguments[0].strip()
+        if not cmd:
+            return None
+        cmd = misc.get_cmdchar(self.config, self.connection, cmd, e.type)
+        cmdchar = self.config['core']['cmdchar']
+        if cmd.split()[0] == '%sreload' % cmdchar:
+            return cmd
+        else:
+            return None
+
     def reload_handler(self, c, e):
         """This handles reloads."""
         if e.type not in ['pubmsg', 'privmsg']:
             return
-        cmd = e.arguments[0].strip()
-        if not cmd:
-            return
-        cmd = misc.get_cmdchar(self.config, c, cmd, e.type)
+        cmd = self.is_reload(e)
         cmdchar = self.config['core']['cmdchar']
-        if cmd.split()[0] == '%sreload' % cmdchar:
+        if cmd is not None:
             admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
             if e.source.nick not in admins:
                 c.privmsg(self.get_target(e), "Nope, not gonna do it.")
                 return
             importlib.reload(reloader)
-            # FIXME: fix race conditions with reload
             self.reload_event.set()
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
             if reloader.do_reload(self, self.get_target(e), cmdargs):
