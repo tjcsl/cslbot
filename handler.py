@@ -431,26 +431,32 @@ class BotHandler():
                 cmdlen = len(cmd)
         cmdargs = msg[cmdlen:]
 
-        # parse out any filters
-        parser = arguments.ArgParser(self.config)
-        parser.add_argument('--filter')
-        parsedfilters, remainder = parser.parse_known_args(cmdargs)
-        cmdargs = ' '.join(remainder)
-        filter_list = []
-        if parsedfilters.filter:
-            for next_filter in parsedfilters.filter.split(','):
-                if next_filter in textutils.output_filters.keys():
-                    filter_list.append(textutils.output_filters[next_filter])
-                else:
-                    send("Invalid filter %s." % next_filter)
-                    return
-
-        # define a new send to handle filter chaining
-        def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
-            self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
-
         if cmd.startswith(cmdchar) and not msgtype == 'action':
+            # parse out any filters
+            parser = arguments.ArgParser(self.config)
+            parser.add_argument('--filter')
+            parsedfilters = None
+            try:
+                parsedfilters, remainder = parser.parse_known_args(cmdargs)
+                cmdargs = ' '.join(remainder)
+                filter_list = []
+                if parsedfilters.filter:
+                    for next_filter in parsedfilters.filter.split(','):
+                        if next_filter in textutils.output_filters.keys():
+                            filter_list.append(textutils.output_filters[next_filter])
+                        else:
+                            send("Invalid filter %s." % next_filter)
+                            return
+            except arguments.ArgumentException as e:
+                send("--filter needs at least one argument")
+                return
+
+            # define a new send to handle filter chaining
+            def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
+                self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
+
             cmd_name = cmd[len(cmdchar):]
+
             if command.is_registered(cmd_name):
                 cmd_obj = command.get_command(cmd_name)
                 if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
