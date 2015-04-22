@@ -438,18 +438,18 @@ class BotHandler():
             parsedfilters = None
             try:
                 parsedfilters, remainder = parser.parse_known_args(cmdargs)
-                cmdargs = ' '.join(remainder)
-                filter_list = []
-                if parsedfilters.filter:
-                    for next_filter in parsedfilters.filter.split(','):
-                        if next_filter in textutils.output_filters.keys():
-                            filter_list.append(textutils.output_filters[next_filter])
-                        else:
-                            send("Invalid filter %s." % next_filter)
-                            return
-            except arguments.ArgumentException as e:
-                send("--filter needs at least one argument")
+            except arguments.ArgumentException as ex:
+                send(str(ex))
                 return
+            cmdargs = ' '.join(remainder)
+            filter_list = []
+            if parsedfilters.filter:
+                for next_filter in parsedfilters.filter.split(','):
+                    if next_filter in textutils.output_filters.keys():
+                        filter_list.append(textutils.output_filters[next_filter])
+                    else:
+                        send("Invalid filter %s." % next_filter)
+                        return
 
             # define a new send to handle filter chaining
             def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
