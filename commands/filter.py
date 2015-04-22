@@ -36,13 +36,14 @@ def append_filters(handler, filters):
     return "Okay!"
 
 
-@Command('filter', ['config', 'handler', 'nick', 'type'], admin=True)
+@Command('filter', ['config', 'handler', 'is_admin', 'nick', 'type'])
 def cmd(send, msg, args):
     """Changes the output filter.
     Syntax: {command} <filter|--show|--list|--reset|--chain filter,[filter2,...]>
     """
     if args['type'] == 'privmsg':
         send('Filters must be set in channels, not via private message.')
+    isadmin = args['is_admin'](args['nick'])
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()
     group.add_argument('filter', nargs='?')
@@ -60,17 +61,19 @@ def cmd(send, msg, args):
         return
     if cmdargs.list:
         send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
-    elif cmdargs.reset:
+    elif cmdargs.reset and isadmin:
         args['handler'].outputfilter.clear()
         send("Okay!")
-    elif cmdargs.chain:
+    elif cmdargs.chain and isadmin:
         if not args['handler'].outputfilter:
             send("Must have a filter set in order to chain.")
             return
         send(append_filters(args['handler'], cmdargs.chain))
     elif cmdargs.show:
         send(get_filters(args['handler']))
-    else:
+    elif isadmin:
         # If we're just adding a filter without chain, blow away any existing filters.
         args['handler'].outputfilter.clear()
         send(append_filters(args['handler'], msg))
+    else:
+        send('This command requires admin privileges.')
