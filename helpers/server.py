@@ -100,6 +100,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     ctrlchan = bot.config['core']['ctrlchan']
                     bot.reload_event.set()
                     reloader.do_reload(bot, ctrlchan, cmdargs, send)
+                    bot.server = init_server(bot)
                     bot.reload_event.clear()
                     send("Aye Aye Capt'n\n")
                     bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
