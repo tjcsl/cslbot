@@ -158,7 +158,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 self.connection.send_raw('AUTHENTICATE %s' % token.decode())
         elif e.type == 'nicknameinuse':
             self.connection.nick('Guest%d' % random.getrandbits(20))
-            self.connection.send_raw('NS REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['serverpass']))
+            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['serverpass']))
             self.handler.workers.defer(5, False, self.do_welcome, c)
         elif e.type == 'welcome':
             logging.info("Connected to server %s", self.config['core']['host'])
@@ -175,9 +175,7 @@ class IrcBot(bot.SingleServerIRCBot):
             if len(e.arguments) == 2:
                 misc.ping(c, e, time.time())
         elif e.type == 'error':
-            # FIXME: do something else here?
             logging.error(e.target)
-            logging.error(e.arguments)
         elif e.type == 'disconnect':
             # Don't kill everything if we just ping timed-out
             if e.arguments[0] == 'Goodbye, Cruel World!':
