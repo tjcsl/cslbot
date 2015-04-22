@@ -111,37 +111,37 @@ def get_modules(folder, mod_type):
 def safe_reload(modname):
     """ Catch and log any errors that arise from reimporting a module, but do not die.
 
-    :rtype: bool
-    :return: True when import was successful
+    :rtype: bool, str
+    :return: True when import was successful. String is the first line of the error message
     """
     try:
         importlib.reload(modname)
-        return True
+        return True, ''
     except Exception as e:
         logging.error("Failed to reimport module: %s" % (e))
         (typ3, value, tb) = sys.exc_info()
         errmsg = "".join(traceback.format_exception(typ3, value, tb))
         for line in errmsg.split('\n'):
-            logging.error(errmsg)
-        return False
+            logging.error(line)
+        return False, str(e)
 
 
 def safe_load(modname):
     """ Load a module, logging errors instead of dying if it fails to load
 
-    :rtype: bool
-    :return: True when import was successful
+    :rtype: bool, str
+    :return: True when import was successful. String is the first line of the error message
     """
     try:
         importlib.import_module(modname)
-        return True
+        return True, ''
     except Exception as e:
         logging.error("Failed to import module: %s" % (e))
         (typ3, value, tb) = sys.exc_info()
         errmsg = "".join(traceback.format_exception(typ3, value, tb))
         for line in errmsg.split('\n'):
-            logging.error(errmsg)
-        return False
+            logging.error(line)
+        return False, str(e)
 
 
 def scan_and_reimport(folder, mod_type):
@@ -150,9 +150,11 @@ def scan_and_reimport(folder, mod_type):
     errors = []
     for mod in (mod_enabled + mod_disabled):
         if mod in sys.modules:
-            if not safe_reload(sys.modules[mod]):
-                errors.append(mod)
+            successful, msg = safe_reload(sys.modules[mod])
+            if not successful:
+                errors.append((mod, msg))
         else:
-            if not safe_load(mod):
-                errors.append(mod)
+            successful, msg = safe_load(mod)
+            if not successful:
+                errors.append((mod, msg))
     return errors

@@ -73,13 +73,14 @@ class IrcBot(SingleServerIRCBot):
         commands, errored_commands = command.scan_for_commands('commands')
         if len(errored_commands) > 0:
             print("Failed to reload some commands, things may not work as expected")
-            print(", ".join(errored_commands))
+            print(", ".join([x[0] for x in errored_commands]))
             sys.exit(1)
         hooks, errored_hooks = hook.scan_for_hooks('hooks')
         if len(errored_hooks) > 0:
             print("Failed to reload some hooks, there may be significant spam or silent bot failures")
-            print(", ".join(errored_hooks))
+            print(", ".join([x[0] for x in errored_hooks]))
             sys.exit(1)
+        self.reload_only = False
 
         self.handler = handler.BotHandler(botconfig)
 
@@ -104,13 +105,15 @@ class IrcBot(SingleServerIRCBot):
             target = e.target
         else:
             target = e.source.nick
+        reloading = False
         try:
             self.reload_event.wait()
-            reloading = False
             if msgtype != 'mode' and msgtype != 'nick' and msgtype != 'join':
                 reloading = self.check_reload(target, c, e, msgtype)
-            self.handler.handle_msg(msgtype, c, e)
+            if not self.reload_only:
+                self.handler.handle_msg(msgtype, c, e)
         except Exception as ex:
+            # reloading blew up, but we don't want to lock up on the next spin through here
             if reloading:
                 self.reload_event.set()
             traceback.handle_traceback(ex, c, target, self.config)
@@ -158,6 +161,12 @@ class IrcBot(SingleServerIRCBot):
         controlchan = self.config['core']['ctrlchan']
         self.connection.privmsg(controlchan, msg)
 
+    def debug_send_many(self, msgs):
+        """ Send many messages, with rate limiting """
+        for msg in msgs:
+            self.debug_send(msg)
+            time.sleep(0.1)  # rate limit
+
     def do_reload(self, c, target, cmdargs):
         """The reloading magic.
 
@@ -176,29 +185,42 @@ class IrcBot(SingleServerIRCBot):
         failed_modules = []
         for name in modutils.get_enabled('helpers', 'helpers')[0]:
             if name in sys.modules:
-                mod_reload_ok = modutils.safe_reload(sys.modules[name])
+                mod_reload_ok, msg = modutils.safe_reload(sys.modules[name])
                 if not mod_reload_ok:
-                    failed_modules.append(name)
+                    failed_modules.append((name, msg))
                     reload_ok = False
         if not reload_ok:
-            self.debug_send("Failed to reload some helper modules. Some commands may not work as expected, see the console for details")
-            self.debug_send("Failures: " + ", ".join(failed_modules))
+            self.debug_send("Failed to reload some helper modules. Going in to reload-only mode")
+            self.debug_send("Failures: ")
+            self.debug_send_many(x[0] + ":" + x[1] for x in failed_modules)
+            self.reload_only = True
+            self.reload_event.set()
+            return
         # reimport the handler
-        if not modutils.safe_reload(handler):
-            self.debug_send("Failed to reload the helper module, dying")
-            self.debug_send("Failures: " + ", ".join(failed_modules))
-            sys.exit(1)
+        handler_ok, handler_err = modutils.safe_reload(handler)
+        if not handler_ok:
+            self.debug_send("Failed to reload the helper module")
+            self.debug_send(handler_err)
+            self.reload_only = True
+            self.reload_event.set()
+            return
         # reimport the commands and hooks
         modutils.init_aux(self.config['core'])
         modutils.init_groups(self.config['groups'])
         commands, errored_commands = command.scan_for_commands('commands')
         if len(errored_commands) > 0:
-            self.debug_send("Failed to reload some commands, things may not work as expected")
-            self.debug_send(", ".join(errored_commands))
+            self.debug_send("Failed to reload some commands. Going in to reload-only mode")
+            self.debug_send_many(x[0] + ":" + x[1] for x in errored_commands)
+            self.reload_only = True
+            self.reload_event.set()
+            return
         hooks, errored_hooks = hook.scan_for_hooks('hooks')
         if len(errored_hooks) > 0:
-            self.debug_send("Failed to reload some hooks, there may be significant spam or silent bot failures")
-            self.debug_send(", ".join(errored_hooks))
+            self.debug_send("Failed to reload some hooks. Going in to reload-only mode")
+            self.debug_send_many(x[0] + ":" + x[1] for x in errored_hooks)
+            self.reload_only = True
+            self.reload_event.set()
+            return
 
         self.config = ConfigParser()
         configfile = join(dirname(__file__), 'config.cfg')
@@ -213,6 +235,7 @@ class IrcBot(SingleServerIRCBot):
         self.handler.channels = self.channels
         if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
+        self.reload_only = False
         self.reload_event.set()
         if output:
             return output
