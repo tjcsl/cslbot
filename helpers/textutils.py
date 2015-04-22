@@ -225,6 +225,7 @@ def gen_lenny(msg):
     return "%s ( ͡° ͜ʖ ͡°)" % msg
 
 output_filters = {
+    "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
     "fwilson": gen_fwilson,
     "creffett": gen_creffett,
