@@ -16,14 +16,19 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import logging
 import traceback
 import sys
 from os.path import basename
 
 
-def get_traceback(ex):
+def output_traceback(ex):
+    """ Returns a tuple of a prettyprinted error message and string representation of the error """
     # Dump full traceback to console.
-    traceback.print_exc()
+    (typ3, value, tb) = sys.exc_info()
+    errmsg = "".join(traceback.format_exception(typ3, value, tb))
+    for line in errmsg.split('\n'):
+        logging.error(line)
     # Force traceback to be flushed
     sys.stderr.flush()
     trace = traceback.extract_tb(ex.__traceback__)[-1]
@@ -35,7 +40,7 @@ def get_traceback(ex):
 
 
 def handle_traceback(ex, c, target, config, source="the bot"):
-    msg, output = get_traceback(ex)
+    msg, output = output_traceback(ex)
     name = type(ex).__name__
     ctrlchan = config['core']['ctrlchan']
     prettyerrors = config['feature'].getboolean('prettyerrors')

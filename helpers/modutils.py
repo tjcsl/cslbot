@@ -19,10 +19,10 @@
 import sys
 from configparser import ConfigParser
 from os.path import abspath, basename, dirname, join
-import traceback
 import importlib
 import logging
 from glob import glob
+from .traceback import output_traceback
 
 GROUPS = {'commands': set(), 'hooks': set()}
 DISABLED = {'commands': set(), 'hooks': set()}
@@ -118,12 +118,9 @@ def safe_reload(modname):
         importlib.reload(modname)
         return True, ''
     except Exception as e:
-        logging.error("Failed to reimport module: %s" % (e))
-        (typ3, value, tb) = sys.exc_info()
-        errmsg = "".join(traceback.format_exception(typ3, value, tb))
-        for line in errmsg.split('\n'):
-            logging.error(line)
-        return False, str(e)
+        logging.error("Failed to reimport module: %s" % modname)
+        msg, out = output_traceback(e)
+        return False, str(msg)
 
 
 def safe_load(modname):
@@ -136,12 +133,9 @@ def safe_load(modname):
         importlib.import_module(modname)
         return True, ''
     except Exception as e:
-        logging.error("Failed to import module: %s" % (e))
-        (typ3, value, tb) = sys.exc_info()
-        errmsg = "".join(traceback.format_exception(typ3, value, tb))
-        for line in errmsg.split('\n'):
-            logging.error(line)
-        return False, str(e)
+        logging.error("Failed to import module: %s" % modname)
+        msg, out = output_traceback(e)
+        return False, str(msg)
 
 
 def scan_and_reimport(folder, mod_type):
