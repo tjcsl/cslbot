@@ -16,10 +16,12 @@
 
 import json
 import ssl
+import re
 from lxml.html import parse
 from urllib import request
 from urllib.error import URLError, HTTPError
 from requests import post
+from requests.exceptions import ConnectTimeout
 from socket import timeout
 from .exception import CommandFailedException
 
@@ -27,8 +29,12 @@ from .exception import CommandFailedException
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
-    data = post('https://www.googleapis.com/urlshortener/v1/url?key=%s' % key, data=json.dumps({'longUrl': msg}),
-                headers={'Content-Type': 'application/json'}, timeout=10).json()
+    try:
+        data = post('https://www.googleapis.com/urlshortener/v1/url?key=%s' % key, data=json.dumps({'longUrl': msg}),
+                    headers={'Content-Type': 'application/json'}, timeout=10).json()
+    except ConnectTimeout as e:
+        # Sanitize the error before throwing it
+        raise ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
     if 'error' in data:
         return msg
     else:
