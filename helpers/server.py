@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-from .traceback import output_traceback
+from . import backtrace, reloader
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -97,11 +97,10 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     send("%s\n" % admins)
                 elif cmd[0] == "reload":
                     cmdargs = cmd[1] if len(cmd) > 1 else ''
-                    bot.reload_event.wait()
                     ctrlchan = bot.config['core']['ctrlchan']
-                    output = bot.do_reload(bot.connection, ctrlchan, cmdargs)
-                    if output:
-                        send("%s\n" % output)
+                    bot.reload_event.set()
+                    reloader.do_reload(bot, ctrlchan, cmdargs, send)
+                    bot.reload_event.clear()
                     send("Aye Aye Capt'n\n")
                     bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
                     self.request.close()
@@ -121,7 +120,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 else:
                     send("Unknown command. Type help for more info.\n")
         except Exception as ex:
-            msg, _ = output_traceback(ex)
+            msg, _ = backtrace.output_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']
             send('%s\n' % msg)
             bot.connection.privmsg(ctrlchan, msg)

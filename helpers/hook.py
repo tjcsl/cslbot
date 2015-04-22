@@ -20,8 +20,7 @@ import sys
 import functools
 import re
 import threading
-from . import modutils
-from .traceback import handle_traceback
+from . import backtrace, modutils
 
 _known_hooks = {}
 _disabled_hooks = set()
@@ -32,18 +31,22 @@ def scan_for_hooks(folder):
     Scans folder for hooks
 
     :param str folder: The folder in which to look for hooks
-    :rtype: dict, list
-    :return: The dict represents a list of known hooks, while the list is a list of modules that failed to reload
+    :rtype: list
+    :return: A list of modules that failed to reload
     """
-    global _known_hooks, _disabled_hooks
-    _known_hooks = {}
+    global _disabled_hooks
+    _known_hooks.clear()
     _disabled_hooks = modutils.get_disabled("hooks")
     errors = modutils.scan_and_reimport(folder, "hooks")
-    return _known_hooks, errors
+    return errors
 
 
 def get_known_hooks():
     return _known_hooks
+
+
+def get_hook_objects():
+    return [_known_hooks[x] for x in _known_hooks if x not in _disabled_hooks]
 
 
 def get_enabled_hooks():
@@ -68,9 +71,8 @@ def disable_hook(hook):
 
 def enable_hook(hook):
     """Removes a command from the disabled hooks list."""
-    global _disabled_hooks
     if hook == "all":
-        _disabled_hooks = []
+        _disabled_hooks.clear()
         return "Enabled all hooks."
     elif hook in _disabled_hooks:
         _disabled_hooks.remove(hook)
@@ -84,7 +86,6 @@ def enable_hook(hook):
 class Hook():
 
     def __init__(self, name, types, args=[]):
-        global _known_hooks
         self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args
@@ -101,7 +102,7 @@ class Hook():
                     with self.handler.db.session_scope() as args['db']:
                         func(send, msg, args)
                 except Exception as ex:
-                    handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
+                    backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
                 finally:
                     thread.name = "%s idle, last ran %s" % (thread_id, func.__module__)
         self.exe = wrapper

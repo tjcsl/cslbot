@@ -345,6 +345,24 @@ class BotHandler():
         self.connection.disconnect('Goodbye, Cruel World!')
         self.workers.stop_workers()
 
+    def do_welcome(self, bot):
+        """Do setup when connected to server.
+
+        | Join the primary channel.
+        | Join the control channel.
+        """
+        self.connection = bot.connection
+        self.channels = bot.channels
+        self.get_admins(self.connection)
+        self.connection.join(self.config['core']['channel'])
+        self.connection.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        extrachans = self.config['core']['extrachans']
+        if extrachans:
+            extrachans = [x.strip() for x in extrachans.split(',')]
+            # Delay joining extra channels to prevent excess flood.
+            for i in range(len(extrachans)):
+                self.workers.defer(i, False, self.connection.join, extrachans[i])
+
     def kill(self):
         """ Forcibly kill ourself """
         self.workers.kill_workers()
@@ -383,8 +401,7 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
-            enabled_hooks = [h for h in hook.get_known_hooks().values() if h not in hook.get_disabled_hooks()]
-            for h in enabled_hooks:
+            for h in hook.get_hook_objects():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
                 h.run(send, msg, msgtype, self, target, realargs)
 
@@ -407,6 +424,18 @@ class BotHandler():
         if msgtype == 'join':
             if nick == c.real_nickname:
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
+            return
+
+        if msgtype == 'part':
+            if nick == c.real_nickname:
+                send("Parted channel %s" % target, target=self.config['core']['ctrlchan'])
+            return
+
+        if msgtype == 'kick':
+            if nick == c.real_nickname:
+                send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
+                # Auto-rejoin after 5 seconds.
+                self.workers.defer(5, False, self.connection.join, target)
             return
 
         if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):

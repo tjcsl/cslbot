@@ -22,11 +22,11 @@ from os.path import abspath, basename, dirname, join
 import importlib
 import logging
 from glob import glob
-from .traceback import output_traceback
+from . import backtrace
 
 GROUPS = {'commands': set(), 'hooks': set()}
 DISABLED = {'commands': set(), 'hooks': set()}
-AUX = {'commands': [], 'hooks': []}
+AUX = {'commands': [], 'hooks': [], 'helpers': []}
 
 
 def init_aux(config):
@@ -111,31 +111,29 @@ def get_modules(folder, mod_type):
 def safe_reload(modname):
     """ Catch and log any errors that arise from reimporting a module, but do not die.
 
-    :rtype: bool, str
-    :return: True when import was successful. String is the first line of the error message
+    :return: None when import was successful. String is the first line of the error message
     """
     try:
         importlib.reload(modname)
-        return True, ''
+        return None
     except Exception as e:
         logging.error("Failed to reimport module: %s" % modname)
-        msg, out = output_traceback(e)
-        return False, str(msg)
+        msg, _ = backtrace.output_traceback(e)
+        return msg
 
 
 def safe_load(modname):
     """ Load a module, logging errors instead of dying if it fails to load
 
-    :rtype: bool, str
-    :return: True when import was successful. String is the first line of the error message
+    :return: None when import was successful. String is the first line of the error message
     """
     try:
         importlib.import_module(modname)
-        return True, ''
-    except Exception as e:
+        return None
+    except Exception as ex:
         logging.error("Failed to import module: %s" % modname)
-        msg, out = output_traceback(e)
-        return False, str(msg)
+        msg, _ = backtrace.output_traceback(ex)
+        return msg
 
 
 def scan_and_reimport(folder, mod_type):
@@ -144,11 +142,9 @@ def scan_and_reimport(folder, mod_type):
     errors = []
     for mod in (mod_enabled + mod_disabled):
         if mod in sys.modules:
-            successful, msg = safe_reload(sys.modules[mod])
-            if not successful:
-                errors.append((mod, msg))
+            msg = safe_reload(sys.modules[mod])
         else:
-            successful, msg = safe_load(mod)
-            if not successful:
-                errors.append((mod, msg))
+            msg = safe_load(mod)
+        if msg is not None:
+            errors.append((mod, msg))
     return errors

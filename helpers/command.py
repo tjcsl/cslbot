@@ -20,10 +20,9 @@ import sys
 import functools
 import re
 import threading
-from . import modutils
+from . import modutils, backtrace
 from inspect import getdoc
 from datetime import datetime, timedelta
-from .traceback import handle_traceback
 from .orm import Commands, Log
 
 _known_commands = {}
@@ -42,7 +41,7 @@ def scan_for_commands(folder):
     _known_commands.clear()
     _disabled_commands = modutils.get_disabled("commands")
     errors = modutils.scan_and_reimport(folder, "commands")
-    return _known_commands, errors
+    return errors
 
 
 def is_registered(command_name):
@@ -127,7 +126,7 @@ class Command():
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
             except Exception as ex:
-                handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
+                backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
             finally:
                 thread.name = "%s idle, last ran command.%s" % (thread_id, self.names[0])
         self.doc = getdoc(func)

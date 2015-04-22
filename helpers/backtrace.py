@@ -25,9 +25,8 @@ from os.path import basename
 def output_traceback(ex):
     """ Returns a tuple of a prettyprinted error message and string representation of the error """
     # Dump full traceback to console.
-    (typ3, value, tb) = sys.exc_info()
-    errmsg = "".join(traceback.format_exception(typ3, value, tb))
-    for line in errmsg.split('\n'):
+    output = "".join(traceback.format_exc())
+    for line in output.split('\n'):
         logging.error(line)
     # Force traceback to be flushed
     sys.stderr.flush()

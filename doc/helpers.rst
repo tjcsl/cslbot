@@ -28,6 +28,14 @@ helpers.babble module
     :undoc-members:
     :show-inheritance:
 
+helpers.backtrace module
+------------------------
+
+.. automodule:: helpers.backtrace
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.command module
 ----------------------
 
@@ -64,6 +72,14 @@ helpers.geoip module
 --------------------
 
 .. automodule:: helpers.geoip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+helpers.handler module
+----------------------
+
+.. automodule:: helpers.handler
     :members:
     :undoc-members:
     :show-inheritance:
@@ -116,6 +132,14 @@ helpers.reddit module
     :undoc-members:
     :show-inheritance:
 
+helpers.reloader module
+-----------------------
+
+.. automodule:: helpers.reloader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.server module
 ---------------------
 
@@ -136,14 +160,6 @@ helpers.textutils module
 ------------------------
 
 .. automodule:: helpers.textutils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-helpers.traceback module
-------------------------
-
-.. automodule:: helpers.traceback
     :members:
     :undoc-members:
     :show-inheritance:

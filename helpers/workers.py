@@ -21,9 +21,7 @@ import concurrent.futures
 import logging
 from collections import namedtuple
 from threading import Timer
-from .traceback import handle_traceback
-from .babble import update_markov
-from .control import show_pending
+from . import backtrace, babble, control
 from .orm import Babble_last, Log
 from sqlalchemy import or_
 
@@ -72,7 +70,7 @@ class Workers():
             func(*args)
         except Exception as ex:
             ctrlchan = self.handler.config['core']['ctrlchan']
-            handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
+            backtrace.handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
 
     def defer(self, t, run_on_cancel, func, *args):
         event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
@@ -123,7 +121,7 @@ class Workers():
         self.defer(3600, False, self.handle_pending, handler, send)
         admins = ": ".join(handler.admins)
         with handler.db.session_scope() as session:
-            show_pending(session, admins, send, True)
+            control.show_pending(session, admins, send, True)
 
     def check_babble(self, handler, send):
         # Re-schedule check_babble
@@ -132,7 +130,7 @@ class Workers():
         ctrlchan = handler.config['core']['ctrlchan']
         with handler.db.session_scope() as session:
             # If we don't actually update anything, don't bother checking the last row.
-            if not update_markov(session, handler.config):
+            if not babble.update_markov(session, handler.config):
                 return
             last = session.query(Babble_last).first()
             row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
