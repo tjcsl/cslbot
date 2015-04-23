@@ -64,14 +64,12 @@ class IrcBot(bot.SingleServerIRCBot):
 
         if botconfig['feature'].getboolean('server'):
             self.server = server.init_server(self)
-        # properly log quits.
-        self.connection.add_global_handler("quit", self.handle_quit, -21)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
 
     def handle_event(self, c, e):
-        handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'disconnect', 'error', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nick', 'part', 'privmsg', 'privnotice', 'pubmsg', 'welcome']
+        handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
+                         'mode', 'nicknameinuse', 'nick', 'part', 'privmsg', 'privnotice', 'pubmsg', 'quit', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return
@@ -101,30 +99,22 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return e.source.nick
 
-    def handle_quit(self, _, e):
-        """Log quits."""
-        for channel in misc.get_channels(self.channels, e.source.nick):
-            self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
-
-    def kill(self):
-        """ forcibly kills everything """
-        if hasattr(self, 'handler'):
-            self.handler.kill()
-        self.shutdown_server()
-
     def shutdown_server(self):
         if hasattr(self, 'server'):
             self.server.socket.close()
             self.server.shutdown()
 
-    def shutdown_workers(self):
+    def shutdown_workers(self, clean):
         if hasattr(self, 'handler'):
-            self.handler.workers.stop_workers()
+            self.handler.workers.stop_workers(clean)
 
-    def shutdown_mp(self):
-        """ Shutdown all the multiprocessing that we know about."""
+    def shutdown_mp(self, clean=True):
+        """ Shutdown all the multiprocessing.
+
+        :param bool clean: Whether to shutdown things cleanly, or force a quick and dirty shutdown.
+        """
         self.shutdown_server()
-        self.shutdown_workers()
+        self.shutdown_workers(clean)
 
     def do_rejoin(self, c, e):
         if e.arguments[0] in self.channels:
@@ -176,10 +166,15 @@ class IrcBot(bot.SingleServerIRCBot):
                 misc.ping(c, e, time.time())
         elif e.type == 'error':
             logging.error(e.target)
-        elif e.type == 'disconnect':
-            # Don't kill everything if we just ping timed-out
-            if e.arguments[0] == 'Goodbye, Cruel World!':
+        elif e.type == 'quit':
+            # Log quits.
+            for channel in misc.get_channels(self.channels, e.source.nick):
+                self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
+            # If we're the one quiting, shut things down cleanly.
+            if e.source.nick == self.connection.real_nickname:
+                # FIXME: If this hangs or takes more then 5 seconds, we'll just reconnect.
                 self.shutdown_mp()
+                sys.exit(0)
         else:
             raise Exception('Un-handled event type %s' % e.type)
 
@@ -214,15 +209,11 @@ class IrcBot(bot.SingleServerIRCBot):
                 self.reload_event.clear()
 
 
-def main(args):
+def main():
     """The bot's main entry point.
 
-    | Setup logging.
-    | When troubleshooting startup, it may help to change the INFO to DEBUG.
     | Initialize the bot and start processing messages.
     """
-    loglevel = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(level=loglevel)
     config_file = path.join(path.dirname(__file__), 'config.cfg')
     if not path.exists(config_file):
         logging.info("Setting up config file")
@@ -235,11 +226,11 @@ def main(args):
     try:
         bot.start()
     except KeyboardInterrupt:
-        # keyboard interrupt means someone tried to ^C, shut down the bot
-        bot.kill()
+        # KeyboardInterrupt means someone tried to ^C, so shut down the bot
+        bot.shutdown_mp()
         sys.exit(0)
     except Exception as e:
-        bot.kill()
+        bot.shutdown_mp(False)
         logging.error("The bot died! %s" % e)
         output = "".join(traceback.format_exc())
         for line in output.split('\n'):
@@ -250,5 +241,7 @@ if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
-    parser_args = parser.parse_args()
-    main(parser_args)
+    args = parser.parse_args()
+    loglevel = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(level=loglevel)
+    main()

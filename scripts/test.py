@@ -48,8 +48,7 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.bot.shutdown_server()
-        cls.bot.shutdown_workers()
+        cls.bot.shutdown_mp()
 
     @classmethod
     def setup_handler(cls):
@@ -67,8 +66,7 @@ class BotTest(unittest.TestCase):
 
     def restart_workers(self):
         """Force all the workers to restart so we get the log message."""
-        self.bot.shutdown_server()
-        self.bot.shutdown_workers()
+        self.bot.shutdown_mp()
         self.bot.handler.workers.__init__(self.bot.handler)
         server_mod = importlib.import_module('helpers.server')
         self.bot.server = server_mod.init_server(self.bot)

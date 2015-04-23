@@ -339,12 +339,6 @@ class BotHandler():
                 raise Exception("Invalid Argument: %s" % arg)
         return realargs
 
-    def shutdown(self):
-        """ Cleanly shut ourself down """
-        self.send(self.config['core']['ctrlchan'], self.connection.real_nickname, 'Please ^C me, I won\'t die all the way =(', 'privmsg')
-        self.connection.disconnect('Goodbye, Cruel World!')
-        self.workers.stop_workers()
-
     def do_welcome(self, bot):
         """Do setup when connected to server.
 
@@ -362,10 +356,6 @@ class BotHandler():
             # Delay joining extra channels to prevent excess flood.
             for i in range(len(extrachans)):
                 self.workers.defer(i, False, self.connection.join, extrachans[i])
-
-    def kill(self):
-        """ Forcibly kill ourself """
-        self.workers.kill_workers()
 
     def is_ignored(self, nick):
         return nick in self.ignored

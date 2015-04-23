@@ -22,4 +22,5 @@ def cmd(send, msg, args):
     """Makes the bot disconnect and shut off
     Syntax: {command}
     """
-    args['handler'].shutdown()
+    # We can't actually shutdown the bot here, because this command is executing on one of the worker threads.
+    args['handler'].connection.quit('Goodbye, Cruel World!')
