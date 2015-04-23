@@ -46,7 +46,7 @@ class IrcBot(bot.SingleServerIRCBot):
         passwd = None if botconfig.getboolean('core', 'sasl') else botconfig['auth']['serverpass']
         serverinfo = bot.ServerSpec(botconfig['core']['host'], botconfig.getint('core', 'ircport'), passwd)
         nick = botconfig['core']['nick']
-        super().__init__([serverinfo], nick, nick, connect_factory=factory)
+        super().__init__([serverinfo], nick, nick, connect_factory=factory, reconnection_interval=5)
         # This does the magic when everything else is dead
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
         self.connection.add_global_handler("all_events", self.handle_event, 10)
