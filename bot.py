@@ -50,6 +50,8 @@ class IrcBot(bot.SingleServerIRCBot):
         # This does the magic when everything else is dead
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
         self.connection.add_global_handler("all_events", self.handle_event, 10)
+        # We need to get the channels that a nick is currently in before the regular quit event is processed.
+        self.connection.add_global_handler("quit", self.handle_quit, -21)
         if passwd is None:
             # FIXME: make this less hacky
             self.reactor._on_connect = self.do_sasl
@@ -69,7 +71,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def handle_event(self, c, e):
         handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nick', 'part', 'privmsg', 'privnotice', 'pubmsg', 'quit', 'welcome']
+                         'mode', 'nicknameinuse', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'quit', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return
@@ -122,13 +124,18 @@ class IrcBot(bot.SingleServerIRCBot):
         # If we're still banned, this will trigger a bannedfromchan event so we'll try again.
         c.join(e.arguments[0])
 
+    def handle_quit(self, _, e):
+        # Log quits.
+        for channel in misc.get_channels(self.channels, e.source.nick):
+            self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
+
     def handle_msg(self, c, e):
         """Handles all messages.
 
         | If a exception is thrown, catch it and display a nice traceback instead of crashing.
         | Do the appropriate processing for each event type.
         """
-        if e.type in ['pubmsg', 'privmsg', 'action', 'privnotice', 'mode', 'join', 'part', 'kick']:
+        if e.type in ['pubmsg', 'privmsg', 'action', 'privnotice', 'pubnotice', 'mode', 'join', 'part', 'kick']:
             try:
                 self.handler.handle_msg(e.type, c, e)
             except Exception as ex:
@@ -167,9 +174,6 @@ class IrcBot(bot.SingleServerIRCBot):
         elif e.type == 'error':
             logging.error(e.target)
         elif e.type == 'quit':
-            # Log quits.
-            for channel in misc.get_channels(self.channels, e.source.nick):
-                self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
             # If we're the one quiting, shut things down cleanly.
             if e.source.nick == self.connection.real_nickname:
                 # FIXME: If this hangs or takes more then 5 seconds, we'll just reconnect.

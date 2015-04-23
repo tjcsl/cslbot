@@ -194,9 +194,6 @@ class BotHandler():
 
         | Logs to a sql db.
         """
-        # We don't log NickServ auth calls.
-        if msgtype == 'privnotice':
-            return
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
@@ -363,16 +360,21 @@ class BotHandler():
     def handle_msg(self, msgtype, c, e):
         """The Heart and Soul of IrcBot."""
 
-        nick = e.source.nick
-
-        # modes have separate arguments, everything else just one
-        if msgtype == 'mode' or msgtype == 'nick' or msgtype == 'join':
-            msg = " ".join(e.arguments)
+        if msgtype not in ['join', 'part', 'quit']:
+            nick = e.source.nick
         else:
+            nick = e.source
+
+        # kick has multiple arguments.
+        if msgtype == 'kick':
+            msg = " ".join(e.arguments).strip()
+        elif e.arguments:
             msg = e.arguments[0].strip()
+        else:  # join and nick don't have any arguments.
+            msg = ""
 
         # ignore empty messages
-        if not msg:
+        if not msg and msgtype in ['privmsg', 'pubmsg', 'privnotice', 'pubnotice']:
             return
 
         # Send the response to private messages to the sending nick.
@@ -388,16 +390,14 @@ class BotHandler():
             # FIXME: come up with a better way to prevent admin abuse.
             if nick == 'NickServ':
                 admin.set_admin(msg, self)
-            return
-
-        if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
-            for h in hook.get_hook_objects():
-                realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
-                h.run(send, msg, msgtype, self, target, realargs)
+                return
+            # Don't bother logging all the server messages before we get the welcome event.
+            elif self.channels is None:
+                return
 
         if msgtype == 'nick':
             if self.config['feature'].getboolean('nickserv') and e.target in self.admins:
-                c.send_raw('NS ACC %s' % e.target)
+                c.privmsg('NickServ', 'ACC %s' % e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
@@ -406,6 +406,11 @@ class BotHandler():
         # must come after set_admin to prevent spam from all the NickServ ACC responses
         # We log nick changes in bot.py so that they show up for all channels.
         self.do_log(target, nick, msg, msgtype)
+
+        if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
+            for h in hook.get_hook_objects():
+                realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
+                h.run(send, msg, msgtype, self, target, realargs)
 
         if msgtype == 'mode':
             self.do_mode(target, msg, nick, send)

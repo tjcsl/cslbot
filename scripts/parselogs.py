@@ -45,17 +45,18 @@ def save_id(outdir, new_id):
     if not exists(outdir):
         makedirs(outdir)
     with open('%s/.dbid' % outdir, 'w') as f:
-        f.write(str(new_id))
+        f.write(str(new_id) + '\n')
 
 
 def write_log(name, outdir, msg):
     if name not in logs:
         outfile = "%s/%s.log" % (outdir, name)
         logs[name] = open(outfile, 'a')
-    logs[name].write(msg)
+    logs[name].write(msg + '\n')
 
 
 def check_day(row, outdir, name):
+    # FIXME: don't use a global variable.
     global day
     time = localtime(row.time)
     rowday = strftime('%d', time)
@@ -64,7 +65,7 @@ def check_day(row, outdir, name):
         return
     if day != rowday:
         day = rowday
-        log = strftime('New Day: %a, %b %d, %Y\n', time)
+        log = strftime('New Day: %a, %b %d, %Y', time)
         write_log(name, outdir, log)
 
 
@@ -72,28 +73,30 @@ def gen_log(row):
     logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
     nick = row.source.split('!')[0]
     if row.type == 'join':
-        log = '%s --> %s (%s) has joined %s\n' % (logtime, nick, row.source, row.msg)
+        log = '%s --> %s (%s) has joined %s' % (logtime, nick, row.source, row.target)
     elif row.type == 'part':
-        log = '%s <-- %s (%s) has left %s\n' % (logtime, nick, row.source, row.msg)
+        log = '%s <-- %s (%s) has left %s' % (logtime, nick, row.source, row.target)
+        if row.msg:
+            log = "%s (%s)" % (log, row.msg)
     elif row.type == 'quit':
-        log = '%s <-- %s (%s) has quit (%s)\n' % (logtime, nick, row.source, row.msg)
+        log = '%s <-- %s (%s) has quit (%s)' % (logtime, nick, row.source, row.msg)
     elif row.type == 'kick':
-        args = row.msg.split(',')
-        log = '%s <-- %s has kicked %s (%s)\n' % (logtime, nick, args[0], args[1])
+        args = row.msg.split()
+        log = '%s <-- %s has kicked %s (%s)' % (logtime, nick, args[0], " ".join(args[1:]))
     elif row.type == 'action':
-        log = '%s * %s %s\n' % (logtime, nick, row.msg)
+        log = '%s * %s %s' % (logtime, nick, row.msg)
     elif row.type == 'mode':
-        log = '%s Mode %s [%s] by %s\n' % (logtime, row.target, row.msg, nick)
+        log = '%s Mode %s [%s] by %s' % (logtime, row.target, row.msg, nick)
     elif row.type == 'nick':
-        log = '%s -- %s is now know as %s\n' % (logtime, nick, row.msg)
-    elif row.type == 'pubnotice':
-        log = '%s Notice(%s): %s\n' % (logtime, nick, row.msg)
-    elif row.type == 'privmsg' or row.type == 'pubmsg':
+        log = '%s -- %s is now known as %s' % (logtime, nick, row.msg)
+    elif row.type in ['pubnotice', 'privnotice']:
+        log = '%s Notice(%s): %s' % (logtime, nick, row.msg)
+    elif row.type in ['privmsg', 'pubmsg']:
         if bool(row.flags & 1):
             nick = '@' + nick
         if bool(row.flags & 2):
             nick = '+' + nick
-        log = '%s <%s> %s\n' % (logtime, nick, row.msg)
+        log = '%s <%s> %s' % (logtime, nick, row.msg)
     else:
         raise Exception("Invalid type %s." % row.type)
     return log
