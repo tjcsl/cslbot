@@ -227,6 +227,7 @@ def main():
         bot.start()
     except KeyboardInterrupt:
         # KeyboardInterrupt means someone tried to ^C, so shut down the bot
+        bot.disconnect('Bot received a Ctrl-C')
         bot.shutdown_mp()
         sys.exit(0)
     except Exception as e:
