@@ -26,8 +26,6 @@ from urllib.parse import unquote
 from requests import post, get
 from requests.exceptions import ReadTimeout
 
-_pinglist = {}
-
 
 def parse_time(time):
     time, unit = time[:-1], time[-1].lower()
@@ -69,15 +67,10 @@ def do_nuke(c, nick, target, channel):
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
-# FIXME: there has to be a better way to do this.
-def recordping(nick, channel):
-    _pinglist[nick] = channel
-
-
-def ping(c, e, pongtime):
+def ping(ping_map, c, e, pongtime):
     if e.arguments[1] == 'No such nick/channel':
         nick = e.arguments[0]
-        target = _pinglist.pop(nick) if nick in _pinglist else nick
+        target = ping_map.pop(nick) if nick in ping_map else nick
         c.privmsg(target, "%s: %s" % (e.arguments[1], e.arguments[0]))
         return
     nick = e.source.split('!')[0]
@@ -88,7 +81,7 @@ def ping(c, e, pongtime):
         elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
     except ValueError:
         elapsed = response
-    target = _pinglist.pop(nick) if nick in _pinglist else nick
+    target = ping_map.pop(nick) if nick in ping_map else nick
     c.privmsg(target, "CTCP reply from %s: %s" % (nick, elapsed))
 
 

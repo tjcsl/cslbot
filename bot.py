@@ -30,7 +30,6 @@ import random
 import ssl
 import subprocess
 import threading
-import time
 import traceback
 from os import path
 from irc import bot, connection
@@ -60,6 +59,7 @@ class IrcBot(bot.SingleServerIRCBot):
         self.handler = handler.BotHandler(botconfig)
         if not reloader.load_modules(botconfig):
             # The initial load of commands/hooks failed, so bail out.
+            self.shutdown_mp(False)
             sys.exit(1)
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
@@ -139,7 +139,7 @@ class IrcBot(bot.SingleServerIRCBot):
         | If a exception is thrown, catch it and display a nice traceback instead of crashing.
         | Do the appropriate processing for each event type.
         """
-        if e.type in ['pubmsg', 'privmsg', 'action', 'privnotice', 'pubnotice', 'mode', 'join', 'part', 'kick']:
+        if e.type in ['pubmsg', 'privmsg', 'action', 'privnotice', 'pubnotice', 'mode', 'join', 'part', 'kick', 'ctcpreply', 'nosuchnick']:
             try:
                 self.handler.handle_msg(e.type, c, e)
             except Exception as ex:
@@ -171,10 +171,6 @@ class IrcBot(bot.SingleServerIRCBot):
             self.handler.handle_msg('nick', c, e)
         elif e.type == 'bannedfromchan':
             self.handler.workers.defer(5, False, self.do_rejoin, c, e)
-        elif e.type in ['ctcpreply', 'nosuchnick']:
-            # FIXME: make this less hacky.
-            if len(e.arguments) == 2:
-                misc.ping(c, e, time.time())
         elif e.type == 'error':
             logging.error(e.target)
         elif e.type == 'quit':

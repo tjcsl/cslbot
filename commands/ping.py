@@ -17,7 +17,6 @@
 import re
 import subprocess
 from time import time
-from helpers.misc import recordping
 from helpers.command import Command
 
 
@@ -40,8 +39,8 @@ def cmd(send, msg, args):
             if not re.match(args['config']['core']['nickregex'], target):
                     send("Invalid nick %s" % target)
             else:
+                args['handler'].ping_map[target] = channel
                 args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
-                recordping(target, channel)
         return
     try:
         answer = subprocess.check_output([args['name'], '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)

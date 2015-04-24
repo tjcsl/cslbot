@@ -54,6 +54,7 @@ class BotHandler():
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
+        self.ping_map = {}
         self.outputfilter = []
         self.kick_enabled = True
         self.caps = []
@@ -385,6 +386,10 @@ class BotHandler():
 
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
+
+        if e.type in ['ctcpreply', 'nosuchnick']:
+            misc.ping(self.ping_map, c, e, time.time())
+            return
 
         if msgtype == 'privnotice':
             # FIXME: come up with a better way to prevent admin abuse.
