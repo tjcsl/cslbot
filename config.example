@@ -27,6 +27,8 @@ admins: admin1, admin2
 [db]
 engine:
 geoip: static/geoip.db
+[alembic]
+script_location: alembic
 [feature]
 nickserv: True
 server: True

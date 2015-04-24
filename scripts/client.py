@@ -15,9 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import configparser
 import logging
 import sys
-from configparser import ConfigParser
 from irc.client import SimpleIRCClient
 
 
@@ -68,12 +68,12 @@ class IrcClient(SimpleIRCClient):
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    config = ConfigParser()
-    config.read_file(open('config.cfg'))
-    PORT = 6667
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open('config.cfg') as f:
+        config.read_file(f)
     CTRLNICK = "bot-controller"
     client = IrcClient(CTRLNICK, config)
-    client.connect(config['core']['host'], PORT, CTRLNICK, config['auth']['ctrlpass'])
+    client.connect(config['core']['host'], config['core']['serverport'], CTRLNICK, config['auth']['ctrlpass'])
     client.start()
 
 if __name__ == '__main__':

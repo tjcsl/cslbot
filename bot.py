@@ -223,7 +223,7 @@ def main():
         logging.info("Setting up config file")
         config.do_setup(config_file)
         return
-    botconfig = configparser.ConfigParser()
+    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(config_file) as f:
         botconfig.read_file(f)
     bot = IrcBot(botconfig)

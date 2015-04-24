@@ -17,16 +17,16 @@
 
 import argparse
 import collections
+import configparser
 from time import strftime, mktime
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
-from os.path import dirname, exists
+from os.path import dirname, exists, join
 from os import mkdir
 from sys import path
-from configparser import ConfigParser
 
 # FIXME: hack to allow sibling imports
-path.append(dirname(__file__) + '/..')
+path.append(join(dirname(__file__), '..'))
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
 from helpers.sql import get_session
@@ -90,13 +90,15 @@ def get_winners(polls, responses):
 def output_quotes(env, session, outdir, time):
     args = {'quotes': get_quotes(session), 'time': time}
     output = env.get_template('quotes.html').render(**args)
-    open(outdir + '/quotes.html', 'w', encoding='utf8').write(output)
+    with open('%s/quotes.html' % outdir, 'w', encoding='utf8') as f:
+        f.write(output)
 
 
 def output_scores(env, session, outdir, time):
     args = {'scores': get_scores(session), 'time': time}
     output = env.get_template('scores.html').render(**args)
-    open(outdir + '/scores.html', 'w', encoding='utf8').write(output)
+    with open('%s/scores.html' % outdir, 'w', encoding='utf8') as f:
+        f.write(output)
 
 
 def output_polls(env, session, outdir, time):
@@ -104,19 +106,21 @@ def output_polls(env, session, outdir, time):
     responses = get_responses(session, polls)
     args = {'polls': polls, 'responses': responses, 'winners': get_winners(polls, responses), 'time': time}
     output = env.get_template('polls.html').render(**args)
-    open(outdir + '/polls.html', 'w', encoding='utf8').write(output)
+    with open('%s/polls.html' % outdir, 'w', encoding='utf8') as f:
+        f.write(output)
 
 
 def output_urls(env, session, outdir, time):
     urls = get_urls(session)
     args = {'urls': urls, 'time': time}
     output = env.get_template('urls.html').render(**args)
-    open(outdir + '/urls.html', 'w', encoding='utf8').write(output)
+    with open('%s/urls.html' % outdir, 'w', encoding='utf8') as f:
+        f.write(output)
 
 
 def main(cfg, outdir):
     session = get_session(cfg)()
-    env = Environment(loader=FileSystemLoader(dirname(__file__) + '/../static/templates'))
+    env = Environment(loader=FileSystemLoader(join(dirname(__file__), '../static/templates')))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not exists(outdir):
@@ -129,8 +133,9 @@ def main(cfg, outdir):
 
 
 if __name__ == '__main__':
-    config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/../config.cfg'))
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(dirname(__file__), '../config.cfg')) as f:
+        config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('output', help='The output dir.')
     cmdargs = parser.parse_args()

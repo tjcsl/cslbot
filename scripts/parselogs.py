@@ -16,14 +16,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-from configparser import ConfigParser
+import configparser
 from time import strftime, localtime
-from os.path import dirname, exists
+from os.path import dirname, exists, join
 from os import makedirs
 from sys import path
 
 # FIXME: hack to allow sibling imports
-path.append(dirname(__file__) + '/..')
+path.append(join(dirname(__file__), '..'))
 
 from helpers.orm import Log  # noqa
 from helpers.sql import get_session  # noqa
@@ -118,8 +118,9 @@ def main(cfg, outdir):
 
 
 if __name__ == '__main__':
-    config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/../config.cfg'))
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(dirname(__file__), '../config.cfg')) as f:
+        config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The directory to write logs too.')
     cmdargs = parser.parse_args()

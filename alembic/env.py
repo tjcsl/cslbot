@@ -1,30 +1,25 @@
-from __future__ import with_statement
 from alembic import context
-from sqlalchemy import engine_from_config, pool
-from logging.config import fileConfig
-from sys import path
-from os.path import dirname
-path.append(dirname(__file__) + '/..')
+import configparser
+import sys
+from sqlalchemy import create_engine
+import logging
+from os.path import dirname, join
+# Fix path to import from helpers
+sys.path.append(join(dirname(__file__), '..'))
 from helpers.orm import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+logging.basicConfig(level=logging.INFO)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 
 
 def run_migrations_offline():
@@ -39,7 +34,11 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(dirname(__file__), '../config.cfg')) as f:
+        config.read_file(f)
+    url = config['db']['engine']
+
     context.configure(url=url, target_metadata=target_metadata)
 
     with context.begin_transaction():
@@ -53,11 +52,12 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix='sqlalchemy.',
-        poolclass=pool.NullPool)
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(dirname(__file__), '../config.cfg')) as f:
+        config.read_file(f)
+    url = config['db']['engine']
 
+    connectable = create_engine(url)
     with connectable.connect() as connection:
         context.configure(
             connection=connection,

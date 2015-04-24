@@ -68,7 +68,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
     if not load_modules(bot.config, send):
         return False
 
-    bot.config = configparser.ConfigParser()
+    bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     config_file = path.join(path.dirname(__file__), '../config.cfg')
     with open(config_file) as f:
         bot.config.read_file(f)

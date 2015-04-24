@@ -16,9 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
+import configparser
 import time
-from configparser import ConfigParser
-from os.path import dirname
+from os.path import dirname, join
 from sys import path
 
 # FIXME: hack to allow sibling imports
@@ -44,8 +44,9 @@ def main(cfg, speaker):
 
 
 if __name__ == '__main__':
-    config = ConfigParser()
-    config.read_file(open(dirname(__file__) + '/../config.cfg'))
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(dirname(__file__), '../config.cfg')) as f:
+        config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
     args = parser.parse_args()

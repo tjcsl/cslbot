@@ -16,9 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import configparser
 import re
 from shutil import copyfile
-from configparser import ConfigParser
 
 
 def do_config(config):
@@ -58,7 +58,7 @@ def check_admins(admins, nickregex):
 def do_setup(configfile):
     examplefile = configfile.replace('cfg', 'example')
     copyfile(examplefile, configfile)
-    config = ConfigParser()
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(configfile) as cfgfile:
         config.read_file(cfgfile)
     do_config(config)
