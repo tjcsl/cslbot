@@ -17,6 +17,7 @@
 import subprocess
 from os.path import dirname
 from requests import get
+from helpers import arguments
 from helpers.command import Command
 
 
@@ -25,19 +26,28 @@ def cmd(send, msg, args):
     """Check the git revison.
     Syntax: {command} [check|master]
     """
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('action', choices=['check', 'master', 'commit'], nargs='?')
+
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
     gitdir = dirname(__file__) + "/../.git"
     try:
-        version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'show', '--format=oneline']).decode().split('\n')[0].split(' ')[0]
+        commit = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'rev-parse', 'HEAD']).decode().splitlines()[0]
+        version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode()
     except subprocess.CalledProcessError:
         send("Couldn't get the version.")
-    if not msg:
+    if not cmdargs.action:
         send(version)
         return
-    if msg == 'master':
+    if cmdargs.action == 'master':
         send(apiOutput['commit']['sha'])
-    elif msg == 'check':
-        check = 'Same' if apiOutput['commit']['sha'] == version else 'Different'
+    elif cmdargs.action == 'check':
+        check = 'Same' if apiOutput['commit']['sha'] == commit else 'Different'
         send(check)
-    else:
-        send('Invalid argument')
+    elif cmdargs.action == 'commit':
+        send(commit)

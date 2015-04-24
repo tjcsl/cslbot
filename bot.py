@@ -28,6 +28,7 @@ import multiprocessing
 import queue
 import random
 import ssl
+import subprocess
 import threading
 import time
 import traceback
@@ -85,11 +86,14 @@ class IrcBot(bot.SingleServerIRCBot):
                 self.handle_msg(c, self.event_queue.get_nowait())
             self.handle_msg(c, e)
 
-    @staticmethod
-    def get_version():
+    def get_version(self):
         """Get the version."""
-        # FIXME: don't hard-code
-        return "cslbot - v0.9"
+        gitdir = path.join(path.dirname(__file__), '.git')
+        try:
+            version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode().splitlines()[0]
+            return "cslbot - %s" % version
+        except subprocess.CalledProcessError:
+            return "Can't get the version."
 
     def do_sasl(self, _):
         self.connection.cap('REQ', 'sasl')
