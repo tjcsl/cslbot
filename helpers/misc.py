@@ -78,7 +78,7 @@ def ping(c, e, pongtime):
     if e.arguments[1] == 'No such nick/channel':
         nick = e.arguments[0]
         target = _pinglist.pop(nick) if nick in _pinglist else nick
-        c.privmsg(target, e.arguments[1])
+        c.privmsg(target, "%s: %s" % (e.arguments[1], e.arguments[0]))
         return
     nick = e.source.split('!')[0]
     response = e.arguments[1].replace(' ', '.')

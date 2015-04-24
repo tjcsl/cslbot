@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 import subprocess
 from time import time
 from helpers.misc import recordping
@@ -31,9 +32,16 @@ def cmd(send, msg, args):
     channel = args['target'] if args['target'] != 'private' else args['nick']
     # CTCP PING
     if "." not in msg and ":" not in msg:
-        for target in msg.split():
-            args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
-            recordping(target, channel)
+        targets = set(msg.split())
+        if len(targets) > 3:
+            send("Please specify three or fewer people to ping.")
+            return
+        for target in targets:
+            if not re.match(args['config']['core']['nickregex'], target):
+                    send("Invalid nick %s" % target)
+            else:
+                args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
+                recordping(target, channel)
         return
     try:
         answer = subprocess.check_output([args['name'], '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
