@@ -16,6 +16,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import base64
+import logging
 import re
 import time
 from helpers import arguments
@@ -34,7 +36,7 @@ from random import choice, random
 
 class BotHandler():
 
-    def __init__(self, config):
+    def __init__(self, config, connection, channels):
         """ Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -47,8 +49,8 @@ class BotHandler():
         | srcdir is the path to the directory where the bot is stored.
         | db - Is a db wrapper for data storage.
         """
-        self.connection = None
-        self.channels = None
+        self.connection = connection
+        self.channels = channels
         self.config = config
         self.workers = workers.Workers(self)
         start = time.time()
@@ -337,14 +339,12 @@ class BotHandler():
                 raise Exception("Invalid Argument: %s" % arg)
         return realargs
 
-    def do_welcome(self, bot):
+    def do_welcome(self):
         """Do setup when connected to server.
 
         | Join the primary channel.
         | Join the control channel.
         """
-        self.connection = bot.connection
-        self.channels = bot.channels
         self.get_admins(self.connection)
         self.connection.join(self.config['core']['channel'])
         self.connection.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
@@ -358,80 +358,119 @@ class BotHandler():
     def is_ignored(self, nick):
         return nick in self.ignored
 
-    def handle_msg(self, msgtype, c, e):
+    def get_filtered_send(self, cmdargs, send, target):
+        """Parse out any filters."""
+        parser = arguments.ArgParser(self.config)
+        parser.add_argument('--filter')
+        try:
+            filterargs, remainder = parser.parse_known_args(cmdargs)
+        except arguments.ArgumentException as ex:
+            return str(ex), None
+        cmdargs = ' '.join(remainder)
+        if filterargs.filter is None:
+            return cmdargs, send
+        filter_list, output = misc.append_filters(filterargs.filter)
+        if filter_list is None:
+            return output, None
+
+        # define a new send to handle filter chaining
+        def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
+            self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
+        return cmdargs, filtersend
+
+    def do_rejoin(self, c, e):
+        # If we're still banned, this will trigger a bannedfromchan event so we'll try again.
+        if e.arguments[0] not in self.channels:
+            c.join(e.arguments[0])
+
+    def handle_event(self, msg, send, c, e):
+        passwd = self.config['auth']['serverpass']
+        user = self.config['core']['nick']
+        # The SASL Successful event doesn't have a pretty name.
+        if e.type == '903':
+            if msg == 'SASL authentication successful':
+                self.connection.cap('END')
+        elif e.type == 'authenticate':
+            if e.target == '+':
+                token = base64.b64encode('\0'.join([user, user, passwd]).encode())
+                self.connection.send_raw('AUTHENTICATE %s' % token.decode())
+        elif e.type == 'bannedfromchan':
+            self.workers.defer(5, False, self.do_rejoin, c, e)
+        elif e.type == 'cap':
+            if msg == 'ACK sasl':
+                self.connection.send_raw('AUTHENTICATE PLAIN')
+        elif e.type in ['ctcpreply', 'nosuchnick']:
+            misc.ping(self.ping_map, c, e, time.time())
+        elif e.type == 'error':
+            logging.error(e.target)
+        elif e.type == 'nick':
+            for channel in misc.get_channels(self.channels, e.target):
+                self.do_log(channel, e.source.nick, e.target, 'nick')
+            if self.config.getboolean('feature', 'nickserv') and e.target in self.admins:
+                c.privmsg('NickServ', 'ACC %s' % e.target)
+            if identity.handle_nick(self, e):
+                for x in misc.get_channels(self.channels, e.target):
+                    self.do_kick(send, x, e.target, "identity crisis")
+        elif e.type == 'nicknameinuse':
+            self.connection.nick('Guest%d' % random.getrandbits(20))
+            if self.config.getboolean('feature', 'nickserv'):
+                self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
+            self.workers.defer(5, False, self.do_welcome)
+        elif e.type == 'privnotice':
+            # FIXME: come up with a better way to prevent admin abuse.
+            if e.source.nick == 'NickServ':
+                admin.set_admin(msg, self)
+        elif e.type == 'welcome':
+            logging.info("Connected to server %s", self.config['core']['host'])
+            self.do_welcome()
+
+    def handle_msg(self, c, e):
         """The Heart and Soul of IrcBot."""
 
-        if msgtype not in ['join', 'part', 'quit']:
+        if e.type not in ['authenticate', 'join', 'part', 'quit']:
             nick = e.source.nick
         else:
             nick = e.source
 
-        # kick has multiple arguments.
-        if msgtype == 'kick':
+        # cap and kick have multiple arguments.
+        if e.type in ['cap', 'kick']:
             msg = " ".join(e.arguments).strip()
         elif e.arguments:
             msg = e.arguments[0].strip()
         else:  # join and nick don't have any arguments.
             msg = ""
 
-        # ignore empty messages
-        if not msg and msgtype in ['privmsg', 'pubmsg', 'privnotice', 'pubnotice']:
-            return
-
         # Send the response to private messages to the sending nick.
-        if msgtype == 'privmsg' or msgtype == 'privnotice':
-            target = nick
-        else:
-            target = e.target
+        target = nick if e.type == 'privmsg' else e.target
 
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
-        if e.type in ['ctcpreply', 'nosuchnick']:
-            misc.ping(self.ping_map, c, e, time.time())
+        if e.type in ['903', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
+            self.handle_event(msg, send, c, e)
             return
 
-        if msgtype == 'privnotice':
-            # FIXME: come up with a better way to prevent admin abuse.
-            if nick == 'NickServ':
-                admin.set_admin(msg, self)
-                return
-            # Don't bother logging all the server messages before we get the welcome event.
-            elif self.channels is None:
-                return
-
-        if msgtype == 'nick':
-            if self.config['feature'].getboolean('nickserv') and e.target in self.admins:
-                c.privmsg('NickServ', 'ACC %s' % e.target)
-            if identity.handle_nick(self, e):
-                for x in misc.get_channels(self.channels, e.target):
-                    self.do_kick(send, x, e.target, "identity crisis")
+        # ignore empty messages
+        if not msg and e.type != 'join':
             return
 
-        # must come after set_admin to prevent spam from all the NickServ ACC responses
-        # We log nick changes in bot.py so that they show up for all channels.
-        self.do_log(target, nick, msg, msgtype)
+        self.do_log(target, nick, msg, e.type)
 
-        if self.config['feature'].getboolean('hooks') and not self.is_ignored(nick):
-            for h in hook.get_hook_objects():
-                realargs = self.do_args(h.args, send, nick, target, e.source, h, msgtype)
-                h.run(send, msg, msgtype, self, target, realargs)
-
-        if msgtype == 'mode':
+        if e.type == 'mode':
             self.do_mode(target, msg, nick, send)
             return
 
-        if msgtype == 'join':
+        if e.type == 'join':
             if nick == c.real_nickname:
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
             return
 
-        if msgtype == 'part':
+        if e.type == 'part':
             if nick == c.real_nickname:
                 send("Parted channel %s" % target, target=self.config['core']['ctrlchan'])
             return
 
-        if msgtype == 'kick':
+        if e.type == 'kick':
             if nick == c.real_nickname:
                 send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
                 # Auto-rejoin after 5 seconds.
@@ -444,13 +483,18 @@ class BotHandler():
         if self.is_ignored(nick) and not self.is_admin(None, nick):
             return
 
-        msg = misc.get_cmdchar(self.config, c, msg, msgtype)
+        if self.config['feature'].getboolean('hooks'):
+            for h in hook.get_hook_objects():
+                realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
+                h.run(send, msg, e.type, self, target, realargs)
+
+        msg = misc.get_cmdchar(self.config, c, msg, e.type)
         cmd = msg.split()[0]
         cmdchar = self.config['core']['cmdchar']
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
 
-        # handle !s
         cmdlen = len(cmd) + 1
+        # FIXME: figure out a better way to handle !s
         if cmd.startswith('%ss' % cmdchar):
             # escape special regex chars
             raw_cmdchar = '\\' + cmdchar if re.match(r'[\[\].^$*+?]', cmdchar) else cmdchar
@@ -458,44 +502,25 @@ class BotHandler():
             if match:
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
+
         cmdargs = msg[cmdlen:]
+        cmd_name = cmd[len(cmdchar):]
 
-        if cmd.startswith(cmdchar) and not msgtype == 'action':
-            # parse out any filters
-            parser = arguments.ArgParser(self.config)
-            parser.add_argument('--filter')
-            parsedfilters = None
-            try:
-                parsedfilters, remainder = parser.parse_known_args(cmdargs)
-            except arguments.ArgumentException as ex:
-                send(str(ex))
+        cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
+        if filtersend is None:
+            send(cmdargs)
+            return
+
+        if command.is_registered(cmd_name):
+            cmd_obj = command.get_command(cmd_name)
+            if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                 return
-            cmdargs = ' '.join(remainder)
-            filter_list = []
-            if parsedfilters.filter:
-                for next_filter in parsedfilters.filter.split(','):
-                    if next_filter in textutils.output_filters.keys():
-                        filter_list.append(textutils.output_filters[next_filter])
-                    else:
-                        send("Invalid filter %s." % next_filter)
-                        return
-
-            # define a new send to handle filter chaining
-            def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
-                self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
-
-            cmd_name = cmd[len(cmdchar):]
-
-            if command.is_registered(cmd_name):
-                cmd_obj = command.get_command(cmd_name)
-                if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
-                    return
-                if cmd_obj.requires_admin() and not self.is_admin(send, nick):
-                    send("This command requires admin privileges.")
-                    return
-                args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, msgtype)
-                cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
-            # special commands
-            elif cmd[len(cmdchar):] == 'reload':
-                if nick in admins:
-                    send("Aye Aye Capt'n")
+            if cmd_obj.requires_admin() and not self.is_admin(send, nick):
+                send("This command requires admin privileges.")
+                return
+            args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
+            cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
+        # special commands
+        elif cmd[len(cmdchar):] == 'reload':
+            if nick in admins:
+                send("Aye Aye Capt'n")

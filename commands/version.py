@@ -14,10 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import subprocess
-from os.path import dirname
 from requests import get
-from helpers import arguments
+from helpers import arguments, misc
 from helpers.command import Command
 
 
@@ -35,11 +33,8 @@ def cmd(send, msg, args):
         send(str(e))
         return
     apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
-    gitdir = dirname(__file__) + "/../.git"
-    try:
-        commit = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'rev-parse', 'HEAD']).decode().splitlines()[0]
-        version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode()
-    except subprocess.CalledProcessError:
+    commit, version = misc.get_version()
+    if commit is None:
         send("Couldn't get the version.")
     if not cmdargs.action:
         send(version)

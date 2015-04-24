@@ -20,15 +20,12 @@ if sys.version_info < (3, 4):
     # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
 import argparse
-import base64
 import configparser
 import logging
 import importlib
 import multiprocessing
 import queue
-import random
 import ssl
-import subprocess
 import threading
 import traceback
 from os import path
@@ -56,7 +53,7 @@ class IrcBot(bot.SingleServerIRCBot):
             # FIXME: make this less hacky
             self.reactor._on_connect = self.do_sasl
         self.config = botconfig
-        self.handler = handler.BotHandler(botconfig)
+        self.handler = handler.BotHandler(botconfig, self.connection, self.channels)
         if not reloader.load_modules(botconfig):
             # The initial load of commands/hooks failed, so bail out.
             self.shutdown_mp(False)
@@ -72,7 +69,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def handle_event(self, c, e):
         handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'quit', 'welcome']
+                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return
@@ -88,12 +85,11 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def get_version(self):
         """Get the version."""
-        gitdir = path.join(path.dirname(__file__), '.git')
-        try:
-            version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode().splitlines()[0]
-            return "cslbot - %s" % version
-        except subprocess.CalledProcessError:
+        _, version = misc.get_version()
+        if version is None:
             return "Can't get the version."
+        else:
+            return "cslbot - %s" % version
 
     def do_sasl(self, _):
         self.connection.cap('REQ', 'sasl')
@@ -105,33 +101,27 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return e.source.nick
 
-    def shutdown_server(self):
-        if hasattr(self, 'server'):
-            self.server.socket.close()
-            self.server.shutdown()
-
-    def shutdown_workers(self, clean):
-        if hasattr(self, 'handler'):
-            self.handler.workers.stop_workers(clean)
-
     def shutdown_mp(self, clean=True):
         """ Shutdown all the multiprocessing.
 
         :param bool clean: Whether to shutdown things cleanly, or force a quick and dirty shutdown.
         """
-        self.shutdown_server()
-        self.shutdown_workers(clean)
-
-    def do_rejoin(self, c, e):
-        if e.arguments[0] in self.channels:
-            return
-        # If we're still banned, this will trigger a bannedfromchan event so we'll try again.
-        c.join(e.arguments[0])
+        # The server runs on a worker thread, so we need to shut it down first.
+        if hasattr(self, 'server'):
+            self.server.socket.close()
+            self.server.shutdown()
+        if hasattr(self, 'handler'):
+            self.handler.workers.stop_workers(clean)
 
     def handle_quit(self, _, e):
         # Log quits.
         for channel in misc.get_channels(self.channels, e.source.nick):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
+        # If we're the one quiting, shut things down cleanly.
+        if e.source.nick == self.connection.real_nickname:
+            # FIXME: If this hangs or takes more then 5 seconds, we'll just reconnect.
+            self.shutdown_mp()
+            sys.exit(0)
 
     def handle_msg(self, c, e):
         """Handles all messages.
@@ -139,48 +129,10 @@ class IrcBot(bot.SingleServerIRCBot):
         | If a exception is thrown, catch it and display a nice traceback instead of crashing.
         | Do the appropriate processing for each event type.
         """
-        if e.type in ['pubmsg', 'privmsg', 'action', 'privnotice', 'pubnotice', 'mode', 'join', 'part', 'kick', 'ctcpreply', 'nosuchnick']:
-            try:
-                self.handler.handle_msg(e.type, c, e)
-            except Exception as ex:
-                backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
-        elif e.type == '903':
-            # The SASL Successful event doesn't have a pretty name.
-            if e.arguments[0] == 'SASL authentication successful':
-                self.connection.cap('END')
-        elif e.type == 'cap':
-            if 'ACK sasl' == ' '.join(e.arguments).strip():
-                self.connection.send_raw('AUTHENTICATE PLAIN')
-        elif e.type == 'authenticate':
-            if e.target == '+':
-                passwd = self.config['auth']['serverpass']
-                user = self.config['core']['nick']
-                token = base64.b64encode('\0'.join([user, user, passwd]).encode())
-                self.connection.send_raw('AUTHENTICATE %s' % token.decode())
-        elif e.type == 'nicknameinuse':
-            self.connection.nick('Guest%d' % random.getrandbits(20))
-            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (self.config['core']['nick'], self.config['auth']['serverpass']))
-            self.handler.workers.defer(5, False, self.do_welcome, c)
-        elif e.type == 'welcome':
-            logging.info("Connected to server %s", self.config['core']['host'])
-            self.handler.do_welcome(self)
-        elif e.type == 'nick':
-            # Log nick changes.
-            for channel in misc.get_channels(self.channels, e.target):
-                self.handler.do_log(channel, e.source.nick, e.target, 'nick')
-            self.handler.handle_msg('nick', c, e)
-        elif e.type == 'bannedfromchan':
-            self.handler.workers.defer(5, False, self.do_rejoin, c, e)
-        elif e.type == 'error':
-            logging.error(e.target)
-        elif e.type == 'quit':
-            # If we're the one quiting, shut things down cleanly.
-            if e.source.nick == self.connection.real_nickname:
-                # FIXME: If this hangs or takes more then 5 seconds, we'll just reconnect.
-                self.shutdown_mp()
-                sys.exit(0)
-        else:
-            raise Exception('Un-handled event type %s' % e.type)
+        try:
+            self.handler.handle_msg(c, e)
+        except Exception as ex:
+            backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
     def is_reload(self, e):
         cmd = e.arguments[0].strip()
@@ -234,9 +186,9 @@ def main():
         bot.disconnect('Bot received a Ctrl-C')
         bot.shutdown_mp()
         sys.exit(0)
-    except Exception as e:
+    except Exception as ex:
         bot.shutdown_mp(False)
-        logging.error("The bot died! %s" % e)
+        logging.error("The bot died! %s" % ex)
         output = "".join(traceback.format_exc())
         for line in output.split('\n'):
             logging.error(line)

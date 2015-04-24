@@ -19,12 +19,14 @@
 import json
 import subprocess
 import re
+from os.path import dirname, join
 from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from requests import post, get
 from requests.exceptions import ReadTimeout
+from . import textutils
 
 
 def parse_time(time):
@@ -196,6 +198,26 @@ def get_urban_definition(msg):
         output = data[int(index) - 1]['definition']
     output = output.splitlines()
     return ' '.join(output).strip()
+
+
+def get_version():
+    gitdir = join(dirname(__file__), "../.git")
+    try:
+        commit = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'rev-parse', 'HEAD']).decode().splitlines()[0]
+        version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode().splitlines()[0]
+        return commit, version
+    except subprocess.CalledProcessError:
+        return None, None
+
+
+def append_filters(filters):
+    filter_list = []
+    for next_filter in filters.split(','):
+        if next_filter in textutils.output_filters.keys():
+            filter_list.append(textutils.output_filters[next_filter])
+        else:
+            return None, "Invalid filter %s." % next_filter
+    return filter_list, "Okay!"
 
 
 def create_issue(title, desc, nick, repo, apikey):

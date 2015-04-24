@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers.command import Command
-from helpers import arguments, textutils
+from helpers import arguments, misc, textutils
 
 
 def get_filters(handler):
@@ -23,17 +23,6 @@ def get_filters(handler):
     if not names:
         names = ['passthrough']
     return "Current filter(s): %s" % ", ".join(names)
-
-
-def append_filters(handler, filters):
-    filter_list = []
-    for next_filter in filters.split(','):
-        if next_filter in textutils.output_filters.keys():
-            filter_list.append(textutils.output_filters[next_filter])
-        else:
-            return "Invalid filter %s." % next_filter
-    handler.outputfilter.extend(filter_list)
-    return "Okay!"
 
 
 @Command('filter', ['config', 'handler', 'is_admin', 'nick', 'type'])
@@ -68,12 +57,18 @@ def cmd(send, msg, args):
         if not args['handler'].outputfilter:
             send("Must have a filter set in order to chain.")
             return
-        send(append_filters(args['handler'], cmdargs.chain))
+        filter_list, output = misc.append_filters(cmdargs.chain)
+        if filter_list is not None:
+            args['handler'].outputfilter.extend(filter_list)
+        send(output)
     elif cmdargs.show:
         send(get_filters(args['handler']))
     elif isadmin:
         # If we're just adding a filter without chain, blow away any existing filters.
-        args['handler'].outputfilter.clear()
-        send(append_filters(args['handler'], msg))
+        filter_list, output = misc.append_filters(cmdargs.filter)
+        if filter_list is not None:
+            args['handler'].outputfilter.clear()
+            args['handler'].outputfilter.extend(filter_list)
+        send(output)
     else:
         send('This command requires admin privileges.')
