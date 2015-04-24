@@ -65,11 +65,16 @@ class DateParser(argparse.Action):
 class ArgParser(argparse.ArgumentParser):
 
     def __init__(self, config=None, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(add_help=False, **kwargs)
         self.namespace = argparse.Namespace()
         self.namespace.config = config
 
     def error(self, message):
+        raise ArgumentException(message)
+
+    def exit(self, status=0, message=None):
+        if message is None:
+            message = "argparse exited with status %d." % status
         raise ArgumentException(message)
 
     def parse_args(self, msg):
