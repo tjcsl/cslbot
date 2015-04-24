@@ -71,7 +71,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def handle_event(self, c, e):
         handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'quit', 'welcome']
+                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'quit', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return
@@ -167,7 +167,7 @@ class IrcBot(bot.SingleServerIRCBot):
             self.handler.handle_msg('nick', c, e)
         elif e.type == 'bannedfromchan':
             self.handler.workers.defer(5, False, self.do_rejoin, c, e)
-        elif e.type == 'ctcpreply':
+        elif e.type in ['ctcpreply', 'nosuchnick']:
             # FIXME: make this less hacky.
             if len(e.arguments) == 2:
                 misc.ping(c, e, time.time())

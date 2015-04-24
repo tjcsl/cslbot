@@ -31,8 +31,9 @@ def cmd(send, msg, args):
     channel = args['target'] if args['target'] != 'private' else args['nick']
     # CTCP PING
     if "." not in msg and ":" not in msg:
-        args['handler'].connection.ctcp("PING", msg, " ".join(str(time()).split('.')))
-        recordping(msg, channel)
+        for target in msg.split():
+            args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
+            recordping(target, channel)
         return
     try:
         answer = subprocess.check_output([args['name'], '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)

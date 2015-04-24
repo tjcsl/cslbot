@@ -71,24 +71,25 @@ def do_nuke(c, nick, target, channel):
 
 # FIXME: there has to be a better way to do this.
 def recordping(nick, channel):
-    global _pinglist
     _pinglist[nick] = channel
 
 
 def ping(c, e, pongtime):
-    global _pinglist
-    response = e.arguments[1].replace(' ', '.')
+    if e.arguments[1] == 'No such nick/channel':
+        nick = e.arguments[0]
+        target = _pinglist.pop(nick) if nick in _pinglist else nick
+        c.privmsg(target, e.arguments[1])
+        return
     nick = e.source.split('!')[0]
+    response = e.arguments[1].replace(' ', '.')
     try:
         pingtime = float(response)
         delta = timedelta(seconds=pongtime - pingtime)
         elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
     except ValueError:
         elapsed = response
-    if nick in _pinglist:
-        c.privmsg(_pinglist.pop(nick), "CTCP reply from %s: %s" % (nick, elapsed))
-    else:
-        c.privmsg(nick, "CTCP reply from %s: %s" % (nick, elapsed))
+    target = _pinglist.pop(nick) if nick in _pinglist else nick
+    c.privmsg(target, "CTCP reply from %s: %s" % (nick, elapsed))
 
 
 def get_channels(chanlist, nick):
