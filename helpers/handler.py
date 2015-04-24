@@ -504,7 +504,7 @@ class BotHandler():
                 cmdlen = len(cmd)
 
         cmdargs = msg[cmdlen:]
-        cmd_name = cmd[len(cmdchar):]
+        cmd_name = cmd[len(cmdchar):] if cmd.startswith(cmdchar) else None
 
         cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
         if filtersend is None:
