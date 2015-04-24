@@ -68,13 +68,13 @@ def cmd(send, msg, args):
             send("There are %d open issues, here's one." % num_issues)
             send("#%d -- %s -- %s" % (issue['number'], issue['title'], issue['html_url']))
     elif cmdargs.title and args['is_admin'](args['nick']):
-        url, success = create_issue(cmdargs.title, cmdargs.desc, args['source'], repo, apikey)
+        url, success = create_issue(cmdargs.title, cmdargs.description, args['source'], repo, apikey)
         if success:
             send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.description))
         else:
             send("Error creating issue: %s" % url)
     elif cmdargs.title:
-        row = Issues(title=cmdargs.title, description=cmdargs.desc, source=args['source'])
+        row = Issues(title=cmdargs.title, description=cmdargs.description, source=args['source'])
         args['db'].add(row)
         args['db'].flush()
         send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.description, args['nick']), target=args['config']['core']['ctrlchan'])
