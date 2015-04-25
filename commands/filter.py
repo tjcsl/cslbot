@@ -38,7 +38,8 @@ def cmd(send, msg, args):
         "reverse": textutils.reverse,
         "lenny": textutils.gen_lenny,
         "yoda": textutils.gen_yoda,
-        "gizoogle": textutils.gen_gizoogle
+        "gizoogle": textutils.gen_gizoogle,
+        "cloud": textutils.gen_cloud
     }
     if args['type'] == 'privmsg':
         send('Ahamilto wants to know all about your doings!')

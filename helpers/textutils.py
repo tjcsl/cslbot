@@ -215,3 +215,7 @@ def reverse(msg):
 
 def gen_lenny(msg):
     return "%s ( ͡° ͜ʖ ͡°)" % msg
+
+def gen_cloud(msg):
+    pattern = re.compile("cloud", re.IGNORECASE)
+    return pattern.sub("butt", msg)
