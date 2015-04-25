@@ -14,9 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import choice, randint
 from helpers.command import Command
-from helpers.textutils import gen_word
+from helpers.textutils import gen_shibe
 
 
 @Command('shibe')
@@ -24,15 +23,4 @@ def cmd(send, msg, _):
     """Generates a shibe reaction.
     Syntax: {command} [topic1]...[topicn]
     """
-    topics = msg.split() if msg else [gen_word()]
-
-    reaction = 'wow'
-    adverbs = ['so', 'such', 'very', 'much', 'many']
-    for i in topics:
-        reaction += ' %s %s' % (choice(adverbs), i)
-
-    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe', 'ooh']
-    for i in range(randint(1, 2)):
-        reaction += ' %s' % choice(quotes)
-    reaction += ' wow'
-    send(reaction)
+    send(gen_shibe(msg))

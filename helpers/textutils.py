@@ -23,7 +23,7 @@ from os.path import dirname
 from requests import get, post
 from lxml.html import fromstring, tostring
 from html import escape, unescape
-from random import random, choice, randrange
+from random import random, choice, randrange, randint
 
 slogan_cache = []
 
@@ -224,6 +224,21 @@ def reverse(msg):
 def gen_lenny(msg):
     return "%s ( ͡° ͜ʖ ͡°)" % msg
 
+
+def gen_shibe(msg):
+    topics = msg.split() if msg else [gen_word()]
+
+    reaction = 'wow'
+    adverbs = ['so', 'such', 'very', 'much', 'many']
+    for i in topics:
+        reaction += ' %s %s' % (choice(adverbs), i)
+
+    quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe', 'ooh']
+    for i in range(randint(1, 2)):
+        reaction += ' %s' % choice(quotes)
+    reaction += ' wow'
+    return reaction
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
@@ -241,5 +256,6 @@ output_filters = {
     "yoda": gen_yoda,
     "gizoogle": gen_gizoogle,
     "shakespeare": gen_shakespeare,
-    "bard": gen_shakespeare
+    "bard": gen_shakespeare,
+    "shibe": gen_shibe
 }
