@@ -14,11 +14,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from helpers import arguments
+from helpers import arguments, misc
+from helpers.orm import Ignore
 from helpers.command import Command
 
 
-@Command('ignore', ['config', 'handler'], admin=True)
+@Command('ignore', ['config', 'db'], admin=True)
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
     Syntax: {command} <--clear|--show/--list|--delete|nick>
@@ -34,23 +35,27 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
+    session = args['db']
     if cmdargs.clear:
-        args['handler'].ignored.clear()
+        session.query(Ignore).delete()
         send("Ignore list cleared.")
     elif cmdargs.show:
-        if args['handler'].ignored:
-            send(", ".join(args['handler'].ignored))
+        ignored = session.query(Ignore).all()
+        if ignored:
+            send(", ".join([x.nick for x in ignored]))
         else:
             send("Nobody is ignored.")
     elif cmdargs.delete:
         if not cmdargs.nick:
             send("Unignore who?")
-        elif cmdargs.nick not in args['handler'].ignored:
-            send("%s is not ignored." % cmdargs.nick)
         else:
-            args['handler'].ignored.remove(cmdargs.nick)
-            send("%s is no longer ignored." % cmdargs.nick)
+            row = session.query(Ignore).filter(Ignore.nick == cmdargs.nick).first()
+            if row is None:
+                send("%s is not ignored." % cmdargs.nick)
+            else:
+                session.delete(row)
+                send("%s is no longer ignored." % cmdargs.nick)
     elif cmdargs.nick:
-        args['handler'].ignore(send, cmdargs.nick)
+        send(misc.ignore(session, cmdargs.nick))
     else:
         send("Ignore who?")

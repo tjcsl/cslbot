@@ -15,10 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from helpers import arguments
+from helpers.orm import Ignore
 from helpers.command import Command
 
 
-@Command('abuse', ['config', 'handler'], admin=True)
+@Command('abuse', ['config', 'db', 'handler'], admin=True)
 def cmd(send, msg, args):
     """Shows or clears the abuse list
     Syntax: {command} <--clear|--show>
@@ -36,7 +37,10 @@ def cmd(send, msg, args):
         args['handler'].abuselist.clear()
         send("Abuse list cleared.")
     elif cmdargs.show:
-        abusers = [x for x in args['handler'].abuselist.keys() if x in args['handler'].ignored]
+        abusers = []
+        for x in args['handler'].abuselist.keys():
+            if args['db'].query(Ignore).filter(Ignore.nick == x).count():
+                abusers.append(x)
         if abusers:
             send(", ".join(abusers))
         else:

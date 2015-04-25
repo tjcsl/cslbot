@@ -24,6 +24,7 @@ from helpers import arguments
 from helpers import control
 from helpers import sql
 from helpers import hook
+from helpers import orm
 from helpers import command
 from helpers import textutils
 from helpers import admin
@@ -41,8 +42,6 @@ class BotHandler():
 
         | kick_enabled controls whether the bot will kick people or not.
         | caps is a array of the nicks who have abused capslock.
-        | ignored is a array of the nicks who are currently ignored for
-        |   bot abuse.
         | abuselist is a dict keeping track of how many times nicks have used
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
@@ -60,7 +59,6 @@ class BotHandler():
         self.outputfilter = []
         self.kick_enabled = True
         self.caps = []
-        self.ignored = []
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
@@ -72,7 +70,6 @@ class BotHandler():
         """Saves the handler's data for :func:`bot.IrcBot.do_reload`"""
         data = {}
         data['caps'] = self.caps[:]
-        data['ignored'] = self.ignored[:]
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
         data['uptime'] = self.uptime.copy()
@@ -84,14 +81,6 @@ class BotHandler():
         for key, val in data.items():
             setattr(self, key, val)
         self.uptime['reloaded'] = time.time()
-
-    def ignore(self, send, nick):
-        """Ignores a nick."""
-        if not nick:
-            send("Ignore who?")
-        elif nick not in self.ignored:
-            self.ignored.append(nick)
-            send("Now ignoring %s." % nick)
 
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
@@ -152,7 +141,8 @@ class BotHandler():
             text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
             msg = textutils.gen_creffett(text % nick)
             send(msg, target=target)
-            self.ignore(send, nick)
+            with self.db.session_scope() as session:
+                send(misc.ignore(session, nick))
             self.do_kick(send, target, nick, msg, False)
             return True
 
@@ -330,7 +320,6 @@ class BotHandler():
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
                 'is_admin': lambda nick: self.is_admin(send, nick),
-                'ignore': lambda nick: self.ignore(send, nick),
                 'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
         for arg in modargs:
             if arg in args:
@@ -356,7 +345,8 @@ class BotHandler():
                 self.workers.defer(i, False, self.connection.join, extrachans[i])
 
     def is_ignored(self, nick):
-        return nick in self.ignored
+        with self.db.session_scope() as session:
+            return session.query(orm.Ignore).filter(orm.Ignore.nick == nick).count()
 
     def get_filtered_send(self, cmdargs, send, target):
         """Parse out any filters."""

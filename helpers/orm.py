@@ -131,3 +131,8 @@ class Babble_count(Base):
     type = Column(String)
     key = Column(String)
     count = Column(Integer)
+
+
+class Ignore(Base):
+    nick = Column(String)
+    expire = Column(Float)

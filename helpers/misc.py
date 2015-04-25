@@ -26,7 +26,7 @@ from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from requests import post, get
 from requests.exceptions import ReadTimeout
-from . import textutils
+from . import orm, textutils
 
 
 def parse_time(time):
@@ -160,6 +160,16 @@ def get_fortune(msg, name='fortune'):
     elif msg:
         return "%s is not a valid fortune module" % msg
     return subprocess.check_output(cmd).decode()
+
+
+def ignore(session, nick):
+    row = session.query(orm.Ignore).filter(orm.Ignore.nick == nick).first()
+    if row is None:
+        # FIXME: support expiration times for ignores
+        session.add(orm.Ignore(nick=nick, expire=-1))
+        return "Now ignoring %s" % nick
+    else:
+        return "%s is already ignored." % nick
 
 
 def get_rand_word():
