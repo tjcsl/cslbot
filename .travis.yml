@@ -7,9 +7,13 @@ addons:
 
 python:
     - 3.4
+
 env:
     global:
         secure: UmNKNYhivdYf9Nm85vnvkPz2ZCEI9GuoQVBwj32alqq1PjUNyIqiGn1pp+J9m/KEyyJTGh8Hlm+57SE0LM7U1/sfu4Rx7hDJNzAbwFo1SJN98nksIPz9CexeaYcKK6z2Cx5rcHi+x39rNNrykXXOMFhwrLuQmKcMrbecylW65j0=
+
+before_cache:
+    - find $HOME/virtualenv -name CslBot.egg-link -delete
 
 cache:
     directories:
