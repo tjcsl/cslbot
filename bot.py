@@ -68,7 +68,7 @@ class IrcBot(bot.SingleServerIRCBot):
         self.connection.buffer_class.errors = 'replace'
 
     def handle_event(self, c, e):
-        handled_types = ['903', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
+        handled_types = ['action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
                          'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:

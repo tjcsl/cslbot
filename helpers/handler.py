@@ -386,14 +386,11 @@ class BotHandler():
     def handle_event(self, msg, send, c, e):
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
-        # The SASL Successful event doesn't have a pretty name.
-        if e.type == '903':
-            if msg == 'SASL authentication successful':
-                self.connection.cap('END')
-        elif e.type == 'authenticate':
+        if e.type == 'authenticate':
             if e.target == '+':
                 token = base64.b64encode('\0'.join([user, user, passwd]).encode())
                 self.connection.send_raw('AUTHENTICATE %s' % token.decode())
+                self.connection.cap('END')
         elif e.type == 'bannedfromchan':
             self.workers.defer(5, False, self.do_rejoin, c, e)
         elif e.type == 'cap':
@@ -446,7 +443,7 @@ class BotHandler():
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
-        if e.type in ['903', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
+        if e.type in ['authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
             self.handle_event(msg, send, c, e)
             return
 
