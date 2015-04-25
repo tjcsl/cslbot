@@ -11,7 +11,7 @@ Support
 -------
 To quote the GPL: 
 
->This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 
 That said, the bot devs hangout in #tjcsl-cslbot on freenode and are usually happy to answer your questions.
 
@@ -40,7 +40,7 @@ Database Backends
 -----------------
 Example configurations:
 
-1.  PostgreSQL - engine: postgresql://ircbot:dbpass@localhost/dbname
+1.  PostgreSQL - engine: postgresql://ircbot:dbpass@/dbname
 
 2.  SQLite - engine: sqlite:///db.sqlite
 
@@ -64,7 +64,7 @@ Adding Modules
 --------------
 To add a module place a <mod>.py file in the commands dir.  
 The file must contain a method that is decorated with the @Command decorator;
-this is used in the form ```@Command(['command_name_1', 'command_name_2'], ['arg_required_1', 'arg_required_2'])```.
+this is used in the form ``@Command(['command_name_1', 'command_name_2'], ['arg_required_1', 'arg_required_2'])``.
 The file will only be run if it is added to helpers/groups.cfg.
 
 GeoIP
