@@ -12,7 +12,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   git add -A .
   latest=$(git log -1 --pretty=%s|sed "s/Update docs, build \([0-9]\+\)/\1/")
   git commit -m "Update docs, build $TRAVIS_BUILD_NUMBER"
-  if [ "$latest" -gt "$TRAVIS_BUILD_NUMBER" ]; then
+  if [ "$latest" -ge "$TRAVIS_BUILD_NUMBER" ]; then
       echo "Not overwriting newer docs."
   else
       git push origin gh-pages |& sed s/${GH_TOKEN}/[secure]/g
