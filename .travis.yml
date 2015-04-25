@@ -16,7 +16,8 @@ cache:
     - $HOME/virtualenv
 
 install:
-    - pip install -U flake8 sphinx psycopg2 -e .
+    # Hack to prevent setuptools being upgraded and screwing up the cache.
+    - pip install -U flake8 sphinx psycopg2 -e . setuptools==$(pip show setuptools|sed -n "s#^Version. \(.*\)#\1#p")
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
