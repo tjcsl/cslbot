@@ -96,7 +96,7 @@ class BotTest(unittest.TestCase):
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!morse bob', 'pubmsg'), ('testBot', '#test-channel', 0, '-... --- -...', 'privmsg')])
 
     def test_bot_reload(self):
-        """Make sure the bod can reload without errors."""
+        """Make sure the bot can reload without errors."""
         # We need to run this in a seperate thread for it to work correctly.
         thread = threading.Thread(target=self.do_reload)
         thread.start()
