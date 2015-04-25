@@ -28,7 +28,7 @@ If you want the tjhsst-specific commands, clone github.com/tjcsl/cslbot-tjhsst i
 
 Python must be at least 3.4.
 
-Run `pip install -r requirements.txt`
+Run `pip install -e .` to install the required libraries.
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 

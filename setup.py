@@ -26,4 +26,20 @@ setup(
     license="GPL",
     packages=find_packages(exclude=['commands.tjhsst']),
     test_suite='scripts.test',
+    install_requires=[
+        'SQLAlchemy>=1.0.0',
+        'alembic',
+        'beautifulsoup4',
+        'geoip2',
+        'irc',
+        'lxml',
+        'python-dateutil',
+        'simplejson',
+        ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
+        'Programming Language :: Python :: 3.4',
+        'Topic :: Communications :: Chat :: Internet Relay Chat',
+        ],
 )
