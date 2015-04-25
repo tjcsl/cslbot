@@ -54,6 +54,7 @@ class BotTest(unittest.TestCase):
     def setup_handler(cls):
         cls.bot.handler.connection = mock.MagicMock(real_nickname='testBot')
         cls.bot.handler.channels = {'#test-channel': mock.MagicMock()}
+        cls.bot.handler.is_ignored = mock.MagicMock(return_value=False)
         cls.bot.handler.db = mock.MagicMock()
 
     @classmethod
