@@ -33,6 +33,25 @@ Run `pip install -e .` to install the required libraries.
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 
+API Keys
+--------
+
+Wolfram Alpha: http://products.wolframalpha.com/api
+
+Dictionary: http://dictionaryapi.com
+
+Weather: http://www.wunderground.com/weather/api
+
+Github: https://github.com/settings/tokens
+
+FML: http://www.fmylife.com/api/home
+
+Google: https://developers.google.com/url-shortener https://developers.google.com/custom-search/json-api/v1/overview
+
+Note: you need to create a custom search app for xkcd.com to enable xkcd search as well as one for the whole internet to enable !google
+
+Translate: https://www.microsoft.com/translator/get-started.aspx
+
 Service
 -------
 Note: the init script (scripts/ircbot) is gentoo/openrc specific.
