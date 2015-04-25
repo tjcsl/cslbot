@@ -14,30 +14,53 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
 from requests import get
-from xml.etree import ElementTree
+from lxml import etree
+from helpers import arguments, textutils
 from helpers.command import Command
+
+
+def strip_colon(msg):
+    return re.sub('^:|:$', '', msg.strip()).strip()
 
 
 @Command('define', ['config'])
 def cmd(send, msg, args):
     """Gets the definition of a word.
-    Syntax: {command} <word>
+    Syntax: {command} [--entry <num>] <word>
     """
-    if not msg:
-        send("Define what?")
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--entry', type=int, default=0, nargs='?')
+    parser.add_argument('word', nargs='?')
+
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
-    req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % msg, params={'key': args['config']['api']['dictionaryapikey']})
-    xml = ElementTree.fromstring(req.text)
-    word = xml.find('./entry/def/dt')
-    if not hasattr(word, 'text') or word.text is None:
-        send("Definition not found")
-        return
-    word = word.text.replace(' :', ', ')
-    if word[-1] == ',':
-        word = word[:-2]
-    if word[0] == ':':
-        word = word[1:]
-    if not word:
-        send("Definition not found")
-    send(word)
+    word = cmdargs.word if cmdargs.word is not None else textutils.gen_word()
+    req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % word, params={'key': args['config']['api']['dictionaryapikey']})
+    xml = etree.fromstring(req.content)
+    defs = []
+    for defn in xml.findall('./entry/def/dt'):
+        if defn.text is not None:
+            elems = [strip_colon(defn.text)]
+        else:
+            elems = []
+        for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
+            elems.append(strip_colon(elem.text))
+        def_str = ' '.join(elems)
+        if def_str:
+            defs.append(def_str)
+
+    if cmdargs.entry >= len(defs):
+        if cmdargs.word:
+            send("Definition not found")
+        else:
+            send("%s: Definition not found" % word)
+    else:
+        if cmdargs.word:
+            send(defs[cmdargs.entry])
+        else:
+            send("%s: %s" % (word, defs[cmdargs.entry]))

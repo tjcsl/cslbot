@@ -33,9 +33,7 @@ def removevowels(msg):
 
 
 def gen_word():
-    html = get('http://randomword.setgetgo.com/get.php').text
-    # Strip BOM
-    return html[3:].rstrip()
+    return get('http://randomword.setgetgo.com/get.php').text.strip()
 
 
 def gen_hashtag(msg):
