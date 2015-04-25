@@ -7,7 +7,6 @@ __pycache__
 *.sw?
 *.*~
 doc/build
-scripts/fixperms.sh
 static/templates/analytics.html
 static/geoip.db
 # ignore tj-specific submodule
