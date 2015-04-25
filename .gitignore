@@ -1,5 +1,7 @@
 b
+CslBot.egg-info
 deploy
+dist
 db.sqlite
 *.cfg
 __pycache__
