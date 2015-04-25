@@ -96,7 +96,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     @staticmethod
     def get_target(e):
-        if e.target[0] == '#' or e.target[0] == '@' or e.target[0] == '+':
+        if e.target[0] in ['#', '&', '+', '!']:
             return e.target
         else:
             return e.source.nick
