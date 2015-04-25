@@ -44,3 +44,4 @@ notifications:
   irc:
       channels: "chat.freenode.net#tjcsl-cslbot"
       skip_join: true
+      use_notice: true
