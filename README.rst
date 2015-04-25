@@ -3,7 +3,7 @@ CslBot
 ======
 
 .. image:: https://travis-ci.org/tjcsl/cslbot.svg?branch=master
-    :target: https://travis-ci.org/github/tjcsl/cslbot
+    :target: https://travis-ci.org/tjcsl/cslbot
 
 A bot written by the TJHSST CSL for IRC. 
 
