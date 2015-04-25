@@ -1,7 +1,7 @@
 include COPYING bot.py config.example
 include alembic/env.py alembic/script.py.mako alembic/versions/*.py
-include doc/conf.py doc/*.rst
+include doc/conf.py
 include scripts/reload scripts/ircbot scripts/*.sh
-include helpers/groups.example helpers/groups.cfg
+include helpers/groups.example
 graft static
 exclude static/geoip.db static/templates/analytics.html
