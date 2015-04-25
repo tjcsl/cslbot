@@ -22,6 +22,7 @@ See http://tjcsl.github.io/cslbot for api docs.
 Setup
 -----
 Run ./bot.py to setup the initial configuration and change values in config.cfg as needed.
+
 You must copy helpers/groups.example to helpers/groups.cfg and make any needed changes to configure the commands and/or hooks you want.
 
 If you want the tjhsst-specific commands, clone github.com/tjcsl/cslbot-tjhsst into commands/tjhsst and add it to extracommands.
@@ -62,7 +63,8 @@ You can run alembic -c config.cfg upgrade head at any time to ensure that you ha
 
 Adding Modules
 --------------
-To add a module place a <mod>.py file in the commands dir.  
+To add a module place a <mod>.py file in the commands directory.
+
 The file must contain a method that is decorated with the @Command decorator;
 this is used in the form ``@Command(['command_name_1', 'command_name_2'], ['arg_required_1', 'arg_required_2'])``.
 The file will only be run if it is added to helpers/groups.cfg.
@@ -86,12 +88,19 @@ It is intended to be used as a cronjob to generate and optionally make available
 Credits
 -------
 Licensed under the GPL v2
-This product may use GeoLite2 data created by MaxMind, available from
-http://www.maxmind.com.
+
+This product may use GeoLite2 data created by MaxMind, available from http://www.maxmind.com.
+
 Created by fwilson (Fox Wilson, Class of 2016).  
+
 Rewritten by pfoley (Peter Foley, Class of 2013).  
+
 Improved by sdamashek (Samuel Damashek, Class of 2017).  
+
 Improved by bob_twinkles (Reed Koser, Class of 2015).  
+
 Improved by csssuf.  
+
 Improved by skasturi. (Srijay Kasturi)  
+
 Criticized and subsequently improved by creffett. (Chris Reffett, Class of 2011).
