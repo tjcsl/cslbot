@@ -419,6 +419,14 @@ commands.lmgtfy module
     :undoc-members:
     :show-inheritance:
 
+commands.man module
+-------------------
+
+.. automodule:: commands.man
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 commands.metar module
 ---------------------
 
