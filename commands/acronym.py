@@ -15,17 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import string
+from pkg_resources import Requirement, resource_string
 from helpers.command import Command
 from random import choice
 from itertools import groupby
-from os.path import dirname
 
 
 def get_list():
     # wordlist (COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
-    wordlist = dirname(__file__) + '/../static/wordlist'
-    rawlist = open(wordlist).read()
-    rawlist = sorted(rawlist.splitlines())
+    rawlist = resource_string(Requirement.parse('CslBot'), 'static/wordlist')
+    rawlist = sorted(rawlist.decode().splitlines())
     words = {}
     for key, group in groupby(rawlist, key=lambda word: word[0].lower()):
         words[key] = list(group)
