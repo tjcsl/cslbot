@@ -198,7 +198,7 @@ def init(confdir=None):
     except Exception as ex:
         bot.shutdown_mp(False)
         logging.error("The bot died! %s" % ex)
-        output = "".join(traceback.format_exc())
+        output = "".join(traceback.format_exc()).strip()
         for line in output.split('\n'):
             logging.error(line)
         sys.exit(1)

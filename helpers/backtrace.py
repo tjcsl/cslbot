@@ -18,18 +18,15 @@
 
 import logging
 import traceback
-import sys
 from os.path import basename
 
 
 def output_traceback(ex):
     """ Returns a tuple of a prettyprinted error message and string representation of the error """
     # Dump full traceback to console.
-    output = "".join(traceback.format_exc())
+    output = "".join(traceback.format_exc()).strip()
     for line in output.split('\n'):
         logging.error(line)
-    # Force traceback to be flushed
-    sys.stderr.flush()
     trace = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace[0]), trace[1]]
     name = type(ex).__name__
