@@ -25,8 +25,10 @@ from os.path import dirname, exists, join
 from os import mkdir
 from sys import path
 
-# FIXME: hack to allow sibling imports
-path.insert(0, join(dirname(__file__), '..'))
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
+from pkg_resources import Requirement, resource_filename
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
 from helpers.sql import get_session
@@ -127,7 +129,7 @@ def main(srcdir=None):
     parser.add_argument('outdir', help='The output dir.')
     cmdargs = parser.parse_args()
     session = get_session(config)()
-    env = Environment(loader=FileSystemLoader(join(dirname(__file__), '../static/templates')))
+    env = Environment(loader=FileSystemLoader(resource_filename(Requirement.parse('CslBot'), 'static/templates')))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not exists(cmdargs.outdir):

@@ -18,11 +18,12 @@
 import argparse
 import configparser
 import time
-from os.path import dirname, join
+from os.path import exists, dirname, join
 from sys import path
 
-# FIXME: hack to allow sibling imports
-path.insert(0, dirname(__file__) + '/..')
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
 
 from helpers.babble import build_markov
 from helpers.sql import get_session

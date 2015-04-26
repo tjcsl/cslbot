@@ -22,11 +22,12 @@ from os.path import dirname, exists, join
 from os import makedirs
 from sys import path
 
-# FIXME: hack to allow sibling imports
-path.insert(0, join(dirname(__file__), '..'))
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
 
-from helpers.orm import Log  # noqa
-from helpers.sql import get_session  # noqa
+from helpers.orm import Log
+from helpers.sql import get_session
 
 logs = {}
 

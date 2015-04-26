@@ -1,11 +1,14 @@
 from alembic import context
 import configparser
-import sys
+from sys import path
 from sqlalchemy import create_engine
 import logging
-from os.path import dirname, join
-# Fix path to import from helpers
-sys.path.insert(0, join(dirname(__file__), '..'))
+from os.path import exists, dirname, join
+
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
+
 from helpers.orm import Base
 
 # this is the Alembic Config object, which provides
