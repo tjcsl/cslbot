@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from sqlalchemy import Column, UnicodeText, Float, Integer, ForeignKey
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -36,49 +36,49 @@ def setup_db(session):
 
 
 class Log(Base):
-    source = Column(String)
-    target = Column(String, index=True)
+    source = Column(UnicodeText)
+    target = Column(UnicodeText, index=True)
     flags = Column(Integer)
-    msg = Column(String)
-    type = Column(String)
+    msg = Column(UnicodeText)
+    type = Column(UnicodeText)
     time = Column(Float)
 
 
 class Quotes(Base):
-    quote = Column(String)
-    nick = Column(String)
-    submitter = Column(String)
+    quote = Column(UnicodeText)
+    nick = Column(UnicodeText)
+    submitter = Column(UnicodeText)
     approved = Column(Integer, default=0)
 
 
 class Polls(Base):
-    question = Column(String)
+    question = Column(UnicodeText)
     active = Column(Integer, default=1)
     deleted = Column(Integer, default=0)
     accepted = Column(Integer, default=0)
-    submitter = Column(String)
+    submitter = Column(UnicodeText)
 
 
 class Poll_responses(Base):
-    response = Column(String)
-    voter = Column(String)
+    response = Column(UnicodeText)
+    voter = Column(UnicodeText)
     pid = Column(Integer, ForeignKey("polls.id"))
 
 
 class Weather_prefs(Base):
-    nick = Column(String, unique=True)
-    location = Column(String)
+    nick = Column(UnicodeText, unique=True)
+    location = Column(UnicodeText)
 
 
 class Scores(Base):
-    nick = Column(String, unique=True)
+    nick = Column(UnicodeText, unique=True)
     score = Column(Integer)
 
 
 class Commands(Base):
-    nick = Column(String)
-    command = Column(String)
-    channel = Column(String)
+    nick = Column(UnicodeText)
+    command = Column(UnicodeText)
+    channel = Column(UnicodeText)
 
 
 class Stopwatches(Base):
@@ -88,38 +88,38 @@ class Stopwatches(Base):
 
 
 class Urls(Base):
-    url = Column(String)
-    title = Column(String)
-    nick = Column(String)
+    url = Column(UnicodeText)
+    title = Column(UnicodeText)
+    nick = Column(UnicodeText)
     time = Column(Float)
 
 
 class Issues(Base):
-    title = Column(String)
-    source = Column(String)
-    description = Column(String)
+    title = Column(UnicodeText)
+    source = Column(UnicodeText)
+    description = Column(UnicodeText)
     accepted = Column(Integer, default=0)
 
 
 class Notes(Base):
-    note = Column(String)
-    submitter = Column(String)
-    nick = Column(String)
+    note = Column(UnicodeText)
+    submitter = Column(UnicodeText)
+    nick = Column(UnicodeText)
     time = Column(Float)
     pending = Column(Integer, default=1)
 
 
 class Nicks(Base):
-    old = Column(String)
-    new = Column(String)
+    old = Column(UnicodeText)
+    new = Column(UnicodeText)
     time = Column(Float)
 
 
 class Babble(Base):
-    key = Column(String, index=True)
-    source = Column(String)
-    target = Column(String)
-    word = Column(String)
+    key = Column(UnicodeText, index=True)
+    source = Column(UnicodeText)
+    target = Column(UnicodeText)
+    word = Column(UnicodeText)
     freq = Column(Integer)
 
 
@@ -128,11 +128,11 @@ class Babble_last(Base):
 
 
 class Babble_count(Base):
-    type = Column(String)
-    key = Column(String)
+    type = Column(UnicodeText)
+    key = Column(UnicodeText)
     count = Column(Integer)
 
 
 class Ignore(Base):
-    nick = Column(String)
+    nick = Column(UnicodeText)
     expire = Column(Float)
