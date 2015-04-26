@@ -29,10 +29,9 @@ from helpers.babble import build_markov
 from helpers.sql import get_session
 
 
-def main(srcdir=None):
+def main(confdir="/etc/cslbot"):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    srcdir = srcdir if srcdir is not None else "FIXME"
-    with open(join(srcdir, '../config.cfg')) as f:
+    with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
@@ -52,4 +51,5 @@ def main(srcdir=None):
 
 
 if __name__ == '__main__':
-    main(dirname(__file__))
+    # If we're running from a git checkout, override the config path.
+    main(join(dirname(__file__), '..'))

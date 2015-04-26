@@ -103,10 +103,9 @@ def gen_log(row):
     return log
 
 
-def main(srcdir=None):
+def main(confdir="/etc/cslbot"):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    srcdir = srcdir if srcdir is not None else "FIXME"
-    with open(join(srcdir, '../config.cfg')) as f:
+    with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)
     session = get_session(config)()
     parser = argparse.ArgumentParser()
@@ -126,4 +125,5 @@ def main(srcdir=None):
 
 
 if __name__ == '__main__':
-    main(dirname(__file__))
+    # If we're running from a git checkout, override the config path.
+    main(join(dirname(__file__), '..'))
