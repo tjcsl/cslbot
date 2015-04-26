@@ -140,7 +140,7 @@ class IrcBot(bot.SingleServerIRCBot):
             return None
         cmd = misc.get_cmdchar(self.config, self.connection, cmd, e.type)
         cmdchar = self.config['core']['cmdchar']
-        if cmd.split()[0] == '%sreload' % cmdchar:
+        if cmd.split()[0] == '%sreload' % cmdchar or cmd.split()[0] == '%sr' % cmdchar:
             return cmd
         else:
             return None
