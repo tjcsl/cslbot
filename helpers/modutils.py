@@ -18,7 +18,8 @@
 
 import sys
 from configparser import ConfigParser
-from os.path import abspath, basename, dirname, join
+from pkg_resources import Requirement, resource_filename
+from os.path import basename, join
 import importlib
 import logging
 from glob import glob
@@ -34,9 +35,9 @@ def init_aux(config):
     AUX['hooks'] = [x.strip() for x in config['extrahooks'].split(',')]
 
 
-def init_groups(groups):
+def init_groups(groups, confdir):
     config = ConfigParser()
-    with open(dirname(__file__) + '/../groups.cfg') as cfgfile:
+    with open(join(confdir, 'groups.cfg')) as cfgfile:
         config.read_file(cfgfile)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')
@@ -82,8 +83,7 @@ def get_disabled(mod_type):
 
 def get_enabled(moddir, mod_type):
     enabled, disabled = [], []
-    full_path = abspath(join(dirname(__file__), '..'))
-    full_dir = join(full_path, moddir)
+    full_dir = resource_filename(Requirement.parse('CslBot'), moddir)
     for f in glob(join(full_dir, '*.py')):
         name = basename(f).split('.')[0]
         mod_pkg = moddir.replace('/', '.')

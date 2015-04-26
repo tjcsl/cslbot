@@ -20,7 +20,7 @@ import json
 import subprocess
 import re
 import pkg_resources
-from os.path import exists, dirname, join
+from os.path import exists, join
 from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
@@ -43,7 +43,7 @@ def parse_time(time):
         return None if unit else time
 
 
-def do_pull(srcdir, nick):
+def do_pull(srcdir):
     return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
 
 
@@ -208,8 +208,8 @@ def get_urban_definition(msg):
     return ' '.join(output).strip()
 
 
-def get_version():
-    gitdir = join(dirname(__file__), "../.git")
+def get_version(srcdir):
+    gitdir = join(srcdir, ".git")
     if not exists(gitdir):
         return None, pkg_resources.get_distribution('CslBot').version
     try:

@@ -38,6 +38,7 @@ def run_migrations_offline():
 
     """
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    # FIXME: make this be not relative
     with open(join(dirname(__file__), '../config.cfg')) as f:
         config.read_file(f)
     url = config['db']['engine']
@@ -56,6 +57,7 @@ def run_migrations_online():
 
     """
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    # FIXME: make this be not relative
     with open(join(dirname(__file__), '../config.cfg')) as f:
         config.read_file(f)
     url = config['db']['engine']

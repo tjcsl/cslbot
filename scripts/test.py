@@ -35,6 +35,7 @@ class BotTest(unittest.TestCase):
     def setUpClass(cls):
         bot_mod = importlib.import_module('helpers.core')
         botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+        # FIXME: make this be not relative
         configfile = join(dirname(__file__), '../config.cfg')
         with open(configfile) as conf:
             botconfig.read_file(conf)

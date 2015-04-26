@@ -15,17 +15,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+from os.path import exists, join
 from helpers.command import Command
 from helpers.misc import do_pull
 
 
-@Command('pull', ['handler', 'nick', 'botnick'], admin=True)
+@Command('pull', ['handler'], admin=True)
 def cmd(send, _, args):
     """Pull changes.
     Syntax: {command} <branch>
     """
+    if not exists(join(args['handler'].confdir, '.git')):
+        send("This command only makes sense if you're running from a git checkout.")
+        return
     try:
-        send(do_pull(args['handler'].srcdir, args['botnick']))
+        send(do_pull(args['handler'].confdir))
     except subprocess.CalledProcessError as e:
-        for line in e.output.decode().splitlines():
+        for line in e.output.decode().strip().splitlines():
             send(line)

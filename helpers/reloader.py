@@ -16,7 +16,7 @@
 import configparser
 import logging
 from . import command, handler, hook, misc, modutils
-from os import path
+from os.path import exists, join
 
 
 def do_log(c, target, msg):
@@ -24,9 +24,9 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(config, send=logging.error):
+def load_modules(config, confdir, send=logging.error):
     modutils.init_aux(config['core'])
-    modutils.init_groups(config['groups'])
+    modutils.init_groups(config['groups'], confdir)
     errored_commands = command.scan_for_commands('commands')
     if errored_commands:
         logging.error("Failed to load some commands.")
@@ -54,10 +54,13 @@ def do_reload(bot, target, cmdargs, server_send=None):
             server_send(msg)
         else:
             do_log(bot.connection, target, msg)
+    confdir = bot.handler.confdir
 
     if cmdargs == 'pull':
-        srcdir = path.dirname(path.abspath(__file__))
-        send(misc.do_pull(srcdir, bot.connection.real_nickname))
+        if exists(join(confdir, '.git')):
+            send(misc.do_pull(confdir, bot.connection.real_nickname))
+        else:
+            send("pull only makes sense if you're running from a git checkout.")
     # Reimport helpers
     errored_helpers = modutils.scan_and_reimport('helpers', 'helpers')
     if errored_helpers:
@@ -65,17 +68,17 @@ def do_reload(bot, target, cmdargs, server_send=None):
         for error in errored_helpers:
             send("%s: %s" % error)
         return False
-    if not load_modules(bot.config, send):
+    if not load_modules(bot.config, confdir, send):
         return False
 
     bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_file = path.join(path.dirname(__file__), '../config.cfg')
+    config_file = join(confdir, 'config.cfg')
     with open(config_file) as f:
         bot.config.read_file(f)
     # preserve data
     data = bot.handler.get_data()
     bot.shutdown_mp()
-    bot.handler = handler.BotHandler(bot.config, bot.connection, bot.channels)
+    bot.handler = handler.BotHandler(bot.config, bot.connection, bot.channels, confdir)
     bot.handler.set_data(data)
     bot.handler.connection = bot.connection
     bot.handler.channels = bot.channels

@@ -21,13 +21,12 @@ import logging
 import re
 import time
 from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
-from os.path import dirname
 from random import choice, random
 
 
 class BotHandler():
 
-    def __init__(self, config, connection, channels):
+    def __init__(self, config, connection, channels, confdir):
         """ Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -35,7 +34,7 @@ class BotHandler():
         | abuselist is a dict keeping track of how many times nicks have used
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
-        | srcdir is the path to the directory where the bot is stored.
+        | confdir is the path to the directory where the bot's config is stored.
         | db - Is a db wrapper for data storage.
         """
         self.connection = connection
@@ -53,7 +52,7 @@ class BotHandler():
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: -1 for nick in admins}
-        self.srcdir = dirname(__file__)
+        self.confdir = confdir
         self.log_to_ctrlchan = False
 
     def get_data(self):

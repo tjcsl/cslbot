@@ -19,7 +19,7 @@ from helpers import arguments, misc
 from helpers.command import Command
 
 
-@Command('version', ['config'])
+@Command('version', ['config', 'handler'])
 def cmd(send, msg, args):
     """Check the git revison.
     Syntax: {command} [check|master]
@@ -33,7 +33,7 @@ def cmd(send, msg, args):
         send(str(e))
         return
     apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
-    commit, version = misc.get_version()
+    commit, version = misc.get_version(args['handler'].confdir)
     if not cmdargs.action:
         send(version)
         return

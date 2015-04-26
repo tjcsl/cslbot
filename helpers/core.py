@@ -33,15 +33,24 @@ from . import backtrace, config, handler, misc, reloader, server
 
 
 class IrcBot(bot.SingleServerIRCBot):
-    def __init__(self, botconfig):
+    def __init__(self, confdir):
         """Setup everything."""
-        if botconfig.getboolean('core', 'ssl'):
-            factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=botconfig.getboolean('core', 'ipv6'))
+        self.confdir = confdir
+        config_file = path.join(confdir, 'config.cfg')
+        if not path.exists(config_file):
+            logging.info("Setting up config file")
+            config.do_setup(config_file)
+            sys.exit(0)
+        self.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+        with open(config_file) as f:
+            self.config.read_file(f)
+        if self.config.getboolean('core', 'ssl'):
+            factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
         else:
-            factory = connection.Factory(ipv6=botconfig.getboolean('core', 'ipv6'))
-        passwd = None if botconfig.getboolean('core', 'sasl') else botconfig['auth']['serverpass']
-        serverinfo = bot.ServerSpec(botconfig['core']['host'], botconfig.getint('core', 'ircport'), passwd)
-        nick = botconfig['core']['nick']
+            factory = connection.Factory(ipv6=self.config.getboolean('core', 'ipv6'))
+        passwd = None if self.config.getboolean('core', 'sasl') else self.config['auth']['serverpass']
+        serverinfo = bot.ServerSpec(self.config['core']['host'], self.config.getint('core', 'ircport'), passwd)
+        nick = self.config['core']['nick']
         super().__init__([serverinfo], nick, nick, connect_factory=factory, reconnection_interval=5)
         # This does the magic when everything else is dead
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
@@ -52,18 +61,17 @@ class IrcBot(bot.SingleServerIRCBot):
         if passwd is None:
             # FIXME: make this less hacky
             self.reactor._on_connect = self.do_sasl
-        self.config = botconfig
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
 
-        if not reloader.load_modules(botconfig):
+        if not reloader.load_modules(self.config, confdir):
             raise Exception("Failed to load modules.")
 
-        self.handler = handler.BotHandler(botconfig, self.connection, self.channels)
-        if botconfig['feature'].getboolean('server'):
+        self.handler = handler.BotHandler(self.config, self.connection, self.channels, confdir)
+        if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
 
     def handle_event(self, c, e):
@@ -84,7 +92,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def get_version(self):
         """Get the version."""
-        _, version = misc.get_version()
+        _, version = misc.get_version(self.confdir)
         if version is None:
             return "Can't get the version."
         else:
@@ -175,16 +183,7 @@ def init(confdir="/etc/cslbot"):
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel)
 
-    config_file = path.join(confdir, 'config.cfg')
-    if not path.exists(config_file):
-        logging.info("Setting up config file")
-        config.do_setup(config_file)
-        return
-    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(config_file) as f:
-        botconfig.read_file(f)
-
-    bot = IrcBot(botconfig)
+    bot = IrcBot(confdir)
 
     try:
         bot.start()
