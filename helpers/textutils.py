@@ -19,7 +19,7 @@
 import json
 import re
 import string
-from os.path import dirname
+from pkg_resources import Requirement, resource_string
 from requests import get, post
 from lxml.html import fromstring, tostring
 from html import escape, unescape
@@ -56,7 +56,7 @@ def gen_gizoogle(msg):
 
 def gen_shakespeare(msg):
     # Originally from http://www.shmoop.com/shakespeare-translator/
-    table = json.load(open(dirname(__file__) + '/../static/shakespeare-dictionary.json'))
+    table = json.loads(resource_string(Requirement.parse('CslBot'), 'static/shakespeare-dictionary.json').decode())
     replist = reversed(sorted(table.keys(), key=len))
     pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
     result = pattern.sub(lambda x: table[x.group().lower()], msg)
@@ -96,8 +96,7 @@ def gen_creffett(msg):
 def gen_slogan(msg):
     # Originally from sloganizer.com
     if not slogan_cache:
-        with open(dirname(__file__) + '/../static/slogans.txt') as f:
-            slogan_cache.extend(f.read().splitlines())
+        slogan_cache.extend(resource_string(Requirement.parse('CslBot'), 'static/slogans.txt').decode().splitlines())
     return re.sub('%s', msg, choice(slogan_cache))
 
 
