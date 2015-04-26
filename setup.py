@@ -28,6 +28,7 @@ setup(
     test_suite='scripts.test',
     install_requires=[
         'SQLAlchemy>=1.0.0',
+        'requests>=2.4.0',
         'alembic',
         'beautifulsoup4',
         'geoip2',
