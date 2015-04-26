@@ -36,7 +36,7 @@ def init_aux(config):
 
 def init_groups(groups):
     config = ConfigParser()
-    with open(dirname(__file__) + '/groups.cfg') as cfgfile:
+    with open(dirname(__file__) + '/../groups.cfg') as cfgfile:
         config.read_file(cfgfile)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')

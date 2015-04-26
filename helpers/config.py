@@ -56,7 +56,7 @@ def check_admins(admins, nickregex):
 
 
 def do_setup(configfile):
-    examplefile = configfile.replace('cfg', 'example')
+    examplefile = 'static/config.example'
     copyfile(examplefile, configfile)
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(configfile) as cfgfile:
