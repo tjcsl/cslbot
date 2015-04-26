@@ -18,7 +18,7 @@
 
 import configparser
 import re
-from shutil import copyfile
+from pkg_resources import Requirement, resource_string
 
 
 def do_config(config):
@@ -56,11 +56,8 @@ def check_admins(admins, nickregex):
 
 
 def do_setup(configfile):
-    examplefile = 'static/config.example'
-    copyfile(examplefile, configfile)
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(configfile) as cfgfile:
-        config.read_file(cfgfile)
+    config.read_string(resource_string(Requirement.parse('CslBot'), 'static/config.example').decode())
     do_config(config)
     with open(configfile, 'w') as cfgfile:
         config.write(cfgfile)

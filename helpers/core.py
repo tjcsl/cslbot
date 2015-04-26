@@ -163,7 +163,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 self.reload_event.clear()
 
 
-def init(srcdir=None):
+def init(confdir=None):
     """The bot's main entry point.
 
     | Initialize the bot and start processing messages.
@@ -176,8 +176,8 @@ def init(srcdir=None):
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel)
 
-    srcdir = srcdir if srcdir is not None else "FIXME"
-    config_file = path.join(srcdir, 'config.cfg')
+    confdir = confdir if confdir is not None else "/etc/cslbot"
+    config_file = path.join(confdir, 'config.cfg')
     if not path.exists(config_file):
         logging.info("Setting up config file")
         config.do_setup(config_file)
