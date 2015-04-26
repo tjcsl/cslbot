@@ -15,14 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import geoip2
-import os.path
 import datetime
 import re
+import socket
 from requests import get
 from helpers import arguments
 from helpers.orm import Weather_prefs
 from helpers.command import Command
 from helpers.geoip import get_zipcode
+from pkg_resources import Requirement, resource_filename
 
 
 def get_default(nick, session, handler, send, config, source):
@@ -33,9 +34,18 @@ def get_default(nick, session, handler, send, config, source):
             # an IP, etc.
             hostmask = source.split('@')[1]
             hostip = re.search(r"\d{1,3}[.-]\d{1,3}[.-]\d{1,3}[.-]\d{1,3}", hostmask)
+            # If that failed, could be a v6 addr
+            if not hostip:
+                try:
+                    socket.inet_pton(socket.AF_INET6, hostmask)
+                    hostip = hostmask
+                except socket.error:
+                    pass
+            else:
+                hostip = hostip.group()
             if hostip:
-                hostip = re.sub('-', '.', hostip.group())
-                db_file = os.path.join(handler.srcdir, config['db']['geoip'])
+                hostip = re.sub('-', '.', hostip)
+                db_file = resource_filename(Requirement.parse('CslBot'), config['db']['geoip'])
                 location = get_zipcode(db_file, hostip)
                 if location is not None:
                     send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
