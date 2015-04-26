@@ -52,19 +52,18 @@ class IrcBot(bot.SingleServerIRCBot):
             # FIXME: make this less hacky
             self.reactor._on_connect = self.do_sasl
         self.config = botconfig
-        self.handler = handler.BotHandler(botconfig, self.connection, self.channels)
-        if not reloader.load_modules(botconfig):
-            # The initial load of commands/hooks failed, so bail out.
-            self.shutdown_mp(False)
-            sys.exit(1)
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
-
-        if botconfig['feature'].getboolean('server'):
-            self.server = server.init_server(self)
         # fix unicode problems
         self.connection.buffer_class.errors = 'replace'
+
+        if not reloader.load_modules(botconfig):
+            raise Exception("Failed to load modules.")
+
+        self.handler = handler.BotHandler(botconfig, self.connection, self.channels)
+        if botconfig['feature'].getboolean('server'):
+            self.server = server.init_server(self)
 
     def handle_event(self, c, e):
         handled_types = ['action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
