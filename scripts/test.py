@@ -26,7 +26,7 @@ import irc.client
 import threading
 
 # FIXME: hack to allow sibling imports
-sys.path.append(dirname(__file__) + '/..')
+sys.path.insert(0, dirname(__file__) + '/..')
 
 
 class BotTest(unittest.TestCase):

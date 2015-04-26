@@ -22,7 +22,7 @@ from os.path import dirname, join
 from sys import path
 
 # FIXME: hack to allow sibling imports
-path.append(dirname(__file__) + '/..')
+path.insert(0, dirname(__file__) + '/..')
 
 from helpers.babble import build_markov
 from helpers.sql import get_session

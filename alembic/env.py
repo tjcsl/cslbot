@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 import logging
 from os.path import dirname, join
 # Fix path to import from helpers
-sys.path.append(join(dirname(__file__), '..'))
+sys.path.insert(0, join(dirname(__file__), '..'))
 from helpers.orm import Base
 
 # this is the Alembic Config object, which provides

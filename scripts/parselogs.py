@@ -23,7 +23,7 @@ from os import makedirs
 from sys import path
 
 # FIXME: hack to allow sibling imports
-path.append(join(dirname(__file__), '..'))
+path.insert(0, join(dirname(__file__), '..'))
 
 from helpers.orm import Log  # noqa
 from helpers.sql import get_session  # noqa

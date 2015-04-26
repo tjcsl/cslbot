@@ -26,7 +26,7 @@ from os import mkdir
 from sys import path
 
 # FIXME: hack to allow sibling imports
-path.append(join(dirname(__file__), '..'))
+path.insert(0, join(dirname(__file__), '..'))
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
 from helpers.sql import get_session
