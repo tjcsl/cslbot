@@ -124,7 +124,7 @@ def main(srcdir=None):
     with open(join(srcdir, '../config.cfg')) as f:
         config.read_file(f)
     parser = argparse.ArgumentParser()
-    parser.add_argument('output', help='The output dir.')
+    parser.add_argument('outdir', help='The output dir.')
     cmdargs = parser.parse_args()
     session = get_session(config)()
     env = Environment(loader=FileSystemLoader(join(dirname(__file__), '../static/templates')))
