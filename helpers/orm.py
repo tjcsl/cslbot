@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from sqlalchemy import Column, UnicodeText, Float, Integer, ForeignKey
+from sqlalchemy import Column, Float, Integer, ForeignKey, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -37,7 +37,7 @@ def setup_db(session):
 
 class Log(Base):
     source = Column(UnicodeText)
-    target = Column(UnicodeText, index=True)
+    target = Column(Unicode(length=512), index=True)
     flags = Column(Integer)
     msg = Column(UnicodeText)
     type = Column(UnicodeText)
@@ -66,12 +66,12 @@ class Poll_responses(Base):
 
 
 class Weather_prefs(Base):
-    nick = Column(UnicodeText, unique=True)
+    nick = Column(Unicode(length=20), unique=True)
     location = Column(UnicodeText)
 
 
 class Scores(Base):
-    nick = Column(UnicodeText, unique=True)
+    nick = Column(Unicode(length=20), unique=True)
     score = Column(Integer)
 
 
@@ -116,7 +116,8 @@ class Nicks(Base):
 
 
 class Babble(Base):
-    key = Column(UnicodeText, index=True)
+    __table_args__ = {'mysql_row_format': 'dynamic'}
+    key = Column(Unicode(length=512), index=True)
     source = Column(UnicodeText)
     target = Column(UnicodeText)
     word = Column(UnicodeText)

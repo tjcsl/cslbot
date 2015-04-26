@@ -128,7 +128,10 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     if initial_run:
         if debug:
             t = time.time()
-        cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
+        if cursor.bind.dialect.name == 'mysql':
+            cursor.execute('DROP INDEX ix_babble_key ON babble')
+        else:
+            cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
         if debug:

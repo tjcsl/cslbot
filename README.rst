@@ -64,6 +64,12 @@ Example configurations:
 
 2.  SQLite - engine: sqlite:///db.sqlite
 
+3. MySQL/MariaDB - engine: mysql://ircbot:dbpass@/dbname
+
+Note that for mysql you need to use the ROW_FORMAT=DYNAMIC option on the babble table.
+
+This may require you to set innodb_file_format=Barracuda and innodb_large_prefix=on in my.cnf
+
 See: http://docs.sqlalchemy.org/en/latest/core/engines.html for more information on SQLAlchemy database engine URLs.
 
 Note that the primary install uses postgres, so sqlite and mysql receive less testing.
