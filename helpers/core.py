@@ -45,6 +45,7 @@ class IrcBot(bot.SingleServerIRCBot):
         super().__init__([serverinfo], nick, nick, connect_factory=factory, reconnection_interval=5)
         # This does the magic when everything else is dead
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
+        self.connection.add_global_handler("privmsg", self.reload_handler, -30)
         self.connection.add_global_handler("all_events", self.handle_event, 10)
         # We need to get the channels that a nick is currently in before the regular quit event is processed.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
@@ -145,8 +146,6 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def reload_handler(self, c, e):
         """This handles reloads."""
-        if e.type not in ['pubmsg', 'privmsg']:
-            return
         cmd = self.is_reload(e)
         cmdchar = self.config['core']['cmdchar']
         if cmd is not None:
