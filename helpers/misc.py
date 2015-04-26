@@ -19,7 +19,8 @@
 import json
 import subprocess
 import re
-from os.path import dirname, join
+import pkg_resources
+from os.path import exists, dirname, join
 from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
@@ -209,6 +210,8 @@ def get_urban_definition(msg):
 
 def get_version():
     gitdir = join(dirname(__file__), "../.git")
+    if not exists(gitdir):
+        return None, pkg_resources.get_distribution('CslBot').version
     try:
         commit = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'rev-parse', 'HEAD']).decode().splitlines()[0]
         version = subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode().splitlines()[0]

@@ -34,15 +34,19 @@ def cmd(send, msg, args):
         return
     apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
     commit, version = misc.get_version()
-    if commit is None:
-        send("Couldn't get the version.")
     if not cmdargs.action:
         send(version)
         return
     if cmdargs.action == 'master':
         send(apiOutput['commit']['sha'])
     elif cmdargs.action == 'check':
-        check = 'Same' if apiOutput['commit']['sha'] == commit else 'Different'
-        send(check)
+        if commit is None:
+            send("Not running from git, version %s" % version)
+        else:
+            check = 'Same' if apiOutput['commit']['sha'] == commit else 'Different'
+            send(check)
     elif cmdargs.action == 'commit':
-        send(commit)
+        if commit is None:
+            send("Not running from git, version %s" % version)
+        else:
+            send(commit)
