@@ -24,7 +24,7 @@ setup(
     url="https://github.com/tjcsl/cslbot",
     version="0.12",
     license="GPL",
-    packages=find_packages(exclude=['commands.tjhsst', 'scripts']),
+    packages=find_packages(exclude=['commands.tjhsst']),
     test_suite='scripts.test',
     install_requires=[
         'SQLAlchemy>=1.0.0',
@@ -46,6 +46,9 @@ setup(
     entry_points={
         'console_scripts': [
             'cslbot = helpers.core:init',
+            'cslbot-parselogs = scripts.parselogs:main',
+            'cslbot-parsedata = scripts.parsedata:main',
+            'cslbot-genbabble = scripts.gen_babble:main',
             ]
         }
 )

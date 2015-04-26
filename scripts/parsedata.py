@@ -118,25 +118,26 @@ def output_urls(env, session, outdir, time):
         f.write(output)
 
 
-def main(cfg, outdir):
-    session = get_session(cfg)()
-    env = Environment(loader=FileSystemLoader(join(dirname(__file__), '../static/templates')))
-    time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
-
-    if not exists(outdir):
-        mkdir(outdir)
-
-    output_quotes(env, session, outdir, time)
-    output_scores(env, session, outdir, time)
-    output_polls(env, session, outdir, time)
-    output_urls(env, session, outdir, time)
-
-
-if __name__ == '__main__':
+def main(srcdir=None):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(dirname(__file__), '../config.cfg')) as f:
+    srcdir = srcdir if srcdir is not None else "FIXME"
+    with open(join(srcdir, '../config.cfg')) as f:
         config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('output', help='The output dir.')
     cmdargs = parser.parse_args()
-    main(config, cmdargs.output)
+    session = get_session(config)()
+    env = Environment(loader=FileSystemLoader(join(dirname(__file__), '../static/templates')))
+    time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
+
+    if not exists(cmdargs.outdir):
+        mkdir(cmdargs.outdir)
+
+    output_quotes(env, session, cmdargs.outdir, time)
+    output_scores(env, session, cmdargs.outdir, time)
+    output_polls(env, session, cmdargs.outdir, time)
+    output_urls(env, session, cmdargs.outdir, time)
+
+
+if __name__ == '__main__':
+    main(dirname(__file__))

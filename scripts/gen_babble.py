@@ -28,10 +28,17 @@ from helpers.babble import build_markov
 from helpers.sql import get_session
 
 
-def main(cfg, speaker):
-    session = get_session(cfg)()
-    cmdchar = cfg['core']['cmdchar']
-    ctrlchan = cfg['core']['ctrlchan']
+def main(srcdir=None):
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    srcdir = srcdir if srcdir is not None else "FIXME"
+    with open(join(srcdir, '../config.cfg')) as f:
+        config.read_file(f)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
+    args = parser.parse_args()
+    session = get_session(config)()
+    cmdchar = config['core']['cmdchar']
+    ctrlchan = config['core']['ctrlchan']
     print('Generating markov.')
     # FIXME: support locking for other dialects?
     if session.bind.dialect.name == 'postgresql':
@@ -39,15 +46,9 @@ def main(cfg, speaker):
         session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
-    build_markov(session, cmdchar, ctrlchan, speaker, initial_run=True, debug=True)
+    build_markov(session, cmdchar, ctrlchan, args.nick, initial_run=True, debug=True)
     print('Finished markov in %f' % (time.time() - t))
 
 
 if __name__ == '__main__':
-    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(dirname(__file__), '../config.cfg')) as f:
-        config.read_file(f)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
-    args = parser.parse_args()
-    main(config, args.nick)
+    main(dirname(__file__))

@@ -102,26 +102,27 @@ def gen_log(row):
     return log
 
 
-def main(cfg, outdir):
-    session = get_session(cfg)()
-    current_id = get_id(outdir)
+def main(srcdir=None):
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    srcdir = srcdir if srcdir is not None else "FIXME"
+    with open(join(srcdir, '../config.cfg')) as f:
+        config.read_file(f)
+    session = get_session(config)()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('outdir', help='The directory to write logs too.')
+    cmdargs = parser.parse_args()
+    current_id = get_id(cmdargs.outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
     # Don't die on empty log table.
     if new_id is None:
         new_id = 0
-    save_id(outdir, new_id)
+    save_id(cmdargs.outdir, new_id)
     for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.id).all():
-        check_day(row, outdir, cfg['core']['channel'])
-        write_log(row.target, outdir, gen_log(row))
+        check_day(row, cmdargs.outdir, config['core']['channel'])
+        write_log(row.target, cmdargs.outdir, gen_log(row))
     for x in logs.values():
         x.close()
 
 
 if __name__ == '__main__':
-    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(dirname(__file__), '../config.cfg')) as f:
-        config.read_file(f)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('outdir', help='The directory to write logs too.')
-    cmdargs = parser.parse_args()
-    main(config, cmdargs.outdir)
+    main(dirname(__file__))
