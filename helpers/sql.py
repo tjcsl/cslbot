@@ -59,7 +59,7 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        entry = Log(source=source, target=target, flags=flags, msg=msg, type=type, time=time())
+        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=type, time=time())
         with self.session_scope() as session:
             session.add(entry)
             session.flush()
