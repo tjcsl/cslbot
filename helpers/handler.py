@@ -20,17 +20,7 @@ import base64
 import logging
 import re
 import time
-from helpers import arguments
-from helpers import control
-from helpers import sql
-from helpers import hook
-from helpers import orm
-from helpers import command
-from helpers import textutils
-from helpers import admin
-from helpers import identity
-from helpers import misc
-from helpers import workers
+from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
 from os.path import dirname
 from random import choice, random
 

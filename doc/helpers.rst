@@ -60,6 +60,14 @@ helpers.control module
     :undoc-members:
     :show-inheritance:
 
+helpers.core module
+-------------------
+
+.. automodule:: helpers.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 helpers.exception module
 ------------------------
 

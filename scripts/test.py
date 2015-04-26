@@ -33,7 +33,7 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        bot_mod = importlib.import_module('bot')
+        bot_mod = importlib.import_module('helpers.core')
         botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         configfile = join(dirname(__file__), '../config.cfg')
         with open(configfile) as conf:

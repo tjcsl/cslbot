@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
 import logging
-from helpers import command, handler, hook, misc, modutils
+from . import command, handler, hook, misc, modutils
 from os import path
 
 

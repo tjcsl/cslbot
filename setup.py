@@ -24,7 +24,7 @@ setup(
     url="https://github.com/tjcsl/cslbot",
     version="0.12",
     license="GPL",
-    packages=find_packages(exclude=['commands.tjhsst']),
+    packages=find_packages(exclude=['commands.tjhsst', 'scripts']),
     test_suite='scripts.test',
     install_requires=[
         'SQLAlchemy>=1.0.0',
@@ -43,4 +43,9 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Topic :: Communications :: Chat :: Internet Relay Chat',
         ],
+    entry_points={
+        'console_scripts': [
+            'cslbot = helpers.core:init',
+            ]
+        }
 )

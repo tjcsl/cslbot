@@ -22,7 +22,7 @@ import collections
 import string
 from sqlalchemy import Index, or_
 from sqlalchemy.exc import OperationalError
-from helpers.orm import Log, Babble, Babble_last, Babble_count
+from .orm import Log, Babble, Babble_last, Babble_count
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
