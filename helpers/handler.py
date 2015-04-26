@@ -41,6 +41,7 @@ class BotHandler():
         self.connection = connection
         self.channels = channels
         self.config = config
+        self.db = sql.Sql(config)
         self.workers = workers.Workers(self)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}
@@ -54,7 +55,6 @@ class BotHandler():
         self.admins = {nick: -1 for nick in admins}
         self.srcdir = dirname(__file__)
         self.log_to_ctrlchan = False
-        self.db = sql.Sql(config)
 
     def get_data(self):
         """Saves the handler's data for :func:`bot.IrcBot.do_reload`"""
