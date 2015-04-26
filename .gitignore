@@ -1,6 +1,5 @@
 b
 build
-CslBot.egg-info
 deploy
 dist
 db.sqlite

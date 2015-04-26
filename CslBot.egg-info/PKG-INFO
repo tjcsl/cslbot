@@ -1,0 +1,14 @@
+Metadata-Version: 1.1
+Name: CslBot
+Version: 0.12
+Summary: An easily extensible, modular irc bot.
+Home-page: https://github.com/tjcsl/cslbot
+Author: The TJHSST Computer Systems Lab
+Author-email: cslbot@pefoley.com
+License: GPL
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Communications :: Chat :: Internet Relay Chat
