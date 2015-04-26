@@ -29,8 +29,8 @@ def cmd(send, msg, args):
     nick = args['nick']
     isup = get("http://isup.me/%s" % msg).text
     if "looks down from here" in isup:
-        send("%s \x034is down\x03" % (nick, msg))
+        send("%s \x034is down\x03" % (msg))
     elif "like a site on the interwho" in isup:
-        send("\x034%s is not a valid url\x03" % (nick, msg))
+        send("\x034%s is not a valid url\x03" % (msg))
     else:
-        send("%s \x033is up\x03" % (nick, msg))
+        send("%s \x033is up\x03" % (msg))
