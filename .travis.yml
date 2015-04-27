@@ -31,7 +31,7 @@ before_script:
 
 script:
     - flake8 --max-line-length=1000 .
-    - ./scripts/test.py
+    - ./setup.py test
     - ./scripts/gen_babble.py
     - ./scripts/parselogs.py /tmp/ircbot
     - ./scripts/parsedata.py /tmp/ircbot

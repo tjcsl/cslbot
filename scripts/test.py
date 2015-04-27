@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -20,13 +19,9 @@ from unittest import mock
 from os.path import dirname, join
 import configparser
 import importlib
-import sys
 import socket
 import irc.client
 import threading
-
-# FIXME: hack to allow sibling imports
-sys.path.insert(0, dirname(__file__) + '/..')
 
 
 class BotTest(unittest.TestCase):
@@ -34,14 +29,9 @@ class BotTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         bot_mod = importlib.import_module('helpers.core')
-        botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-        # FIXME: make this be not relative
-        configfile = join(dirname(__file__), '../config.cfg')
-        with open(configfile) as conf:
-            botconfig.read_file(conf)
-        cls.config = botconfig
+        confdir = join(dirname(__file__), '..')
         mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock).start()
-        cls.bot = bot_mod.IrcBot(botconfig)
+        cls.bot = bot_mod.IrcBot(confdir)
         cls.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
@@ -58,9 +48,9 @@ class BotTest(unittest.TestCase):
         cls.bot.handler.is_ignored = mock.MagicMock(return_value=False)
         cls.bot.handler.db = mock.MagicMock()
 
-    @classmethod
-    def config_mock(cls, section, option):
-        ret = int(cls.config[section][option])
+    @staticmethod
+    def config_mock(config, section, option):
+        ret = int(config[section][option])
         # Avoid port conflicts with running bot
         if section == 'core' and option == 'serverport':
             return ret + 1000
@@ -104,6 +94,3 @@ class BotTest(unittest.TestCase):
         thread.join()
         self.setup_handler()
         self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
-
-if __name__ == '__main__':
-    unittest.main()
