@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+from sys import path
+from os.path import dirname, exists, join
+
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
 
 import argparse
 import collections
@@ -21,13 +27,7 @@ import configparser
 from time import strftime, mktime
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
-from os.path import dirname, exists, join
 from os import mkdir
-from sys import path
-
-# Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
 from pkg_resources import Requirement, resource_filename
 
 from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls

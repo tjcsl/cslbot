@@ -15,16 +15,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import argparse
-import configparser
-from time import strftime, localtime
-from os.path import dirname, exists, join
-from os import makedirs
 from sys import path
+from os.path import dirname, exists, join
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
+import argparse
+import configparser
+from time import strftime, localtime
+from os import makedirs
 
 from helpers.orm import Log
 from helpers.sql import get_session

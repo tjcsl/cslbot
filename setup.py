@@ -26,6 +26,7 @@ setup(
     url="https://github.com/tjcsl/cslbot",
     version="0.12",
     license="GPL",
+    zip_safe=True,
     packages=find_packages(exclude=['commands.tjhsst']),
     data_files=[
         ('alembic', [
