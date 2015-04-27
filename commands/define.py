@@ -70,7 +70,7 @@ def cmd(send, msg, args):
     if cmdargs.word is None:
         for _ in range(5):
             word = textutils.gen_word()
-            defn, suggested_word = get_def(0, textutils.gen_word(), key)
+            defn, suggested_word = get_def(0, word, key)
             word = suggested_word if suggested_word is not None else word
             if defn is not None:
                 send("%s: %s" % (word, defn))
