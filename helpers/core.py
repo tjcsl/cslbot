@@ -172,10 +172,13 @@ class IrcBot(bot.SingleServerIRCBot):
             importlib.reload(reloader)
             self.reload_event.set()
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
-            if reloader.do_reload(self, self.get_target(e), cmdargs):
-                if self.config['feature'].getboolean('server'):
-                    self.server = server.init_server(self)
-                self.reload_event.clear()
+            try:
+                if reloader.do_reload(self, self.get_target(e), cmdargs):
+                    if self.config['feature'].getboolean('server'):
+                        self.server = server.init_server(self)
+                    self.reload_event.clear()
+            except Exception as ex:
+                backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
 
 def init(confdir="/etc/cslbot"):
