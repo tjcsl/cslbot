@@ -24,6 +24,8 @@ from .orm import setup_db, Log
 
 
 def get_session(config):
+    if not config['db']['engine']:
+        raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
     engine = create_engine(config['db']['engine'])
     return sessionmaker(bind=engine)
 
