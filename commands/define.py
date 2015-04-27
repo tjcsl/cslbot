@@ -39,7 +39,17 @@ def get_def(entry, word, key):
         def_str = ' '.join(elems)
         if def_str:
             defs.append(def_str)
-    return None if entry >= len(defs) else defs[entry]
+    if entry >= len(defs):
+        suggestion = xml.find('./suggestion')
+        if suggestion is None:
+            return None, None
+        defn, _ = get_def(0, suggestion.text, key)
+        if defn is None:
+            return None, None
+        else:
+            return defn, suggestion.text
+    else:
+        return defs[entry], None
 
 
 @Command('define', ['config'])
@@ -60,14 +70,17 @@ def cmd(send, msg, args):
     if cmdargs.word is None:
         for _ in range(5):
             word = textutils.gen_word()
-            defn = get_def(0, textutils.gen_word(), key)
+            defn, suggested_word = get_def(0, textutils.gen_word(), key)
+            word = suggested_word if suggested_word is not None else word
             if defn is not None:
                 send("%s: %s" % (word, defn))
                 return
         send("%s: Definition not found" % word)
         return
-    defn = get_def(cmdargs.entry, cmdargs.word, key)
+    defn, suggested_word = get_def(cmdargs.entry, cmdargs.word, key)
     if defn is None:
         send("Definition not found")
-    else:
+    elif suggested_word is None:
         send(defn)
+    else:
+        send("%s: %s" % (suggested_word, defn))
