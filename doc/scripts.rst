@@ -20,6 +20,14 @@ scripts.gen_babble module
     :undoc-members:
     :show-inheritance:
 
+scripts.migrate module
+----------------------
+
+.. automodule:: scripts.migrate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 scripts.parsedata module
 ------------------------
 
