@@ -447,7 +447,7 @@ class BotHandler():
             return
 
         if e.type == 'kick':
-            if nick == c.real_nickname:
+            if e.arguments[0] == c.real_nickname:
                 send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
                 # Auto-rejoin after 5 seconds.
                 self.workers.defer(5, False, self.connection.join, target)
