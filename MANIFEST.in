@@ -1,4 +1,4 @@
-include COPYING
+include bot.py COPYING
 include alembic/env.py alembic/script.py.mako alembic/versions/*.py
 include doc/conf.py
 include scripts/reload scripts/ircbot scripts/*.sh

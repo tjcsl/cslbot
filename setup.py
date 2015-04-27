@@ -26,7 +26,13 @@ setup(
     license="GPL",
     packages=find_packages(exclude=['commands.tjhsst']),
     data_files=[
-        ('static', ['static/config.example']),
+        ('static', [
+            'static/config.example',
+            'static/groups.example',
+            'static/slogans.txt',
+            'static/shakespeare-dictionary.json',
+            'static/wordlist'
+            ]),
         ],
     test_suite='scripts.test',
     install_requires=[
