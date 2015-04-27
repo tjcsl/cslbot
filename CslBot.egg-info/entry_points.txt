@@ -1,6 +1,7 @@
 [console_scripts]
 cslbot = helpers.core:init
 cslbot-genbabble = scripts.gen_babble:main
+cslbot-migrate = scripts.migrate:main
 cslbot-parsedata = scripts.parsedata:main
 cslbot-parselogs = scripts.parselogs:main
 cslbot-reload = scripts.reload:main

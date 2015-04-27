@@ -164,6 +164,7 @@ scripts/gen_babble.py
 scripts/gendocs.sh
 scripts/ircbot
 scripts/log.sh
+scripts/migrate.py
 scripts/parsedata.py
 scripts/parselogs.py
 scripts/reload.py

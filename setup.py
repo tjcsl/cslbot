@@ -15,7 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from glob import glob
 from setuptools import setup, find_packages
+
 setup(
     name="CslBot",
     description="An easily extensible, modular irc bot.",
@@ -26,6 +28,12 @@ setup(
     license="GPL",
     packages=find_packages(exclude=['commands.tjhsst']),
     data_files=[
+        ('alembic', [
+            'alembic/env.py',
+            'alembic/script.py.mako'
+            ]),
+        ('alembic/versions',
+            glob('alembic/versions/*.py')),
         ('static', [
             'static/config.example',
             'static/groups.example',
@@ -66,6 +74,7 @@ setup(
             'cslbot-parsedata = scripts.parsedata:main',
             'cslbot-genbabble = scripts.gen_babble:main',
             'cslbot-reload = scripts.reload:main',
+            'cslbot-migrate = scripts.migrate:main',
             ]
         }
 )

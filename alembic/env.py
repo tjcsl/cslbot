@@ -37,11 +37,11 @@ def run_migrations_offline():
     script output.
 
     """
-    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    # FIXME: make this be not relative
-    with open(join(dirname(__file__), '../config.cfg')) as f:
-        config.read_file(f)
-    url = config['db']['engine']
+    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    config_path = config.get_main_option('bot_config_path', '..')
+    with open(join(config_path, 'config.cfg')) as f:
+        botconfig.read_file(f)
+    url = botconfig['db']['engine']
 
     context.configure(url=url, target_metadata=target_metadata)
 
@@ -56,11 +56,11 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    # FIXME: make this be not relative
-    with open(join(dirname(__file__), '../config.cfg')) as f:
-        config.read_file(f)
-    url = config['db']['engine']
+    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    config_path = config.get_main_option('bot_config_path', '..')
+    with open(join(config_path, 'config.cfg')) as f:
+        botconfig.read_file(f)
+    url = botconfig['db']['engine']
 
     connectable = create_engine(url)
     with connectable.connect() as connection:
