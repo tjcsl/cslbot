@@ -24,6 +24,7 @@ import logging
 import importlib
 import multiprocessing
 import queue
+import signal
 import ssl
 import threading
 import traceback
@@ -35,6 +36,7 @@ from . import backtrace, config, handler, misc, reloader, server
 class IrcBot(bot.SingleServerIRCBot):
     def __init__(self, confdir):
         """Setup everything."""
+        signal.signal(signal.SIGTERM, self.shutdown)
         self.confdir = confdir
         config_file = path.join(confdir, 'config.cfg')
         if not path.exists(config_file):
@@ -107,6 +109,12 @@ class IrcBot(bot.SingleServerIRCBot):
             return e.target
         else:
             return e.source.nick
+
+    def shutdown(self, *_):
+        if hasattr(self, 'connection'):
+            self.connection.disconnect("Bot received SIGTERM")
+        self.shutdown_mp()
+        sys.exit(0)
 
     def shutdown_mp(self, clean=True):
         """ Shutdown all the multiprocessing.
