@@ -30,15 +30,17 @@ def get_def(entry, word, key):
     xml = etree.fromstring(req.content)
     defs = []
     for defn in xml.findall('./entry/def/dt'):
-        if defn.text is not None:
-            elems = [strip_colon(defn.text)]
-        else:
-            elems = []
+        children = []
         for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
-            elems.append(strip_colon(elem.text))
-        def_str = ' '.join(elems)
-        if def_str:
-            defs.append(def_str)
+            children.append(strip_colon(elem.text))
+        if defn.text is None:
+            def_str = [' '.join(children)]
+        else:
+            def_str = []
+            for x in strip_colon(defn.text).split(' :'):
+                def_str.append(' '.join([x]+children))
+        for x in filter(None, def_str):
+            defs.append(x)
     if entry >= len(defs):
         suggestion = xml.find('./suggestion')
         if suggestion is None:
