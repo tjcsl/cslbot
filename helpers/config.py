@@ -18,6 +18,8 @@
 
 import configparser
 import re
+from os import mkdir
+from os.path import exists, dirname, join
 from pkg_resources import Requirement, resource_string
 
 
@@ -59,7 +61,17 @@ def do_setup(configfile):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     config.read_string(resource_string(Requirement.parse('CslBot'), 'static/config.example').decode())
     do_config(config)
-    with open(configfile, 'w') as cfgfile:
-        config.write(cfgfile)
+    configdir = dirname(configfile)
+    try:
+        if not exists(configdir):
+            mkdir(configdir)
+        with open(configfile, 'w') as cfgfile:
+            config.write(cfgfile)
+        groupsfile = join(configdir, 'groups.cfg')
+        if not exists(groupsfile):
+            with open(groupsfile, 'wb') as f:
+                f.write(resource_string(Requirement.parse('CslBot'), 'static/groups.example'))
+    except PermissionError:
+        raise Exception("Please make sure that the user you are running CslBot as has permission to write to %s" % configdir)
     print('WARNING: you must set the db.engine option for the bot to work.')
-    print("Configuration succeded, please review config.cfg and restart the bot.")
+    print("Configuration succeded, please review %s and restart the bot." % configfile)
