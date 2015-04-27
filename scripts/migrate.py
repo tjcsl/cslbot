@@ -14,9 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+from sys import path
+from os.path import dirname, exists, join
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
+
 import configparser
 from alembic import command, config
-from os.path import dirname, exists, join
 from pkg_resources import Requirement, resource_filename
 
 
@@ -25,11 +30,7 @@ def main(confdir="/etc/cslbot"):
     with open(join(confdir, 'config.cfg')) as f:
         botconfig.read_file(f)
     conf_obj = config.Config()
-    # Make this work from git.
-    if exists(join(dirname(__file__), '../.git')):
-        script_location = join(join(dirname(__file__), '..'), botconfig['alembic']['script_location'])
-    else:
-        script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
+    script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
     conf_obj.set_main_option('script_location', script_location)
     conf_obj.set_main_option('bot_config_path', confdir)
     command.upgrade(conf_obj, 'head')
