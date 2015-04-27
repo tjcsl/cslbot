@@ -25,6 +25,23 @@ def strip_colon(msg):
     return re.sub('^:|:$', '', msg.strip()).strip()
 
 
+def get_def(entry, word, key):
+    req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % word, params={'key': key})
+    xml = etree.fromstring(req.content)
+    defs = []
+    for defn in xml.findall('./entry/def/dt'):
+        if defn.text is not None:
+            elems = [strip_colon(defn.text)]
+        else:
+            elems = []
+        for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
+            elems.append(strip_colon(elem.text))
+        def_str = ' '.join(elems)
+        if def_str:
+            defs.append(def_str)
+    return None if entry >= len(defs) else defs[entry]
+
+
 @Command('define', ['config'])
 def cmd(send, msg, args):
     """Gets the definition of a word.
@@ -39,28 +56,18 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    word = cmdargs.word if cmdargs.word is not None else textutils.gen_word()
-    req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % word, params={'key': args['config']['api']['dictionaryapikey']})
-    xml = etree.fromstring(req.content)
-    defs = []
-    for defn in xml.findall('./entry/def/dt'):
-        if defn.text is not None:
-            elems = [strip_colon(defn.text)]
-        else:
-            elems = []
-        for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
-            elems.append(strip_colon(elem.text))
-        def_str = ' '.join(elems)
-        if def_str:
-            defs.append(def_str)
-
-    if cmdargs.entry >= len(defs):
-        if cmdargs.word:
-            send("Definition not found")
-        else:
-            send("%s: Definition not found" % word)
+    key = args['config']['api']['dictionaryapikey']
+    if cmdargs.word is None:
+        for _ in range(5):
+            word = textutils.gen_word()
+            defn = get_def(0, textutils.gen_word(), key)
+            if defn is not None:
+                send("%s: %s" % (word, defn))
+                return
+        send("%s: Definition not found" % word)
+        return
+    defn = get_def(cmdargs.entry, cmdargs.word, key)
+    if defn is None:
+        send("Definition not found")
     else:
-        if cmdargs.word:
-            send(defs[cmdargs.entry])
-        else:
-            send("%s: %s" % (word, defs[cmdargs.entry]))
+        send(defn)
