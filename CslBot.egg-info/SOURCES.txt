@@ -7,9 +7,9 @@ CslBot.egg-info/PKG-INFO
 CslBot.egg-info/SOURCES.txt
 CslBot.egg-info/dependency_links.txt
 CslBot.egg-info/entry_points.txt
+CslBot.egg-info/not-zip-safe
 CslBot.egg-info/requires.txt
 CslBot.egg-info/top_level.txt
-CslBot.egg-info/zip-safe
 alembic/env.py
 alembic/script.py.mako
 alembic/versions/3614b38ddf9_kick_logging_change.py
