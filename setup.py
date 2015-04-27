@@ -31,7 +31,14 @@ setup(
             'static/groups.example',
             'static/slogans.txt',
             'static/shakespeare-dictionary.json',
-            'static/wordlist'
+            'static/wordlist',
+            ]),
+        ('static/templates', [
+            'static/templates/base.html',
+            'static/templates/polls.html',
+            'static/templates/quotes.html',
+            'static/templates/scores.html',
+            'static/templates/urls.html',
             ]),
         ],
     test_suite='scripts.test',
