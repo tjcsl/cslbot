@@ -1,7 +1,6 @@
 COPYING
 MANIFEST.in
 README.rst
-bot.py
 setup.py
 CslBot.egg-info/PKG-INFO
 CslBot.egg-info/SOURCES.txt

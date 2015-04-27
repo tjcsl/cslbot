@@ -25,6 +25,9 @@ setup(
     version="0.12",
     license="GPL",
     packages=find_packages(exclude=['commands.tjhsst']),
+    data_files=[
+        ('static', ['static/config.example']),
+        ],
     test_suite='scripts.test',
     install_requires=[
         'SQLAlchemy>=1.0.0',
