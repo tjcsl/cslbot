@@ -1,7 +1,7 @@
 include bot.py COPYING
 include alembic/env.py alembic/script.py.mako alembic/versions/*.py
 include doc/conf.py
-include scripts/reload scripts/ircbot scripts/*.sh
+include scripts/ircbot scripts/*.sh
 include static/shakespeare-dictionary.json static/slogans.txt static/wordlist
 include static/*.example
 include static/templates/*.html

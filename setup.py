@@ -65,6 +65,7 @@ setup(
             'cslbot-parselogs = scripts.parselogs:main',
             'cslbot-parsedata = scripts.parsedata:main',
             'cslbot-genbabble = scripts.gen_babble:main',
+            'cslbot-reload = scripts.reload:main',
             ]
         }
 )

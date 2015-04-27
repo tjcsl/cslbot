@@ -166,7 +166,7 @@ scripts/ircbot
 scripts/log.sh
 scripts/parsedata.py
 scripts/parselogs.py
-scripts/reload
+scripts/reload.py
 scripts/stats.sh
 scripts/test.py
 static/config.example
