@@ -33,6 +33,8 @@ def get_def(entry, word, key):
         children = []
         for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
             children.append(strip_colon(elem.text))
+            if elem.tail is not None:
+                children.append(strip_colon(elem.tail))
         if defn.text is None:
             def_str = [' '.join(children)]
         else:
