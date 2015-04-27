@@ -49,6 +49,8 @@ FML: http://www.fmylife.com/api/home
 Google: https://developers.google.com/url-shortener https://developers.google.com/custom-search/json-api/v1/overview
 
 Note: you need to create a custom search app for xkcd.com to enable xkcd search as well as one for the whole internet to enable !google
+This can be done at https://cse.google.com/cse/manage/all
+Use the search engine IDs from this page with the api key from https://console.developers.google.com
 
 Translate: https://www.microsoft.com/translator/get-started.aspx
 
