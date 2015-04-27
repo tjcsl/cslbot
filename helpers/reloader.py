@@ -61,6 +61,11 @@ def do_reload(bot, target, cmdargs, server_send=None):
             send(misc.do_pull(confdir, bot.connection.real_nickname))
         else:
             send("pull only makes sense if you're running from a git checkout.")
+    # Reload config
+    bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    config_file = join(confdir, 'config.cfg')
+    with open(config_file) as f:
+        bot.config.read_file(f)
     # Reimport helpers
     errored_helpers = modutils.scan_and_reimport('helpers', 'helpers')
     if errored_helpers:
@@ -71,10 +76,6 @@ def do_reload(bot, target, cmdargs, server_send=None):
     if not load_modules(bot.config, confdir, send):
         return False
 
-    bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_file = join(confdir, 'config.cfg')
-    with open(config_file) as f:
-        bot.config.read_file(f)
     # preserve data
     data = bot.handler.get_data()
     bot.shutdown_mp()
