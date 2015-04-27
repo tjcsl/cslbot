@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from helpers import arguments
 from helpers.command import Command
-import re
 
 
 @Command('msg', ['nick', 'config'], admin=True)
@@ -23,15 +23,14 @@ def cmd(send, msg, args):
     """Sends a message to a channel
     Syntax: {command} <channel> <message>
     """
-    if not msg:
-        send("Message who?")
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('channel', action=arguments.ChanParser)
+    parser.add_argument('message', nargs='+')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
-    msg = msg.split(maxsplit=1)
-    if re.match("#[^ ,]{1,49}$", msg[0]):
-        if len(msg) == 1:
-            send("What message?")
-        else:
-            send(msg[1], target=msg[0])
-            send("%s sent message %s to %s" % (args['nick'], msg[1], msg[0]), target=args['config']['core']['ctrlchan'])
-    else:
-        send("That is not a valid channel.")
+    cmdargs.message = ' '.join(cmdargs.message)
+    send(cmdargs.message, target=cmdargs.channels[0])
+    send("%s sent message %s to %s" % (args['nick'], cmdargs.message, cmdargs.channels[0]), target=args['config']['core']['ctrlchan'])
