@@ -27,7 +27,7 @@ def strip_colon(msg):
 
 def get_def(entry, word, key):
     req = get('http://www.dictionaryapi.com/api/v1/references/collegiate/xml/%s' % word, params={'key': key})
-    xml = etree.fromstring(req.content)
+    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     defs = []
     for defn in xml.findall('./entry/def/dt'):
         children = []
