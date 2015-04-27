@@ -482,12 +482,12 @@ class BotHandler():
         cmdargs = msg[cmdlen:]
         cmd_name = cmd[len(cmdchar):] if cmd.startswith(cmdchar) else None
 
-        cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
-        if filtersend is None:
-            send(cmdargs)
-            return
-
         if command.is_registered(cmd_name):
+            cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
+            if filtersend is None:
+                send(cmdargs)
+                return
+
             cmd_obj = command.get_command(cmd_name)
             if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
                 return
