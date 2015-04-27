@@ -36,7 +36,14 @@ quit\t\t\tquit the console session
 
 def init_server(bot):
     port = bot.config.getint('core', 'serverport')
-    server = BotNetServer(('localhost', port), BotNetHandler)
+    try:
+        server = BotNetServer(('localhost', port), BotNetHandler)
+    except Exception as ex:
+        bot.shutdown_mp()
+        if ex.errno == 98:
+            raise Exception("Please make sure that there is no other service running on port %d" % port)
+        else:
+            raise ex
     server.bot = bot
     bot.handler.workers.start_thread(server.serve_forever)
     return server
