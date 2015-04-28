@@ -23,8 +23,19 @@ def set_admin(msg, handler):
 
     | If NickServ tells us that the nick is authed, mark it as verified.
     """
-    match = re.match("(.*) ACC ([0-3])", msg)
-    if not match:
+    if handler.config['feature']['networktype'] == "unrealircd":
+        match = re.match("STATUS (.*) ([0-3])", msg)
+        if not match:
+            return
+        status = int(match.group(2))
+        nick = match.group(1)
+    else:  # default to atheme-style
+        match = re.match("(.*) ACC ([0-3])", msg)
+        if not match:
+            return
+        status = int(match.group(2))
+        nick = match.group(1)
+
         return
-    if int(match.group(2)) == 3:
-        handler.admins[match.group(1)] = int(time())
+    if status == 3:
+        handler.admins[nick] = int(time())
