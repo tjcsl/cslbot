@@ -85,6 +85,7 @@ If you intend to use MySQL, the default DBAPI is provided by the mysql-python pa
 See the SQLAlchemy documentation if you want to use another backend.
 
 Migrations
+
 ----------
 You can run alembic -c config.cfg upgrade head at any time to ensure that you have the latest database migration.
 
@@ -111,6 +112,12 @@ parselogs.py
 ------------
 This script parses the logs and generates human-readable logs for each channel the bot is in.
 It is intended to be used as a cronjob to generate and optionally make available logs.
+
+Network type
+------------
+Different IRC networks use different software, such as atheme or UnrealIRCd. Certain details can vary between software, such as the method for
+temporarily quieting users. You should set your network's type in config.cfg, it defaults to atheme but we also have partial support for
+unrealircd.
 
 Credits
 -------

@@ -38,6 +38,7 @@ hooks: True
 capskick: True
 nickkick: True
 linkread: True
+networktype: atheme
 [api]
 dictionaryapikey:
 weatherapikey:
