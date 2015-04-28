@@ -25,7 +25,7 @@ install:
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
-    - sed -i "s#/etc/cslbot#$TRAVIS_BUILD_DIR#g" cslbot/helpers/core.py scripts/*.py
+    - sed -i "s#/etc/cslbot#$TRAVIS_BUILD_DIR/tjcsl/cslbot#g" cslbot/helpers/core.py scripts/*.py
     - echo -e 'test\n#test\n#test\ntest' | cslbot
     - sed -i "s#engine:#\0 postgresql://postgres@/ircbot#" config.cfg
     - git clone git://github.com/tjcsl/cslbot-tjhsst.git cslbot/tjhsst
