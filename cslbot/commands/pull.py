@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.misc import do_pull
 
 
-@Command('pull', ['handler'], admin=True)
+@Command('pull', ['config', 'handler'], admin=True)
 def cmd(send, _, args):
     """Pull changes.
     Syntax: {command} <branch>
@@ -29,7 +29,10 @@ def cmd(send, _, args):
         send("This command only makes sense if you're running from a git checkout.")
         return
     try:
-        send(do_pull(args['handler'].confdir))
+        if exists(join(args['handler'].confdir, '.git')):
+            send(do_pull(srcdir=args['handler'].confdir))
+        else:
+            send(do_pull(repo=args['config']['api']['githubrepo']))
     except subprocess.CalledProcessError as e:
         for line in e.output.decode().strip().splitlines():
             send(line)

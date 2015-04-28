@@ -58,9 +58,9 @@ def do_reload(bot, target, cmdargs, server_send=None):
 
     if cmdargs == 'pull':
         if exists(join(confdir, '.git')):
-            send(misc.do_pull(confdir))
+            send(misc.do_pull(srcdir=confdir))
         else:
-            send("pull only makes sense if you're running from a git checkout.")
+            send(misc.do_pull(repo=bot.config['api']['githubrepo']))
     # Reload config
     bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     config_file = join(confdir, 'config.cfg')
