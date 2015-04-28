@@ -1,13 +1,6 @@
 cslbot.commands package
 =======================
 
-Subpackages
------------
-
-.. toctree::
-
-    cslbot.commands.tjhsst
-
 Submodules
 ----------
 
