@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import random
 from requests import get
 from lxml import etree
 from ..helpers import arguments, textutils
@@ -43,6 +44,8 @@ def get_def(entry, word, key):
                 def_str.append(' '.join([x]+children))
         for x in filter(None, def_str):
             defs.append(x)
+    if entry is None:
+        entry = random.randrange(len(defs)) if defs else 0
     if entry >= len(defs):
         suggestion = xml.find('./suggestion')
         if suggestion is None:
@@ -74,7 +77,7 @@ def cmd(send, msg, args):
     if cmdargs.word is None:
         for _ in range(5):
             word = textutils.gen_word()
-            defn, suggested_word = get_def(0, word, key)
+            defn, suggested_word = get_def(None, word, key)
             word = suggested_word if suggested_word is not None else word
             if defn is not None:
                 send("%s: %s" % (word, defn))
