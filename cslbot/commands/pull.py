@@ -25,9 +25,6 @@ def cmd(send, _, args):
     """Pull changes.
     Syntax: {command} <branch>
     """
-    if not exists(join(args['handler'].confdir, '.git')):
-        send("This command only makes sense if you're running from a git checkout.")
-        return
     try:
         if exists(join(args['handler'].confdir, '.git')):
             send(do_pull(srcdir=args['handler'].confdir))
