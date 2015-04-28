@@ -36,11 +36,13 @@ def cmd(send, msg, args):
     parser.add_argument('title', nargs='*', default='')
     parser.add_argument('--get', '--show', action='store_true')
     parser.add_argument('--description', nargs='+', default="No description given.")
-    cmdargs = parser.parse_args(msg)
+    cmdargs, remainder = parser.parse_known_args(msg)
     if isinstance(cmdargs.title, list):
         cmdargs.title = ' '.join(cmdargs.title)
     if isinstance(cmdargs.description, list):
         cmdargs.description = ' '.join(cmdargs.description)
+    if remainder:
+        cmdargs.title = "%s %s" % (cmdargs.title, ' '.join(remainder))
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif cmdargs.get or cmdargs.title.isdigit():
