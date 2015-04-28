@@ -116,8 +116,20 @@ It is intended to be used as a cronjob to generate and optionally make available
 Network type
 ------------
 Different IRC networks use different software, such as atheme or UnrealIRCd. Certain details can vary between software, such as the method for
-temporarily quieting users. You should set your network's type in config.cfg, it defaults to atheme but we also have partial support for
-unrealircd.
+temporarily quieting users. You should set your network's type in config.cfg. The following values are supported:
+
+* atheme (default)
+
+* unreal
+
+Services type
+-------------
+Services, such as NickServ and ChanServ, are generally independent of the network software. This can be set on the servicestype line in config.cfg.
+The following values are supported:
+
+* atheme (default)
+
+* ircservices
 
 Credits
 -------

@@ -87,10 +87,12 @@ class BotHandler():
         if nick not in self.admins:
             self.admins[nick] = -1
         if self.admins[nick] == -1:
-            if self.config['feature']['networktype'] == "unrealircd":
+            if self.config['feature']['servicestype'] == "ircservices":
                 self.connection.send_raw('NS STATUS %s' % nick)
-            else:  # default to atheme-style
+            elif self.config['feature']['servicestype'] == "atheme":
                 self.connection.send_raw('NS ACC %s' % nick)
+            else:
+                raise Exception("servicestype undefined in config.cfg")
             # We don't necessarily want to complain in all cases.
             if send is not None:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
@@ -98,10 +100,12 @@ class BotHandler():
         else:
             # reverify every 5min
             if int(time.time()) - self.admins[nick] > 300:
-                if self.config['feature']['networktype'] == "unrealircd":
+                if self.config['feature']['servicestype'] == "ircservices":
                     self.connection.send_raw('NS STATUS %s' % nick)
-                else:
+                elif self.config['feature']['servicestype'] == "atheme":
                     self.connection.send_raw('NS ACC %s' % nick)
+                else:
+                    raise Exception("servicestype undefined in config.cfg")
             return True
 
     def get_admins(self, c):
@@ -110,10 +114,12 @@ class BotHandler():
             return
         i = 0
         for a in self.admins:
-            if self.config['feature']['networktype'] == "unrealircd":
+            if self.config['feature']['servicestype'] == "ircservices":
                 self.workers.defer(i, False, c.send_raw, 'NS STATUS %s' % a)
-            else:
+            elif self.config['feature']['servicestype'] == "atheme":
                 self.workers.defer(i, False, c.send_raw, 'NS ACC %s' % a)
+            else:
+                raise Exception("servicestype undefined in config.cfg")
             i += 1
 
     def abusecheck(self, send, nick, target, limit, cmd):
@@ -392,10 +398,12 @@ class BotHandler():
             for channel in misc.get_channels(self.channels, e.target):
                 self.do_log(channel, e.source.nick, e.target, 'nick')
             if self.config.getboolean('feature', 'nickserv') and e.target in self.admins:
-                if self.config['feature']['networktype'] == "unrealircd":
+                if self.config['feature']['servicestype'] == "ircservices":
                     c.privmsg('NickServ', 'STATUS %s' % e.target)
-                else:  # default to atheme-style
+                elif self.config['feature']['servicestype'] == "atheme":
                     c.privmsg('NickServ', 'ACC %s' % e.target)
+                else:
+                    raise Exception("servicestype undefined in config.cfg")
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
