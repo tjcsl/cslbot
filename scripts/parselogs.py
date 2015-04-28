@@ -26,8 +26,8 @@ import configparser
 from time import strftime, localtime
 from os import makedirs
 
-from helpers.orm import Log
-from helpers.sql import get_session
+from cslbot.helpers.orm import Log
+from cslbot.helpers.sql import get_session
 
 logs = {}
 

@@ -23,8 +23,7 @@ if exists(join(dirname(__file__), '../.git')):
 import argparse
 import configparser
 import time
-from helpers.babble import build_markov
-from helpers.sql import get_session
+from cslbot.helpers import babble, sql
 
 
 def main(confdir="/etc/cslbot"):
@@ -34,7 +33,7 @@ def main(confdir="/etc/cslbot"):
     parser = argparse.ArgumentParser()
     parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
     args = parser.parse_args()
-    session = get_session(config)()
+    session = sql.get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
     print('Generating markov.')
@@ -44,7 +43,7 @@ def main(confdir="/etc/cslbot"):
         session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
-    build_markov(session, cmdchar, ctrlchan, args.nick, initial_run=True, debug=True)
+    babble.build_markov(session, cmdchar, ctrlchan, args.nick, initial_run=True, debug=True)
     print('Finished markov in %f' % (time.time() - t))
 
 

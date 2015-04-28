@@ -1,4 +1,4 @@
-Welcome to IrcBot's documentation!
+Welcome to CslBot's documentation!
 ==================================
 
 Contents:

@@ -23,20 +23,19 @@ if exists(join(dirname(__file__), '../.git')):
 import unittest
 from unittest import mock
 import configparser
-import importlib
 import socket
 import irc.client
 import threading
+from cslbot.helpers import core, server
 
 
 class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        bot_mod = importlib.import_module('helpers.core')
         confdir = join(dirname(__file__), '..')
         mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock).start()
-        cls.bot = bot_mod.IrcBot(confdir)
+        cls.bot = core.IrcBot(confdir)
         cls.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
@@ -65,8 +64,7 @@ class BotTest(unittest.TestCase):
         """Force all the workers to restart so we get the log message."""
         self.bot.shutdown_mp()
         self.bot.handler.workers.__init__(self.bot.handler)
-        server_mod = importlib.import_module('helpers.server')
-        self.bot.server = server_mod.init_server(self.bot)
+        self.bot.server = server.init_server(self.bot)
 
     def do_reload(self):
         sock = socket.socket()

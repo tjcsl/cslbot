@@ -32,7 +32,7 @@ def main(confdir="/etc/cslbot"):
     with open(join(confdir, 'config.cfg')) as f:
         botconfig.read_file(f)
     conf_obj = config.Config()
-    script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
+    script_location = resource_filename(Requirement.parse('CslBot'), join('cslbot', botconfig['alembic']['script_location']))
     conf_obj.set_main_option('script_location', script_location)
     conf_obj.set_main_option('bot_config_path', confdir)
     command.upgrade(conf_obj, 'head')

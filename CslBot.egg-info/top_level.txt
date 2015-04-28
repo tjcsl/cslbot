@@ -1,4 +1,2 @@
-commands
-helpers
-hooks
+cslbot
 scripts

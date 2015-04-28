@@ -1,5 +1,5 @@
 [console_scripts]
-cslbot = helpers.core:init
+cslbot = cslbot.helpers.core:init
 cslbot-genbabble = scripts.gen_babble:main
 cslbot-migrate = scripts.migrate:main
 cslbot-parsedata = scripts.parsedata:main

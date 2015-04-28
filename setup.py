@@ -15,7 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from glob import glob
 from setuptools import setup, find_packages
 
 setup(
@@ -27,30 +26,21 @@ setup(
     version="0.14",
     license="GPL",
     zip_safe=False,
-    packages=find_packages(exclude=['commands.tjhsst']),
-    data_files=[
-        ('alembic', [
+    packages=find_packages(exclude=['cslbot.tjhsst']),
+    test_suite='scripts.test',
+    package_data={
+        '': [
             'alembic/env.py',
-            'alembic/script.py.mako'
-            ]),
-        ('alembic/versions',
-            glob('alembic/versions/*.py')),
-        ('static', [
-            'static/config.example',
-            'static/groups.example',
+            'alembic/script.py.mako',
+            'alembic/versions/*.py',
+            'static/*.example',
             'static/slogans.txt',
             'static/shakespeare-dictionary.json',
             'static/wordlist',
-            ]),
-        ('static/templates', [
-            'static/templates/base.html',
-            'static/templates/polls.html',
-            'static/templates/quotes.html',
-            'static/templates/scores.html',
-            'static/templates/urls.html',
-            ]),
-        ],
-    test_suite='scripts.test',
+            'templates/*.html'],
+        },
+    exclude_package_data={
+        '': ['templates/analytics.html']},
     install_requires=[
         'SQLAlchemy>=1.0.0',
         'requests>=2.4.0',
@@ -58,10 +48,14 @@ setup(
         'beautifulsoup4',
         'geoip2',
         'irc',
+        'jinja2',
         'lxml',
         'python-dateutil',
         'simplejson',
         ],
+    extras_require={
+        'doc': ['sphinx'],
+        },
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
@@ -70,7 +64,7 @@ setup(
         ],
     entry_points={
         'console_scripts': [
-            'cslbot = helpers.core:init',
+            'cslbot = cslbot.helpers.core:init',
             'cslbot-parselogs = scripts.parselogs:main',
             'cslbot-parsedata = scripts.parsedata:main',
             'cslbot-genbabble = scripts.gen_babble:main',

@@ -4,6 +4,10 @@ alembic
 beautifulsoup4
 geoip2
 irc
+jinja2
 lxml
 python-dateutil
 simplejson
+
+[doc]
+sphinx

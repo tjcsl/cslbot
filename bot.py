@@ -19,7 +19,7 @@ from sys import path
 from os.path import dirname
 path.insert(0, dirname(__file__))
 
-from helpers import core
+from cslbot.helpers import core
 
 if __name__ == '__main__':
     core.init(dirname(__file__))

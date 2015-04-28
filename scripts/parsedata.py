@@ -30,8 +30,8 @@ from jinja2 import Environment, FileSystemLoader
 from os import mkdir
 from pkg_resources import Requirement, resource_filename
 
-from helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
-from helpers.sql import get_session
+from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
+from cslbot.helpers.sql import get_session
 
 
 def get_quotes(session):
@@ -128,7 +128,7 @@ def main(confdir="/etc/cslbot"):
     parser.add_argument('outdir', help='The output dir.')
     cmdargs = parser.parse_args()
     session = get_session(config)()
-    env = Environment(loader=FileSystemLoader(resource_filename(Requirement.parse('CslBot'), 'static/templates')))
+    env = Environment(loader=FileSystemLoader(resource_filename(Requirement.parse('CslBot'), 'cslbot/templates')))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not exists(cmdargs.outdir):

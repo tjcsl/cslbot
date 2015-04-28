@@ -1,8 +1,3 @@
 include bot.py COPYING
-include alembic/env.py alembic/script.py.mako alembic/versions/*.py
 include doc/conf.py
-include scripts/ircbot scripts/*.sh
-include static/shakespeare-dictionary.json static/slogans.txt static/wordlist
-include static/*.example
-include static/templates/*.html
-exclude static/templates/analytics.html
+include scripts/ircbot scripts/*.sh scripts/*.py

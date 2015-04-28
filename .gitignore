@@ -9,7 +9,7 @@ __pycache__
 *.sw?
 *.*~
 doc/build
-static/templates/analytics.html
-static/geoip.db
+cslbot/templates/analytics.html
+cslbot/static/geoip.db
 # ignore tj-specific submodule
-commands/tjhsst
+cslbot/tjhsst
