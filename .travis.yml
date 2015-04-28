@@ -28,6 +28,8 @@ before_script:
     - sed -i "s#/etc/cslbot#$TRAVIS_BUILD_DIR#g" cslbot/helpers/core.py scripts/*.py
     - echo -e 'test\n#test\n#test\ntest' | cslbot
     - sed -i "s#engine:#\0 postgresql://postgres@/ircbot#" $TRAVIS_BUILD_DIR/config.cfg
+    - cat $TRAVIS_BUILD_DIR/config.cfg
+    - echo `pwd`
     - git clone git://github.com/tjcsl/cslbot-tjhsst.git cslbot/tjhsst
 
 script:
