@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
+import time
 from os.path import exists, join
 from ..helpers.command import Command
 from ..helpers.misc import do_pull
@@ -33,3 +34,4 @@ def cmd(send, _, args):
     except subprocess.CalledProcessError as e:
         for line in e.output.decode().strip().splitlines():
             send(line)
+            time.sleep(0.2)
