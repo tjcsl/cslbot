@@ -403,7 +403,7 @@ class BotHandler():
     def handle_msg(self, c, e):
         """The Heart and Soul of IrcBot."""
 
-        if e.type not in ['authenticate', 'join', 'part', 'quit']:
+        if e.type not in ['authenticate', 'error', 'join', 'part', 'quit']:
             nick = e.source.nick
         else:
             nick = e.source
