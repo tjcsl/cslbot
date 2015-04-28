@@ -222,7 +222,7 @@ def get_version(srcdir):
 
 def append_filters(filters):
     filter_list = []
-    for next_filter in filters.split(','):
+    for next_filter in filter(None, filters.split(',')):
         if next_filter in textutils.output_filters.keys():
             filter_list.append(textutils.output_filters[next_filter])
         else:
