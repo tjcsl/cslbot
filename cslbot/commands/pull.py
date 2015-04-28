@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import logging
 import subprocess
-import time
 from os.path import exists, join
 from ..helpers.command import Command
 from ..helpers.misc import do_pull
@@ -31,7 +31,7 @@ def cmd(send, _, args):
             send(do_pull(srcdir=args['handler'].confdir))
         else:
             send(do_pull(repo=args['config']['api']['githubrepo']))
-    except subprocess.CalledProcessError as e:
-        for line in e.output.decode().strip().splitlines():
-            send(line)
-            time.sleep(0.2)
+    except subprocess.CalledProcessError as ex:
+        for line in ex.output.decode().strip().splitlines():
+            logging.error(line)
+        raise ex
