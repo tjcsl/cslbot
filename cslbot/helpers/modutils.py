@@ -98,7 +98,7 @@ def get_enabled(mod_type, package='CslBot'):
 
 def get_modules(mod_type):
     core_enabled, core_disabled = get_enabled(mod_type)
-    for package in AUX:
+    for package in filter(None, AUX):
         aux_enabled, aux_disabled = get_enabled(mod_type, package)
         core_enabled.extend(aux_enabled)
         core_disabled.extend(aux_disabled)
