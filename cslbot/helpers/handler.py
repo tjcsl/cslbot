@@ -20,6 +20,7 @@ import base64
 import logging
 import re
 import time
+from irc import modes
 from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
 from random import choice, random
 
@@ -262,12 +263,20 @@ class BotHandler():
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
 
+    def check_mode(self, mode):
+        if mode[2] != self.connection.real_nickname:
+            return False
+        if (mode[0], mode[1]) == ('-', 'o'):
+            return True
+        elif (mode[0], mode[1]) == ('+', 'b'):
+            return True
+        return False
+
     def do_mode(self, target, msg, nick, send):
         """ reop and handle guard violations """
         # reop
-        botnick = self.config['core']['nick']
-        match = re.search(r".*(-o|\+b).*%s" % botnick, msg)
-        if match:
+        mode_changes = list(filter(self.check_mode, modes.parse_channel_modes(msg)))
+        if mode_changes:
             send("%s: :(" % nick, target=target)
             send("OP %s" % target, target='ChanServ')
             send("UNBAN %s" % target, target='ChanServ')
@@ -428,13 +437,10 @@ class BotHandler():
         else:
             nick = e.source
 
-        # cap and kick have multiple arguments.
-        if e.type in ['cap', 'kick']:
-            msg = " ".join(e.arguments).strip()
-        elif e.arguments:
-            msg = e.arguments[0].strip()
-        else:  # join and nick don't have any arguments.
+        if e.arguments is None:
             msg = ""
+        else:
+            msg = " ".join(e.arguments).strip()
 
         # Send the response to private messages to the sending nick.
         target = nick if e.type == 'privmsg' else e.target
