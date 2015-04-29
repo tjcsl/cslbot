@@ -45,6 +45,13 @@ def cmd(send, msg, args):
     if time is None:
         send("Invalid unit.")
     else:
-        setmode(channel, " +q %s!*@*" % user)
+        if args['config']['feature']['networktype'] == 'unrealircd':
+            setmode(channel, " +b ~q:%s!*@*" % user)
+            defer_args = [channel, " -b ~q:%s!*@*" % user]
+        elif args['config']['feature']['networktype'] == 'atheme':
+            setmode(channel, " +q %s!*@*" % user)
+            defer_args = [channel, " -q %s!*@*" % user]
+        else:
+            raise Exception("networktype undefined or unknown in config.cfg")
         ident = args['handler'].workers.defer(time, True, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))
