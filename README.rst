@@ -85,7 +85,6 @@ If you intend to use MySQL, the default DBAPI is provided by the mysql-python pa
 See the SQLAlchemy documentation if you want to use another backend.
 
 Migrations
-
 ----------
 You can run alembic -c config.cfg upgrade head at any time to ensure that you have the latest database migration.
 
