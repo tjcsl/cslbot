@@ -39,7 +39,7 @@ def cmd(send, msg, args):
             short = fromstring(html.text).find('.//meta[@name="description"]').get('content')
             send("%s -- http://linux.die.net/man/%s/%s" % (short, cmdargs.section, cmdargs.command))
         except:
-            send("Couldn't find command %s in section %s" % (cmdargs.command, cmdargs.section))
+            send("No manual entry for %s in section %s" % (cmdargs.command, cmdargs.section))
     else:
         for section in range(0, 8):
             html = get('http://linux.die.net/man/%d/%s' % (section, cmdargs.command))
@@ -47,4 +47,4 @@ def cmd(send, msg, args):
                 short = fromstring(html.text).find('.//meta[@name="description"]').get('content')
                 send("%s -- http://linux.die.net/man/%d/%s" % (short, section, cmdargs.command))
                 return
-        send("Couldn't find command %s" % cmdargs.command)
+        send("No manual entry for %s" % cmdargs.command)
