@@ -18,16 +18,17 @@
 import configparser
 import logging
 import sys
-from irc.client import SimpleIRCClient
+import ssl
+from irc import client, connection
 
 
-class IrcClient(SimpleIRCClient):
+class IrcClient(client.SimpleIRCClient):
 
     def __init__(self, nick, config):
         self.nick = nick
         self.config = config
         self.loading = False
-        SimpleIRCClient.__init__(self)
+        super().__init__()
 
     def on_welcome(self, c, _):
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
@@ -73,7 +74,11 @@ def main():
         config.read_file(f)
     CTRLNICK = "bot-controller"
     client = IrcClient(CTRLNICK, config)
-    client.connect(config['core']['host'], config['core']['serverport'], CTRLNICK, config['auth']['ctrlpass'])
+    if config.getboolean('core', 'ssl'):
+        factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
+    else:
+        factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
+    client.connect(config['core']['host'], config.getint('core', 'ircport'), CTRLNICK, config['auth']['ctrlpass'], connect_factory=factory)
     client.start()
 
 if __name__ == '__main__':
