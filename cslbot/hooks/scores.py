@@ -28,7 +28,7 @@ def handle(send, msg, args):
     | Otherwise substract one point.
     """
     session = args['db']
-    matches = re.findall(r"(%s{2,})(\+\+|--)" % args['config']['core']['nickregex'], msg)
+    matches = re.findall(r"\b(?<!-)(%s{2,})(\+\+|--)" % args['config']['core']['nickregex'], msg)
     if not matches:
         return
     if args['type'] == 'privmsg':
