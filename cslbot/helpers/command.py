@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import sys
 import functools
 import re
 import threading
@@ -66,7 +65,7 @@ def get_disabled_commands():
 
 def disable_command(command):
     """ adds a command to the disabled comands list"""
-    if ("commands.%s" % command) not in sys.modules:
+    if not is_registered(command):
         return "%s is not a loaded module" % command
     if command not in _disabled_commands:
         _disabled_commands.add(command)
@@ -136,7 +135,7 @@ class Command():
         return wrapper
 
     def run(self, send, msg, args, command, nick, target, handler):
-        if command in _disabled_commands:
+        if [x for x in self.names if x in _disabled_commands]:
             send("Sorry, that command is disabled.")
         else:
             self.target = target

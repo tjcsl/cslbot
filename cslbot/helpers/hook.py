@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import sys
 import functools
 import re
 import threading
@@ -60,7 +59,7 @@ def get_disabled_hooks():
 def disable_hook(hook):
     """Adds a hook to the disabled hooks list."""
     global _disabled_hooks
-    if ("hooks.%s" % hook) not in sys.modules:
+    if hook not in _known_hooks:
         return "%s is not a loaded hook" % hook
     if hook not in _disabled_hooks:
         _disabled_hooks.add(hook)
@@ -77,7 +76,7 @@ def enable_hook(hook):
     elif hook in _disabled_hooks:
         _disabled_hooks.remove(hook)
         return "Enabled hook %s" % hook
-    elif ("hooks.%s" % hook) in sys.modules:
+    elif hook in _known_hooks:
         return "That hook isn't disabled!"
     else:
         return "%s is not a loaded hook" % hook

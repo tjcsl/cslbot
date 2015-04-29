@@ -143,7 +143,7 @@ def handle_show(args):
             args.send("Missing argument.")
         elif args.args[0] == "commands":
             mods = ", ".join(sorted(command.get_enabled_commands()))
-            args.send(mods)
+            args.send(mods, ignore_length=True)
         elif args.args[0] == "hooks":
             mods = ", ".join(sorted(hook.get_enabled_hooks()))
             args.send(mods)
