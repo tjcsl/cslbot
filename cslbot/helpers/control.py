@@ -136,8 +136,11 @@ def handle_show(args):
         else:
             args.send("No polls pending.")
     elif args.cmd == "pending":
-        admins = ": ".join(args.handler.admins)
-        show_pending(args.db, admins, args.send)
+        if args.args:
+            args.send("Invalid argument %s." % args.args[0])
+        else:
+            admins = ": ".join(args.handler.admins)
+            show_pending(args.db, admins, args.send)
     elif args.cmd == "enabled":
         if not args.args:
             args.send("Missing argument.")
