@@ -28,7 +28,11 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('section', nargs='?')
     parser.add_argument('command')
-    cmdargs = parser.parse_args(msg)
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     if(cmdargs.section):
         html = get('http://linux.die.net/man/%s/%s' % (cmdargs.section, cmdargs.command))
         try:
