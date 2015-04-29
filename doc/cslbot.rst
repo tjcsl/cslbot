@@ -9,7 +9,6 @@ Subpackages
     cslbot.commands
     cslbot.helpers
     cslbot.hooks
-    cslbot.tjhsst
 
 Module contents
 ---------------

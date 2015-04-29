@@ -25,11 +25,11 @@ Run ./bot.py to setup the initial configuration and change values in config.cfg 
 
 You must copy static/groups.example to groups.cfg and make any needed changes to configure the commands and/or hooks you want.
 
-If you want the tjhsst-specific commands, clone github.com/tjcsl/cslbot-tjhsst into commands/tjhsst and add it to extracommands.
+If you want the tjhsst-specific commands, run `pip install git+git://github.com/tjcsl/cslbot-tjhsst` and add cslbot-tjhsst to extramodules.
 
 Python must be at least 3.4.
 
-Run `pip install -e .` to install the required libraries.
+Run `pip install .` to install the required libraries.
 
 You must also install the appropriate DBAPI package as explained in the next section (unnecessary if you're using SQLite).
 

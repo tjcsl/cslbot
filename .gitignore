@@ -8,6 +8,5 @@ __pycache__
 *.py[co]
 *.sw?
 *.*~
-doc/build
 cslbot/templates/analytics.html
 cslbot/static/geoip.db
