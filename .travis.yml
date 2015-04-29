@@ -21,7 +21,7 @@ cache:
 
 install:
     # Hack to prevent setuptools being upgraded and screwing up the cache.
-    - pip install -U flake8 sphinx psycopg2 -e . setuptools==$(pip show setuptools|sed -n "s#^Version. \(.*\)#\1#p")
+    - pip install -U flake8 sphinx psycopg2 cslbot-tjhsst -e . setuptools==$(pip show setuptools|sed -n "s#^Version. \(.*\)#\1#p")
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
@@ -31,7 +31,7 @@ before_script:
     - git commit -am 'update path'
     - echo -e 'test\n#test\n#test\ntest' | cslbot
     - sed -i 's#engine.=.#\0 postgresql://postgres@/ircbot#' $TRAVIS_BUILD_DIR/config.cfg
-    - git clone git://github.com/tjcsl/cslbot-tjhsst.git cslbot/tjhsst
+    - sed -i 's#extramodules.=.#\0 cslbot-tjhsst#' $TRAVIS_BUILD_DIR/config.cfg
 
 script:
     - flake8 --max-line-length=1000 .
