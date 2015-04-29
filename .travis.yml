@@ -20,8 +20,7 @@ cache:
     - $HOME/virtualenv
 
 install:
-    # Hack to prevent setuptools being upgraded and screwing up the cache.
-    - pip install -U flake8 sphinx psycopg2 cslbot-tjhsst -e . setuptools==$(pip show setuptools|sed -n "s#^Version. \(.*\)#\1#p")
+    - pip install flake8 sphinx psycopg2 git+git://github.com/tjcsl/cslbot-tjhsst -e .
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
