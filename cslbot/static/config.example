@@ -14,8 +14,7 @@ altcmdchars: fwil, @, ~
 url: http://example.com/irc/
 nickregex: [a-zA-Z0-9_\|`\^-]
 chanregex: [&#+!][^, \x07]+
-extracommands:
-extrahooks:
+extramodules:
 [groups]
 hooks: core, optional
 commands: admin, core, useful, optional

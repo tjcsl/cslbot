@@ -28,18 +28,17 @@ _known_commands = {}
 _disabled_commands = set()
 
 
-def scan_for_commands(folder):
+def scan_for_commands():
     """
-    Scans folder for commands
+    Scans for commands
 
-    :param str folder: The folder in which to look for commands
     :rtype: dict, list
     :return: The dict represents a list of known commands, while the list is a list of modules that failed to reload
     """
     global _disabled_commands
     _known_commands.clear()
     _disabled_commands = modutils.get_disabled("commands")
-    errors = modutils.scan_and_reimport(folder, "commands")
+    errors = modutils.scan_and_reimport("commands")
     return errors
 
 

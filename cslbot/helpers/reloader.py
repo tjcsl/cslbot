@@ -27,13 +27,13 @@ def do_log(c, target, msg):
 def load_modules(config, confdir, send=logging.error):
     modutils.init_aux(config['core'])
     modutils.init_groups(config['groups'], confdir)
-    errored_commands = command.scan_for_commands('commands')
+    errored_commands = command.scan_for_commands()
     if errored_commands:
         logging.error("Failed to load some commands.")
         for error in errored_commands:
             send("%s: %s" % error)
         return False
-    errored_hooks = hook.scan_for_hooks('hooks')
+    errored_hooks = hook.scan_for_hooks()
     if errored_hooks:
         logging.error("Failed to reload some hooks.")
         for error in errored_hooks:
@@ -67,7 +67,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
     with open(config_file) as f:
         bot.config.read_file(f)
     # Reimport helpers
-    errored_helpers = modutils.scan_and_reimport('helpers', 'helpers')
+    errored_helpers = modutils.scan_and_reimport('helpers')
     if errored_helpers:
         send("Failed to load some helpers.")
         for error in errored_helpers:

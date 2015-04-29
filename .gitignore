@@ -11,5 +11,3 @@ __pycache__
 doc/build
 cslbot/templates/analytics.html
 cslbot/static/geoip.db
-# ignore tj-specific submodule
-cslbot/tjhsst

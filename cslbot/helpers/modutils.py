@@ -27,12 +27,12 @@ from . import backtrace
 
 GROUPS = {'commands': set(), 'hooks': set()}
 DISABLED = {'commands': set(), 'hooks': set()}
-AUX = {'commands': [], 'hooks': [], 'helpers': []}
+AUX = []
 
 
 def init_aux(config):
-    AUX['commands'] = [x.strip() for x in config['extracommands'].split(',')]
-    AUX['hooks'] = [x.strip() for x in config['extrahooks'].split(',')]
+    AUX.clear()
+    AUX.extend([x.strip() for x in config['extramodules'].split(',')])
 
 
 def init_groups(groups, confdir):
@@ -81,13 +81,12 @@ def get_disabled(mod_type):
     return DISABLED[mod_type]
 
 
-def get_enabled(moddir, mod_type):
+def get_enabled(mod_type, package='CslBot'):
     enabled, disabled = [], []
-    full_dir = resource_filename(Requirement.parse('CslBot'), join('cslbot', moddir))
+    full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
     for f in glob(join(full_dir, '*.py')):
         name = basename(f).split('.')[0]
-        mod_pkg = moddir.replace('/', '.')
-        mod_name = "cslbot.%s.%s" % (mod_pkg, name)
+        mod_name = "%s.%s.%s" % (package.lower(), mod_type, name)
         if group_enabled(mod_type, name):
             enabled.append(mod_name)
         elif group_disabled(mod_type, name):
@@ -97,12 +96,10 @@ def get_enabled(moddir, mod_type):
     return enabled, disabled
 
 
-def get_modules(folder, mod_type):
-    core_enabled, core_disabled = get_enabled(folder, mod_type)
-    for aux in AUX[mod_type]:
-        if not aux:
-            continue
-        aux_enabled, aux_disabled = get_enabled(aux, mod_type)
+def get_modules(mod_type):
+    core_enabled, core_disabled = get_enabled(mod_type)
+    for package in AUX:
+        aux_enabled, aux_disabled = get_enabled(mod_type, package)
         core_enabled.extend(aux_enabled)
         core_disabled.extend(aux_disabled)
     return core_enabled, core_disabled
@@ -136,9 +133,9 @@ def safe_load(modname):
         return msg
 
 
-def scan_and_reimport(folder, mod_type):
+def scan_and_reimport(mod_type):
     """ Scans folder for modules."""
-    mod_enabled, mod_disabled = get_modules(folder, mod_type)
+    mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []
     for mod in (mod_enabled + mod_disabled):
         if mod in sys.modules:
