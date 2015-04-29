@@ -52,8 +52,6 @@ def cmd(send, msg, args):
             setmode(channel, " +q %s!*@*" % user)
             defer_args = [channel, " -q %s!*@*" % user]
         else:
-            send("Network type invalid or unset, defaulting to atheme-style quiet")
-            setmode(channel, " +q %s!*@*" % user)
-            defer_args = [channel, " -q %s!*@*" % user]
+            raise Exception("networktype undefined or unknown in config.cfg")
         ident = args['handler'].workers.defer(time, True, setmode, *defer_args)
         send("%s has been put in timeout, ident: %d" % (user, ident))

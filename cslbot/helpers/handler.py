@@ -92,7 +92,7 @@ class BotHandler():
             elif self.config['feature']['servicestype'] == "atheme":
                 self.connection.send_raw('NS ACC %s' % nick)
             else:
-                raise Exception("servicestype undefined in config.cfg")
+                raise Exception("servicestype undefined or unknown in config.cfg")
             # We don't necessarily want to complain in all cases.
             if send is not None:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
@@ -105,7 +105,7 @@ class BotHandler():
                 elif self.config['feature']['servicestype'] == "atheme":
                     self.connection.send_raw('NS ACC %s' % nick)
                 else:
-                    raise Exception("servicestype undefined in config.cfg")
+                    raise Exception("servicestype undefined or unknown in config.cfg")
             return True
 
     def get_admins(self, c):
@@ -119,7 +119,7 @@ class BotHandler():
             elif self.config['feature']['servicestype'] == "atheme":
                 self.workers.defer(i, False, c.send_raw, 'NS ACC %s' % a)
             else:
-                raise Exception("servicestype undefined in config.cfg")
+                raise Exception("servicestype undefined or unknown in config.cfg")
             i += 1
 
     def abusecheck(self, send, nick, target, limit, cmd):
@@ -403,7 +403,7 @@ class BotHandler():
                 elif self.config['feature']['servicestype'] == "atheme":
                     c.privmsg('NickServ', 'ACC %s' % e.target)
                 else:
-                    raise Exception("servicestype undefined in config.cfg")
+                    raise Exception("servicestype undefined or unknown in config.cfg")
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
