@@ -74,7 +74,7 @@ class BotHandler():
             setattr(self, key, val)
         self.uptime['reloaded'] = time.time()
 
-    def get_nickstatus(self, nick):
+    def update_nickstatus(self, nick):
         if self.features['whox']:
             self.connection.who('%s %%na' % nick)
         elif self.config['feature']['servicestype'] == "ircservices":
