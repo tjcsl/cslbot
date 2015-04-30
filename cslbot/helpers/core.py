@@ -114,7 +114,7 @@ class IrcBot(bot.SingleServerIRCBot):
     def shutdown(self, *_):
         if hasattr(self, 'connection'):
             self.connection.disconnect("Bot received SIGTERM")
-        self.shutdown_mp()
+        self.shutdown_mp(False)
         sys.exit(0)
 
     def shutdown_mp(self, clean=True):

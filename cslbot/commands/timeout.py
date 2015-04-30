@@ -39,7 +39,6 @@ def cmd(send, msg, args):
     if not re.match(nickregex, user):
         send("%s is an invalid nick." % user)
         return
-    defer_args = [channel, " -q %s!*@*" % user]
 
     time = parse_time(time)
     if time is None:
