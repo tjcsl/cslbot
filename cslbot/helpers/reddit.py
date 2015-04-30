@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from requests import get
+from urllib.request import Request, urlopen
 from .urlutils import get_title, get_short
 import time
 
@@ -30,6 +31,7 @@ def check_exists(subreddit):
 
 def random_post(subreddit, apikey):
     """ Gets a random post from a subreddit and returns a title and shortlink to it """
-    urlstr = 'http://reddit.com%s/random?%s' % ('/r/' + subreddit, time.time())
-    url = get(urlstr, headers={'User-Agent': 'CslBot/1.0'}).url
+    subreddit = '/r/random' if subreddit is None else '/r/%s' % subreddit
+    urlstr = 'http://reddit.com%s/random?%s' % (subreddit, time.time())
+    url = urlopen(Request(urlstr, headers={'User-Agent': 'CslBot/1.0'})).geturl()
     return '** %s - %s' % (get_title(url), get_short(url, apikey))
