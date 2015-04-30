@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import time
+import time
 from datetime import datetime, timedelta
 from .orm import Nicks
 
@@ -22,39 +22,26 @@ from .orm import Nicks
 def handle_nick(handler, e):
     old, new = e.source.nick, e.target
     with handler.db.session_scope() as session:
-        session.add(Nicks(old=old, new=new, time=time()))
+        session.add(Nicks(old=old, new=new, time=time.time()))
         if handler.config['feature'].getboolean('nickkick'):
             return do_kick(handler, session, new)
         else:
             return False
 
 
-def get_mapping(session, nick, limit):
-    mapping = {}
-    done = set()
-    todo = set([nick])
-    while todo:
-        curr = todo.pop()
-        prev = session.query(Nicks).filter(Nicks.new == curr, Nicks.time >= limit).order_by(Nicks.time).all()
-        done.add(curr)
-        for x in prev:
-            if x.old not in done:
-                todo.add(x.old)
-        mapping[curr] = prev
-    return mapping
-
-
 def get_chain(session, nick, limit=0):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
-    mapping = get_mapping(session, nick, limit)
-    chain = [nick]
-    curr = mapping[nick]
-    while curr:
-        last = sorted(curr, key=lambda x: x.time)
-        if last:
-            last = last[0].old
-            curr = None if last in chain else mapping[last]
-            chain.append(last)
+    chain = []
+    curr_time = time.time()
+    curr = nick
+    while curr is not None:
+        chain.append(curr)
+        row = session.query(Nicks).filter(Nicks.new == curr, ~Nicks.old.startswith('Guest'), Nicks.time < curr_time, Nicks.time >= limit).order_by(Nicks.time).limit(1).first()
+        if row is not None:
+            curr = row.old
+            curr_time = row.time
+        else:
+            curr = None
     return list(reversed(chain))
 
 
