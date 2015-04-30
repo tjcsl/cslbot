@@ -26,6 +26,7 @@ from random import choice, random
 from datetime import timedelta
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
+from urllib.request import urlopen
 from requests import post, get
 from requests.exceptions import ReadTimeout
 from . import orm, textutils
@@ -176,7 +177,7 @@ def ignore(session, nick):
 
 
 def get_rand_word():
-    url = get('http://www.urbandictionary.com/random.php').url
+    url = urlopen('http://www.urbandictionary.com/random.php').geturl()
     url = url.split('=')[1].replace('+', ' ')
     return unquote(url)
 
