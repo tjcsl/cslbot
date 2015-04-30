@@ -16,8 +16,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import configparser
 import sys
-from configparser import ConfigParser
 from pkg_resources import Requirement, resource_filename
 from os.path import basename, join
 import importlib
@@ -36,7 +36,7 @@ def init_aux(config):
 
 
 def init_groups(groups, confdir):
-    config = ConfigParser()
+    config = configparser.ConfigParser()
     with open(join(confdir, 'groups.cfg')) as cfgfile:
         config.read_file(cfgfile)
     add_to_groups(config, groups, 'commands')

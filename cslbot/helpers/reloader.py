@@ -13,9 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import configparser
 import logging
-from . import command, handler, hook, misc, modutils
+from . import config, command, handler, hook, misc, modutils
 from os.path import exists, join
 
 
@@ -62,10 +61,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
         else:
             send(misc.do_pull(repo=bot.config['api']['githubrepo']))
     # Reload config
-    bot.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_file = join(confdir, 'config.cfg')
-    with open(config_file) as f:
-        bot.config.read_file(f)
+    bot.config = config.load_config(join(confdir, 'config.cfg'))
     # Reimport helpers
     errored_helpers = modutils.scan_and_reimport('helpers')
     if errored_helpers:

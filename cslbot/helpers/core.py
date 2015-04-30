@@ -19,7 +19,6 @@ if sys.version_info < (3, 4):
     # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
 import argparse
-import configparser
 import logging
 import importlib
 import multiprocessing
@@ -43,9 +42,7 @@ class IrcBot(bot.SingleServerIRCBot):
             logging.info("Setting up config file")
             config.do_setup(config_file)
             sys.exit(0)
-        self.config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-        with open(config_file) as f:
-            self.config.read_file(f)
+        self.config = config.load_config(config_file)
         if self.config.getboolean('core', 'ssl'):
             factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
         else:

@@ -18,9 +18,39 @@
 
 import configparser
 import re
+import logging
 from os import mkdir
 from os.path import exists, dirname, join
 from pkg_resources import Requirement, resource_string
+
+
+def migrate_config(config_file, config_obj):
+    example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
+    modified = False
+
+    for section in example_obj.sections():
+        if not config_obj.has_section(section):
+            logging.info("Adding config section %s", section)
+            config_obj.add_section(section)
+            modified = True
+        for option in example_obj.options(section):
+            if not config_obj.has_option(section, option):
+                logging.info("Adding default value for config option %s.%s", section, option)
+                config_obj[section][option] = example_obj[section][option]
+                modified = True
+    if modified:
+        logging.info("Writing updated config file.")
+        with open(config_file, 'w') as f:
+            config_obj.write(f)
+
+
+def load_config(config_file):
+    config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(config_file) as f:
+        config_obj.read_file(f)
+    migrate_config(config_file, config_obj)
+    return config_obj
 
 
 def do_config(config):
