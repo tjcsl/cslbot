@@ -42,7 +42,7 @@ class IrcBot(bot.SingleServerIRCBot):
             logging.info("Setting up config file")
             config.do_setup(config_file)
             sys.exit(0)
-        self.config = config.load_config(config_file)
+        self.config = config.load_config(config_file, logging.info)
         if self.config.getboolean('core', 'ssl'):
             factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
         else:

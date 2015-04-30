@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+import importlib
 import logging
 from . import config, command, handler, hook, misc, modutils
 from os.path import exists, join
@@ -61,7 +62,8 @@ def do_reload(bot, target, cmdargs, server_send=None):
         else:
             send(misc.do_pull(repo=bot.config['api']['githubrepo']))
     # Reload config
-    bot.config = config.load_config(join(confdir, 'config.cfg'))
+    importlib.reload(config)
+    bot.config = config.load_config(join(confdir, 'config.cfg'), send)
     # Reimport helpers
     errored_helpers = modutils.scan_and_reimport('helpers')
     if errored_helpers:

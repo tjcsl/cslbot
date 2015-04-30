@@ -18,38 +18,46 @@
 
 import configparser
 import re
-import logging
 from os import mkdir
 from os.path import exists, dirname, join
 from pkg_resources import Requirement, resource_string
 
 
-def migrate_config(config_file, config_obj):
+def migrate_config(config_file, config_obj, send):
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
     modified = False
 
+    # Check for new sections/options
     for section in example_obj.sections():
         if not config_obj.has_section(section):
-            logging.info("Adding config section %s", section)
+            send("Adding config section %s" % section)
             config_obj.add_section(section)
             modified = True
         for option in example_obj.options(section):
             if not config_obj.has_option(section, option):
-                logging.info("Adding default value for config option %s.%s", section, option)
+                send("Adding default value for config option %s.%s" % (section, option))
                 config_obj[section][option] = example_obj[section][option]
                 modified = True
+    # Check for removed sections/options
+    for section in config_obj.sections():
+        if example_obj.has_section(section):
+            for option in config_obj.options(section):
+                if not example_obj.has_option(section, option):
+                    send("Obsolete config option %s.%s, consider removing." % (section, option))
+        else:
+            send("Obsolete config section %s, consider removing." % section)
     if modified:
-        logging.info("Writing updated config file.")
+        send("Config file automatically migrated, please review.")
         with open(config_file, 'w') as f:
             config_obj.write(f)
 
 
-def load_config(config_file):
+def load_config(config_file, send):
     config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(config_file) as f:
         config_obj.read_file(f)
-    migrate_config(config_file, config_obj)
+    migrate_config(config_file, config_obj, send)
     return config_obj
 
 
