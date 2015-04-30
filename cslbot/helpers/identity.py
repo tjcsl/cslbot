@@ -35,13 +35,15 @@ def get_chain(session, nick, limit=0):
     curr_time = time.time()
     curr = nick
     while curr is not None:
-        chain.append(curr)
         row = session.query(Nicks).filter(Nicks.new == curr, ~Nicks.old.startswith('Guest'), Nicks.time < curr_time, Nicks.time >= limit).order_by(Nicks.time).limit(1).first()
         if row is not None:
             curr = row.old
+            chain.append(curr)
             curr_time = row.time
         else:
             curr = None
+    if chain:
+        chain.insert(0, nick)
     return list(reversed(chain))
 
 

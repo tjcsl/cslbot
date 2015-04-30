@@ -27,4 +27,7 @@ def cmd(send, msg, args):
         send("Which nick?")
         return
     chain = get_chain(args['db'], msg)
-    send(" -> ".join(chain))
+    if chain:
+        send(" -> ".join(chain))
+    else:
+        send("%s has never changed their nick." % msg)
