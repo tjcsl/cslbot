@@ -57,9 +57,8 @@ class IrcBot(bot.SingleServerIRCBot):
         self.connection.add_global_handler("all_events", self.handle_event, 10)
         # We need to get the channels that a nick is currently in before the regular quit event is processed.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
-        if passwd is None:
-            # FIXME: make this less hacky
-            self.reactor._on_connect = self.do_sasl
+        # FIXME: make this less hacky
+        self.reactor._on_connect = self.do_cap
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
@@ -74,7 +73,7 @@ class IrcBot(bot.SingleServerIRCBot):
             self.server = server.init_server(self)
 
     def handle_event(self, c, e):
-        handled_types = ['action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'join', 'kick',
+        handled_types = ['354', 'account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick',
                          'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
@@ -97,8 +96,13 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return "cslbot - %s" % version
 
-    def do_sasl(self, _):
-        self.connection.cap('REQ', 'sasl')
+    def do_cap(self, _):
+        self.connection.cap('REQ', 'account-notify')
+        self.connection.cap('REQ', 'extended-join')
+        if self.config.getboolean('core', 'sasl'):
+            self.connection.cap('REQ', 'sasl')
+        else:
+            self.connection.cap('END')
 
     @staticmethod
     def get_target(e):

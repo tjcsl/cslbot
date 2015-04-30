@@ -52,7 +52,8 @@ class BotHandler():
         self.caps = []
         self.abuselist = {}
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
-        self.admins = {nick: -1 for nick in admins}
+        self.admins = {nick: None for nick in admins}
+        self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         self.confdir = confdir
         self.log_to_ctrlchan = False
 
@@ -62,6 +63,7 @@ class BotHandler():
         data['caps'] = self.caps[:]
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
+        data['features'] = self.features.copy()
         data['uptime'] = self.uptime.copy()
         data['abuselist'] = self.abuselist.copy()
         return data
@@ -71,6 +73,14 @@ class BotHandler():
         for key, val in data.items():
             setattr(self, key, val)
         self.uptime['reloaded'] = time.time()
+
+    def get_nickstatus(self, nick):
+        if self.features['whox']:
+            self.connection.who('%s %%na' % nick)
+        elif self.config['feature']['servicestype'] == "ircservices":
+            self.connection.privmsg('NickServ', 'STATUS %s' % nick)
+        elif self.config['feature']['servicestype'] == "atheme":
+            self.connection.privmsg('NickServ', 'ACC %s' % nick)
 
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
@@ -86,42 +96,28 @@ class BotHandler():
             return True
         # unauthed
         if nick not in self.admins:
-            self.admins[nick] = -1
-        if self.admins[nick] == -1:
-            if self.config['feature']['servicestype'] == "ircservices":
-                self.connection.send_raw('NS STATUS %s' % nick)
-            elif self.config['feature']['servicestype'] == "atheme":
-                self.connection.send_raw('NS ACC %s' % nick)
-            else:
-                raise Exception("servicestype undefined or unknown in config.cfg")
+            self.admins[nick] = None
+        if self.admins[nick] is None:
+            self.update_nickstatus(nick)
             # We don't necessarily want to complain in all cases.
             if send is not None:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
             return False
         else:
-            # reverify every 5min
-            if int(time.time()) - self.admins[nick] > 300:
-                if self.config['feature']['servicestype'] == "ircservices":
-                    self.connection.send_raw('NS STATUS %s' % nick)
-                elif self.config['feature']['servicestype'] == "atheme":
-                    self.connection.send_raw('NS ACC %s' % nick)
-                else:
-                    raise Exception("servicestype undefined or unknown in config.cfg")
+            if not self.features['account-notify']:
+                # reverify every 5min
+                if int(time.time()) - self.admins[nick] > 300:
+                    self.update_nickstatus(nick)
             return True
 
-    def get_admins(self, c):
+    def get_admins(self):
         """Check verification for all admins."""
+        # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
             return
-        i = 0
-        for a in self.admins:
-            if self.config['feature']['servicestype'] == "ircservices":
-                self.workers.defer(i, False, c.send_raw, 'NS STATUS %s' % a)
-            elif self.config['feature']['servicestype'] == "atheme":
-                self.workers.defer(i, False, c.send_raw, 'NS ACC %s' % a)
-            else:
-                raise Exception("servicestype undefined or unknown in config.cfg")
-            i += 1
+        for i, a in enumerate(self.admins):
+            if a is None:
+                self.workers.defer(i, False, self.update_nickstatus, a)
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -256,6 +252,7 @@ class BotHandler():
         if cmdargs[0] != '#':
             cmdargs = '#' + cmdargs
         cmd = cmdargs.split()
+        # FIXME: use argparse
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
             send("%s is already a member of %s" % (self.config['core']['nick'],
                                                    cmd[0]))
@@ -347,15 +344,16 @@ class BotHandler():
         | Join the primary channel.
         | Join the control channel.
         """
-        self.get_admins(self.connection)
         self.connection.join(self.config['core']['channel'])
         self.connection.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        # We use this to pick up info on admins who aren't currently in a channel.
+        self.workers.defer(5, False, self.get_admins)
         extrachans = self.config['core']['extrachans']
         if extrachans:
             extrachans = [x.strip() for x in extrachans.split(',')]
             # Delay joining extra channels to prevent excess flood.
-            for i in range(len(extrachans)):
-                self.workers.defer(i, False, self.connection.join, extrachans[i])
+            for i, chan in enumerate(extrachans):
+                self.workers.defer(i, False, self.connection.join, chan)
 
     def is_ignored(self, nick):
         with self.db.session_scope() as session:
@@ -389,7 +387,17 @@ class BotHandler():
     def handle_event(self, msg, send, c, e):
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
-        if e.type == 'authenticate':
+        if e.type == '354':
+            if e.arguments[0] in self.admins:
+                if e.arguments[1] != '0':
+                    self.admins[e.arguments[0]] = time.time()
+        elif e.type == 'account':
+            if e.source.nick in self.admins:
+                if e.target == '*':
+                    self.admins[e.source.nick] = None
+                else:
+                    self.admins[e.source.nick] = time.time()
+        elif e.type == 'authenticate':
             if e.target == '+':
                 token = base64.b64encode('\0'.join([user, user, passwd]).encode())
                 self.connection.send_raw('AUTHENTICATE %s' % token.decode())
@@ -397,22 +405,25 @@ class BotHandler():
         elif e.type == 'bannedfromchan':
             self.workers.defer(5, False, self.do_rejoin, c, e)
         elif e.type == 'cap':
-            if msg == 'ACK sasl':
-                self.connection.send_raw('AUTHENTICATE PLAIN')
+            if e.arguments[0] == 'ACK':
+                if e.arguments[1].strip() == 'sasl':
+                    self.connection.send_raw('AUTHENTICATE PLAIN')
+                elif e.arguments[1].strip() == 'account-notify':
+                    self.features['account-notify'] = True
+                elif e.arguments[1].strip() == 'extended-join':
+                    self.features['extended-join'] = True
         elif e.type in ['ctcpreply', 'nosuchnick']:
             misc.ping(self.ping_map, c, e, time.time())
         elif e.type == 'error':
             logging.error(e.target)
+        elif e.type == 'featurelist':
+            if 'WHOX' in e.arguments:
+                self.features['whox'] = True
         elif e.type == 'nick':
             for channel in misc.get_channels(self.channels, e.target):
                 self.do_log(channel, e.source.nick, e.target, 'nick')
-            if self.config.getboolean('feature', 'nickserv') and e.target in self.admins:
-                if self.config['feature']['servicestype'] == "ircservices":
-                    c.privmsg('NickServ', 'STATUS %s' % e.target)
-                elif self.config['feature']['servicestype'] == "atheme":
-                    c.privmsg('NickServ', 'ACC %s' % e.target)
-                else:
-                    raise Exception("servicestype undefined or unknown in config.cfg")
+            if e.target in self.admins:
+                self.update_nickstatus(e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
@@ -422,7 +433,6 @@ class BotHandler():
                 self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
             self.workers.defer(5, False, self.do_welcome)
         elif e.type == 'privnotice':
-            # FIXME: come up with a better way to prevent admin abuse.
             if e.source.nick == 'NickServ':
                 admin.set_admin(msg, self)
         elif e.type == 'welcome':
@@ -448,7 +458,7 @@ class BotHandler():
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
-        if e.type in ['authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
+        if e.type in ['354', 'account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
             self.handle_event(msg, send, c, e)
             return
 
@@ -463,8 +473,16 @@ class BotHandler():
             return
 
         if e.type == 'join':
-            if nick == c.real_nickname:
+            if e.source.nick == c.real_nickname:
+                if self.features['whox']:
+                    c.who('%s %%na' % target)
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
+            elif self.features['extended-join']:
+                if e.source.nick in self.admins:
+                    if e.arguments[0] == '*':
+                        self.admins[e.source.nick] = None
+                    else:
+                        self.admins[e.source.nick] = time.time()
             return
 
         if e.type == 'part':

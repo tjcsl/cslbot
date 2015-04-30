@@ -26,8 +26,8 @@ def cmd(send, _, args):
     admins = args['handler'].admins
     adminlist = []
     for admin in sorted(admins):
-        if admins[admin] != -1:
-            adminlist.append("%s (V)" % admin)
-        else:
+        if admins[admin] is None:
             adminlist.append("%s (U)" % admin)
+        else:
+            adminlist.append("%s (V)" % admin)
     send(", ".join(adminlist), target=args['nick'])

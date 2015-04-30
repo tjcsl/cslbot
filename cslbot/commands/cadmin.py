@@ -24,5 +24,5 @@ def cmd(send, msg, args):
     """
     admins = [x.strip() for x in args['handler'].config['auth']['admins'].split(',')]
     args['handler'].admins = {nick: False for nick in admins}
-    args['handler'].get_admins(args['handler'].connection)
+    args['handler'].get_admins()
     send("Verified admins reset.")
