@@ -238,7 +238,7 @@ def gen_shibe(msg):
 
 
 def gen_underscore(msg):
-    return msg.replace(' ', '_')
+    return msg.replace(' ', '_').lower()
 
 output_filters = {
     "passthrough": lambda x: x,
