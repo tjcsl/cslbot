@@ -32,7 +32,7 @@ def get_def(entry, word, key):
     defs = []
     for defn in xml.findall('./entry/def/dt'):
         children = []
-        for elem in defn.xpath('*[not(self::ca|self::dx|self::vi|self::un|self::sx)]'):
+        for elem in defn.xpath('*[not(self::ca|self::dx|self::dx_def|self::vi|self::un|self::sx)]'):
             if elem.text is not None:
                 children.append(strip_colon(elem.text))
             if elem.tail is not None:
@@ -51,7 +51,7 @@ def get_def(entry, word, key):
         suggestion = xml.find('./suggestion')
         if suggestion is None:
             return None, None
-        defn, _ = get_def(0, suggestion.text, key)
+        defn, _ = get_def(None, suggestion.text, key)
         if defn is None:
             return None, None
         else:
