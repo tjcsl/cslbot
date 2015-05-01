@@ -67,7 +67,7 @@ def cmd(send, msg, args):
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--entry', type=int, default=0, nargs='?')
-    parser.add_argument('word', nargs='?')
+    parser.add_argument('word', nargs='*')
 
     try:
         cmdargs = parser.parse_args(msg)
@@ -75,7 +75,7 @@ def cmd(send, msg, args):
         send(str(e))
         return
     key = args['config']['api']['dictionaryapikey']
-    if cmdargs.word is None:
+    if not cmdargs.word:
         for _ in range(5):
             word = textutils.gen_word()
             defn, suggested_word = get_def(None, word, key)
@@ -85,7 +85,8 @@ def cmd(send, msg, args):
                 return
         send("%s: Definition not found" % word)
         return
-    defn, suggested_word = get_def(cmdargs.entry, cmdargs.word, key)
+    word = ' '.join(cmdargs.word)
+    defn, suggested_word = get_def(cmdargs.entry, word, key)
     if defn is None:
         send("Definition not found")
     elif suggested_word is None:
