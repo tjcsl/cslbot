@@ -18,7 +18,7 @@
 
 import configparser
 import sys
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename, resource_string
 from os.path import basename, join
 import importlib
 import logging
@@ -35,10 +35,19 @@ def init_aux(config):
     AUX.extend([x.strip() for x in config['extramodules'].split(',')])
 
 
-def init_groups(groups, confdir):
-    config = configparser.ConfigParser()
+def load_groups(confdir):
+    example_obj = configparser.ConfigParser()
+    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example').decode())
+    config_obj = configparser.ConfigParser()
     with open(join(confdir, 'groups.cfg')) as cfgfile:
-        config.read_file(cfgfile)
+        config_obj.read_file(cfgfile)
+    if config_obj.sections() != example_obj.sections():
+        raise Exception("Invalid or missing section in groups.cfg, only valid sections are %s" % ",".join(example_obj.sections()))
+    return config_obj
+
+
+def init_groups(groups, confdir):
+    config = load_groups(confdir)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')
 
