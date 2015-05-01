@@ -236,6 +236,10 @@ def gen_shibe(msg):
     reaction += ' wow'
     return reaction
 
+
+def gen_underscore(msg):
+    return msg.replace(' ', '_')
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
@@ -254,5 +258,6 @@ output_filters = {
     "gizoogle": gen_gizoogle,
     "shakespeare": gen_shakespeare,
     "bard": gen_shakespeare,
-    "shibe": gen_shibe
+    "shibe": gen_shibe,
+    "underscore": gen_underscore
 }
