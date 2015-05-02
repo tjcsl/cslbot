@@ -109,12 +109,6 @@ class Notes(Base):
     pending = Column(Integer, default=1)
 
 
-class Nicks(Base):
-    old = Column(UnicodeText)
-    new = Column(UnicodeText)
-    time = Column(Float)
-
-
 class Babble(Base):
     __table_args__ = {'mysql_row_format': 'dynamic'}
     key = Column(Unicode(length=512), index=True)

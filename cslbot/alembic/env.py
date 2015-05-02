@@ -16,8 +16,8 @@
 from sys import path
 from os.path import exists, dirname, join
 # Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+if exists(join(dirname(__file__), '../../.git')):
+    path.insert(0, join(dirname(__file__), '../..'))
 
 import configparser
 import logging
@@ -53,7 +53,7 @@ def run_migrations_offline():
 
     """
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '..'))
+    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
     with open(join(config_path, 'config.cfg')) as f:
         botconfig.read_file(f)
     url = botconfig['db']['engine']
@@ -72,7 +72,7 @@ def run_migrations_online():
 
     """
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '..'))
+    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
     with open(join(config_path, 'config.cfg')) as f:
         botconfig.read_file(f)
     url = botconfig['db']['engine']

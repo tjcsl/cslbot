@@ -16,15 +16,13 @@
 
 import time
 from datetime import datetime, timedelta
-from .orm import Nicks
+from .orm import Log
 
 
 def handle_nick(handler, e):
-    old, new = e.source.nick, e.target
     with handler.db.session_scope() as session:
-        session.add(Nicks(old=old, new=new, time=time.time()))
         if handler.config['feature'].getboolean('nickkick'):
-            return do_kick(handler, session, new)
+            return do_kick(handler, session, e.target)
         else:
             return False
 
@@ -35,9 +33,9 @@ def get_chain(session, nick, limit=0):
     curr_time = time.time()
     curr = nick
     while curr is not None:
-        row = session.query(Nicks).filter(Nicks.new == curr, ~Nicks.old.startswith('Guest'), Nicks.time < curr_time, Nicks.time >= limit).order_by(Nicks.time).limit(1).first()
+        row = session.query(Log).filter(Log.msg == curr, Log.type == 'nick', ~Log.source.startswith('Guest'), Log.time < curr_time, Log.time >= limit).order_by(Log.time.desc()).limit(1).first()
         if row is not None:
-            curr = row.old
+            curr = row.source
             chain.append(curr)
             curr_time = row.time
         else:
