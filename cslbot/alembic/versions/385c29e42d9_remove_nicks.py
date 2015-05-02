@@ -17,7 +17,9 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.drop_table('nicks')
+    # FIXME: make sure this works everywhere.
+    op.get_bind().execute('DROP TABLE IF EXISTS nicks')
+    # op.drop_table('nicks')
 
 
 def downgrade():
