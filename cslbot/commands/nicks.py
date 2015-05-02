@@ -14,18 +14,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from random import choice
 from ..helpers.identity import get_chain
 from ..helpers.command import Command
 
 
-@Command('nicks', ['db'])
+@Command('nicks', ['db', 'handler', 'target', 'nick'])
 def cmd(send, msg, args):
     """Gets previous nicks.
     Syntax: {command} <nick>
     """
     if not msg:
-        send("Which nick?")
-        return
+        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else [args['nick']]
+        msg = choice(users)
     chain = get_chain(args['db'], msg)
     if chain:
         send(" -> ".join(chain))
