@@ -27,7 +27,7 @@ def cmd(send, msg, args):
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)
-    parser.add_argument('string', nargs='?')
+    parser.add_argument('string', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -37,15 +37,16 @@ def cmd(send, msg, args):
         send('Please specify a search term.')
         return
     cmdchar = args['config']['core']['cmdchar']
+    term = ' '.join(cmdargs.string)
     if cmdargs.nick:
         row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
-                                           Log.msg.like('%' + cmdargs.string + '%')).order_by(Log.id.desc()).first()
+                                           Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
     else:
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%' + cmdargs.string + '%')).order_by(Log.id.desc()).first()
+        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
     elif cmdargs.nick:
-        send('%s has never said %s.' % (cmdargs.nick, cmdargs.string))
+        send('%s has never said %s.' % (cmdargs.nick, term))
     else:
-        send('%s has never been said.' % cmdargs.string)
+        send('%s has never been said.' % term)
