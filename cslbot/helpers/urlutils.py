@@ -78,7 +78,7 @@ def get_title(url):
     except timeout as e:
         raise CommandFailedException(e)
     except HTTPError as e:
-        raise CommandFailedException('HTTP Error %d' % e.code)
+        title = 'HTTP Error %d' % e.code
     except ConnectionResetError as e:
         raise CommandFailedException(e.strerror)
     except URLError as e:
