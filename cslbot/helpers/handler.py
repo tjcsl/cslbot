@@ -20,6 +20,7 @@ import base64
 import logging
 import re
 import time
+import threading
 from irc import modes
 from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
 from random import choice, random
@@ -51,6 +52,8 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.abuselist = {}
+        self.flood_lock = threading.Lock()
+        self.last_msg_time = time.time()
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: None for nick in admins}
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
@@ -172,7 +175,15 @@ class BotHandler():
             if msgtype == 'action':
                 self.connection.action(target, i)
             else:
-                self.connection.privmsg(target, i)
+                self.rate_limited_send(target, i)
+
+    def rate_limited_send(self, target, msg):
+        with self.flood_lock:
+            elapsed = time.time() - self.last_msg_time
+            # Don't send messages more then once every 0.5 sec.
+            time.sleep(max(0, 0.5 - elapsed))
+            self.connection.privmsg(target, msg)
+            self.last_msg_time = time.time()
 
     @staticmethod
     def get_split_pos(message):
