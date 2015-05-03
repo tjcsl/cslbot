@@ -79,6 +79,8 @@ def cmd(send, msg, args):
         else:
             maxuser = maxuser[-1]
             send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, cmdargs.command, nicktotals[maxuser], totals[cmdargs.command]))
+    elif cmdargs.command and not is_registered(cmdargs.command):
+        send("Command %s not found." % cmdargs.command)
     elif cmdargs.high:
         send('Most Used Commands:')
         high = list(reversed(sortedtotals))
