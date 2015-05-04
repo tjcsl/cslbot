@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--clear', action='store_true')
     group.add_argument('--show', '--list', action='store_true')
-    group.add_argument('--delete', action='store_true')
+    group.add_argument('--delete', '--remove', action='store_true')
     parser.add_argument('nick', nargs='?')
     try:
         cmdargs = parser.parse_args(msg)
