@@ -40,17 +40,19 @@ def cmd(send, msg, args):
     cmdchar = args['config']['core']['cmdchar']
     term = ' '.join(cmdargs.string)
     if cmdargs.nick:
+        query = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar))
         if cmdargs.ignore_case:
-            row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
-                                               Log.msg.ilike('%%%s%%' % term)).order_by(Log.id.desc()).first()
+            query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
-            row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
-                                               Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
+            query.filter(Log.msg.like('%%%s%%' % term))
+        row = query.order_by(Log.id.desc()).first()
     else:
+        query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
         if cmdargs.ignore_case:
-            row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.ilike('%%%s%%' % term)).order_by(Log.id.desc()).first()
+            query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
-            row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
+            query.filter(Log.msg.like('%%%s%%' % term))
+        row = query.order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
