@@ -20,27 +20,26 @@ from ..helpers.orm import Log
 from ..helpers.command import Command
 
 
-def get_last(cursor, nick):
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.type != 'join').order_by(Log.time.desc()).first()
-
-
 @Command('highlight', ['db', 'nick', 'config', 'target', 'botnick'])
 def cmd(send, msg, args):
     """When a nick was last pinged.
-    Syntax: {command} [nick]
+    Syntax: {command} [--channel #channel] [nick]
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('nick', nargs='?', action=arguments.NickParser)
+    parser.add_argument('--channel', nargs='?', action=arguments.ChanParser)
+    parser.add_argument('nick', nargs='?', action=arguments.NickParser, default=args['nick'])
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    if not cmdargs.nick:
-        cmdargs.nick = args['nick']
-    row = args['db'].query(Log).filter(Log.msg.ilike("%" + cmdargs.nick + "%"), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
-                                       Log.target == args['target'], Log.source != args['botnick'], Log.source != cmdargs.nick,
-                                       Log.type != 'mode', Log.type != 'nick').order_by(Log.time.desc()).first()
+    if args['target'] == 'private':
+        send("You're always the highlight of your monologues!")
+        return
+    target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
+    row = args['db'].query(Log).filter(Log.msg.ilike("%%%s%%" % cmdargs.nick), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
+                                       Log.target == target, Log.source != args['botnick'], Log.source != cmdargs.nick,
+                                       (Log.type == 'pubmsg') | (Log.type == 'privmsg') | (Log.type == 'action')).order_by(Log.time.desc()).first()
     if row is None:
         send("%s has never been pinged." % cmdargs.nick)
     else:
