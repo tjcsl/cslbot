@@ -23,10 +23,11 @@ from ..helpers.command import Command
 @Command(['grep', 'loggrep'], ['config', 'db'])
 def cmd(send, msg, args):
     """Greps the log for a string.
-    Syntax: {command} [--nick <nick>] <string>
+    Syntax: {command} [--nick <nick>] [--ignore-case/-i] <string>
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)
+    parser.add_argument('--ignore-case', '-i', action='store_true')
     parser.add_argument('string', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
@@ -39,10 +40,17 @@ def cmd(send, msg, args):
     cmdchar = args['config']['core']['cmdchar']
     term = ' '.join(cmdargs.string)
     if cmdargs.nick:
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
-                                           Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
+        if cmdargs.ignore_case:
+            row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
+                                               Log.msg.ilike('%%%s%%' % term)).order_by(Log.id.desc()).first()
+        else:
+            row = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar),
+                                               Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
     else:
-        row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
+        if cmdargs.ignore_case:
+            row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.ilike('%%%s%%' % term)).order_by(Log.id.desc()).first()
+        else:
+            row = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar), Log.msg.like('%%%s%%' % term)).order_by(Log.id.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
