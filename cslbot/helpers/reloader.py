@@ -51,7 +51,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
     """
     def send(msg):
         if server_send is not None:
-            server_send(msg)
+            server_send("%s\n" % msg)
         else:
             do_log(bot.connection, target, msg)
     confdir = bot.handler.confdir

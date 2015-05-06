@@ -24,7 +24,7 @@ from requests import get, post
 from lxml.html import fromstring, tostring
 from html import escape, unescape
 from random import random, choice, randrange, randint
-from .misc import get_token
+from . import misc
 
 slogan_cache = []
 
@@ -243,7 +243,7 @@ def gen_underscore(msg):
 
 
 def gen_translate(msg, config, outputlang='en'):
-    token = get_token(config['api']['translateid'], config['api']['translatesecret'])
+    token = misc.get_token(config['api']['translateid'], config['api']['translatesecret'])
     params = {'text': msg, 'to': outputlang}
     headers = {'Authorization': 'Bearer %s' % token}
     data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
