@@ -23,6 +23,7 @@ if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 import argparse
 import configparser
+import fcntl
 from time import strftime, localtime
 from os import makedirs
 
@@ -43,8 +44,6 @@ def get_id(outdir):
 
 
 def save_id(outdir, new_id):
-    if not exists(outdir):
-        makedirs(outdir)
     with open('%s/.dbid' % outdir, 'w') as f:
         f.write(str(new_id) + '\n')
 
@@ -111,6 +110,10 @@ def main(confdir="/etc/cslbot"):
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The directory to write logs too.')
     cmdargs = parser.parse_args()
+    if not exists(cmdargs.outdir):
+        makedirs(cmdargs.outdir)
+    lockfile = open('%s/.lock' % cmdargs.outdir, 'w')
+    fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
     current_id = get_id(cmdargs.outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
     # Don't die on empty log table.
@@ -122,6 +125,8 @@ def main(confdir="/etc/cslbot"):
         write_log(row.target, cmdargs.outdir, gen_log(row))
     for x in logs.values():
         x.close()
+    fcntl.lockf(lockfile, fcntl.LOCK_UN)
+    lockfile.close()
 
 
 if __name__ == '__main__':

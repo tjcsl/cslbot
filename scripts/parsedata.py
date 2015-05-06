@@ -24,10 +24,11 @@ if exists(join(dirname(__file__), '../.git')):
 import argparse
 import collections
 import configparser
+import fcntl
 from time import strftime, mktime
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
-from os import mkdir
+from os import makedirs
 from pkg_resources import Requirement, resource_filename
 
 from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
@@ -132,12 +133,17 @@ def main(confdir="/etc/cslbot"):
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not exists(cmdargs.outdir):
-        mkdir(cmdargs.outdir)
+        makedirs(cmdargs.outdir)
+    lockfile = open('%s/.lock' % cmdargs.outdir, 'w')
+    fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     output_quotes(env, session, cmdargs.outdir, time)
     output_scores(env, session, cmdargs.outdir, time)
     output_polls(env, session, cmdargs.outdir, time)
     output_urls(env, session, cmdargs.outdir, time)
+
+    fcntl.lockf(lockfile, fcntl.LOCK_UN)
+    lockfile.close()
 
 
 if __name__ == '__main__':
