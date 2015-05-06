@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
+import sys
 import subprocess
 from os.path import dirname, join
 
@@ -27,9 +28,11 @@ def main(confdir="/etc/cslbot"):
     port = config['core']['serverport']
     msg = '%s\nreload' % passwd
     try:
-        output = subprocess.check_output(['nc', 'localhost', port], input=msg.encode())
-        for line in output.decode().splitlines():
+        output = subprocess.check_output(['nc', 'localhost', port], input=msg.encode()).decode().splitlines()
+        for line in output:
             print(line)
+        if output[-1] != "Aye Aye Capt'n":
+            sys.exit(1)
     except subprocess.CalledProcessError:
         raise Exception("Could not connect to server, is bot running?")
 
