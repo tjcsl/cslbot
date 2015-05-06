@@ -247,11 +247,31 @@ def gen_translate(msg, config, outputlang='en'):
     params = {'text': msg, 'to': outputlang}
     headers = {'Authorization': 'Bearer %s' % token}
     data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    print(data)
     if re.search('>Argument Exception<', data):
-        print("potato")
         return "An error occurred: " + unescape(re.search('Message: (.*)', data).group(1))
     return unescape(re.search('>(.*)<', data).group(1))
+
+
+def gen_random_translate(msg, config):
+    langs = {'ar': 'Arabic', 'bs-Latn': 'Bosnian (Latin)', 'bg': 'Bulgarian', 'ca': 'Catalan',
+             'zh-CHS': 'Chinese Simplified', 'zh-CHT': 'Chinese Traditional', 'hr': 'Croatian',
+             'cs': 'Czech', 'da': 'Danish', 'nl': 'Dutch', 'en': 'English', 'et': 'Estonian',
+             'fi': 'Finnish', 'fr': 'French', 'de': 'German', 'el': 'Greek', 'ht': 'Haitian Creole',
+             'he': 'Hebrew', 'hi': 'Hindi', 'mww': 'Hmong Daw', 'hu': 'Hungarian', 'id': 'Indonesian',
+             'it': 'Italian', 'ja': 'Japanese', 'tlh': 'Klingon', 'tlh-Qaak': 'Klingon (pIqaD)',
+             'ko': 'Korean', 'lv': 'Latvian', 'lt': 'Lithuanian', 'ms': 'Malay', 'mt': 'Maltese',
+             'no': 'Norwegian', 'fa': 'Persian', 'pl': 'Polish', 'pt': 'Portugese', 'otq': 'Querétaro Otomi',
+             'ro': 'Romanian', 'ru': 'Russian', 'sr-Cyrl': 'Serbian (Cyrillic)', 'sr-Latn': 'Serbian (Latin)',
+             'sk': 'Slovak', 'sl': 'Slovenian', 'es': 'Spanish', 'sv': 'Swedish', 'th': 'Thai', 'tr': 'Turkish',
+             'uk': 'Ukranian', 'ur': 'Urdu', 'vi': 'Vietnamese', 'cy': 'Welsh', 'yua': 'Yucatec Maya'}
+    outputlang = choice(list(langs.keys()))
+    token = get_token(config['api']['translateid'], config['api']['translatesecret'])
+    params = {'text': msg, 'to': outputlang}
+    headers = {'Authorization': 'Bearer %s' % token}
+    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
+    if re.search('>Argument Exception<', data):
+        return "An error occurred: " + unescape(re.search('Message: (.*)', data).group(1))
+    return unescape(re.search('>(.*)<', data).group(1)) + " (" + langs[outputlang] + ")"
 
 
 def append_filters(filters):
@@ -283,5 +303,6 @@ output_filters = {
     "bard": gen_shakespeare,
     "shibe": gen_shibe,
     "underscore": gen_underscore,
-    "translate": gen_translate
+    "translate": gen_translate,
+    "randtranslate": gen_random_translate
 }

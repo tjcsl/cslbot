@@ -556,6 +556,14 @@ cslbot.commands.random module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.randtranslate module
+------------------------------------
+
+.. automodule:: cslbot.commands.randtranslate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.reddit module
 -----------------------------
 

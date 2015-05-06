@@ -163,7 +163,7 @@ class BotHandler():
         for i in filters:
             if target != self.config['core']['ctrlchan']:
                 # FIXME: we need a better way to do this than a special case for gen_translate
-                if i.__name__ == 'gen_translate':
+                if i.__name__ in ('gen_translate', 'gen_random_translate'):
                     args = [msg, self.config]
                 else:
                     args = [msg]
