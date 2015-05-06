@@ -162,7 +162,12 @@ class BotHandler():
             filters = self.outputfilter
         for i in filters:
             if target != self.config['core']['ctrlchan']:
-                msg = i(msg)
+                # FIXME: we need a better way to do this than a special case for gen_translate
+                if i.__name__ == 'gen_translate':
+                    args = [msg, self.config]
+                else:
+                    args = [msg]
+                msg = i(*args)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
             msgs.append(msg[:split_pos].strip())
@@ -381,7 +386,7 @@ class BotHandler():
         cmdargs = ' '.join(remainder)
         if filterargs.filter is None:
             return cmdargs, send
-        filter_list, output = misc.append_filters(filterargs.filter)
+        filter_list, output = textutils.append_filters(filterargs.filter)
         if filter_list is None:
             return output, None
 

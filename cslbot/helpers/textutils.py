@@ -24,6 +24,7 @@ from requests import get, post
 from lxml.html import fromstring, tostring
 from html import escape, unescape
 from random import random, choice, randrange, randint
+from .misc import get_token
 
 slogan_cache = []
 
@@ -240,6 +241,24 @@ def gen_shibe(msg):
 def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
+
+def gen_translate(msg, config, outputlang='en'):
+    token = get_token(config['api']['translateid'], config['api']['translatesecret'])
+    params = {'text': msg, 'to': outputlang}
+    headers = {'Authorization': 'Bearer %s' % token}
+    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
+    return re.search('>(.*)<', data).group(1)
+
+
+def append_filters(filters):
+    filter_list = []
+    for next_filter in filter(None, filters.split(',')):
+        if next_filter in output_filters.keys():
+            filter_list.append(output_filters[next_filter])
+        else:
+            return None, "Invalid filter %s." % next_filter
+    return filter_list, "Okay!"
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
@@ -259,5 +278,6 @@ output_filters = {
     "shakespeare": gen_shakespeare,
     "bard": gen_shakespeare,
     "shibe": gen_shibe,
-    "underscore": gen_underscore
+    "underscore": gen_underscore,
+    "translate": gen_translate
 }

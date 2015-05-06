@@ -29,7 +29,7 @@ from urllib.parse import unquote
 from urllib.request import urlopen
 from requests import post, get
 from requests.exceptions import ReadTimeout
-from . import orm, textutils
+from . import orm
 
 
 def parse_time(time):
@@ -226,16 +226,6 @@ def get_version(srcdir):
         return None, None
 
 
-def append_filters(filters):
-    filter_list = []
-    for next_filter in filter(None, filters.split(',')):
-        if next_filter in textutils.output_filters.keys():
-            filter_list.append(textutils.output_filters[next_filter])
-        else:
-            return None, "Invalid filter %s." % next_filter
-    return filter_list, "Okay!"
-
-
 def create_issue(title, desc, nick, repo, apikey):
     body = {"title": title, "body": "%s\nIssue created by %s" % (desc, nick), "labels": ["bot"]}
     headers = {'Authorization': 'token %s' % apikey}
@@ -247,3 +237,9 @@ def create_issue(title, desc, nick, repo, apikey):
         return data['message'], False
     else:
         return "Unknown error", False
+
+
+def get_token(client_id, secret):
+    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
+    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
+    return data['access_token']

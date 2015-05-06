@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.command import Command
-from ..helpers import arguments, misc, textutils
+from ..helpers import arguments, textutils
 
 
 def get_filters(handler):
@@ -57,7 +57,7 @@ def cmd(send, msg, args):
         if not args['handler'].outputfilter:
             send("Must have a filter set in order to chain.")
             return
-        filter_list, output = misc.append_filters(cmdargs.chain)
+        filter_list, output = textutils.append_filters(cmdargs.chain)
         if filter_list is not None:
             args['handler'].outputfilter.extend(filter_list)
         send(output)
@@ -65,7 +65,7 @@ def cmd(send, msg, args):
         send(get_filters(args['handler']))
     elif isadmin:
         # If we're just adding a filter without chain, blow away any existing filters.
-        filter_list, output = misc.append_filters(cmdargs.filter)
+        filter_list, output = textutils.append_filters(cmdargs.filter)
         if filter_list is not None:
             args['handler'].outputfilter.clear()
             args['handler'].outputfilter.extend(filter_list)

@@ -14,15 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
-from requests import post, get
 from ..helpers.command import Command
-
-
-def get_token(client_id, secret):
-    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
-    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
-    return data['access_token']
+from ..helpers.textutils import gen_translate
 
 
 @Command(['translate', 'trans'], ['config'])
@@ -33,8 +26,4 @@ def cmd(send, msg, args):
     if not msg:
         send("Translate what?")
         return
-    token = get_token(args['config']['api']['translateid'], args['config']['api']['translatesecret'])
-    params = {'text': msg, 'to': 'en'}
-    headers = {'Authorization': 'Bearer %s' % token}
-    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    send(re.search('>(.*)<', data).group(1))
+    send(gen_translate(msg, args['config']))
