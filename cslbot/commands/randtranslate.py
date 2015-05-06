@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_random_translate
 
 
-@Command(['randtranslate', 'randomtranslate'], ['config'])
+@Command(['randtrans', 'randtranslate', 'randomtranslate'], ['config'])
 def cmd(send, msg, args):
     """Translate something into a random language
     Syntax: {command} <text>
@@ -31,6 +31,4 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    if isinstance(cmdargs.msg, list):
-        cmdargs.msg = ' '.join(cmdargs.msg)
-    send(gen_random_translate(cmdargs.msg, args['config']))
+    send(gen_random_translate(' '.join(cmdargs.msg), args['config']))

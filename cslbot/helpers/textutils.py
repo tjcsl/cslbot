@@ -21,6 +21,7 @@ import re
 import string
 from pkg_resources import Requirement, resource_string
 from requests import get, post
+from lxml import etree
 from lxml.html import fromstring, tostring
 from html import escape, unescape
 from random import random, choice, randrange, randint
@@ -246,25 +247,24 @@ def gen_translate(msg, config, outputlang='en'):
     token = misc.get_token(config['api']['translateid'], config['api']['translatesecret'])
     params = {'text': msg, 'to': outputlang}
     headers = {'Authorization': 'Bearer %s' % token}
-    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    if re.search('>Argument Exception<', data):
-        return "An error occurred: " + unescape(re.search('Message: (.*)', data).group(1))
-    return unescape(re.search('>(.*)<', data).group(1))
+    req = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers)
+    xml = etree.fromstring(req.content)
+    if xml.tag == 'html':
+        html = ' '.join(xml.itertext())
+        html = ' '.join(html.splitlines())
+        return "An error occurred: %s" % html
+    return xml.text
 
 
 def gen_random_translate(msg, config):
-    # FIXME: don't hard-code this.
-    langs = {'ar': 'Arabic', 'bs-Latn': 'Bosnian (Latin)', 'bg': 'Bulgarian', 'ca': 'Catalan',
-             'zh-CHS': 'Chinese Simplified', 'zh-CHT': 'Chinese Traditional', 'hr': 'Croatian',
-             'cs': 'Czech', 'da': 'Danish', 'nl': 'Dutch', 'en': 'English', 'et': 'Estonian',
-             'fi': 'Finnish', 'fr': 'French', 'de': 'German', 'el': 'Greek', 'ht': 'Haitian Creole',
-             'he': 'Hebrew', 'hi': 'Hindi', 'mww': 'Hmong Daw', 'hu': 'Hungarian', 'id': 'Indonesian',
-             'it': 'Italian', 'ja': 'Japanese', 'tlh': 'Klingon', 'tlh-Qaak': 'Klingon (pIqaD)',
-             'ko': 'Korean', 'lv': 'Latvian', 'lt': 'Lithuanian', 'ms': 'Malay', 'mt': 'Maltese',
-             'no': 'Norwegian', 'fa': 'Persian', 'pl': 'Polish', 'pt': 'Portugese', 'otq': 'Querétaro Otomi',
-             'ro': 'Romanian', 'ru': 'Russian', 'sr-Cyrl': 'Serbian (Cyrillic)', 'sr-Latn': 'Serbian (Latin)',
-             'sk': 'Slovak', 'sl': 'Slovenian', 'es': 'Spanish', 'sv': 'Swedish', 'th': 'Thai', 'tr': 'Turkish',
-             'uk': 'Ukranian', 'ur': 'Urdu', 'vi': 'Vietnamese', 'cy': 'Welsh', 'yua': 'Yucatec Maya'}
+    token = misc.get_token(config['api']['translateid'], config['api']['translatesecret'])
+    headers = {'Authorization': 'Bearer %s' % token, 'Content-Type': 'text/xml'}
+    langs = get('http://api.microsofttranslator.com/V2/Http.svc/GetLanguagesForTranslate', headers=headers)
+    names = post('http://api.microsofttranslator.com/V2/Http.svc/GetLanguageNames', params={'locale': 'en'}, data=langs.text, headers=headers)
+    langs_xml = etree.fromstring(langs.content)
+    names_xml = etree.fromstring(names.content)
+    langs = {langs_xml[x].text: names_xml[x].text for x in range(len(langs_xml))}
+    del langs['en']
     outputlang = choice(list(langs.keys()))
     translation = gen_translate(msg, config, outputlang)
     return "%s (%s)" % (translation, langs[outputlang])
