@@ -26,13 +26,11 @@ def cmd(send, msg, args):
     See https://msdn.microsoft.com/en-us/library/hh456380.aspx for a list of valid language codes
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--lang', '--language')
+    parser.add_argument('--lang', '--language', default='en')
     parser.add_argument('msg', nargs='+')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    if not cmdargs.lang:
-        cmdargs.lang = 'en'
     send(gen_translate(cmdargs.msg, args['config'], outputlang=cmdargs.lang))

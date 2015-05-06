@@ -253,6 +253,7 @@ def gen_translate(msg, config, outputlang='en'):
 
 
 def gen_random_translate(msg, config):
+    # FIXME: don't hard-code this.
     langs = {'ar': 'Arabic', 'bs-Latn': 'Bosnian (Latin)', 'bg': 'Bulgarian', 'ca': 'Catalan',
              'zh-CHS': 'Chinese Simplified', 'zh-CHT': 'Chinese Traditional', 'hr': 'Croatian',
              'cs': 'Czech', 'da': 'Danish', 'nl': 'Dutch', 'en': 'English', 'et': 'Estonian',
@@ -265,13 +266,8 @@ def gen_random_translate(msg, config):
              'sk': 'Slovak', 'sl': 'Slovenian', 'es': 'Spanish', 'sv': 'Swedish', 'th': 'Thai', 'tr': 'Turkish',
              'uk': 'Ukranian', 'ur': 'Urdu', 'vi': 'Vietnamese', 'cy': 'Welsh', 'yua': 'Yucatec Maya'}
     outputlang = choice(list(langs.keys()))
-    token = get_token(config['api']['translateid'], config['api']['translatesecret'])
-    params = {'text': msg, 'to': outputlang}
-    headers = {'Authorization': 'Bearer %s' % token}
-    data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    if re.search('>Argument Exception<', data):
-        return "An error occurred: " + unescape(re.search('Message: (.*)', data).group(1))
-    return unescape(re.search('>(.*)<', data).group(1)) + " (" + langs[outputlang] + ")"
+    translation = gen_translate(msg, config, outputlang)
+    return "%s (%s)" % (translation, langs[outputlang])
 
 
 def append_filters(filters):
