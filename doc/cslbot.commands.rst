@@ -492,6 +492,14 @@ cslbot.commands.nuke module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.paraphrase module
+---------------------------------
+
+.. automodule:: cslbot.commands.paraphrase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.part module
 ---------------------------
 

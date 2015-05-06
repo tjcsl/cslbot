@@ -15,15 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.command import Command
-from ..helpers.textutils import gen_random_translate
+from ..helpers.textutils import gen_paraphrase
 
 
-@Command(['randtrans', 'randtranslate', 'randomtranslate'])
+@Command('paraphrase')
 def cmd(send, msg, args):
-    """Translate something into a random language
+    """Paraphrase a sentence.
     Syntax: {command} <text>
     """
     if not msg:
-        send("Translate what?")
+        send("Paraphrase what?")
         return
-    send(gen_random_translate(msg))
+    send(gen_paraphrase(msg))
