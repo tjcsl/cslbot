@@ -31,4 +31,6 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
+    if isinstance(cmdargs.msg, list):
+        cmdargs.msg = ' '.join(cmdargs.msg)
     send(gen_random_translate(cmdargs.msg, args['config']))
