@@ -247,7 +247,11 @@ def gen_translate(msg, config, outputlang='en'):
     params = {'text': msg, 'to': outputlang}
     headers = {'Authorization': 'Bearer %s' % token}
     data = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers).text
-    return re.search('>(.*)<', data).group(1)
+    print(data)
+    if re.search('>Argument Exception<', data):
+        print("potato")
+        return "An error occurred: " + unescape(re.search('Message: (.*)', data).group(1))
+    return unescape(re.search('>(.*)<', data).group(1))
 
 
 def append_filters(filters):

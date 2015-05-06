@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.textutils import gen_translate
 
@@ -21,9 +22,17 @@ from ..helpers.textutils import gen_translate
 @Command(['translate', 'trans'], ['config'])
 def cmd(send, msg, args):
     """Translate something.
-    Syntax: {command} <text>
+    Syntax: {command} [--lang <language code>] <text>
+    See https://msdn.microsoft.com/en-us/library/hh456380.aspx for a list of valid language codes
     """
-    if not msg:
-        send("Translate what?")
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--lang', '--language')
+    parser.add_argument('msg', nargs='+')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
-    send(gen_translate(msg, args['config']))
+    if not cmdargs.lang:
+        cmdargs.lang = 'en'
+    send(gen_translate(cmdargs.msg, args['config'], outputlang=cmdargs.lang))
