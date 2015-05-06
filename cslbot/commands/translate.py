@@ -33,4 +33,4 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    send(gen_translate(' '.join(cmdargs.msg), args['config'], outputlang=cmdargs.lang))
+    send(gen_translate(' '.join(cmdargs.msg), outputlang=cmdargs.lang))

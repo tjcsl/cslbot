@@ -19,15 +19,33 @@
 import json
 import re
 import string
+import time
 from pkg_resources import Requirement, resource_string
 from requests import get, post
 from lxml import etree
 from lxml.html import fromstring, tostring
 from html import escape, unescape
 from random import random, choice, randrange, randint
-from . import misc
 
 slogan_cache = []
+
+token_cache = {'token': 'invalid', 'time': 0}
+
+
+def get_token(config):
+    client_id, secret = config['api']['translateid'], config['api']['translatesecret']
+    # Don't die if we didn't setup the translate api.
+    if not client_id:
+        token_cache['token'] = 'nokey'
+        return token_cache['token']
+    # The cache is valid for 10 minutes, refresh it only if it will expire in 5 seconds or less.
+    if time.time() - token_cache['time'] < 10*60-5:
+        return token_cache['token']
+    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
+    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
+    token_cache['token'] = data['access_token']
+    token_cache['time'] = time.time()
+    return token_cache['token']
 
 
 def removevowels(msg):
@@ -61,7 +79,8 @@ def gen_shakespeare(msg):
     table = json.loads(resource_string(Requirement.parse('CslBot'), 'cslbot/static/shakespeare-dictionary.json').decode())
     replist = reversed(sorted(table.keys(), key=len))
     pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
-    result = pattern.sub(lambda x: table[x.group().lower()], msg)
+    # Normalize text to hopefully match more words.
+    result = pattern.sub(lambda x: table[x.group().lower()], transform_text(msg))
     return result
 
 
@@ -243,11 +262,21 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, config, outputlang='en'):
-    token = misc.get_token(config['api']['translateid'], config['api']['translatesecret'])
-    params = {'text': msg, 'to': outputlang}
-    headers = {'Authorization': 'Bearer %s' % token}
-    req = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params=params, headers=headers)
+def transform_text(msg):
+    # Don't die if no api key
+    if token_cache['token'] == 'nokey':
+        return msg
+    headers = {'Authorization': 'Bearer %s' % token_cache['token']}
+    data = get('http://api.microsofttranslator.com/V3/json/TransformText', params={'language': 'en', 'sentence': msg}, headers=headers).json()
+    return data['sentence'] if data['ec'] == 0 else data['em']
+
+
+def gen_translate(msg, outputlang='en'):
+    # Don't die if no api key
+    if token_cache['token'] == 'nokey':
+        return msg
+    headers = {'Authorization': 'Bearer %s' % token_cache['token']}
+    req = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params={'text': transform_text(msg), 'to': outputlang}, headers=headers)
     xml = etree.fromstring(req.content)
     if xml.tag == 'html':
         html = ' '.join(xml.itertext())
@@ -256,9 +285,11 @@ def gen_translate(msg, config, outputlang='en'):
     return xml.text
 
 
-def gen_random_translate(msg, config):
-    token = misc.get_token(config['api']['translateid'], config['api']['translatesecret'])
-    headers = {'Authorization': 'Bearer %s' % token, 'Content-Type': 'text/xml'}
+def gen_random_translate(msg):
+    # Don't die if no api key
+    if token_cache['token'] == 'nokey':
+        return msg
+    headers = {'Authorization': 'Bearer %s' % token_cache['token'], 'Content-Type': 'text/xml'}
     langs = get('http://api.microsofttranslator.com/V2/Http.svc/GetLanguagesForTranslate', headers=headers)
     names = post('http://api.microsofttranslator.com/V2/Http.svc/GetLanguageNames', params={'locale': 'en'}, data=langs.text, headers=headers)
     langs_xml = etree.fromstring(langs.content)
@@ -266,7 +297,7 @@ def gen_random_translate(msg, config):
     langs = {langs_xml[x].text: names_xml[x].text for x in range(len(langs_xml))}
     del langs['en']
     outputlang = choice(list(langs.keys()))
-    translation = gen_translate(msg, config, outputlang)
+    translation = gen_translate(msg, outputlang)
     return "%s (%s)" % (translation, langs[outputlang])
 
 
@@ -300,5 +331,5 @@ output_filters = {
     "shibe": gen_shibe,
     "underscore": gen_underscore,
     "translate": gen_translate,
-    "randtranslate": gen_random_translate
+    "randtrans": gen_random_translate
 }

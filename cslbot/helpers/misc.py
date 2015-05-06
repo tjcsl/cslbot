@@ -237,9 +237,3 @@ def create_issue(title, desc, nick, repo, apikey):
         return data['message'], False
     else:
         return "Unknown error", False
-
-
-def get_token(client_id, secret):
-    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
-    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
-    return data['access_token']

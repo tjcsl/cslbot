@@ -158,16 +158,11 @@ class BotHandler():
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
-        if not filters:
+        if filters is None:
             filters = self.outputfilter
         for i in filters:
             if target != self.config['core']['ctrlchan']:
-                # FIXME: we need a better way to do this than a special case for gen_translate
-                if i.__name__ in ('gen_translate', 'gen_random_translate'):
-                    args = [msg, self.config]
-                else:
-                    args = [msg]
-                msg = i(*args)
+                msg = i(msg)
         while len(msg) > 400:
             split_pos = self.get_split_pos(msg)
             msgs.append(msg[:split_pos].strip())
@@ -473,6 +468,9 @@ class BotHandler():
 
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
+
+        # FIXME: make this a scheduled task
+        textutils.get_token(self.config)
 
         if e.type in ['354', 'account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
             self.handle_event(msg, send, c, e)
