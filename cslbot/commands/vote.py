@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import collections
 from ..helpers.orm import Polls, Poll_responses
 from ..helpers.command import Command
 
@@ -109,20 +110,16 @@ def tally_poll(session, pid, send, target):
     state = "Active" if poll.active == 1 else "Closed"
     votes = session.query(Poll_responses).filter(Poll_responses.pid == pid).all()
     send("%s poll: %s, %d total votes" % (state, poll.question, len(votes)))
-    votemap = {}
+    votemap = collections.defaultdict(list)
     for v in votes:
-        if v.response not in votemap:
-            votemap[v.response] = []
         votemap[v.response].append(v.voter)
     for x in sorted(votemap.keys()):
         send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])), target=target)
     if not votemap:
         return
-    ranking = {}
+    ranking = collections.defaultdict(list)
     for x in votemap.keys():
         num = len(votemap[x])
-        if num not in ranking:
-            ranking[num] = []
         ranking[num].append(x)
     high = max(ranking)
     winners = (ranking[high], high)

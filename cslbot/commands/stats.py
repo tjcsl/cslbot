@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+from sqlalchemy import func
 from ..helpers.orm import Commands
 from ..helpers import arguments
 from ..helpers.command import Command, is_registered
@@ -25,29 +26,16 @@ def get_commands(session):
     return [row.command for row in rows]
 
 
-def get_nicks(session, command):
-    if command is None:
-        rows = session.query(Commands.nick).distinct().all()
-    else:
-        rows = session.query(Commands.nick).filter(Commands.command == command).distinct().all()
-    return [row.nick for row in rows]
-
-
 def get_command_totals(session, commands):
-    totals = {}
-    for c in commands:
-        totals[c] = session.query(Commands).filter(Commands.command == c).count()
-    return totals
+    rows = session.query(Commands.command, func.count(Commands.command)).group_by(Commands.command).all()
+    return {x[0]: x[1] for x in rows}
 
 
 def get_nick_totals(session, command=None):
-    totals = {}
-    for nick in get_nicks(session, command):
-        if command is None:
-            totals[nick] = session.query(Commands).filter(Commands.nick == nick).count()
-        else:
-            totals[nick] = session.query(Commands).filter(Commands.command == command, Commands.nick == nick).count()
-    return totals
+    query = session.query(Commands.nick, func.count(Commands.nick)).group_by(Commands.nick)
+    if command is not None:
+        query = query.filter(Commands.command == command)
+    return {x[0]: x[1] for x in query.all()}
 
 
 @Command('stats', ['config', 'db'])
