@@ -54,7 +54,7 @@ def build_msg(cursor, speaker, start):
         if prev is None:
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
-    while len(msg) < 256:
+    while len(msg) < 512:
         data = cursor.query(Babble).filter(Babble.key == prev, getattr(Babble, location) == speaker).all()
         if not data:
             break
