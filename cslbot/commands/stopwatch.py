@@ -17,21 +17,15 @@
 from time import time
 from datetime import timedelta
 from ..helpers.orm import Stopwatches
+from ..helpers import arguments
 from ..helpers.command import Command
 
 
-def create_sw(session):
+def create_stopwatch(args):
     row = Stopwatches(time=time())
-    session.add(row)
-    session.flush()
+    args.session.add(row)
+    args.session.flush()
     return "Created new stopwatch with ID %d" % row.id
-
-
-def get_status(session, sw):
-    active = session.query(Stopwatches).get(sw).active
-    if active is None:
-        return "Invalid ID!"
-    return "Active" if active == 1 else "Paused"
 
 
 def get_elapsed(session, sw):
@@ -44,21 +38,33 @@ def get_elapsed(session, sw):
     return str(timedelta(seconds=etime))
 
 
-def stop_stopwatch(session, sw):
-    stopwatch = session.query(Stopwatches).get(sw)
+def stop_stopwatch(args):
+    stopwatch = args.session.query(Stopwatches).get(args.id)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 0:
-        return "That stopwatch is already disabled!"
+        return "That stopwatch is already stopped!"
     etime = stopwatch.elapsed
     etime = time() - stopwatch.time
     stopwatch.elapsed = etime
     stopwatch.active = 0
-    return "Stopwatch stopped!"
+    return "Stopwatch stopped at %s" % get_elapsed(args.session, args.id)
 
 
-def stopwatch_resume(session, sw):
-    stopwatch = session.query(Stopwatches).get(sw)
+def delete_stopwatch(args):
+    if not args.isadmin:
+        return "Nope, not gonna do it!"
+    stopwatch = args.session.query(Stopwatches).get(args.id)
+    if stopwatch is None:
+        return "No stopwatch exists with that ID!"
+    if stopwatch.active == 1:
+        return "That stopwatch is currently running!"
+    args.session.delete(stopwatch)
+    return "Stopwatch deleted!"
+
+
+def resume_stopwatch(args):
+    stopwatch = args.session.query(Stopwatches).get(args.id)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 1:
@@ -68,38 +74,54 @@ def stopwatch_resume(session, sw):
     return "Stopwatch resumed!"
 
 
-def stopwatch_list(session, send, nick):
-    active = session.query(Stopwatches).filter(Stopwatches.active == 1).all()
-    paused = session.query(Stopwatches).filter(Stopwatches.active == 0).all()
-    send("%d active and %d paused stopwatches." % (len(active), len(paused)))
+def list_stopwatch(args):
+    active = args.session.query(Stopwatches).filter(Stopwatches.active == 1).order_by(Stopwatches.id).all()
+    paused = args.session.query(Stopwatches).filter(Stopwatches.active == 0).order_by(Stopwatches.id).all()
     for x in active:
-        send('Active stopwatch #%d started at %d' % (x.id, x.time), target=nick)
+        args.send('Active stopwatch #%d started at %d' % (x.id, x.time), target=args.nick)
     for x in paused:
-        send('Paused stopwatch #%d started at %d time elapsed %d' % (x.id, x.time, x.elapsed), target=nick)
+        args.send('Paused stopwatch #%d started at %d time elapsed %d' % (x.id, x.time, x.elapsed), target=args.nick)
+    return "%d active and %d paused stopwatches." % (len(active), len(paused))
 
 
-@Command(['stopwatch', 'sw'], ['db', 'nick'])
+def get_stopwatch(args):
+    stopwatch = args.session.query(Stopwatches).get(args.id)
+    if stopwatch is None:
+        return "Invalid ID!"
+    status = "Active" if stopwatch.active == 1 else "Paused"
+    return "%s %s" % (status, get_elapsed(args.session, args.id))
+
+
+@Command(['stopwatch', 'sw'], ['config', 'db', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
-    Syntax: {command} <start|stop|resume|get|list>
+    Syntax: {command} <start|stop|resume|delete|get|list>
     """
 
-    if not msg:
-        send("Invalid Syntax.")
+    parser = arguments.ArgParser(args['config'])
+    parser.set_defaults(session=args['db'])
+    subparser = parser.add_subparsers()
+    start_parser = subparser.add_parser('start')
+    start_parser.set_defaults(func=create_stopwatch)
+    stop_parser = subparser.add_parser('stop')
+    stop_parser.add_argument('id', type=int)
+    stop_parser.set_defaults(func=stop_stopwatch)
+    resume_parser = subparser.add_parser('resume')
+    resume_parser.add_argument('id', type=int)
+    resume_parser.set_defaults(func=resume_stopwatch)
+    delete_parser = subparser.add_parser('delete')
+    delete_parser.add_argument('id', type=int)
+    delete_parser.set_defaults(func=delete_stopwatch, isadmin=args['is_admin'](args['nick']))
+    get_parser = subparser.add_parser('get')
+    get_parser.add_argument('id', type=int)
+    get_parser.set_defaults(func=get_stopwatch)
+    list_parser = subparser.add_parser('list')
+    list_parser.set_defaults(func=list_stopwatch, nick=args['nick'], send=send)
+
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
         return
-    msg = msg.split()
-    command = msg[0]
-    msg = " ".join(msg[1:])
-    session = args['db']
-    if command == "start":
-        send(create_sw(session))
-    elif command == "get":
-        send("%s %s" % (get_status(session, msg), get_elapsed(session, msg)))
-    elif command == "stop":
-        send("%s Stopped at %s" % (stop_stopwatch(session, msg), get_elapsed(session, msg)))
-    elif command == "resume":
-        send(stopwatch_resume(session, msg))
-    elif command == "list":
-        stopwatch_list(session, send, args['nick'])
-    else:
-        send("Invalid Syntax.")
+
+    send(cmdargs.func(cmdargs))
