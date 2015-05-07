@@ -151,6 +151,17 @@ class BotHandler():
             self.do_kick(send, target, nick, msg, False)
             return True
 
+    @staticmethod
+    def get_max_length(target, msgtype):
+        overhead = r"PRIVMSG %s: \r\n" % target
+        # FIXME: what the hell is up w/ message length limits?
+        if msgtype == 'action':
+            overhead += "\001ACTION \001"
+            MAX = 454  # 512
+        else:
+            MAX = 453  # 512
+        return MAX - len(overhead.encode())
+
     def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
         """ Send a message.
 
@@ -164,19 +175,32 @@ class BotHandler():
         for i in filters:
             if target != self.config['core']['ctrlchan']:
                 msg = i(msg)
-        while len(msg) > 400:
-            split_pos = self.get_split_pos(msg)
+        # Avoid spam from commands that produce excessive output.
+        MAX_LEN = 650
+        if len(msg) > MAX_LEN and not ignore_length:
+            split_pos = self.get_split_pos(msg, MAX_LEN)
+            msg = msg[:split_pos] + "..."
+        max_len = self.get_max_length(target, msgtype)
+        # We can't send messages > 512 bytes to irc.
+        while len(msg.encode()) > max_len:
+            split_pos = self.get_split_pos(msg, max_len)
             msgs.append(msg[:split_pos].strip())
             msg = msg[split_pos:]
         msgs.append(msg.strip())
-        # Avoid sending more then two lines to avoid Excess Flood errors and spam
-        msgs = msgs if ignore_length else msgs[:2]
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':
                 self.connection.action(target, i)
             else:
                 self.rate_limited_send(target, i)
+
+    @staticmethod
+    def get_split_pos(message, max_len):
+        """Tries to find a empty space close to the max line length."""
+        for i in range(max_len, max_len-15, -1):
+            if message[i] == ' ':
+                return i
+        return max_len
 
     def rate_limited_send(self, target, msg):
         with self.flood_lock:
@@ -185,15 +209,6 @@ class BotHandler():
             time.sleep(max(0, 0.5 - elapsed))
             self.connection.privmsg(target, msg)
             self.last_msg_time = time.time()
-
-    @staticmethod
-    def get_split_pos(message):
-        """Gets the proper split position at or around position 400 of
-           a message."""
-        for i in range(385, 415):
-            if message[i] == ' ':
-                return i
-        return 400
 
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
