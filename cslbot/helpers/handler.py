@@ -17,6 +17,7 @@
 # USA.
 
 import base64
+import collections
 import logging
 import re
 import time
@@ -48,7 +49,7 @@ class BotHandler():
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
         self.ping_map = {}
-        self.outputfilter = []
+        self.outputfilter = collections.defaultdict(list)
         self.kick_enabled = True
         self.caps = []
         self.abuselist = {}
@@ -159,7 +160,7 @@ class BotHandler():
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
         msgs = []
         if filters is None:
-            filters = self.outputfilter
+            filters = self.outputfilter[target]
         for i in filters:
             if target != self.config['core']['ctrlchan']:
                 msg = i(msg)

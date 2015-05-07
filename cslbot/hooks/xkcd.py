@@ -15,13 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.hook import Hook
-from ..helpers.textutils import do_xkcd_sub
+from ..helpers import textutils
 
 
 @Hook('xkcd', ['pubmsg', 'action'], ['nick', 'type'])
 def handle(send, msg, args):
     """ Implements several XKCD comics """
-    output = do_xkcd_sub(msg, True)
+    output = textutils.gen_xkcd_sub(msg, True)
     if output is None:
         return
     if args['type'] == 'action':

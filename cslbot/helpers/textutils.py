@@ -48,7 +48,7 @@ def get_token(config):
     return token_cache['token']
 
 
-def removevowels(msg):
+def gen_removevowels(msg):
     return re.sub('[aeiouy]', '', msg, flags=re.I)
 
 
@@ -207,7 +207,7 @@ def gen_binary(string):
     return "".join(map(char_to_bin, string))
 
 
-def do_xkcd_sub(msg, hook=False):
+def gen_xkcd_sub(msg, hook=False):
     # http://xkcd.com/1288/
     substitutions = {'witnesses': 'these dudes I know',
                      'allegedly': 'kinda probably', 'new study': 'tumblr post',
@@ -327,9 +327,9 @@ output_filters = {
     "slogan": gen_slogan,
     "insult": gen_insult,
     "morse": gen_morse,
-    "removevowels": removevowels,
+    "removevowels": gen_removevowels,
     "binary": gen_binary,
-    "xkcd": do_xkcd_sub,
+    "xkcd": gen_xkcd_sub,
     "praise": gen_praise,
     "reverse": reverse,
     "lenny": gen_lenny,
