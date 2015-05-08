@@ -18,9 +18,12 @@ from ..helpers.misc import get_urban
 from ..helpers.command import Command
 
 
-@Command('urban')
+@Command('urban', ['config'])
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
     Syntax: {command} [#<num>] <term>
     """
-    send(get_urban(msg))
+    key = args['config']['api']['googleapikey']
+    defn, url = get_urban(msg, key)
+    send(defn)
+    send("See full definition at %s" % url)

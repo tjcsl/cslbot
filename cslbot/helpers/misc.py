@@ -29,7 +29,7 @@ from urllib.parse import unquote
 from urllib.request import urlopen
 from requests import post, get
 from requests.exceptions import ReadTimeout
-from . import orm
+from . import orm, urlutils
 
 
 def parse_time(time):
@@ -182,16 +182,17 @@ def get_rand_word():
     return unquote(url)
 
 
-def get_urban(msg=""):
-    if msg:
-        output = get_urban_definition(msg)
-    else:
+def get_urban(msg, key):
+    if not msg:
         msg = get_rand_word()
-        output = "%s: %s" % (msg, get_urban_definition(msg))
-    return output
+        defn, url = get_urban_definition(msg, key)
+        defn = "%s: %s" % (msg, defn)
+    else:
+        defn, url = get_urban_definition(msg, key)
+    return defn, url
 
 
-def get_urban_definition(msg):
+def get_urban_definition(msg, key):
     msg = msg.split()
     index = msg[0][1:] if msg[0].startswith('#') else None
     term = " ".join(msg[1:]) if index is not None else " ".join(msg)
@@ -210,8 +211,9 @@ def get_urban_definition(msg):
         output = "Invalid Index"
     else:
         output = data[int(index) - 1]['definition']
-    output = output.splitlines()
-    return ' '.join(output).strip()
+    output = ' '.join(output.splitlines()).strip()
+    url = 'http://urbandictionary.com/define.php?term=%s' % term
+    return output, urlutils.get_short(url, key)
 
 
 def get_version(srcdir):
