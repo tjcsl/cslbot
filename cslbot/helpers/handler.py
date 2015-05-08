@@ -197,7 +197,7 @@ class BotHandler():
     @staticmethod
     def get_split_pos(message, max_len):
         """Tries to find a empty space close to the max line length."""
-        for i in range(max_len, max_len-15, -1):
+        for i in range(max_len, max(0, max_len-15), -1):
             if message[i] == ' ':
                 return i
         return max_len
