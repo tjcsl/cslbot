@@ -304,7 +304,10 @@ def gen_random_translate(msg):
     langs_xml = etree.fromstring(langs.content)
     names_xml = etree.fromstring(names.content)
     langs = {langs_xml[x].text: names_xml[x].text for x in range(len(langs_xml))}
+    # No point in english->english
     del langs['en']
+    # This Klingon variant seems to royally screw-up terminals.
+    del langs['tlh-Qaak']
     outputlang = choice(list(langs.keys()))
     translation = gen_translate(msg, outputlang)
     return "%s (%s)" % (translation, langs[outputlang])
