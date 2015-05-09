@@ -51,7 +51,10 @@ def handle(send, msg, args):
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
-        if last is not None and args['config']['feature'].getboolean('linkread'):
-            lasttime = time.strftime('%H:%M:%S on %Y-%m-%d', time.localtime(last.time))
-            send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
+        if args['config']['feature'].getboolean('linkread'):
+            if last is not None:
+                lasttime = time.strftime('%H:%M:%S on %Y-%m-%d', time.localtime(last.time))
+                send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
+            else:
+                send('** %s - %s' % (title, short))
         args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time.time()))
