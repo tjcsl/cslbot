@@ -30,6 +30,9 @@ def cmd(send, msg, args):
         return
     params = {'format': 'plaintext', 'reinterpret': 'true', 'input': msg, 'appid': args['config']['api']['wolframapikey']}
     xml = get('http://api.wolframalpha.com/v2/query', params=params)
+    if xml.status_code == 403:
+        send("WolframAlpha is having issues.")
+        return
     xml = etree.fromstring(xml.text.encode())
     output = xml.findall('./pod')
     key = args['config']['api']['googleapikey']
