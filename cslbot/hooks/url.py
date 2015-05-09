@@ -45,13 +45,13 @@ def handle(send, msg, args):
         return
     for url in urls:
         # Prevent botloops
-        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count():
+        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count() > 1:
             return
         title = urlutils.get_title(url)
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
-        if last and args['config']['feature'].getboolean('linkread'):
-            lasttime = time.strftime('at %H:%M:%S on %Y-%m-%d', time.localtime(last.time))
-            send("Url %s previously posted %s by %s -- %s" % (short, lasttime, last.nick, title))
+        if last is not None and args['config']['feature'].getboolean('linkread'):
+            lasttime = time.strftime('%H:%M:%S on %Y-%m-%d', time.localtime(last.time))
+            send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
         args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time.time()))
