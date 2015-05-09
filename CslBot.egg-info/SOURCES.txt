@@ -78,6 +78,7 @@ cslbot/commands/msg.py
 cslbot/commands/nicks.py
 cslbot/commands/note.py
 cslbot/commands/nuke.py
+cslbot/commands/paraphrase.py
 cslbot/commands/part.py
 cslbot/commands/pester.py
 cslbot/commands/ping.py
@@ -86,6 +87,7 @@ cslbot/commands/pull.py
 cslbot/commands/quit.py
 cslbot/commands/quote.py
 cslbot/commands/random.py
+cslbot/commands/randtranslate.py
 cslbot/commands/reddit.py
 cslbot/commands/roman.py
 cslbot/commands/s.py
