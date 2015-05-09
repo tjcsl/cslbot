@@ -24,7 +24,7 @@ before_script:
     - sed -i "s#/etc/cslbot#$TRAVIS_BUILD_DIR#g" cslbot/helpers/*.py scripts/*.py
     - git config user.email "test@test.com"
     - git config user.name "test"
-    - git commit -am 'update path'
+    - git commit -m 'update path' cslbot/helpers/*.py scripts/*.py
     - echo -e 'test\n#test\n#test\ntest' | cslbot
     - sed -i 's#engine.=.#\0 postgresql://postgres@/ircbot#' $TRAVIS_BUILD_DIR/config.cfg
     - sed -i 's#extramodules.=.#\0 cslbot-tjhsst#' $TRAVIS_BUILD_DIR/config.cfg
