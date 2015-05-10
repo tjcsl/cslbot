@@ -26,4 +26,5 @@ def cmd(send, msg, args):
     key = args['config']['api']['googleapikey']
     defn, url = get_urban(msg, key)
     send(defn)
-    send("See full definition at %s" % url)
+    if url:
+        send("See full definition at %s" % url)

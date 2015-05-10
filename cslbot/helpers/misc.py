@@ -200,11 +200,11 @@ def get_urban_definition(msg, key):
         req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
         data = req.json()['list']
     except JSONDecodeError:
-        return "UrbanDictionary is having problems."
+        return "UrbanDictionary is having problems.", None
     except ReadTimeout:
-        return "UrbanDictionary timed out."
+        return "UrbanDictionary timed out.", None
     if len(data) == 0:
-        output = "UrbanDictionary doesn't have an answer for you."
+        return "UrbanDictionary doesn't have an answer for you.", None
     elif index is None:
         output = data[0]['definition']
     elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
@@ -212,8 +212,11 @@ def get_urban_definition(msg, key):
     else:
         output = data[int(index) - 1]['definition']
     output = ' '.join(output.splitlines()).strip()
-    url = 'http://urbandictionary.com/define.php?term=%s' % term
-    return output, urlutils.get_short(url, key)
+    if len(output) > 650:
+        url = urlutils.get_short('http://urbandictionary.com/define.php?term=%s' % term, key)
+    else:
+        url = None
+    return output, url
 
 
 def get_version(srcdir):
