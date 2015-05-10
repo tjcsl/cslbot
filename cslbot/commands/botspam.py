@@ -28,7 +28,8 @@ def gen_fortune(send):
 def gen_urban(send, key):
     defn, url = get_urban("", key)
     send(defn)
-    send("See full definition at %s" % url)
+    if url:
+        send("See full definition at %s" % url)
 
 
 @Command('botspam', ['config'])
