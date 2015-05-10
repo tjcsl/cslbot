@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import socket
 import ssl
 import re
 from lxml.html import parse
@@ -22,7 +23,6 @@ from urllib import request
 from urllib.error import URLError, HTTPError
 from requests import post
 from requests.exceptions import ConnectTimeout
-from socket import timeout
 from .exception import CommandFailedException
 
 
@@ -75,7 +75,7 @@ def get_title(url):
                 title = ctype
             else:
                 title = "Title Not Found"
-    except timeout as e:
+    except socket.timeout as e:
         raise CommandFailedException(e)
     except HTTPError as e:
         title = 'HTTP Error %d' % e.code
