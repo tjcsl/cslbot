@@ -42,7 +42,7 @@ def get_def(entry, word, key):
         else:
             def_str = []
             for x in strip_colon(defn.text).split(' :'):
-                def_str.append(' '.join([x]+children))
+                def_str.append(' '.join([x] + children))
         for x in filter(None, def_str):
             defs.append(x)
     if entry is None:

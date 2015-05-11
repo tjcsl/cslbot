@@ -37,8 +37,10 @@ def cmd(send, msg, args):
         return
     if isinstance(cmdargs.stations, list):
         cmdargs.stations = ','.join(cmdargs.stations)
-    req = get('https://aviationweather.gov/adds/dataserver_current/httpparam', params={'datasource': 'metars', 'requestType': 'retrieve',
-              'format': 'xml', 'mostRecentForEachStation': 'constraint', 'hoursBeforeNow': '1.25', 'stationString': cmdargs.stations})
+    req = get('https://aviationweather.gov/adds/dataserver_current/httpparam',
+              params={'datasource': 'metars', 'requestType': 'retrieve',
+                      'format': 'xml', 'mostRecentForEachStation': 'constraint',
+                      'hoursBeforeNow': '1.25', 'stationString': cmdargs.stations})
     xml = ElementTree.fromstring(req.text)
     errors = xml.find('./errors')
     if len(errors):

@@ -33,6 +33,7 @@ from . import backtrace, config, handler, misc, reloader, server
 
 
 class IrcBot(bot.SingleServerIRCBot):
+
     def __init__(self, confdir):
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)

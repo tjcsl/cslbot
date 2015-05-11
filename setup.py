@@ -38,7 +38,7 @@ setup(
             'static/shakespeare-dictionary.json',
             'static/wordlist',
             'templates/*.html'],
-        },
+    },
     exclude_package_data={
         '': ['templates/analytics.html']},
     install_requires=[
@@ -52,16 +52,16 @@ setup(
         'lxml',
         'python-dateutil',
         'simplejson',
-        ],
+    ],
     extras_require={
         'doc': ['sphinx'],
-        },
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
         'Programming Language :: Python :: 3.4',
         'Topic :: Communications :: Chat :: Internet Relay Chat',
-        ],
+    ],
     entry_points={
         'console_scripts': [
             'cslbot = cslbot.helpers.core:init',
@@ -70,6 +70,6 @@ setup(
             'cslbot-genbabble = scripts.gen_babble:main',
             'cslbot-reload = scripts.reload:main',
             'cslbot-migrate = scripts.migrate:main',
-            ]
-        }
+        ]
+    }
 )

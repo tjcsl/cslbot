@@ -37,7 +37,7 @@ def cmd(send, msg, args):
             return
         for target in targets:
             if not re.match(args['config']['core']['nickregex'], target):
-                    send("Invalid nick %s" % target)
+                send("Invalid nick %s" % target)
             else:
                 args['handler'].ping_map[target] = channel
                 args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))

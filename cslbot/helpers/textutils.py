@@ -39,7 +39,7 @@ def get_token(config):
         token_cache['token'] = 'nokey'
         return token_cache['token']
     # The cache is valid for 10 minutes, refresh it only if it will expire in 5 seconds or less.
-    if time.time() - token_cache['time'] < 10*60-5:
+    if time.time() - token_cache['time'] < 10 * 60 - 5:
         return token_cache['token']
     postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
     data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
