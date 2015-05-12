@@ -571,6 +571,6 @@ class BotHandler():
             args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
             cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
         # special commands
-        elif cmd.startswith('%sreload' % cmdchar):
+        elif cmd == '%sreload' % cmdchar:
             if nick in admins:
                 send("Aye Aye Capt'n")
