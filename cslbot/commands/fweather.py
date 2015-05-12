@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from bs4 import BeautifulSoup
+from lxml import etree
 from requests import get
 from ..helpers.command import Command
 
@@ -24,10 +24,10 @@ def cmd(send, msg, _):
     """Gets the F***ING weather!
     Syntax: {command} <location>
     """
-    try:
-        html = get('http://thefuckingweather.com/', params={'where': msg})
-        soup = BeautifulSoup(html.text)
-        temp, remark, _ = soup.findAll('p')
-        send((temp.contents[0].contents[0] + ' F? ' + remark.contents[0]).replace("FUCK", "FSCK"))
-    except ValueError:
+    req = get('http://thefuckingweather.com/April/%s' % msg)
+    html = etree.HTML(req.text)
+    elem = html.find('body/h1')
+    if elem is None:
         send('NO FSCKING RESULTS.')
+    else:
+        send(elem.text)
