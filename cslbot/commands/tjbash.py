@@ -14,7 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from bs4 import BeautifulSoup
+import operator
+from lxml import html
 from requests import get
 from random import choice
 from ..helpers.command import Command
@@ -25,35 +26,32 @@ def cmd(send, msg, _):
     """Finds a random quote from tjbash.org given search criteria.
     Syntax: {command} [searchstring]
     """
-    if len(msg) == 0:
+    if not msg:
         url = 'http://tjbash.org/random1'
+        params = {}
     else:
-        url = 'http://tjbash.org/search?query='
-        targs = msg.split(' ')
+        targs = msg.split()
         if len(targs) == 1 and targs[0].isnumeric():
-            url = 'http://tjbash.org/' + targs[0]
+            url = 'http://tjbash.org/%s' % targs[0]
+            params = {}
         else:
-            for tag in targs:
-                url += 'tag:' + tag + ' '
-    html = get(url)
-    soup = BeautifulSoup(html.text)
-    quotes = soup.findAll('blockquote')
-    if len(quotes) < 1:
+            url = 'http://tjbash.org/search'
+            params = {'query': 'tag:%s' % '+'.join(targs)}
+    req = get(url, params=params)
+    doc = html.fromstring(req.text)
+    quotes = doc.find_class('quote-body')
+    if not quotes:
         send("There were no results.")
         return
     quote = choice(quotes)
-    text = [x for x in quote.text.splitlines() if x]
-    text = text[:3]
-    for line in text:
-        send(line.rstrip())
-    root = quote.parent.parent
-    postid = root.get('id').split('quote-')[1].rstrip()
-    tagitems = root.find('div', attrs={'class': 'quote-tags'})
-    if tagitems is not None:
-        tagitems = tagitems.find_all('a')
-        tags = []
-        for tag in tagitems:
-            tags.append(tag.text.rstrip())
-        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if (len(text) > 3) else "", postid))
+    lines = [x.strip() for x in map(operator.methodcaller('strip'), quote.itertext())]
+    # Only send up to three lines.
+    for line in lines[:4]:
+        send(line)
+    tags = quote.getparent().find_class('quote-tags')
+    postid = quote.getparent().getparent().get('id').replace('quote-', '')
+    if tags:
+        tags = [x.text for x in tags[0].findall('.//a')]
+        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if (len(lines) > 3) else "", postid))
     else:
         send(" -- http://tjbash.org/{}".format(postid))

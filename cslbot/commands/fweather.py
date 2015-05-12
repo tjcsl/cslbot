@@ -26,7 +26,7 @@ def cmd(send, msg, _):
     """
     req = get('http://thefuckingweather.com/April/%s' % msg)
     html = etree.HTML(req.text)
-    elem = html.find('body/h1')
+    elem = html.find('.//h1')
     if elem is None:
         send('NO FSCKING RESULTS.')
     else:

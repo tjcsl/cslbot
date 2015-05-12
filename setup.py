@@ -45,7 +45,6 @@ setup(
         'SQLAlchemy>=1.0.0',
         'requests>=2.4.0',
         'alembic',
-        'beautifulsoup4',
         'geoip2',
         'irc',
         'jinja2',
