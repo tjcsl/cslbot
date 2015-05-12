@@ -22,8 +22,7 @@ import string
 import time
 from pkg_resources import Requirement, resource_string
 from requests import get, post
-from lxml import etree
-from lxml.html import fromstring, tostring
+from lxml import etree, html
 from html import escape, unescape
 from random import random, choice, randrange, randint
 
@@ -62,14 +61,14 @@ def gen_hashtag(msg):
 
 
 def gen_yoda(msg):
-    html = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
-    return fromstring(html.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip()
+    req = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
+    return html.fromstring(req.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip()
 
 
 def gen_gizoogle(msg):
-    html = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})
+    req = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})
     # This mess is needed because gizoogle has a malformed textarea, so the text isn't within the tag
-    response = unescape(tostring(fromstring(html.text).find('.//textarea')).decode('utf-7')).strip()
+    response = unescape(html.tostring(html.fromstring(req.text).find('.//textarea')).decode('utf-7')).strip()
     response = re.sub(".*</textarea>", '', response)
     return unescape(response)
 
@@ -92,8 +91,8 @@ def gen_praise(msg):
 
 
 def get_praise():
-    html = fromstring(get('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG').text)
-    return html.find('body/center/h2').text.replace('\n', ' ').strip()
+    doc = html.fromstring(get('http://www.madsci.org/cgi-bin/cgiwrap/~lynn/jardin/SCG').text)
+    return doc.find('body/center/h2').text.replace('\n', ' ').strip()
 
 
 def gen_fwilson(x, mode=None):
@@ -288,9 +287,9 @@ def gen_translate(msg, outputlang='en'):
     req = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params={'text': transform_text(msg), 'to': outputlang}, headers=headers)
     xml = etree.fromstring(req.content)
     if xml.tag == 'html':
-        html = ' '.join(xml.itertext())
-        html = ' '.join(html.splitlines())
-        return "An error occurred: %s" % html
+        doc = ' '.join(xml.itertext())
+        doc = ' '.join(doc.splitlines())
+        return "An error occurred: %s" % doc
     return xml.text
 
 

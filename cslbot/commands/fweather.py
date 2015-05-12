@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from lxml import etree
+from lxml.html import fromstring
 from requests import get
 from ..helpers.command import Command
 
@@ -25,8 +25,8 @@ def cmd(send, msg, _):
     Syntax: {command} <location>
     """
     req = get('http://thefuckingweather.com/April/%s' % msg)
-    html = etree.HTML(req.text)
-    elem = html.find('.//h1')
+    doc = fromstring(req.text)
+    elem = doc.find('.//h1')
     if elem is None:
         send('NO FSCKING RESULTS.')
     else:

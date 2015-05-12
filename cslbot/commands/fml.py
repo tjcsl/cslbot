@@ -14,14 +14,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from lxml import etree
+from lxml.etree import fromstring
+from requests import get
 from ..helpers.command import Command
 
 
-@Command('fml', ['config'], limit=2)
+@Command('fml', ['config'])
 def cmd(send, msg, args):
     """Gets a random FML post.
     Syntax: {command}
     """
-    tree = etree.parse("http://api.fmylife.com/view/random/nosex/?key=%s&language=en" % args['config']['api']['fmlkey'])
-    send(tree.xpath('//text')[0].text)
+    req = get("http://api.fmylife.com/view/random", params={'language': 'en', 'key': args['config']['api']['fmlkey']})
+    doc = fromstring(req.content)
+    send(doc.xpath('//text')[0].text)

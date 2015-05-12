@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import operator
-from lxml import html
+from lxml.html import fromstring
 from requests import get
 from random import choice
 from ..helpers.command import Command
@@ -38,7 +38,7 @@ def cmd(send, msg, _):
             url = 'http://tjbash.org/search'
             params = {'query': 'tag:%s' % '+'.join(targs)}
     req = get(url, params=params)
-    doc = html.fromstring(req.text)
+    doc = fromstring(req.text)
     quotes = doc.find_class('quote-body')
     if not quotes:
         send("There were no results.")

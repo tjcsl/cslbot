@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from requests import get
-from lxml import etree
+from lxml.etree import fromstring
 from ..helpers.command import Command
 from ..helpers.urlutils import get_short
 
@@ -29,11 +29,11 @@ def cmd(send, msg, args):
         send("Evaluate what?")
         return
     params = {'format': 'plaintext', 'reinterpret': 'true', 'input': msg, 'appid': args['config']['api']['wolframapikey']}
-    xml = get('http://api.wolframalpha.com/v2/query', params=params)
-    if xml.status_code == 403:
+    req = get('http://api.wolframalpha.com/v2/query', params=params)
+    if req.status_code == 403:
         send("WolframAlpha is having issues.")
         return
-    xml = etree.fromstring(xml.text.encode())
+    xml = fromstring(req.content)
     output = xml.findall('./pod')
     key = args['config']['api']['googleapikey']
     url = get_short("http://www.wolframalpha.com/input/?i=%s" % msg, key)
