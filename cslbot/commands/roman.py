@@ -45,5 +45,5 @@ def cmd(send, msg, _):
         msg = randrange(5000)
     elif not msg.isdigit():
         send("Invalid Number.")
-    else:
-        send(gen_roman(int(msg)))
+        return
+    send(gen_roman(int(msg)))
