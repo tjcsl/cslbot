@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.command import Command, get_commands, get_command, is_registered
+from ..helpers.command import Command, get_command, is_registered, get_enabled_commands
 
 
 @Command('help', ['nick', 'config'])
@@ -38,7 +38,7 @@ def cmd(send, msg, args):
                 for line in doc.splitlines():
                     send(line.format(command=cmdchar + msg))
     else:
-        modules = sorted(get_commands())
+        modules = sorted(get_enabled_commands())
         cmdlist = (' %s' % cmdchar).join(modules)
         send('Commands: %s%s' % (cmdchar, cmdlist), target=args['nick'], ignore_length=True)
         send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])
