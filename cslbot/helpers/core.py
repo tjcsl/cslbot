@@ -75,7 +75,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def handle_event(self, c, e):
         handled_types = ['354', 'account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'welcome']
+                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return

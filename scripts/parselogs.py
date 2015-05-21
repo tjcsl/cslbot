@@ -89,6 +89,9 @@ def gen_log(row):
         log = '%s Mode %s [%s] by %s' % (logtime, row.target, row.msg, nick)
     elif row.type == 'nick':
         log = '%s -- %s is now known as %s' % (logtime, nick, row.msg)
+    elif row.type == 'topic':
+        # FIXME: keep track of the old topic
+        log = '%s %s has changed topic for #msbob to "%s"' % (logtime, nick, row.msg)
     elif row.type in ['pubnotice', 'privnotice']:
         log = '%s Notice(%s): %s' % (logtime, nick, row.msg)
     elif row.type in ['privmsg', 'pubmsg']:
@@ -120,7 +123,7 @@ def main(confdir="/etc/cslbot"):
     if new_id is None:
         new_id = 0
     save_id(cmdargs.outdir, new_id)
-    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.id).all():
+    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.time).all():
         check_day(row, cmdargs.outdir, config['core']['channel'])
         write_log(row.target, cmdargs.outdir, gen_log(row))
     for x in logs.values():
