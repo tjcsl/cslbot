@@ -45,14 +45,14 @@ def cmd(send, msg, args):
             query = query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
             query = query.filter(Log.msg.like('%%%s%%' % term))
-        row = query.order_by(Log.id.desc()).first()
+        row = query.order_by(Log.time.desc()).first()
     else:
         query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
         if cmdargs.ignore_case:
             query = query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
             query = query.filter(Log.msg.like('%%%s%%' % term))
-        row = query.order_by(Log.id.desc()).first()
+        row = query.order_by(Log.time.desc()).first()
     if row:
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
         send("%s said %s at %s" % (row.source, row.msg, logtime))
