@@ -16,6 +16,7 @@
 
 import re
 from requests import get
+from ..helpers import arguments
 from ..helpers.command import Command
 
 
@@ -55,11 +56,16 @@ def random_stock():
     return re.search(r'\((.*)\)', html).group(1)
 
 
-@Command('stock')
-def cmd(send, msg, _):
+@Command('stock', ['config'])
+def cmd(send, msg, args):
     """Gets a stock quote.
     Syntax: {command} [symbol]
     """
-    if not msg:
-        msg = random_stock()
-    send(gen_stock(msg))
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('stock', nargs='?', default=random_stock())
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+    send(gen_stock(cmdargs.stock))
