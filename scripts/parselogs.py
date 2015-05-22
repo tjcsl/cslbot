@@ -123,7 +123,7 @@ def main(confdir="/etc/cslbot"):
     if new_id is None:
         new_id = 0
     save_id(cmdargs.outdir, new_id)
-    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.time).all():
+    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.time, Log.id).all():
         check_day(row, cmdargs.outdir, config['core']['channel'])
         write_log(row.target, cmdargs.outdir, gen_log(row))
     for x in logs.values():
