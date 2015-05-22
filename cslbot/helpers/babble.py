@@ -134,8 +134,6 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
             cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
         cursor.execute(Babble.__table__.delete())
         cursor.execute(Babble_count.__table__.delete())
-        if debug:
-            print('Created index in %f' % (time.time() - t))
     if debug:
         t = time.time()
     if initial_run and cursor.bind.dialect.name == 'postgresql':
