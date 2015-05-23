@@ -137,7 +137,7 @@ class IrcBot(bot.SingleServerIRCBot):
         # If we're the one quiting, shut things down cleanly.
         # If it's an Excess Flood or other server-side quit we want to reconnect.
         if e.source.nick == self.connection.real_nickname and e.arguments[0] in ['Client Quit', 'Goodbye, Cruel World!']:
-            # FIXME: If this hangs or takes more then 5 seconds, we'll just reconnect.
+            self.connection.close()
             self.shutdown_mp()
             sys.exit(0)
 
