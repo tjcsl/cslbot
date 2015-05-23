@@ -14,7 +14,7 @@ env:
 
 cache:
     directories:
-    - $HOME/virtualenv
+    - $HOME/.cache/pip
 
 install:
     - pip install flake8 sphinx psycopg2 git+git://github.com/tjcsl/cslbot-tjhsst -e .
