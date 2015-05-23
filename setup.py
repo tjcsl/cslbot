@@ -23,7 +23,7 @@ setup(
     author="The TJHSST Computer Systems Lab",
     author_email="cslbot@pefoley.com",
     url="https://github.com/tjcsl/cslbot",
-    version="0.15",
+    version="0.16",
     license="GPL",
     zip_safe=False,
     packages=find_packages(exclude=['cslbot.tjhsst']),
