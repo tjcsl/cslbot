@@ -21,10 +21,9 @@ before_install:
     - git config user.email "test@test.com"
     - git config user.name "test"
     - git commit -m 'update path' cslbot/helpers/*.py scripts/*.py
-    - cat cslbot/helpers/core.py
 
 install:
-    - pip install flake8 sphinx psycopg2 git+git://github.com/tjcsl/cslbot-tjhsst -e .
+    - pip install flake8 sphinx psycopg2 git+git://github.com/tjcsl/cslbot-tjhsst .
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
