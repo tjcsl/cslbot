@@ -18,6 +18,7 @@
 
 import base64
 import collections
+import functools
 import logging
 import re
 import time
@@ -177,16 +178,17 @@ class BotHandler():
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
         MAX_LEN = 650
-        if len(msg) > MAX_LEN and not ignore_length:
-            split_pos = self.get_split_pos(msg, MAX_LEN)
-            msg = msg[:split_pos] + "..."
+        msg = [x.encode() for x in msg]
+        if functools.reduce(lambda x, y: x + len(y), msg, 0) > MAX_LEN and not ignore_length:
+            msg, _ = self.split_msg(msg, MAX_LEN)
+            msg += "..."
+            msg = [x.encode() for x in msg]
         max_len = self.get_max_length(target, msgtype)
         # We can't send messages > 512 bytes to irc.
-        while len(msg.encode()) > max_len:
-            split_pos = self.get_split_pos(msg, max_len)
-            msgs.append(msg[:split_pos].strip())
-            msg = msg[split_pos:]
-        msgs.append(msg.strip())
+        while functools.reduce(lambda x, y: x + len(y), msg, 0) > max_len:
+            split, msg = self.split_msg(msg, max_len)
+            msgs.append(split)
+        msgs.append(''.join([x.decode() for x in msg]).strip())
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':
@@ -195,12 +197,14 @@ class BotHandler():
                 self.rate_limited_send(target, i)
 
     @staticmethod
-    def get_split_pos(message, max_len):
-        """Tries to find a empty space close to the max line length."""
-        for i in range(max_len, max(0, max_len - 15), -1):
-            if message[i] == ' ':
-                return i
-        return max_len
+    def split_msg(msgs, max_len):
+        """Splits as close to the end as possible."""
+        msg = ""
+        while len(msg.encode()) < max_len:
+            if len(msg.encode()) + len(msgs[0]) > max_len:
+                return msg, msgs
+            msg += msgs.pop(0).decode()
+        return msg, msgs
 
     def rate_limited_send(self, target, msg):
         with self.flood_lock:
