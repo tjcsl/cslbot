@@ -25,7 +25,7 @@ before_install:
 install:
     - pip install flake8 sphinx psycopg2 .
       # We need to install this separately since it will pull in CslBot from pypi otherwise
-    - pip install --no-deps git+git://github.com/tjcsl/cslbot-tjhsst
+    - pip install git+git://github.com/tjcsl/cslbot-tjhsst
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
