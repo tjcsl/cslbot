@@ -19,7 +19,7 @@ from random import choice
 from ..helpers import arguments
 from ..helpers.orm import Issues
 from ..helpers.command import Command
-from ..helpers.misc import create_issue
+from ..helpers.web import create_issue
 
 
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])

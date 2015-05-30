@@ -24,6 +24,7 @@ from urllib.error import URLError, HTTPError
 from urllib.parse import urlsplit, urlunsplit
 from requests import post
 from requests.exceptions import ConnectTimeout
+from . import misc
 from .exception import CommandFailedException
 
 
@@ -86,8 +87,5 @@ def get_title(url):
             raise CommandFailedException(e.reason)
         else:
             raise CommandFailedException(e.reason.strerror)
-    # FIXME: handle unicode properly
-    # Truncate over-long titles.
-    if len(title) > 256:
-        title = title[:253] + "..."
+    title = misc.truncate_msg(title, 256)
     return title

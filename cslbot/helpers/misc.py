@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import json
 import subprocess
 import re
 import os
@@ -24,12 +23,7 @@ import pkg_resources
 from os.path import exists, join
 from random import choice, random
 from datetime import timedelta
-from simplejson import JSONDecodeError
-from urllib.parse import unquote
-from urllib.request import urlopen
-from requests import post, get
-from requests.exceptions import ReadTimeout
-from . import orm, urlutils
+from . import orm
 
 
 def parse_time(time):
@@ -176,49 +170,6 @@ def ignore(session, nick):
         return "%s is already ignored." % nick
 
 
-def get_rand_word():
-    url = urlopen('http://www.urbandictionary.com/random.php').geturl()
-    url = url.split('=')[1].replace('+', ' ')
-    return unquote(url)
-
-
-def get_urban(msg, key):
-    if not msg:
-        msg = get_rand_word()
-        defn, url = get_urban_definition(msg, key)
-        defn = "%s: %s" % (msg, defn)
-    else:
-        defn, url = get_urban_definition(msg, key)
-    return defn, url
-
-
-def get_urban_definition(msg, key):
-    msg = msg.split()
-    index = msg[0][1:] if msg[0].startswith('#') else None
-    term = " ".join(msg[1:]) if index is not None else " ".join(msg)
-    try:
-        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
-        data = req.json()['list']
-    except JSONDecodeError:
-        return "UrbanDictionary is having problems.", None
-    except ReadTimeout:
-        return "UrbanDictionary timed out.", None
-    if len(data) == 0:
-        return "UrbanDictionary doesn't have an answer for you.", None
-    elif index is None:
-        output = data[0]['definition']
-    elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
-        output = "Invalid Index"
-    else:
-        output = data[int(index) - 1]['definition']
-    output = ' '.join(output.splitlines()).strip()
-    if len(output) > 650:
-        url = urlutils.get_short('http://urbandictionary.com/define.php?term=%s' % term, key)
-    else:
-        url = None
-    return output, url
-
-
 def get_version(srcdir):
     gitdir = join(srcdir, ".git")
     if not exists(gitdir):
@@ -231,14 +182,19 @@ def get_version(srcdir):
         return None, None
 
 
-def create_issue(title, desc, nick, repo, apikey):
-    body = {"title": title, "body": "%s\nIssue created by %s" % (desc, nick), "labels": ["bot"]}
-    headers = {'Authorization': 'token %s' % apikey}
-    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
-    data = req.json()
-    if 'html_url' in data.keys():
-        return data['html_url'], True
-    elif 'message' in data.keys():
-        return data['message'], False
-    else:
-        return "Unknown error", False
+def split_msg(msgs, max_len):
+    """Splits as close to the end as possible."""
+    msg = ""
+    while len(msg.encode()) < max_len:
+        if len(msg.encode()) + len(msgs[0]) > max_len:
+            return msg, msgs
+        msg += msgs.pop(0).decode()
+    return msg, msgs
+
+
+def truncate_msg(msg, max_len):
+    if len(msg.encode()) > max_len:
+        msg = [x.encode() for x in msg]
+        msg, _ = split_msg(msg, max_len-3)
+        return msg + "..."
+    return msg

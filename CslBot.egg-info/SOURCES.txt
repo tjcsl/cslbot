@@ -145,6 +145,7 @@ cslbot/helpers/server.py
 cslbot/helpers/sql.py
 cslbot/helpers/textutils.py
 cslbot/helpers/urlutils.py
+cslbot/helpers/web.py
 cslbot/helpers/workers.py
 cslbot/hooks/__init__.py
 cslbot/hooks/autodeop.py

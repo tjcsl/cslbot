@@ -180,6 +180,14 @@ cslbot.helpers.urlutils module
     :undoc-members:
     :show-inheritance:
 
+cslbot.helpers.web module
+-------------------------
+
+.. automodule:: cslbot.helpers.web
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.helpers.workers module
 -----------------------------
 

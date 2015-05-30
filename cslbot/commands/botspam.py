@@ -16,7 +16,8 @@
 
 from random import choice
 from ..helpers.command import Command
-from ..helpers.misc import get_fortune, get_urban
+from ..helpers.misc import get_fortune
+from ..helpers.web import get_urban
 from ..helpers.textutils import gen_lenny
 
 

@@ -180,13 +180,13 @@ class BotHandler():
         MAX_LEN = 650
         msg = [x.encode() for x in msg]
         if functools.reduce(lambda x, y: x + len(y), msg, 0) > MAX_LEN and not ignore_length:
-            msg, _ = self.split_msg(msg, MAX_LEN)
+            msg, _ = misc.split_msg(msg, MAX_LEN)
             msg += "..."
             msg = [x.encode() for x in msg]
         max_len = self.get_max_length(target, msgtype)
         # We can't send messages > 512 bytes to irc.
         while functools.reduce(lambda x, y: x + len(y), msg, 0) > max_len:
-            split, msg = self.split_msg(msg, max_len)
+            split, msg = misc.split_msg(msg, max_len)
             msgs.append(split)
         msgs.append(''.join([x.decode() for x in msg]).strip())
         for i in msgs:
@@ -195,16 +195,6 @@ class BotHandler():
                 self.connection.action(target, i)
             else:
                 self.rate_limited_send(target, i)
-
-    @staticmethod
-    def split_msg(msgs, max_len):
-        """Splits as close to the end as possible."""
-        msg = ""
-        while len(msg.encode()) < max_len:
-            if len(msg.encode()) + len(msgs[0]) > max_len:
-                return msg, msgs
-            msg += msgs.pop(0).decode()
-        return msg, msgs
 
     def rate_limited_send(self, target, msg):
         with self.flood_lock:
