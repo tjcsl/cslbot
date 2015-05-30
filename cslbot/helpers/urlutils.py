@@ -21,6 +21,7 @@ import re
 from lxml.html import parse
 from urllib import request
 from urllib.error import URLError, HTTPError
+from urllib.parse import urlsplit, urlunsplit
 from requests import post
 from requests.exceptions import ConnectTimeout
 from .exception import CommandFailedException
@@ -30,7 +31,7 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     try:
-        data = post('https://www.googleapis.com/urlshortener/v1/url?key=%s' % key, data=json.dumps({'longUrl': msg}),
+        data = post('https://www.googleapis.com/urlshortener/v1/url', params={'key': key}, data=json.dumps({'longUrl': msg}),
                     headers={'Content-Type': 'application/json'}, timeout=10).json()
     except ConnectTimeout as e:
         # Sanitize the error before throwing it
@@ -44,13 +45,12 @@ def get_short(msg, key):
 def get_title(url):
     title = 'No Title Found'
     try:
-        # Strip unicode
-        # FIXME: do we want to do this?
-        url = url.encode('ascii', 'ignore').decode()
         url = url.split('://', maxsplit=1)
         if len(url) == 1:
             url = ['http', url[0]]
         url = "://".join(url)
+        url = urlsplit(url)
+        url = urlunsplit((url[0], url[1].encode('idna').decode(), url[2], url[3], url[4]))
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         # We don't care if the cert is valid or not.
@@ -82,10 +82,11 @@ def get_title(url):
     except ConnectionResetError as e:
         raise CommandFailedException(e.strerror)
     except URLError as e:
-        if e.reason.strerror is None:
+        if not hasattr(e.reason, 'strerror') or e.reason.strerror is None:
             raise CommandFailedException(e.reason)
         else:
             raise CommandFailedException(e.reason.strerror)
+    # FIXME: handle unicode properly
     # Truncate over-long titles.
     if len(title) > 256:
         title = title[:253] + "..."
