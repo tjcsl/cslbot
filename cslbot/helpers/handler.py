@@ -408,7 +408,7 @@ class BotHandler():
     def handle_event(self, msg, send, c, e):
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
-        if e.type == '354':
+        if e.type == 'whospcrpl':
             if e.arguments[0] in self.admins:
                 if e.arguments[1] != '0':
                     self.admins[e.arguments[0]] = time.time()
@@ -482,7 +482,7 @@ class BotHandler():
         # FIXME: make this a scheduled task
         textutils.get_token(self.config)
 
-        if e.type in ['354', 'account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome']:
+        if e.type in ['account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome', 'whospcrpl']:
             self.handle_event(msg, send, c, e)
             return
 

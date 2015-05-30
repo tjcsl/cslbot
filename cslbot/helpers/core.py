@@ -19,6 +19,7 @@ if sys.version_info < (3, 4):
     # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
 import argparse
+import functools
 import logging
 import importlib
 import multiprocessing
@@ -28,7 +29,7 @@ import ssl
 import threading
 import traceback
 from os import path
-from irc import bot, connection
+from irc import bot, connection, client
 from . import backtrace, config, handler, misc, reloader, server
 
 
@@ -51,15 +52,14 @@ class IrcBot(bot.SingleServerIRCBot):
         passwd = None if self.config.getboolean('core', 'sasl') else self.config['auth']['serverpass']
         serverinfo = bot.ServerSpec(self.config['core']['host'], self.config.getint('core', 'ircport'), passwd)
         nick = self.config['core']['nick']
+        self.reactor_class = functools.partial(client.Reactor, on_connect=self.do_cap)
         super().__init__([serverinfo], nick, nick, connect_factory=factory, reconnection_interval=5)
-        # This does the magic when everything else is dead
+        # These allow reload events to be processed when a reload has failed.
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
         self.connection.add_global_handler("privmsg", self.reload_handler, -30)
         self.connection.add_global_handler("all_events", self.handle_event, 10)
-        # We need to get the channels that a nick is currently in before the regular quit event is processed.
+        # We need to get the channels that a nick is currently in before the regular quit event is processed and the nick is removed from self.channels.
         self.connection.add_global_handler("quit", self.handle_quit, -21)
-        # FIXME: make this less hacky
-        self.reactor._on_connect = self.do_cap
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
@@ -74,8 +74,8 @@ class IrcBot(bot.SingleServerIRCBot):
             self.server = server.init_server(self)
 
     def handle_event(self, c, e):
-        handled_types = ['354', 'account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome']
+        handled_types = ['account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick',
+                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome', 'whospcrpl']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return

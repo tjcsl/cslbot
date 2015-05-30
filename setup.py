@@ -46,7 +46,7 @@ setup(
         'requests>=2.4.0',
         'alembic',
         'geoip2',
-        'irc',
+        'irc>=12.2',
         'jinja2',
         'lxml',
         'python-dateutil',
