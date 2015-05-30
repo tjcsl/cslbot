@@ -91,7 +91,7 @@ def gen_log(row):
         log = '%s -- %s is now known as %s' % (logtime, nick, row.msg)
     elif row.type == 'topic':
         # FIXME: keep track of the old topic
-        log = '%s %s has changed topic for #msbob to "%s"' % (logtime, nick, row.msg)
+        log = '%s %s has changed topic for %s to "%s"' % (logtime, nick, row.target, row.msg)
     elif row.type in ['pubnotice', 'privnotice']:
         log = '%s Notice(%s): %s' % (logtime, nick, row.msg)
     elif row.type in ['privmsg', 'pubmsg']:
