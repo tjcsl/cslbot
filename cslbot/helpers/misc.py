@@ -188,7 +188,11 @@ def split_msg(msgs, max_len):
     while len(msg.encode()) < max_len:
         if len(msg.encode()) + len(msgs[0]) > max_len:
             return msg, msgs
-        msg += msgs.pop(0).decode()
+        char = msgs.pop(0).decode()
+        # If we have a space within 15 chars of the length limit, split there to avoid words being broken up.
+        if char == ' ' and len(msg.encode()) > max_len - 15:
+            return msg, msgs
+        msg += char
     return msg, msgs
 
 
