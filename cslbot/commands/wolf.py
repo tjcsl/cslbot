@@ -44,6 +44,7 @@ def cmd(send, msg, args):
     if text is None:
         send("No Output parsable")
     else:
-        for t in text.splitlines():
+        # Only send the first three lines of output
+        for t in text.splitlines()[:3]:
             send(t)
     send("See %s for more info" % url)
