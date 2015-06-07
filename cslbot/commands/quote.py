@@ -82,6 +82,14 @@ def do_delete_quote(session, qid):
     return 'Deleted quote with ID %d' % qid
 
 
+def search_quote(session, term):
+    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id).first()
+    if quote is None:
+        return "No quote found."
+    else:
+        return "Quote #%d: %s -- %s" % (quote.id, quote.quote, quote.nick)
+
+
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
@@ -96,6 +104,7 @@ def cmd(send, msg, args):
     group.add_argument('--add', action='store_true')
     group.add_argument('--delete', '--remove', type=int)
     group.add_argument('--edit', type=int)
+    group.add_argument('--search')
 
     if not msg:
         send(do_get_quote(session))
@@ -131,6 +140,8 @@ def cmd(send, msg, args):
             send(do_update_quote(session, cmdargs.edit, cmdargs.nick, cmdargs.quote))
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
+    elif cmdargs.search:
+        send(search_quote(session, cmdargs.search))
     else:
         if msg.isdigit():
             send(do_get_quote(session, int(msg)))
