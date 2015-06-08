@@ -83,7 +83,7 @@ def do_delete_quote(session, qid):
 
 
 def search_quote(session, term):
-    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id).first()
+    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).first()
     if quote is None:
         return "No quote found."
     else:
