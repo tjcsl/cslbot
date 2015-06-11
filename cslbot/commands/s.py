@@ -25,9 +25,9 @@ from ..helpers.command import Command
 def get_log(conn, target, user):
     query = conn.query(Log).filter((Log.type == 'privmsg') | (Log.type == 'pubmsg') | (Log.type == 'action'), Log.target == target).order_by(Log.time.desc())
     if user is None:
-        return query.offset(1).limit(50).all()
+        return query.offset(1).limit(500).all()
     else:
-        return query.filter(Log.source.ilike(user)).limit(50).all()
+        return query.filter(Log.source.ilike(user)).limit(500).all()
 
 
 def get_modifiers(msg, nick, nickregex):
