@@ -82,10 +82,11 @@ def do_delete_quote(session, qid):
     return 'Deleted quote with ID %d' % qid
 
 
-def search_quote(session, term):
+def search_quote(session, search):
+    term = ' '.join(search)
     quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).first()
     if quote is None:
-        return "No quote found."
+        return "No matching quote found."
     else:
         return "Quote #%d: %s -- %s" % (quote.id, quote.quote, quote.nick)
 
@@ -104,7 +105,7 @@ def cmd(send, msg, args):
     group.add_argument('--add', action='store_true')
     group.add_argument('--delete', '--remove', type=int)
     group.add_argument('--edit', type=int)
-    group.add_argument('--search')
+    group.add_argument('--search', nargs='*')
 
     if not msg:
         send(do_get_quote(session))
