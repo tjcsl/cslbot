@@ -82,9 +82,9 @@ def do_delete_quote(session, qid):
     return 'Deleted quote with ID %d' % qid
 
 
-def search_quote(session, search):
+def search_quote(session, offset, search):
     term = ' '.join(search)
-    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).first()
+    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).offset(offset).first()
     if quote is None:
         return "No matching quote found."
     else:
@@ -95,10 +95,12 @@ def search_quote(session, search):
 def cmd(send, msg, args):
     """Handles quotes.
     Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
+        !quote --search (--offset <num>) <number>
     """
     session = args['db']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', nargs='?')
+    parser.add_argument('--offset', nargs='?', default=0)
     parser.add_argument('quote', nargs='*')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--list', action='store_true')
@@ -142,7 +144,7 @@ def cmd(send, msg, args):
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     elif cmdargs.search:
-        send(search_quote(session, cmdargs.search))
+        send(search_quote(session, cmdargs.offset, cmdargs.search))
     else:
         if msg.isdigit():
             send(do_get_quote(session, int(msg)))
