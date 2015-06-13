@@ -100,7 +100,7 @@ def cmd(send, msg, args):
     session = args['db']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', nargs='?')
-    parser.add_argument('--offset', nargs='?', default=0)
+    parser.add_argument('--offset', nargs='?', type=int, default=0)
     parser.add_argument('quote', nargs='*')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--list', action='store_true')
