@@ -20,8 +20,9 @@ from ..helpers.orm import Log
 from ..helpers.command import Command
 
 
-def get_last(cursor, ctrlchan, nick):
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.type != 'join').order_by(Log.time.desc()).first()
+def get_last(cursor, cmdchar, ctrlchan, nick):
+    cmd = '%sseen %s' % (cmdchar, nick)
+    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != cmd, Log.type != 'join').order_by(Log.time.desc()).first()
 
 
 @Command('seen', ['db', 'config'])
@@ -32,7 +33,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Seen who?")
         return
-    last = get_last(args['db'], args['config']['core']['ctrlchan'], msg)
+    cmdchar, ctrlchan = args['config']['core']['cmdchar'], args['config']['core']['ctrlchan']
+    last = get_last(args['db'], cmdchar, ctrlchan, msg)
     if last is None:
         send("%s has never shown his face." % msg)
         return
