@@ -95,7 +95,7 @@ def search_quote(session, offset, search):
 def cmd(send, msg, args):
     """Handles quotes.
     Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
-        !quote --search (--offset <num>) <number>
+    !quote --search (--offset <num>) <number>
     """
     session = args['db']
     parser = arguments.ArgParser(args['config'])
