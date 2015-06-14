@@ -53,6 +53,12 @@ def cmd(send, msg, args):
         output += 'quiting and saying "%s"' % last.msg
     elif last.type == 'kick':
         output += 'kicking %s for "%s"' % last.msg.split(',')
+    elif last.type == 'topic':
+        output += 'changing topic to %s' % last.msg
+    elif last.type in ['pubnotice', 'privnotice']:
+        output += 'sending notice %s' % last.msg
+    elif last.type == 'mode':
+        output += 'setting mode %s' % last.msg
     else:
         raise Exception("Invalid type.")
     send(output)
