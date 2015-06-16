@@ -45,17 +45,18 @@ def cmd(send, msg, args):
             query = query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
             query = query.filter(Log.msg.like('%%%s%%' % term))
-        row = query.order_by(Log.time.desc()).first()
+        rows = query.order_by(Log.time.desc()).all()
     else:
         query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
         if cmdargs.ignore_case:
             query = query.filter(Log.msg.ilike('%%%s%%' % term))
         else:
             query = query.filter(Log.msg.like('%%%s%%' % term))
-        row = query.order_by(Log.time.desc()).first()
-    if row:
+        rows = query.order_by(Log.time.desc()).all()
+    if rows:
+        row = rows[0]
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
-        send("%s said %s at %s" % (row.source, row.msg, logtime))
+        send("%s was last said by %s at %s (%d occurences)" % (row.msg, row.source, logtime, len(rows)))
     elif cmdargs.nick:
         send('%s has never said %s.' % (cmdargs.nick, term))
     else:
