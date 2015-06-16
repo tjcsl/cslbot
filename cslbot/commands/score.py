@@ -20,7 +20,7 @@ from ..helpers.orm import Scores
 from ..helpers.command import Command
 
 
-@Command('score', ['config', 'db', 'botnick'])
+@Command(['score', 'points'], ['config', 'db', 'botnick'])
 def cmd(send, msg, args):
     """Gets scores.
     Syntax: {command} <--high|--low|nick>
