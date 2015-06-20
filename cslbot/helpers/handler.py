@@ -21,11 +21,11 @@ import collections
 import functools
 import logging
 import re
+import random
 import time
 import threading
 from irc import modes
 from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
-from random import choice, random
 
 
 class BotHandler():
@@ -324,8 +324,8 @@ class BotHandler():
         botnick = self.config['core']['nick']
         if botnick not in ops:
             ops = ['someone'] if not ops else ops
-            send(textutils.gen_creffett("%s: /op the bot" % choice(ops)), target=target)
-        elif random() < 0.01 and msg == "shutting caps lock off":
+            send(textutils.gen_creffett("%s: /op the bot" % random.choice(ops)), target=target)
+        elif random.random() < 0.01 and msg == "shutting caps lock off":
             if nick in ops:
                 send("%s: HUEHUEHUE GIBE CAPSLOCK PLS I REPORT U" % nick, target=target)
             else:
