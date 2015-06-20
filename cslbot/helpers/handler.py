@@ -450,14 +450,13 @@ class BotHandler():
                     self.do_kick(send, x, e.target, "identity crisis")
         elif e.type == 'nicknameinuse':
             self.connection.nick('Guest%d' % random.getrandbits(20))
-            if self.config.getboolean('feature', 'nickserv'):
-                self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
-            self.workers.defer(5, False, self.do_welcome)
         elif e.type == 'privnotice':
             if e.source.nick == 'NickServ':
                 admin.set_admin(msg, self)
         elif e.type == 'welcome':
             logging.info("Connected to server %s", self.config['core']['host'])
+            if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
+                self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
             self.do_welcome()
 
     def handle_msg(self, c, e):
