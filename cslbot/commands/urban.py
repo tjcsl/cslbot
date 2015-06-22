@@ -18,7 +18,7 @@ from ..helpers.web import get_urban
 from ..helpers.command import Command
 
 
-@Command('urban', ['config'])
+@Command(['urban', 'ud'], ['config'])
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
     Syntax: {command} [#<num>] <term>
