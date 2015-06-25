@@ -16,7 +16,7 @@
 
 import re
 import logging
-from . import command, hook, arguments, misc
+from . import command, hook, arguments, web
 from .orm import Quotes, Issues, Polls
 
 
@@ -216,7 +216,7 @@ def accept_issue(handler, db, num):
         return "Not a valid issue"
     repo = handler.config['api']['githubrepo']
     apikey = handler.config['api']['githubapikey']
-    msg, success = misc.create_issue(issue.title, issue.description, issue.source, repo, apikey)
+    msg, success = web.create_issue(issue.title, issue.description, issue.source, repo, apikey)
     if not success:
         return msg
     issue.accepted = 1
