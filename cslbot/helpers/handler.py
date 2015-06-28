@@ -144,12 +144,10 @@ class BotHandler():
             if (time.time() - x) < 60:
                 count = count + 1
         if count > limit:
-            text = "%s: don't abuse scores" if cmd == 'scores' else "%s: stop abusing the bot"
-            msg = textutils.gen_creffett(text % nick)
-            send(msg, target=target)
+            msg = "%s: don't abuse scores!" if cmd == 'scores' else "%s: stop abusing the bot!"
+            send(msg % nick, target=target)
             with self.db.session_scope() as session:
                 send(misc.ignore(session, nick))
-            self.do_kick(send, target, nick, msg, False)
             return True
 
     @staticmethod
