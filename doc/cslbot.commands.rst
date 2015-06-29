@@ -740,6 +740,14 @@ cslbot.commands.translate module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.tumblr module
+-----------------------------
+
+.. automodule:: cslbot.commands.tumblr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.uptime module
 -----------------------------
 

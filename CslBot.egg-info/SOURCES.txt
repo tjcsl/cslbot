@@ -109,6 +109,7 @@ cslbot/commands/timeout.py
 cslbot/commands/timeuntil.py
 cslbot/commands/tjbash.py
 cslbot/commands/translate.py
+cslbot/commands/tumblr.py
 cslbot/commands/uptime.py
 cslbot/commands/urban.py
 cslbot/commands/version.py
