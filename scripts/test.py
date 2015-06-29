@@ -69,7 +69,7 @@ class BotTest(unittest.TestCase):
     def do_reload(self):
         sock = socket.socket()
         port = self.bot.config.getint('core', 'serverport')
-        passwd = self.bot.config['auth']['serverpass']
+        passwd = self.bot.config['auth']['ctrlpass']
         sock.connect(('localhost', port))
         msg = '%s\nreload' % passwd
         sock.send(msg.encode())

@@ -78,7 +78,7 @@ def main():
         factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
     else:
         factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
-    client.connect(config['core']['host'], config.getint('core', 'ircport'), CTRLNICK, config['auth']['ctrlpass'], connect_factory=factory)
+    client.connect(config['core']['host'], config.getint('core', 'ircport'), CTRLNICK, config['auth']['serverpass'], connect_factory=factory)
     client.start()
 
 if __name__ == '__main__':
