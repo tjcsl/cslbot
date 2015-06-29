@@ -144,6 +144,7 @@ cslbot/helpers/reloader.py
 cslbot/helpers/server.py
 cslbot/helpers/sql.py
 cslbot/helpers/textutils.py
+cslbot/helpers/tokens.py
 cslbot/helpers/urlutils.py
 cslbot/helpers/web.py
 cslbot/helpers/workers.py

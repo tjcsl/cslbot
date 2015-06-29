@@ -172,6 +172,14 @@ cslbot.helpers.textutils module
     :undoc-members:
     :show-inheritance:
 
+cslbot.helpers.tokens module
+----------------------------
+
+.. automodule:: cslbot.helpers.tokens
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.helpers.urlutils module
 ------------------------------
 
