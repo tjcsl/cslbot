@@ -25,7 +25,7 @@ import random
 import time
 import threading
 from irc import modes
-from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
+from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, tokens, workers
 
 
 class BotHandler():
@@ -477,7 +477,7 @@ class BotHandler():
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
         # FIXME: make this a scheduled task
-        textutils.get_token(self.config)
+        tokens.update_all_tokens(self.config)
 
         if e.type in ['account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse', 'privnotice', 'welcome', 'whospcrpl']:
             self.handle_event(msg, send, c, e)
