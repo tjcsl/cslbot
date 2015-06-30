@@ -70,3 +70,5 @@ def cmd(send, msg, args):
             args['db'].flush()
             send("New Tumblr Post: %s -- %s, Submitted by %s" % (cmdargs.submit, cmdargs.blogname, args['nick']), target=args['config']['core']['ctrlchan'])
             send("Issue submitted for approval.", target=args['nick'])
+    else:
+        send("Did not get an argument (choices are --random, --submit)")
