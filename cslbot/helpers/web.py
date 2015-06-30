@@ -22,6 +22,7 @@ from urllib.parse import unquote
 from urllib.request import urlopen
 from requests import post, get
 from requests.exceptions import ReadTimeout
+from requests_oauthlib import OAuth1Session
 from . import urlutils
 
 
@@ -79,3 +80,21 @@ def create_issue(title, desc, nick, repo, apikey):
         return data['message'], False
     else:
         return "Unknown error", False
+
+
+def post_tumblr(config, blog, post):
+    tumblr = OAuth1Session(
+        client_key=config['api']['tumblrconsumerkey'],
+        client_secret=config['api']['tumblrconsumersecret'],
+        resource_owner_key=config['api']['tumblroauthkey'],
+        resource_owner_secret=config['api']['tumblroauthsecret'])
+    data = {'body': post}
+    response = tumblr.post('https://api.tumblr.com/v2/blog/%s/post' % blog, params={'type': 'text'}, data=data).json()
+    if response['meta']['status'] == 201:
+        return "Posted!", True
+    else:
+        if isinstance(response['response'], dict):
+            error = response['response']['errors'][0]
+        else:
+            error = response['meta']['msg']
+    return "Got error %d from Tumblr: %s" % (response['meta']['status'], error), False

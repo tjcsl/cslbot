@@ -15,6 +15,7 @@ cslbot/alembic/env.py
 cslbot/alembic/script.py.mako
 cslbot/alembic/versions/3614b38ddf9_kick_logging_change.py
 cslbot/alembic/versions/385c29e42d9_remove_nicks.py
+cslbot/alembic/versions/42775a6dd8b_add_tumblr_table.py
 cslbot/alembic/versions/ef7ccebeff_initial_commit.py
 cslbot/commands/8ball.py
 cslbot/commands/__init__.py

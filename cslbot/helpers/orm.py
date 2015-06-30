@@ -131,3 +131,10 @@ class Babble_count(Base):
 class Ignore(Base):
     nick = Column(UnicodeText)
     expire = Column(Float)
+
+
+class Tumblrs(Base):
+    post = Column(UnicodeText)
+    blogname = Column(UnicodeText)
+    submitter = Column(UnicodeText)
+    accepted = Column(Integer, default=0)

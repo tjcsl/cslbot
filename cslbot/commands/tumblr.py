@@ -18,38 +18,55 @@ from random import randint
 from requests import get
 from ..helpers import arguments
 from ..helpers.command import Command
+from ..helpers.orm import Tumblrs
+from ..helpers.web import post_tumblr
 
 
-def validate_blogname(name):
-    if "." not in name:
-        name += ".tumblr.com"
-
-
-@Command('tumblr', ['config'])
+@Command('tumblr', ['config', 'is_admin', 'db', 'nick'])
 def cmd(send, msg, args):
     """Searches tumblr
-    Syntax: {command} <blogname>
+    Syntax: {command} <blogname> <--submit content|--random>
     """
-    apikey = args['config']['api']['tumblrconsumer']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('blogname', action=arguments.TumblrParser)
-    cmdargs = parser.parse_args(msg)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--submit', nargs='*')
+    group.add_argument('--random', action='store_true')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
 
-    # First, get the number of posts
-    response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname, params={'api_key': apikey, 'type': 'text'}).json()
-    if response['meta']['status'] != 200:
-        send(response['meta']['msg'])
-        return
-    postcount = response['response']['total_posts']
-    # No random post functionality and we can only get 20 posts per API call, so pick a random offset to get the random post
-    if postcount <= 1:
-        send("No text posts found.")
-        return
-    offset = randint(0, postcount-1)
-    response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
-                   params={'api_key': apikey, 'offset': offset, 'limit': 1, 'type': 'text', 'filter': 'text'}).json()
-    post = response['response']['posts'][0]['body']
-    # Account for possibility of multiple lines
-    for line in post.splitlines():
-        send(line)
-    # TODO: Implement posting functionality, need to figure out oauth
+    if cmdargs.random:
+        apikey = args['config']['api']['tumblrconsumerkey']
+        # First, get the number of posts
+        response = get('https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname, params={'api_key': apikey, 'type': 'text'}).json()
+        postcount = response['response']['total_posts']
+        if postcount <= 1:
+            send("No text posts found.")
+            return
+        # No random post functionality and we can only get 20 posts per API call, so pick a random offset to get the random post
+        offset = randint(0, postcount-1)
+        response = get('https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
+                       params={'api_key': apikey, 'offset': offset, 'limit': 1, 'type': 'text', 'filter': 'text'}).json()
+        entry = response['response']['posts'][0]['body']
+        # Account for possibility of multiple lines
+        lines = entry.splitlines()
+        for line in lines:
+            send(line)
+
+    elif cmdargs.submit:
+        if not cmdargs.submit:
+            send('Post what?')
+            return
+        if isinstance(cmdargs.submit, list):
+            cmdargs.submit = ' '.join(cmdargs.submit)
+        if args['is_admin']:
+            send(post_tumblr(args['config'], cmdargs.blogname, cmdargs.submit)[0])
+        else:
+            row = Tumblrs(post=cmdargs.submit, submitter=args['nick'], nick=args['nick'], blogname=cmdargs.blogname)
+            args['db'].add(row)
+            args['db'].flush()
+            send("New Tumblr Post: %s -- %s, Submitted by %s" % (cmdargs.submit, cmdargs.blogname, args['nick']), target=args['config']['core']['ctrlchan'])
+            send("Issue submitted for approval.", target=args['nick'])
