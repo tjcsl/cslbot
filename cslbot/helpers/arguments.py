@@ -62,6 +62,16 @@ class DateParser(argparse.Action):
             raise ArgumentException("Couldn't parse a date from %s: %s" % (value, e))
 
 
+class TumblrParser(argparse.Action):
+
+    def __call__(self, parser, namespace, value, option_strings):
+        if value is None:
+            return
+        if '.' not in value:
+            value += ".tumblr.com"
+        namespace.blogname = value
+
+
 class ArgParser(argparse.ArgumentParser):
 
     def __init__(self, config=None, **kwargs):
