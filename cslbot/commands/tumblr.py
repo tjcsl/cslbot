@@ -36,17 +36,17 @@ def cmd(send, msg, args):
     cmdargs = parser.parse_args(msg)
 
     # First, get the number of posts
-    response = get('http://api.tumblr.com/v2/blog/%s/info' % cmdargs.blogname, params={'api_key': apikey}).json()
+    response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname, params={'api_key': apikey, 'type': 'text'}).json()
     if response['meta']['status'] != 200:
         send(response['meta']['msg'])
         return
-    postcount = response['response']['blog']['posts']
+    postcount = response['response']['total_posts']
     # No random post functionality and we can only get 20 posts per API call, so pick a random offset to get the random post
     offset = randint(0, postcount-1)
-    response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname, params={'api_key': apikey, 'offset': offset, 'limit': 1, 'filter': 'text'}).json()
+    response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
+                   params={'api_key': apikey, 'offset': offset, 'limit': 1, 'type': 'text', 'filter': 'text'}).json()
     post = response['response']['posts'][0]['body']
     # Account for possibility of multiple lines
-    lines = post.splitlines()
-    for line in lines:
+    for line in post.splitlines():
         send(line)
     # TODO: Implement posting functionality, need to figure out oauth
