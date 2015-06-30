@@ -42,6 +42,9 @@ def cmd(send, msg, args):
         return
     postcount = response['response']['total_posts']
     # No random post functionality and we can only get 20 posts per API call, so pick a random offset to get the random post
+    if postcount <= 1:
+        send("No text posts found.")
+        return
     offset = randint(0, postcount-1)
     response = get('http://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
                    params={'api_key': apikey, 'offset': offset, 'limit': 1, 'type': 'text', 'filter': 'text'}).json()
