@@ -76,7 +76,7 @@ def cmd(send, msg, args):
         else:
             send("Error creating issue: %s" % url)
     elif cmdargs.title:
-        row = Issues(title=cmdargs.title, description=cmdargs.description, source=args['source'])
+        row = Issues(title=cmdargs.title, description=cmdargs.description, source=str(args['source']))  # str needed to make mysqlconnector happy
         args['db'].add(row)
         args['db'].flush()
         send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.description, args['nick']), target=args['config']['core']['ctrlchan'])
