@@ -17,7 +17,7 @@
 import re
 import logging
 from . import command, hook, arguments, web
-from .orm import Quotes, Issues, Polls
+from .orm import Quotes, Issues, Polls, Tumblrs
 
 
 def handle_chanserv(args):
@@ -163,6 +163,12 @@ def handle_show(args):
             args.send(mods if mods else "No disabled hooks.")
         else:
             args.send("Invalid argument.")
+    elif args.cmd == "tumblr":
+        tumblrs = args.db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
+        if tumblrs:
+            show_tumblrs(tumblrs, args.send)
+        else:
+            args.send("No Tumblr posts pending")
 
 
 def show_quotes(quotes, send):
@@ -181,10 +187,16 @@ def show_polls(polls, send):
         send("#%d -- %s, Submitted by %s" % (x.id, x.question, x.submitter))
 
 
+def show_tumblrs(tumblrs, send):
+    for x in tumblrs:
+        send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
+
+
 def show_pending(db, admins, send, ping=False):
     issues = db.query(Issues).filter(Issues.accepted == 0).all()
     quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
     polls = db.query(Polls).filter(Polls.accepted == 0).all()
+    tumblrs = db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
     if issues or quotes or polls:
         if ping:
             send("%s: Items are Pending Approval" % admins)
@@ -199,6 +211,9 @@ def show_pending(db, admins, send, ping=False):
     if polls:
         send("Polls:")
         show_polls(polls, send)
+    if tumblrs:
+        send("Tumblr posts:")
+        show_tumblrs(tumblrs, send)
 
 
 def handle_accept(args):
@@ -208,6 +223,8 @@ def handle_accept(args):
         args.send(accept_quote(args.handler, args.db, args.num))
     elif args.cmd == 'poll':
         args.send(accept_poll(args.handler, args.db, args.num))
+    elif args.cmd == 'tumblr':
+        args.send(accept_tumblr(args.handler, args.db, args.num))
 
 
 def accept_issue(handler, db, num):
@@ -260,6 +277,24 @@ def accept_poll(handler, db, pid):
     return ""
 
 
+def accept_tumblr(handler, db, tid):
+    tumblr = db.query(Tumblrs).filter(Tumblrs.accepted == 0, Tumblrs.id == tid).first()
+    if tumblr is None:
+        return "Not a valid Tumblr post"
+    msg, success = web.post_tumblr(handler.config, tumblr.blog, tumblr.post)
+    if not success:
+        return msg
+    tumblr.accepted = 1
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = tumblr.submitter
+    msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (tid, tumblr.post, nick)
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
+    return ""
+
+
 def handle_reject(args):
     if args.cmd == 'issue':
         args.send(reject_issue(args.handler, args.db, args.num))
@@ -267,6 +302,8 @@ def handle_reject(args):
         args.send(reject_quote(args.handler, args.db, args.num))
     elif args.cmd == 'poll':
         args.send(reject_poll(args.handler, args.db, args.num))
+    elif args.cmd == 'tumblr':
+        args.send(reject_tumblr(args.handler, args.db, args.num))
 
 
 def reject_issue(handler, db, num):
@@ -320,6 +357,23 @@ def reject_poll(handler, db, pid):
     return ""
 
 
+def reject_tumblr(handler, db, tid):
+    tumblr = db.query(Tumblrs).get(tid)
+    if tumblr is None:
+        return "Not a valid  poll"
+    if tumblr.accepted == 1:
+        return "Poll already accepted"
+    ctrlchan = handler.config['core']['ctrlchan']
+    channel = handler.config['core']['channel']
+    botnick = handler.config['core']['nick']
+    nick = tumblr.submitter
+    msg = "Poll #%d rejected: %s, Submitted by %s" % (tid, tumblr.post, nick)
+    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
+    handler.do_log('private', botnick, msg, 'privmsg')
+    db.delete(tumblr)
+    return ""
+
+
 def handle_quote(args):
     if args.cmd[0] == "join":
         args.send("quote join is not suported, use !join.")
@@ -331,7 +385,7 @@ def handle_help(args):
     args.send("quote <raw command>")
     args.send("cs|chanserv <chanserv command>")
     args.send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
-    args.send("show <guarded|issues|quotes|polls|pending> <disabled|enabled> <commands|hooks>")
+    args.send("show <guarded|issues|quotes|polls|pending|tumblr> <disabled|enabled> <commands|hooks>")
     args.send("accept|reject <issue|quote|poll> <num>")
     args.send("guard|unguard <nick>")
 

@@ -51,6 +51,7 @@ setup(
         'lxml',
         'python-dateutil',
         'simplejson',
+        'requests_oauthlib',
     ],
     extras_require={
         'doc': ['sphinx'],

@@ -54,6 +54,12 @@ Use the search engine IDs from this page with the api key from https://console.d
 
 Translate: https://www.microsoft.com/translator/get-started.aspx
 
+Tumblr: http://www.tumblr.com/oauth/apps
+
+Note: you need the OAuth consumer API key, consumer secret, OAuth token, and OAuth secret, which you can obtain via the Tumblr API console
+at https://api.tumblr.com/console/calls/user/info. You can take the four keys listed in the sample code and put them into your config.cfg
+in that order.
+
 Service
 -------
 Note: the init script (scripts/ircbot) is gentoo/openrc specific.

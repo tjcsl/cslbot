@@ -52,5 +52,7 @@ fmlkey:
 googleapikey:
 xkcdsearchid:
 googlesearchid:
-tumblrconsumer:
-tumblrsecret:
+tumblrconsumerkey:
+tumblrconsumersecret:
+tumblroauthkey:
+tumblroauthsecret:

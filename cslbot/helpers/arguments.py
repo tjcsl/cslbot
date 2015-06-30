@@ -17,6 +17,7 @@
 import argparse
 import dateutil.parser
 import re
+from requests import get
 
 
 class ArgumentException(Exception):
@@ -69,6 +70,9 @@ class TumblrParser(argparse.Action):
             return
         if '.' not in value:
             value += ".tumblr.com"
+        response = get('http://api.tumblr.com/v2/blog/%s/info' % value, params={'api_key': namespace.config['api']['tumblrconsumerkey']}).json()
+        if response['meta']['status'] != 200:
+            raise ArgumentException("Error in checking status of blog %s: %s" % (value, response['meta']['msg']))
         namespace.blogname = value
 
 
