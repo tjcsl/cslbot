@@ -52,6 +52,7 @@ def get_title(url):
         url = "://".join(url)
         url = urlsplit(url)
         url = urlunsplit((url[0], url[1].encode('idna').decode(), url[2], url[3], url[4]))
+        url = url.encode('ascii', 'replace').decode()
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
         # We don't care if the cert is valid or not.
