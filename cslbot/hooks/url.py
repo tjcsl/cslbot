@@ -16,6 +16,7 @@
 
 import re
 import time
+import logging
 import multiprocessing
 from ..helpers import urlutils
 from ..helpers.orm import Urls
@@ -53,7 +54,7 @@ def handle(send, msg, args):
             try:
                 title = urlutils.get_title(url)
             except CommandFailedException as e:
-                pass
+                logging.error(e)
         if title is None:
             raise e
         key = args['config']['api']['googleapikey']
