@@ -20,6 +20,7 @@ import multiprocessing
 from ..helpers import urlutils
 from ..helpers.orm import Urls
 from ..helpers.hook import Hook
+from ..helpers.exception import CommandFailedException
 
 
 def get_urls(msg):
@@ -47,7 +48,14 @@ def handle(send, msg, args):
         # Prevent botloops
         if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count() > 1:
             return
-        title = urlutils.get_title(url)
+        title = None
+        for _ in range(3):
+            try:
+                title = urlutils.get_title(url)
+            except CommandFailedException as e:
+                pass
+        if title is None:
+            raise e
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
