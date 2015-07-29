@@ -50,13 +50,16 @@ def handle(send, msg, args):
         if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count() > 1:
             return
         title = None
+        ex = None
         for _ in range(3):
             try:
                 title = urlutils.get_title(url)
             except CommandFailedException as e:
-                logging.error(e)
+                # FIXME: there has to be a better way to do this
+                ex = e
+                logging.error(ex)
         if title is None:
-            raise e
+            raise ex
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
