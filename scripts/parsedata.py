@@ -50,8 +50,7 @@ def get_urls(session):
     rows = session.query(Urls).filter(Urls.time > limit).order_by(Urls.time.desc()).all()
     urls = []
     for row in rows:
-        url = row.url.replace('http', 'https') if row.url.startswith('http://') else row.url
-        urls.append({'time': datetime.fromtimestamp(row.time), 'title': row.title, 'url': url})
+        urls.append({'time': datetime.fromtimestamp(row.time), 'title': row.title, 'url': row.url})
     return urls
 
 
