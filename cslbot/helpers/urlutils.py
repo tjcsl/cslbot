@@ -51,9 +51,7 @@ def get_title(url):
             url = ['http', url[0]]
         url = "://".join(url)
         url = urlsplit(url)
-        if url[1]:
-            url[1] = url[1].encode('idna').decode()
-        url = urlunsplit((url[0], url[1], url[2], url[3], url[4]))
+        url = urlunsplit((url[0], url[1].encode('idna').decode(), url[2], url[3], url[4]))
         url = url.encode('ascii', 'replace').decode()
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
