@@ -31,11 +31,16 @@ executor_lock = threading.Lock()
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
+def pool_init():
+    """We ignore Ctrl-C in the poll workers, so that we can clean things up properly."""
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
 class Workers():
 
     def __init__(self, handler):
         with worker_lock:
-            self.pool = multiprocessing.Pool(initializer=self.pool_init)
+            self.pool = multiprocessing.Pool(initializer=pool_init)
             self.events = {}
         with executor_lock:
             self.executor = concurrent.futures.ThreadPoolExecutor(4)
@@ -46,10 +51,6 @@ class Workers():
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
-
-    def pool_init(_):
-        """We ignore Ctrl-C in the poll workers, so that we can clean things up properly."""
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:
@@ -64,7 +65,7 @@ class Workers():
         with worker_lock:
             self.pool.terminate()
             self.pool.join()
-            self.pool = multiprocessing.Pool(initializer=self.pool_init)
+            self.pool = multiprocessing.Pool(initializer=pool_init)
 
     def run_action(self, func, args):
         try:
