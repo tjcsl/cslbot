@@ -16,10 +16,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from sys import path
-from os.path import dirname
-path.insert(0, dirname(__file__))
+from os.path import abspath, dirname
+path.insert(0, dirname(abspath(__file__)))
 
 from cslbot.helpers import core
 
 if __name__ == '__main__':
-    core.init(dirname(__file__))
+    core.init(dirname(abspath(__file__)))
