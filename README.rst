@@ -4,6 +4,11 @@ CslBot
 
 .. image:: https://travis-ci.org/tjcsl/cslbot.svg?branch=master
     :target: https://travis-ci.org/tjcsl/cslbot
+       :alt: Travis CI
+
+.. image:: https://codeclimate.com/github/tjcsl/cslbot/badges/gpa.svg
+   :target: https://codeclimate.com/github/tjcsl/cslbot
+      :alt: Code Climate
 
 A bot written by the TJHSST CSL for IRC. 
 
