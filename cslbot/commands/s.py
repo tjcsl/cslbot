@@ -78,7 +78,7 @@ def cmd(send, msg, args):
         send("Invalid Syntax.")
         return
     char = msg[0]
-    msg = [x.replace('\/', '/') for x in re.split(r'(?<!\\)%s' % char, msg[1:], maxsplit=2)]
+    msg = [x.replace('\/', '/') for x in re.split(r'(?<!\\)\%s' % char, msg[1:], maxsplit=2)]
     # fix for people who forget a trailing slash
     if len(msg) == 2 and args['config']['feature'].getboolean('lazyregex'):
         msg.append('')
