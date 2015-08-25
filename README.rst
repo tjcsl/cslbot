@@ -160,3 +160,5 @@ Improved by csssuf.
 Improved by skasturi. (Srijay Kasturi)  
 
 Criticized and subsequently improved by creffett. (Chris Reffett, Class of 2011).
+
+Improved by wzhang (William Zhang, Class of 2018).

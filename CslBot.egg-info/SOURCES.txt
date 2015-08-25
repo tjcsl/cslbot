@@ -31,6 +31,7 @@ cslbot/commands/botsnack.py
 cslbot/commands/botspam.py
 cslbot/commands/cadmin.py
 cslbot/commands/cancel.py
+cslbot/commands/celebrate.py
 cslbot/commands/channels.py
 cslbot/commands/choose.py
 cslbot/commands/cidr.py
