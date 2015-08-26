@@ -98,7 +98,7 @@ def gen_creffett(msg):
 def gen_slogan(msg):
     # Originally from sloganizer.com
     if not slogan_cache:
-        slogan_cache.extend(resource_string(Requirement.parse('CslBot'), 'cslbot/static/slogans.txt').decode().splitlines())
+        slogan_cache.extend(resource_string(Requirement.parse('CslBot'), 'cslbot/static/slogans').decode().splitlines())
     return re.sub('%s', msg, choice(slogan_cache))
 
 
