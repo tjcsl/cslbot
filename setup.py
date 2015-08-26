@@ -34,7 +34,7 @@ setup(
             'alembic/script.py.mako',
             'alembic/versions/*.py',
             'static/*.example',
-            'static/slogans.txt',
+            'static/slogans',
             'static/shakespeare-dictionary.json',
             'static/wordlist',
             'templates/*.html'],

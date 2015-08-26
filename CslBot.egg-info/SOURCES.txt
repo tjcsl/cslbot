@@ -167,7 +167,7 @@ cslbot/hooks/xkcd.py
 cslbot/static/config.example
 cslbot/static/groups.example
 cslbot/static/shakespeare-dictionary.json
-cslbot/static/slogans.txt
+cslbot/static/slogans
 cslbot/static/wordlist
 cslbot/templates/base.html
 cslbot/templates/polls.html
