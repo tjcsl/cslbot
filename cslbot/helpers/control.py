@@ -16,12 +16,20 @@
 
 import re
 import logging
-from . import command, hook, arguments, web
+from . import command, orm, hook, arguments, web
 from .orm import Quotes, Issues, Polls, Tumblrs
 
 
 def handle_chanserv(args):
     args.send("%s %s" % (args.cmd, " ".join(args.args)), target="ChanServ")
+
+
+def toggle_logging(level):
+    if logging.getLogger().getEffectiveLevel() == level:
+        return False
+    else:
+        logging.getLogger().setLevel(level)
+        return True
 
 
 def handle_disable(args):
@@ -42,11 +50,10 @@ def handle_disable(args):
         else:
             args.send("Missing argument.")
     elif args.cmd == "logging":
-        if logging.getLogger().getEffectiveLevel() == logging.INFO:
-            args.send("logging already disabled.")
-        else:
-            logging.getLogger().setLevel(logging.INFO)
+        if toggle_logging(logging.INFO):
             args.send("Logging disabled.")
+        else:
+            args.send("logging already disabled.")
     elif args.cmd == "chanlog":
         if args.handler.log_to_ctrlchan:
             args.handler.log_to_ctrlchan = False
@@ -82,11 +89,10 @@ def handle_enable(args):
         else:
             args.send("Missing argument.")
     elif args.cmd == "logging":
-        if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-            args.send("logging already enabled.")
-        else:
-            logging.getLogger().setLevel(logging.DEBUG)
+        if toggle_logging(logging.DEBUG):
             args.send("Logging enabled.")
+        else:
+            args.send("logging already enabled.")
     elif args.cmd == "chanlog":
         if not args.handler.log_to_ctrlchan:
             args.handler.log_to_ctrlchan = True
@@ -124,7 +130,7 @@ def handle_show(args):
         else:
             args.send("No outstanding issues.")
     elif args.cmd == "quotes":
-        quotes = args.db.query(Quotes).filter(Quotes.approved == 0).all()
+        quotes = args.db.query(Quotes).filter(Quotes.accepted == 0).all()
         if quotes:
             show_quotes(quotes, args.send)
         else:
@@ -194,7 +200,7 @@ def show_tumblrs(tumblrs, send):
 
 def show_pending(db, admins, send, ping=False):
     issues = db.query(Issues).filter(Issues.accepted == 0).all()
-    quotes = db.query(Quotes).filter(Quotes.approved == 0).all()
+    quotes = db.query(Quotes).filter(Quotes.accepted == 0).all()
     polls = db.query(Polls).filter(Polls.accepted == 0).all()
     tumblrs = db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
     if issues or quotes or polls:
@@ -217,82 +223,38 @@ def show_pending(db, admins, send, ping=False):
 
 
 def handle_accept(args):
-    if args.cmd == 'issue':
-        args.send(accept_issue(args.handler, args.db, args.num))
-    elif args.cmd == 'quote':
-        args.send(accept_quote(args.handler, args.db, args.num))
-    elif args.cmd == 'poll':
-        args.send(accept_poll(args.handler, args.db, args.num))
-    elif args.cmd == 'tumblr':
-        args.send(accept_tumblr(args.handler, args.db, args.num))
-
-
-def accept_issue(handler, db, num):
-    issue = db.query(Issues).filter(Issues.accepted == 0, Issues.id == num).first()
-    if issue is None:
-        return "Not a valid issue"
-    repo = handler.config['api']['githubrepo']
-    apikey = handler.config['api']['githubapikey']
-    msg, success = web.create_issue(issue.title, issue.description, issue.source, repo, apikey)
+    table = getattr(orm, args.cmd.capitalize())
+    pending = args.db.query(table).filter(table.accepted == 0, table.id == args.num).first()
+    if pending is None:
+        args.send("Not a valid %s" % args.cmd)
+    msg, success = get_accept_msg(args.handler, pending, args.cmd)
     if not success:
-        return msg
-    issue.accepted = 1
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = issue.source.split('!')[0]
-    msg = "Issue Created -- %s -- %s" % (msg, issue.title)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    return ""
+        args.send(msg)
+    pending.accepted = 1
+    ctrlchan = args.handler.config['core']['ctrlchan']
+    channel = args.handler.config['core']['channel']
+    botnick = args.handler.config['core']['nick']
+    args.handler.connection.privmsg_many([ctrlchan, channel, pending.submitter], msg)
+    args.handler.do_log('private', botnick, msg, 'privmsg')
 
 
-def accept_quote(handler, db, qid):
-    quote = db.query(Quotes).filter(Quotes.approved == 0, Quotes.id == qid).first()
-    if quote is None:
-        return "Not a valid quote"
-    quote.approved = 1
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = quote.submitter
-    msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (qid, quote.quote, quote.nick, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    return ""
-
-
-def accept_poll(handler, db, pid):
-    poll = db.query(Polls).filter(Polls.accepted == 0, Polls.id == pid).first()
-    if poll is None:
-        return "Not a valid poll"
-    poll.accepted = 1
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = poll.submitter
-    msg = "Poll #%d accepted: %s, Submitted by %s" % (pid, poll.question, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    return ""
-
-
-def accept_tumblr(handler, db, tid):
-    tumblr = db.query(Tumblrs).filter(Tumblrs.accepted == 0, Tumblrs.id == tid).first()
-    if tumblr is None:
-        return "Not a valid Tumblr post"
-    msg, success = web.post_tumblr(handler.config, tumblr.blog, tumblr.post)
-    if not success:
-        return msg
-    tumblr.accepted = 1
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = tumblr.submitter
-    msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (tid, tumblr.post, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    return ""
+def get_accept_msg(handler, pending, type):
+    success = True
+    if type == 'quote':
+        msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
+    elif type == 'poll':
+        msg = "Poll #%d accepted: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
+    elif type == 'issue':
+        repo = handler.config['api']['githubrepo']
+        apikey = handler.config['api']['githubapikey']
+        msg, success = web.create_issue(pending.title, pending.description, pending.source, repo, apikey)
+        if success:
+            msg = "Issue Created -- %s -- %s" % (msg, pending.title)
+    elif type == 'tumblr':
+        msg, success = web.post_tumblr(handler.config, pending.blog, pending.post)
+        if success:
+            msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
+    return msg, success
 
 
 def handle_reject(args):
@@ -327,8 +289,8 @@ def reject_quote(handler, db, qid):
     quote = db.query(Quotes).get(qid)
     if quote is None:
         return "Not a valid quote"
-    if quote.approved == 1:
-        return "Quote already approved."
+    if quote.accepted == 1:
+        return "Quote already accepted."
     ctrlchan = handler.config['core']['ctrlchan']
     channel = handler.config['core']['channel']
     botnick = handler.config['core']['nick']

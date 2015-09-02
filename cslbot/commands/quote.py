@@ -23,7 +23,7 @@ from ..helpers.orm import Quotes
 
 def do_get_quote(session, qid=None):
     if qid is None:
-        quotes = session.query(Quotes).filter(Quotes.approved == 1).all()
+        quotes = session.query(Quotes).filter(Quotes.accepted == 1).all()
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
@@ -32,14 +32,14 @@ def do_get_quote(session, qid=None):
         quote = session.query(Quotes).get(qid)
         if quote is None:
             return "That quote doesn't exist!"
-        if quote.approved == 0:
-            return "That quote hasn't been approved yet."
+        if quote.accepted == 0:
+            return "That quote hasn't been accepted yet."
         else:
             return "%s -- %s" % (quote.quote, quote.nick)
 
 
 def get_quotes_nick(session, nick):
-    rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.approved == 1).all()
+    rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.accepted == 1).all()
     if not rows:
         return "No quotes for %s" % nick
     row = choice(rows)
@@ -51,7 +51,7 @@ def do_add_quote(nick, quote, session, isadmin, send, args):
     session.add(row)
     session.flush()
     if isadmin:
-        row.approved = 1
+        row.accepted = 1
         send("Added quote %d!" % row.id)
     else:
         send("Quote submitted for approval.", target=args['nick'])
@@ -70,7 +70,7 @@ def do_update_quote(session, qid, nick, quote):
 
 
 def do_list_quotes(session, quote_url):
-    num = session.query(Quotes).filter(Quotes.approved == 1).count()
+    num = session.query(Quotes).filter(Quotes.accepted == 1).count()
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 

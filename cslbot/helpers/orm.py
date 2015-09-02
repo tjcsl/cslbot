@@ -48,7 +48,7 @@ class Quotes(Base):
     quote = Column(UnicodeText)
     nick = Column(UnicodeText)
     submitter = Column(UnicodeText)
-    approved = Column(Integer, default=0)
+    accepted = Column(Integer, default=0)
 
 
 class Polls(Base):
