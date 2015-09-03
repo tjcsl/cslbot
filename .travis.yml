@@ -36,7 +36,7 @@ before_script:
 
 script:
     - flake8 --max-line-length=1000 .
-    - coverage run --source=cslbot ./setup.py test
+    - coverage run ./setup.py test
     - cslbot-migrate
     - cslbot-genbabble
     - cslbot-parselogs /tmp/ircbot
