@@ -18,7 +18,6 @@ import re
 import sys
 import logging
 from . import command, orm, hook, arguments, web
-from .orm import Quotes, Issues, Polls, Tumblrs
 
 
 def handle_chanserv(args):
@@ -109,36 +108,23 @@ def handle_unguard(args):
         args.send("No longer guarding %s" % args.nick)
 
 
+def handle_show_pending(args):
+    table = getattr(orm, args.cmd.capitalize())
+    pending = args.db.query(table).filter(table.accepted == 0).all()
+    if pending:
+        show_pending_items(args.cmd, pending, args.send)
+    else:
+        args.send("No pending %s." % args.cmd)
+
+
 def handle_show(args):
     if args.cmd == "guarded":
         if args.handler.guarded:
             args.send(", ".join(args.handler.guarded))
         else:
             args.send("Nobody is guarded.")
-    elif args.cmd == "issues":
-        issues = args.db.query(Issues).filter(Issues.accepted == 0).all()
-        if issues:
-            show_pending_items('issues', issues, args.send)
-        else:
-            args.send("No outstanding issues.")
-    elif args.cmd == "quotes":
-        quotes = args.db.query(Quotes).filter(Quotes.accepted == 0).all()
-        if quotes:
-            show_pending_items('quotes', quotes, args.send)
-        else:
-            args.send("No quotes pending.")
-    elif args.cmd == "polls":
-        polls = args.db.query(Polls).filter(Polls.accepted == 0).all()
-        if polls:
-            show_pending_items('polls', polls, args.send)
-        else:
-            args.send("No polls pending.")
-    elif args.cmd == "tumblr":
-        tumblrs = args.db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
-        if tumblrs:
-            show_pending_items('tumblrs', tumblrs, args.send)
-        else:
-            args.send("No Tumblr posts pending")
+    elif args.cmd in ["issues", "quotes", "polls", "tumblrs"]:
+        handle_show_pending(args)
     elif args.cmd == "pending":
         if args.args:
             args.send("Invalid argument %s." % args.args[0])
