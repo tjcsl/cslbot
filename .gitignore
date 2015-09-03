@@ -8,5 +8,6 @@ __pycache__
 *.py[co]
 *.sw?
 *.*~
+.coverage
 cslbot/templates/analytics.html
 cslbot/static/geoip.db
