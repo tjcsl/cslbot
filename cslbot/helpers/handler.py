@@ -44,7 +44,7 @@ class BotHandler():
         self.connection = connection
         self.channels = channels
         self.config = config
-        self.db = sql.Sql(config)
+        self.db = sql.Sql(config, confdir)
         self.workers = workers.Workers(self)
         start = time.time()
         self.uptime = {'start': start, 'reloaded': start}

@@ -16,6 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+from alembic import command, config
+from pkg_resources import Requirement, resource_filename
+
 from sqlalchemy import Column, Float, Integer, ForeignKey, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
@@ -29,10 +32,17 @@ class Base(object):
         return self.__name__.lower()
 
 
-def setup_db(session):
+def setup_db(session, botconfig, confdir):
     """ Sets up the database.
     """
     Base.metadata.create_all(session.connection())
+    # If we're creating a fresh db, we don't need to worry about migrations.
+    if not session.get_bind().has_table('alembic_version'):
+        conf_obj = config.Config()
+        script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
+        conf_obj.set_main_option('script_location', script_location)
+        conf_obj.set_main_option('bot_config_path', confdir)
+        command.stamp(conf_obj, 'head')
 
 
 class Log(Base):

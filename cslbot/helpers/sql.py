@@ -32,11 +32,11 @@ def get_session(config):
 
 class Sql():
 
-    def __init__(self, config):
+    def __init__(self, config, confdir):
         """ Set everything up"""
         self.session = get_session(config)
         with self.session_scope() as session:
-            setup_db(session)
+            setup_db(session, config, confdir)
 
     @contextmanager
     def session_scope(self):
