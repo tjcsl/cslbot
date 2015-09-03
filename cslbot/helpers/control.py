@@ -126,21 +126,27 @@ def handle_show(args):
     elif args.cmd == "issues":
         issues = args.db.query(Issues).filter(Issues.accepted == 0).all()
         if issues:
-            show_issues(issues, args.send)
+            show_pending_items('issues', issues, args.send)
         else:
             args.send("No outstanding issues.")
     elif args.cmd == "quotes":
         quotes = args.db.query(Quotes).filter(Quotes.accepted == 0).all()
         if quotes:
-            show_quotes(quotes, args.send)
+            show_pending_items('quotes', quotes, args.send)
         else:
             args.send("No quotes pending.")
     elif args.cmd == "polls":
         polls = args.db.query(Polls).filter(Polls.accepted == 0).all()
         if polls:
-            show_polls(polls, args.send)
+            show_pending_items('polls', polls, args.send)
         else:
             args.send("No polls pending.")
+    elif args.cmd == "tumblr":
+        tumblrs = args.db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
+        if tumblrs:
+            show_pending_items('tumblrs', tumblrs, args.send)
+        else:
+            args.send("No Tumblr posts pending")
     elif args.cmd == "pending":
         if args.args:
             args.send("Invalid argument %s." % args.args[0])
@@ -169,57 +175,34 @@ def handle_show(args):
             args.send(mods if mods else "No disabled hooks.")
         else:
             args.send("Invalid argument.")
-    elif args.cmd == "tumblr":
-        tumblrs = args.db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
-        if tumblrs:
-            show_tumblrs(tumblrs, args.send)
-        else:
-            args.send("No Tumblr posts pending")
 
 
-def show_quotes(quotes, send):
-    for x in quotes:
-        send("#%d %s -- %s, Submitted by %s" % (x.id, x.quote, x.nick, x.submitter))
-
-
-def show_issues(issues, send):
-    for issue in issues:
-        nick = issue.source.split('!')[0]
-        send("#%d %s, Submitted by %s" % (issue.id, issue.title, nick))
-
-
-def show_polls(polls, send):
-    for x in polls:
-        send("#%d -- %s, Submitted by %s" % (x.id, x.question, x.submitter))
-
-
-def show_tumblrs(tumblrs, send):
-    for x in tumblrs:
-        send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
+def show_pending_items(type, items, send):
+    for x in items:
+        if type == 'quotes':
+            send("#%d %s -- %s, Submitted by %s" % (x.id, x.quote, x.nick, x.submitter))
+        elif type == 'issues':
+            nick = x.source.split('!')[0]
+            send("#%d %s, Submitted by %s" % (x.id, x.title, nick))
+        elif type == 'polls':
+            send("#%d -- %s, Submitted by %s" % (x.id, x.question, x.submitter))
+        elif type == 'tumblrs':
+            send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
 
 
 def show_pending(db, admins, send, ping=False):
-    issues = db.query(Issues).filter(Issues.accepted == 0).all()
-    quotes = db.query(Quotes).filter(Quotes.accepted == 0).all()
-    polls = db.query(Polls).filter(Polls.accepted == 0).all()
-    tumblrs = db.query(Tumblrs).filter(Tumblrs.accepted == 0).all()
-    if issues or quotes or polls:
+    pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
+    for name in pending:
+        table = getattr(orm, name.capitalize())
+        pending[name] = db.query(table).filter(table.accepted == 0).all()
+    if any(pending.values()):
         if ping:
             send("%s: Items are Pending Approval" % admins)
     elif not ping:
         send("No items are Pending")
-    if issues:
-        send("Issues:")
-        show_issues(issues, send)
-    if quotes:
-        send("Quotes:")
-        show_quotes(quotes, send)
-    if polls:
-        send("Polls:")
-        show_polls(polls, send)
-    if tumblrs:
-        send("Tumblr posts:")
-        show_tumblrs(tumblrs, send)
+    for type, items in pending():
+        send("%s:" % type.capitalize())
+        show_pending_items(type, items, send)
 
 
 def handle_accept(args):
