@@ -11,6 +11,7 @@ python:
 env:
     global:
         secure: UmNKNYhivdYf9Nm85vnvkPz2ZCEI9GuoQVBwj32alqq1PjUNyIqiGn1pp+J9m/KEyyJTGh8Hlm+57SE0LM7U1/sfu4Rx7hDJNzAbwFo1SJN98nksIPz9CexeaYcKK6z2Cx5rcHi+x39rNNrykXXOMFhwrLuQmKcMrbecylW65j0=
+        secure: ksEkBn8IqgTkE5CDSlvV6PxQ5Cvvls9MjU4fYwBtZw32uSarIK9qkR6dtgbSxN37vS/lRgDM2yIDedhMTUUnYtL+qfC3866DnwHgN9tHdvFqB7+bZGFTg1lnuJN9IW/CdCaDgNSkZjNqNY6t4lzdrAsEYR4KDsqYwjsbJEqZRkw=
 
 cache:
     directories:
@@ -23,7 +24,7 @@ before_install:
     - git commit -m 'update path' cslbot/helpers/*.py scripts/*.py
 
 install:
-    - pip install flake8 sphinx psycopg2 .
+    - pip install flake8 sphinx psycopg2 coveralls .
       # We need to install this separately since it will pull in CslBot from pypi otherwise
     - pip install git+git://github.com/tjcsl/cslbot-tjhsst
 
@@ -35,7 +36,7 @@ before_script:
 
 script:
     - flake8 --max-line-length=1000 .
-    - ./setup.py test
+    - coverage run --source=cslbot ./setup.py test
     - cslbot-migrate
     - cslbot-genbabble
     - cslbot-parselogs /tmp/ircbot
@@ -43,6 +44,7 @@ script:
     - ./scripts/gendocs.sh
 
 after_success:
+    coveralls
     ./scripts/deploy_docs.sh
 
 notifications:

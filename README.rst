@@ -10,6 +10,10 @@ CslBot
    :target: https://codeclimate.com/github/tjcsl/cslbot
    :alt: Code Climate
 
+.. image:: https://coveralls.io/repos/tjcsl/cslbot/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/tjcsl/cslbot?branch=master
+    :alt: Coverage
+
 A bot written by the TJHSST CSL for IRC. 
 
 Support
