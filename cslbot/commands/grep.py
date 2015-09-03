@@ -41,18 +41,13 @@ def cmd(send, msg, args):
     term = ' '.join(cmdargs.string)
     if cmdargs.nick:
         query = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar))
-        if cmdargs.ignore_case:
-            query = query.filter(Log.msg.ilike('%%%s%%' % term))
-        else:
-            query = query.filter(Log.msg.like('%%%s%%' % term))
-        rows = query.order_by(Log.time.desc()).all()
     else:
         query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
-        if cmdargs.ignore_case:
-            query = query.filter(Log.msg.ilike('%%%s%%' % term))
-        else:
-            query = query.filter(Log.msg.like('%%%s%%' % term))
-        rows = query.order_by(Log.time.desc()).all()
+    if cmdargs.ignore_case:
+        query = query.filter(Log.msg.ilike('%%%s%%' % term))
+    else:
+        query = query.filter(Log.msg.like('%%%s%%' % term))
+    rows = query.order_by(Log.time.desc()).all()
     if rows:
         row = rows[0]
         logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
