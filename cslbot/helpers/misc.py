@@ -26,6 +26,10 @@ from datetime import timedelta
 from . import orm
 
 
+def get_users(args):
+    return (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
+
+
 def parse_time(time):
     time, unit = time[:-1], time[-1].lower()
     if time.isdigit():

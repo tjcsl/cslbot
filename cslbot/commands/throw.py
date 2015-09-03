@@ -16,6 +16,7 @@
 
 import re
 from random import choice
+from ..helpers.misc import get_users
 from ..helpers.command import Command
 
 
@@ -24,8 +25,8 @@ def cmd(send, msg, args):
     """Throw something.
     Syntax: {command} <object> [at <target>]
     """
-    users = (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
-    if "into" in msg and msg != "into":
+    users = get_users(args)
+    if " into " in msg and msg != "into":
         match = re.match('(.*) into (.*)', msg)
         if match:
             msg = 'throws %s into %s' % (match.group(1), match.group(2))

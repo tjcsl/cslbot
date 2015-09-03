@@ -16,6 +16,7 @@
 
 from random import choice
 from ..helpers.command import Command
+from ..helpers.misc import get_users
 from ..helpers.textutils import gen_insult
 
 
@@ -26,8 +27,7 @@ def cmd(send, msg, args):
     """
 
     if not msg:
-        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
-        user = choice(users)
+        user = choice(get_users(args))
     else:
         user = msg
     send(gen_insult(user))

@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+from ..helpers.misc import get_users
 from ..helpers.command import Command
 
 
@@ -23,8 +24,7 @@ def cmd(send, msg, args):
     """Blames a random user for something.
     Syntax: {command} [reason]
     """
-    users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
-    user = choice(users)
+    user = choice(get_users(args))
     if msg:
         msg = " for " + msg
     msg = "blames " + user + msg
