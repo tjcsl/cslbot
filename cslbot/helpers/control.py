@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import sys
 import logging
 from . import command, orm, hook, arguments, web
 from .orm import Quotes, Issues, Polls, Tumblrs
@@ -32,6 +33,13 @@ def toggle_logging(level):
         return True
 
 
+def toggle_module(type, name, enable=True):
+    if not name:
+        return "Missing argument."
+    toggle = "enable_%s" % type if enable else "disable_%s" % type
+    return getattr(sys.modules["cslbot.helpers.%s" % type], toggle)(name[0])
+
+
 def handle_disable(args):
     if args.cmd == "kick":
         if not args.handler.kick_enabled:
@@ -39,16 +47,8 @@ def handle_disable(args):
         else:
             args.handler.kick_enabled = False
             args.send("Kick disabled.")
-    elif args.cmd == "command":
-        if args.args:
-            args.send(command.disable_command(args.args[0]))
-        else:
-            args.send("Missing argument.")
-    elif args.cmd == "hook":
-        if args.args:
-            args.send(hook.disable_hook(args.args[0]))
-        else:
-            args.send("Missing argument.")
+    elif args.cmd in ["command", "hook"]:
+        args.send(toggle_module(args.cmd, args.args, False))
     elif args.cmd == "logging":
         if toggle_logging(logging.INFO):
             args.send("Logging disabled.")
@@ -69,11 +69,8 @@ def handle_enable(args):
         else:
             args.handler.kick_enabled = True
             args.send("Kick enabled.")
-    elif args.cmd == "command":
-        if args.args:
-            args.send(command.enable_command(args.args[0]))
-        else:
-            args.send("Missing argument.")
+    elif args.cmd in ["command", "hook"]:
+        args.send(toggle_module(args.cmd, args.args))
     elif args.cmd == "all":
         if not args.args:
             args.send("Missing argument.")
@@ -83,11 +80,6 @@ def handle_enable(args):
             args.send(hook.enable_hook(args.cmd))
         else:
             args.send("Invalid argument.")
-    elif args.cmd == "hook":
-        if args.args:
-            args.send(hook.enable_hook(args.args[0]))
-        else:
-            args.send("Missing argument.")
     elif args.cmd == "logging":
         if toggle_logging(logging.DEBUG):
             args.send("Logging enabled.")
