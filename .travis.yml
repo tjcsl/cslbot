@@ -44,8 +44,8 @@ script:
     - ./scripts/gendocs.sh
 
 after_success:
-    coveralls
-    ./scripts/deploy_docs.sh
+    - coveralls
+    - ./scripts/deploy_docs.sh
 
 notifications:
   irc:
