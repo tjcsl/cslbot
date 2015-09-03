@@ -227,9 +227,11 @@ def handle_accept(args):
     pending = args.db.query(table).filter(table.accepted == 0, table.id == args.num).first()
     if pending is None:
         args.send("Not a valid %s" % args.cmd)
+        return
     msg, success = get_accept_msg(args.handler, pending, args.cmd)
     if not success:
         args.send(msg)
+        return
     pending.accepted = 1
     ctrlchan = args.handler.config['core']['ctrlchan']
     channel = args.handler.config['core']['channel']
@@ -258,82 +260,33 @@ def get_accept_msg(handler, pending, type):
 
 
 def handle_reject(args):
-    if args.cmd == 'issue':
-        args.send(reject_issue(args.handler, args.db, args.num))
-    elif args.cmd == 'quote':
-        args.send(reject_quote(args.handler, args.db, args.num))
-    elif args.cmd == 'poll':
-        args.send(reject_poll(args.handler, args.db, args.num))
-    elif args.cmd == 'tumblr':
-        args.send(reject_tumblr(args.handler, args.db, args.num))
+    table = getattr(orm, args.cmd.capitalize())
+    pending = args.db.query(table).get(args.num)
+    if pending is None:
+        args.send("Not a valid %s" % args.cmd)
+        return
+    if pending.accepted == 1:
+        args.send("%s already accepted" % args.cmd.capitialize())
+        return
+    ctrlchan = args.handler.config['core']['ctrlchan']
+    channel = args.handler.config['core']['channel']
+    botnick = args.handler.config['core']['nick']
+    msg = get_reject_msg(args.cmd)
+    args.handler.connection.privmsg_many([ctrlchan, channel, pending.submitter], msg)
+    args.handler.do_log('private', botnick, msg, 'privmsg')
+    args.db.delete(pending)
 
 
-def reject_issue(handler, db, num):
-    issue = db.query(Issues).get(num)
-    if issue is None:
-        return "Not a valid issue"
-    if issue.accepted == 1:
-        return "Issue already accepted"
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = issue.source.split('!')[0]
-    msg = "Issue Rejected -- %s, Submitted by %s" % (issue.title, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    db.delete(issue)
-    return ""
-
-
-def reject_quote(handler, db, qid):
-    quote = db.query(Quotes).get(qid)
-    if quote is None:
-        return "Not a valid quote"
-    if quote.accepted == 1:
-        return "Quote already accepted."
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = quote.submitter
-    msg = "Quote #%d Rejected: %s -- %s, Submitted by %s" % (qid, quote.quote, quote.nick, nick)
-    db.delete(quote)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    return ""
-
-
-def reject_poll(handler, db, pid):
-    poll = db.query(Polls).get(pid)
-    if poll is None:
-        return "Not a valid poll"
-    if poll.accepted == 1:
-        return "Poll already accepted."
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = poll.submitter
-    msg = "Poll #%d rejected: %s, Submitted by %s" % (pid, poll.question, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    db.delete(poll)
-    return ""
-
-
-def reject_tumblr(handler, db, tid):
-    tumblr = db.query(Tumblrs).get(tid)
-    if tumblr is None:
-        return "Not a valid  poll"
-    if tumblr.accepted == 1:
-        return "Poll already accepted"
-    ctrlchan = handler.config['core']['ctrlchan']
-    channel = handler.config['core']['channel']
-    botnick = handler.config['core']['nick']
-    nick = tumblr.submitter
-    msg = "Poll #%d rejected: %s, Submitted by %s" % (tid, tumblr.post, nick)
-    handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    handler.do_log('private', botnick, msg, 'privmsg')
-    db.delete(tumblr)
-    return ""
+def get_reject_msg(pending, type):
+    if type == 'issue':
+        nick = pending.source.split('!')[0]
+        return "Issue Rejected -- %s, Submitted by %s" % (pending.title, nick)
+    elif type == 'quote':
+        return "Quote #%d Rejected: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
+    elif type == 'poll':
+        return "Poll #%d rejected: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
+    elif type == 'tumblr':
+        return "Tumblr #%d rejected: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
 
 
 def handle_quote(args):
