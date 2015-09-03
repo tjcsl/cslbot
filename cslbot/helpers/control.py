@@ -200,9 +200,10 @@ def show_pending(db, admins, send, ping=False):
             send("%s: Items are Pending Approval" % admins)
     elif not ping:
         send("No items are Pending")
-    for type, items in pending():
-        send("%s:" % type.capitalize())
-        show_pending_items(type, items, send)
+    for type, items in pending.items():
+        if items:
+            send("%s:" % type.capitalize())
+            show_pending_items(type, items, send)
 
 
 def handle_accept(args):
