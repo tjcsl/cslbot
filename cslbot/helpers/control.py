@@ -198,7 +198,8 @@ def handle_accept(args):
     ctrlchan = args.handler.config['core']['ctrlchan']
     channel = args.handler.config['core']['channel']
     botnick = args.handler.config['core']['nick']
-    args.handler.connection.privmsg_many([ctrlchan, channel, pending.submitter], msg)
+    nick = pending.source.split('!')[0] if args.cmd == 'issue' else pending.submitter
+    args.handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     args.handler.do_log('private', botnick, msg, 'privmsg')
 
 
@@ -234,7 +235,8 @@ def handle_reject(args):
     channel = args.handler.config['core']['channel']
     botnick = args.handler.config['core']['nick']
     msg = get_reject_msg(args.cmd)
-    args.handler.connection.privmsg_many([ctrlchan, channel, pending.submitter], msg)
+    nick = pending.source.split('!')[0] if args.cmd == 'issue' else pending.submitter
+    args.handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
     args.handler.do_log('private', botnick, msg, 'privmsg')
     args.db.delete(pending)
 
