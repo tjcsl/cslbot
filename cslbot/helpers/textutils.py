@@ -92,7 +92,7 @@ def gen_fwilson(x, mode=None):
 
 
 def gen_creffett(msg):
-    return '\x02\x038,4%s!!!' % msg.upper()
+    return '\x02\x038,04%s!!!' % msg.upper()
 
 
 def gen_slogan(msg):
