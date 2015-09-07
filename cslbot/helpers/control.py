@@ -185,7 +185,7 @@ def show_pending(db, admins, send, ping=False):
 
 
 def handle_accept(args):
-    table = getattr(orm, args.cmd.capitalize())
+    table = getattr(orm, args.cmd.capitalize() + "s")
     pending = args.db.query(table).filter(table.accepted == 0, table.id == args.num).first()
     if pending is None:
         args.send("Not a valid %s" % args.cmd)
@@ -222,7 +222,7 @@ def get_accept_msg(handler, pending, type):
 
 
 def handle_reject(args):
-    table = getattr(orm, args.cmd.capitalize())
+    table = getattr(orm, args.cmd.capitalize() + "s")
     pending = args.db.query(table).get(args.num)
     if pending is None:
         args.send("Not a valid %s" % args.cmd)
@@ -314,12 +314,12 @@ def init_parser(send, handler, db):
     show_parser.set_defaults(func=handle_show)
 
     show_parser = subparser.add_parser('accept')
-    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll'])
+    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll', 'tumblr'])
     show_parser.add_argument('num', type=int)
     show_parser.set_defaults(func=handle_accept)
 
     show_parser = subparser.add_parser('reject')
-    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll'])
+    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll', 'tumblr'])
     show_parser.add_argument('num', type=int)
     show_parser.set_defaults(func=handle_reject)
 
