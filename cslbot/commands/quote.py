@@ -119,8 +119,6 @@ def cmd(send, msg, args):
         send(str(e))
         return
 
-    isadmin = args['is_admin'](args['nick'])
-
     if cmdargs.add:
         if args['type'] == 'privmsg':
             send("You want everybody to know about your witty sayings, right?")
@@ -130,16 +128,17 @@ def cmd(send, msg, args):
             elif not cmdargs.quote:
                 send('You must specify a quote.')
             else:
+                isadmin = args['is_admin'](args['nick'])
                 do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, send, args)
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:
-        if isadmin:
+        if args['is_admin'](args['nick']):
             send(do_delete_quote(session, cmdargs.delete))
         else:
             send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
     elif cmdargs.edit:
-        if isadmin:
+        if args['is_admin'](args['nick']):
             send(do_update_quote(session, cmdargs.edit, cmdargs.nick, cmdargs.quote))
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
