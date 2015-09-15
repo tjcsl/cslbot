@@ -27,7 +27,7 @@ def cmd(send, msg, _):
     Syntax: {command} [searchstring]
     """
     if not msg:
-        url = 'http://tjbash.org/random1'
+        url = 'http://tjbash.org/random1.html'
         params = {}
     else:
         targs = msg.split()
@@ -35,7 +35,7 @@ def cmd(send, msg, _):
             url = 'http://tjbash.org/%s' % targs[0]
             params = {}
         else:
-            url = 'http://tjbash.org/search'
+            url = 'http://tjbash.org/search.html'
             params = {'query': 'tag:%s' % '+'.join(targs)}
     req = get(url, params=params)
     doc = fromstring(req.text)
