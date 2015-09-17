@@ -46,14 +46,16 @@ def get_quotes_nick(session, nick):
     return "Quote #%d (out of %d): %s -- %s" % (row.id, len(rows), row.quote, nick)
 
 
-def do_add_quote(nick, quote, session, isadmin, send, args):
+def do_add_quote(nick, quote, session, isadmin, approve, send, args):
     row = Quotes(quote=quote, nick=nick, submitter=args['nick'])
     session.add(row)
     session.flush()
-    if isadmin:
+    if isadmin and approve:
         row.accepted = 1
         send("Added quote %d!" % row.id)
     else:
+        if approve:
+            send("Only admins can auto-approve quotes.")
         send("Quote submitted for approval.", target=args['nick'])
         send("New Quote: #%d %s -- %s, Submitted by %s" % (row.id, quote, nick, args['nick']), target=args['config']['core']['ctrlchan'])
 
@@ -94,11 +96,12 @@ def search_quote(session, offset, search):
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
 def cmd(send, msg, args):
     """Handles quotes.
-    Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick>, !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
+    Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick> (--approve), !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
     !quote --search (--offset <num>) <number>
     """
     session = args['db']
     parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--approve', action='store_true')
     parser.add_argument('--nick', nargs='?')
     parser.add_argument('--offset', nargs='?', type=int, default=0)
     parser.add_argument('quote', nargs='*')
@@ -129,7 +132,7 @@ def cmd(send, msg, args):
                 send('You must specify a quote.')
             else:
                 isadmin = args['is_admin'](args['nick'])
-                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, send, args)
+                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, cmdargs.approve, send, args)
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:
