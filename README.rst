@@ -145,6 +145,15 @@ The following values are supported:
 
 * ircservices
 
+
+Contributing
+------------
+Run flake8 --max-line-length 1000 .
+Run ./scripts/gendocs.sh
+Run ./setup.py egg_info
+Commit the changes.
+Submit a PR and make sure the travis build is green.
+
 Credits
 -------
 Licensed under the GPL v2
