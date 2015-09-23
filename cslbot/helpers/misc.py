@@ -83,7 +83,7 @@ def ping(ping_map, c, e, pongtime):
         pingtime = float(response)
         delta = timedelta(seconds=pongtime - pingtime)
         elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
-    except ValueError:
+    except (ValueError, OverflowError):
         elapsed = response
     target = ping_map.pop(nick) if nick in ping_map else nick
     c.privmsg(target, "CTCP reply from %s: %s" % (nick, elapsed))
