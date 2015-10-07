@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from random import randint
+from sqlalchemy import func
 from ..helpers import arguments
 from ..helpers.orm import Scores
 from ..helpers.command import Command
@@ -65,10 +65,8 @@ def cmd(send, msg, args):
         else:
             send("Nobody cares about %s" % name)
     else:
-        count = session.query(Scores).count()
-        if count == 0:
+        if session.query(Scores).count() == 0:
             send("Nobody cares about anything =(")
         else:
-            randid = randint(1, count)
-            query = session.query(Scores).get(randid)
+            query = session.query(Scores).order_by(func.random()).first()
             send("%s has %i point%s!" % (query.nick, query.score, '' if abs(query.score) == 1 else 's'))

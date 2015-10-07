@@ -178,7 +178,7 @@ def char_to_bin(c):
     if i > 1 << 16:
         n = 32
     ret = ""
-    for j in range(n):
+    for _ in range(n):
         ret += str(i & 1)
         i >>= 1
     return ret[::-1]
