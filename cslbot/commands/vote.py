@@ -196,7 +196,7 @@ def list_polls(args):
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
 def cmd(send, msg, args):
     """Handles voting.
-    Syntax: {command} <start|end|list|tally|edit|delete|vote|retract>
+    Syntax: {command} <start|end|list|tally|edit|delete|retract|reopen|(num) vote>
     """
     command = msg.split()
     msg = " ".join(command[1:])
