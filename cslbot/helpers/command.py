@@ -106,6 +106,7 @@ class Command():
     def __init__(self, names, args=[], limit=0, admin=False):
         global _known_commands
         self.names = [names] if isinstance(names, str) else names
+        self.names = [i.upper() for i in self.names]
         self.args = args
         self.limit = limit
         self.admin = admin
