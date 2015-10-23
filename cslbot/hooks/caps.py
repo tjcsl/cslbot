@@ -33,15 +33,15 @@ def handle(_, msg, args):
 
     if args['config']['feature'].getboolean('capskick'):
         nick = args['nick']
-        THRESHOLD = 0.65
-        text = "shutting caps lock off"
+        THRESHOLD = 0.2
+        text = "turning caps lock on"
         upper = [i for i in msg if i in string.ascii_uppercase]
         if len(msg) == 0:
             return
         upper_ratio = len(upper) / len(msg.replace(' ', ''))
         if args['target'] != 'private':
             with _caps_lock:
-                if upper_ratio > THRESHOLD and len(msg) > 20:
+                if upper_ratio < THRESHOLD:
                     if nick in _caps:
                         args['do_kick'](args['target'], nick, text)
                         _caps.remove(nick)
