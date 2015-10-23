@@ -17,6 +17,7 @@
 # USA.
 
 import subprocess
+import logging
 import re
 import os
 import pkg_resources
@@ -44,11 +45,15 @@ def parse_time(time):
 
 
 def do_pull(srcdir=None, repo=None):
-    if repo is None:
-        return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
-    else:
-        return subprocess.check_output(['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo],
-                                       stderr=subprocess.STDOUT, env=os.environ.copy()).decode().splitlines()[-1]
+    try:
+        if repo is None:
+            return subprocess.check_output(['git', 'pull'], cwd=srcdir, stderr=subprocess.STDOUT).decode().splitlines()[-1]
+        else:
+            return subprocess.check_output(['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo],
+                                           stderr=subprocess.STDOUT, env=os.environ.copy()).decode().splitlines()[-1]
+    except subprocess.CalledProcessError as e:
+        logging.error(e.output)
+        raise e
 
 
 def do_nuke(c, nick, target, channel):
