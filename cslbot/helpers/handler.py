@@ -291,6 +291,7 @@ class BotHandler():
     def do_mode(self, target, msg, nick, send):
         """ reop and handle guard violations """
         # reop
+        # FIXME: handle -o+o msbobBot msbobBot
         mode_changes = list(filter(self.check_mode, modes.parse_channel_modes(msg)))
         if mode_changes:
             send("%s: :(" % nick, target=target)
