@@ -546,6 +546,7 @@ class BotHandler():
 
         cmdargs = msg[cmdlen:]
         cmd_name = cmd[len(cmdchar):] if cmd.startswith(cmdchar) else None
+        cmd_name = cmd_name.lower()
 
         if command.is_registered(cmd_name):
             cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
