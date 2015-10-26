@@ -18,21 +18,51 @@
 from sys import path
 from os.path import dirname, exists, join
 
-# Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
 import argparse
 import configparser
 import fcntl
 from time import strftime, localtime
 from os import makedirs
 
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
 from cslbot.helpers.orm import Log
 from cslbot.helpers.sql import get_session
 
-logs = {}
 
-day = False
+class LogProcesser(object):
+    def __init__(self, outdir):
+        self.day = {}
+        self.logs = {}
+        self.outdir = outdir
+
+    def __del__(self):
+        for log in self.logs.values():
+            log.close()
+
+    def check_day(self, row):
+        # FIXME: print out new day messages for each day, not just the last one.
+        channel = row.target
+        time = localtime(row.time)
+        rowday = strftime('%d', time)
+        if channel not in self.day:
+            self.day[channel] = rowday
+            return
+        if self.day[channel] != rowday:
+            self.day[channel] = rowday
+            log = strftime('New Day: %a, %b %d, %Y', time)
+            self.write_log(channel, log)
+
+    def write_log(self, channel, msg):
+        if channel not in self.logs:
+            outfile = "%s/%s.log" % (self.outdir, channel)
+            self.logs[channel] = open(outfile, 'a')
+        self.logs[channel].write(msg + '\n')
+
+    def process_line(self, row):
+        self.check_day(row)
+        self.write_log(row.target, gen_log(row))
 
 
 def get_id(outdir):
@@ -46,27 +76,6 @@ def get_id(outdir):
 def save_id(outdir, new_id):
     with open('%s/.dbid' % outdir, 'w') as f:
         f.write(str(new_id) + '\n')
-
-
-def write_log(name, outdir, msg):
-    if name not in logs:
-        outfile = "%s/%s.log" % (outdir, name)
-        logs[name] = open(outfile, 'a')
-    logs[name].write(msg + '\n')
-
-
-def check_day(row, outdir, name):
-    # FIXME: don't use a global variable.
-    global day
-    time = localtime(row.time)
-    rowday = strftime('%d', time)
-    if not day:
-        day = rowday
-        return
-    if day != rowday:
-        day = rowday
-        log = strftime('New Day: %a, %b %d, %Y', time)
-        write_log(name, outdir, log)
 
 
 def gen_log(row):
@@ -123,11 +132,10 @@ def main(confdir="/etc/cslbot"):
     if new_id is None:
         new_id = 0
     save_id(cmdargs.outdir, new_id)
+    processer = LogProcesser(cmdargs.outdir)
     for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.time, Log.id).all():
-        check_day(row, cmdargs.outdir, config['core']['channel'])
-        write_log(row.target, cmdargs.outdir, gen_log(row))
-    for x in logs.values():
-        x.close()
+        processer.process_line(row)
+    del processer
     fcntl.lockf(lockfile, fcntl.LOCK_UN)
     lockfile.close()
 
