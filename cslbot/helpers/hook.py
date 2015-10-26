@@ -51,8 +51,8 @@ class HookData(object):
     def get_disabled_hooks(self):
         return [x for x in self.known_hooks if x in self.disabled_hooks]
 
-    def is_enabled(self, hook):
-        return hook not in self.disabled_hooks
+    def is_disabled(self, hook):
+        return hook in self.disabled_hooks
 
     def disable_hook(self, hook):
         """Adds a hook to the disabled hooks list."""
@@ -115,7 +115,7 @@ class Hook():
         return self.name
 
     def run(self, send, msg, msgtype, handler, target, args):
-        if registry.is_enabled(self.name):
+        if registry.is_disabled(self.name):
             return
         self.handler = handler
         self.target = target
