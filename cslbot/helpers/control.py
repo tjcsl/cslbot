@@ -76,7 +76,7 @@ def handle_enable(args):
         elif args.args[0] == "commands":
             args.send(command.enable_command(args.cmd))
         elif args.args[0] == "hooks":
-            args.send(hook.enable_hook(args.cmd))
+            args.send(hook.registry.enable_hook(args.cmd))
         else:
             args.send("Invalid argument.")
     elif args.cmd == "logging":
@@ -138,7 +138,7 @@ def handle_show(args):
             mods = ", ".join(sorted(command.get_enabled_commands()))
             args.send(mods, ignore_length=True)
         elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(hook.get_enabled_hooks()))
+            mods = ", ".join(sorted(hook.registry.get_enabled_hooks()))
             args.send(mods)
         else:
             args.send("Invalid argument.")
@@ -149,7 +149,7 @@ def handle_show(args):
             mods = ", ".join(sorted(command.get_disabled_commands()))
             args.send(mods if mods else "No disabled commands.")
         elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(hook.get_disabled_hooks()))
+            mods = ", ".join(sorted(hook.registry.get_disabled_hooks()))
             args.send(mods if mods else "No disabled hooks.")
         else:
             args.send("Invalid argument.")

@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.hook import get_known_hooks
+from ..helpers.hook import registry
 from ..helpers.command import Command
 
 
@@ -24,5 +24,5 @@ def cmd(send, *_):
     """Lists loaded hooks
     Syntax: {command}
     """
-    hooklist = ', '.join([str(x) for x in get_known_hooks()])
+    hooklist = ', '.join([str(x) for x in registry.get_known_hooks()])
     send('Loaded hooks: %s' % (hooklist))

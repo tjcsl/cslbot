@@ -21,64 +21,66 @@ import re
 import threading
 from . import backtrace, modutils
 
-_known_hooks = {}
-_disabled_hooks = set()
 
+class HookData(object):
+    def __init__(self):
+        self.known_hooks = {}
+        self.disabled_hooks = set()
 
-def scan_for_hooks():
-    """
-    Scans for hooks
+    def scan_for_hooks(self):
+        """
+        Scans for hooks
 
-    :rtype: list
-    :return: A list of modules that failed to reload
-    """
-    global _disabled_hooks
-    _known_hooks.clear()
-    _disabled_hooks = modutils.get_disabled("hooks")
-    errors = modutils.scan_and_reimport("hooks")
-    return errors
+        :rtype: list
+        :return: A list of modules that failed to reload
+        """
+        self.known_hooks.clear()
+        self.disabled_hooks = modutils.get_disabled("hooks")
+        errors = modutils.scan_and_reimport("hooks")
+        return errors
 
+    def get_known_hooks(self):
+        return self.known_hooks
 
-def get_known_hooks():
-    return _known_hooks
+    def get_hook_objects(self):
+        return [self.known_hooks[x] for x in self.known_hooks if x not in self.disabled_hooks]
 
+    def get_enabled_hooks(self):
+        return [x for x in self.known_hooks if x not in self.disabled_hooks]
 
-def get_hook_objects():
-    return [_known_hooks[x] for x in _known_hooks if x not in _disabled_hooks]
+    def get_disabled_hooks(self):
+        return [x for x in self.known_hooks if x in self.disabled_hooks]
 
+    def is_enabled(self, hook):
+        return hook not in self.disabled_hooks
 
-def get_enabled_hooks():
-    return [x for x in _known_hooks if x not in _disabled_hooks]
+    def disable_hook(self, hook):
+        """Adds a hook to the disabled hooks list."""
+        if hook not in self.known_hooks:
+            return "%s is not a loaded hook" % hook
+        if hook not in self.disabled_hooks:
+            self.disabled_hooks.add(hook)
+            return "Disabled hook %s" % hook
+        else:
+            return "That hook is already disabled!"
 
+    def enable_hook(self, hook):
+        """Removes a command from the disabled hooks list."""
+        if hook == "all":
+            self.disabled_hooks.clear()
+            return "Enabled all hooks."
+        elif hook in self.disabled_hooks:
+            self.disabled_hooks.remove(hook)
+            return "Enabled hook %s" % hook
+        elif hook in self.known_hooks:
+            return "That hook isn't disabled!"
+        else:
+            return "%s is not a loaded hook" % hook
 
-def get_disabled_hooks():
-    return [x for x in _known_hooks if x in _disabled_hooks]
+    def register(self, hook):
+        self.known_hooks[hook.name] = hook
 
-
-def disable_hook(hook):
-    """Adds a hook to the disabled hooks list."""
-    global _disabled_hooks
-    if hook not in _known_hooks:
-        return "%s is not a loaded hook" % hook
-    if hook not in _disabled_hooks:
-        _disabled_hooks.add(hook)
-        return "Disabled hook %s" % hook
-    else:
-        return "That hook is already disabled!"
-
-
-def enable_hook(hook):
-    """Removes a command from the disabled hooks list."""
-    if hook == "all":
-        _disabled_hooks.clear()
-        return "Enabled all hooks."
-    elif hook in _disabled_hooks:
-        _disabled_hooks.remove(hook)
-        return "Enabled hook %s" % hook
-    elif hook in _known_hooks:
-        return "That hook isn't disabled!"
-    else:
-        return "%s is not a loaded hook" % hook
+registry = HookData()
 
 
 class Hook():
@@ -87,7 +89,7 @@ class Hook():
         self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args
-        _known_hooks[name] = self
+        registry.register(self)
 
     def __call__(self, func):
         @functools.wraps(func)
@@ -113,7 +115,7 @@ class Hook():
         return self.name
 
     def run(self, send, msg, msgtype, handler, target, args):
-        if self.name in _disabled_hooks:
+        if registry.is_enabled(self.name):
             return
         self.handler = handler
         self.target = target

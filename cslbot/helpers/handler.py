@@ -526,7 +526,7 @@ class BotHandler():
             return
 
         if self.config['feature'].getboolean('hooks'):
-            for h in hook.get_hook_objects():
+            for h in hook.registry.get_hook_objects():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
                 h.run(send, msg, e.type, self, target, realargs)
 

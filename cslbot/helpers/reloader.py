@@ -33,7 +33,7 @@ def load_modules(config, confdir, send=logging.error):
         for error in errored_commands:
             send("%s: %s" % error)
         return False
-    errored_hooks = hook.scan_for_hooks()
+    errored_hooks = hook.registry.scan_for_hooks()
     if errored_hooks:
         logging.error("Failed to reload some hooks.")
         for error in errored_hooks:
