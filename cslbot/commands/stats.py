@@ -18,7 +18,7 @@ from random import choice
 from sqlalchemy import func
 from ..helpers.orm import Commands
 from ..helpers import arguments
-from ..helpers.command import Command, is_registered
+from ..helpers.command import Command, registry
 
 
 def get_commands(session):
@@ -59,7 +59,7 @@ def cmd(send, msg, args):
     commands = get_commands(session)
     totals = get_command_totals(session, commands)
     sortedtotals = sorted(totals, key=totals.get)
-    if is_registered(cmdargs.command):
+    if registry.is_registered(cmdargs.command):
         nicktotals = get_nick_totals(session, cmdargs.command)
         maxuser = sorted(nicktotals, key=nicktotals.get)
         if not maxuser:
@@ -67,7 +67,7 @@ def cmd(send, msg, args):
         else:
             maxuser = maxuser[-1]
             send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, cmdargs.command, nicktotals[maxuser], totals[cmdargs.command]))
-    elif cmdargs.command and not is_registered(cmdargs.command):
+    elif cmdargs.command and not registry.is_registered(cmdargs.command):
         send("Command %s not found." % cmdargs.command)
     elif cmdargs.high:
         send('Most Used Commands:')

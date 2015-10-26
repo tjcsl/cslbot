@@ -27,7 +27,7 @@ def do_log(c, target, msg):
 def load_modules(config, confdir, send=logging.error):
     modutils.init_aux(config['core'])
     modutils.init_groups(config['groups'], confdir)
-    errored_commands = command.scan_for_commands()
+    errored_commands = command.registry.scan_for_commands()
     if errored_commands:
         logging.error("Failed to load some commands.")
         for error in errored_commands:

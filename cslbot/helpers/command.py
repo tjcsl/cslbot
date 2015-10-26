@@ -24,65 +24,69 @@ from inspect import getdoc
 from datetime import datetime, timedelta
 from .orm import Commands, Log
 
-_known_commands = {}
-_disabled_commands = set()
 
+class CommandData(object):
+    def __init__(self):
+        self.known_commands = {}
+        self.disabled_commands = set()
 
-def scan_for_commands():
-    """
-    Scans for commands
+    def scan_for_commands(self):
+        """
+        Scans for commands
 
-    :rtype: dict, list
-    :return: The dict represents a list of known commands, while the list is a list of modules that failed to reload
-    """
-    global _disabled_commands
-    _known_commands.clear()
-    _disabled_commands = modutils.get_disabled("commands")
-    errors = modutils.scan_and_reimport("commands")
-    return errors
+        :rtype: list
+        :return: A list of modules that failed to reload
+        """
+        self.known_commands.clear()
+        self.disabled_commands = modutils.get_disabled("commands")
+        errors = modutils.scan_and_reimport("commands")
+        return errors
 
+    def get_known_commands(self):
+        return self.known_commands
 
-def is_registered(command_name):
-    return command_name in _known_commands
+    def get_enabled_commands(self):
+        return [x for x in self.known_commands if x not in self.disabled_commands]
 
+    def get_disabled_commands(self):
+        return [x for x in self.known_commands if x in self.disabled_commands]
 
-def get_command(command_name):
-    return _known_commands[command_name]
+    def is_disabled(self, command):
+        return command in self.disabled_commands
 
+    def is_registered(self, command_name):
+        return command_name in self.known_commands
 
-def get_commands():
-    return _known_commands
+    def get_command(self, command_name):
+        return self.known_commands[command_name]
 
+    def disable_command(self, command):
+        """Adds a command to the disabled commands list."""
+        if command not in self.known_commands:
+            return "%s is not a loaded command" % command
+        if command not in self.disabled_commands:
+            self.disabled_commands.add(command)
+            return "Disabled command %s" % command
+        else:
+            return "That command is already disabled!"
 
-def get_enabled_commands():
-    return [x for x in _known_commands if x not in _disabled_commands]
+    def enable_command(self, command):
+        """Removes a command from the disabled commands list."""
+        if command == "all":
+            self.disabled_commands.clear()
+            return "Enabled all commands."
+        elif command in self.disabled_commands:
+            self.disabled_commands.remove(command)
+            return "Enabled command %s" % command
+        elif command in self.known_commands:
+            return "That command isn't disabled!"
+        else:
+            return "%s is not a loaded command" % command
 
+    def register(self, name, command):
+        self.known_commands[name] = command
 
-def get_disabled_commands():
-    return [x for x in _known_commands if x in _disabled_commands]
-
-
-def disable_command(command):
-    """ adds a command to the disabled comands list"""
-    if not is_registered(command):
-        return "%s is not a loaded module" % command
-    if command not in _disabled_commands:
-        _disabled_commands.add(command)
-        return "Disabled command %s" % command
-    else:
-        return "That command is already disabled!"
-
-
-def enable_command(command):
-    """ removes a command from the disabled commands list"""
-    if command == "all":
-        _disabled_commands.clear()
-        return "Enabled all modules."
-    elif command in _disabled_commands:
-        _disabled_commands.remove(command)
-        return "%s reenabled" % command
-    else:
-        return "That command isn't disabled!"
+registry = CommandData()
 
 
 def record_command(cursor, nick, command, channel):
@@ -110,9 +114,9 @@ class Command():
         self.limit = limit
         self.admin = admin
         for t in self.names:
-            if t in _known_commands:
+            if registry.is_registered(t):
                 raise ValueError("There is already a command registered with the name %s" % t)
-            _known_commands[t] = self
+            registry.register(t, self)
 
     def __call__(self, func):
         @functools.wraps(func)
@@ -134,7 +138,7 @@ class Command():
         return wrapper
 
     def run(self, send, msg, args, command, nick, target, handler):
-        if [x for x in self.names if x in _disabled_commands]:
+        if any(map(registry.is_disabled, self.names)):
             send("Sorry, that command is disabled.")
         else:
             self.target = target
