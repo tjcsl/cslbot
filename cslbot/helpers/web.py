@@ -17,6 +17,7 @@
 # USA.
 
 import json
+from pkg_resources import Requirement, resource_string
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from urllib.request import urlopen
@@ -27,9 +28,13 @@ from . import urlutils
 
 
 def get_rand_word():
-    url = urlopen('http://www.urbandictionary.com/random.php').geturl()
-    url = url.split('=')[1].replace('+', ' ')
-    return unquote(url)
+    excludes = json.loads(resource_string(Requirement.parse('CslBot'), 'cslbot/static/urban-names.json').decode())
+    term = 'Joe'
+    while term in excludes:
+        url = urlopen('http://www.urbandictionary.com/random.php').geturl()
+        term = url.split('=')[1].replace('+', ' ')
+        term = unquote(term)
+    return term
 
 
 def get_urban(msg, key):
