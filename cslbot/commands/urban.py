@@ -38,7 +38,7 @@ def unblacklist_word(session, msg):
 @Command('urban', ['config', 'db', 'is_admin', 'nick'])
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
-    Syntax: {command} [#<num>] <term>
+    Syntax: {command} <[#<num>] <term>|--blacklist (word)|--unblacklist (word)>
     """
     key = args['config']['api']['googleapikey']
     parser = arguments.ArgParser(args['config'])
