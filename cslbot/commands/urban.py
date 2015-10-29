@@ -46,7 +46,8 @@ def cmd(send, msg, args):
     parser.add_argument('--unblacklist')
 
     try:
-        cmdargs = parser.parse_args(msg)
+        cmdargs, msg = parser.parse_known_args(msg)
+        msg = ' '.join(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
