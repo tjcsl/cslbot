@@ -21,6 +21,7 @@ from requests import post
 
 
 class Token():
+
     def __init__(self, update):
         self.time = 0
         self.key = 'invalid'

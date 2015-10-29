@@ -148,3 +148,7 @@ class Tumblrs(Base):
     blogname = Column(UnicodeText)
     submitter = Column(UnicodeText)
     accepted = Column(Integer, default=0)
+
+
+class UrbanBlacklist(Base):
+    word = Column(UnicodeText)

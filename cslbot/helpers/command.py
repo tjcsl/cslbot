@@ -26,6 +26,7 @@ from .orm import Commands, Log
 
 
 class CommandData(object):
+
     def __init__(self):
         self.known_commands = {}
         self.disabled_commands = set()

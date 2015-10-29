@@ -26,14 +26,14 @@ def gen_fortune(send):
         send(line)
 
 
-def gen_urban(send, key):
-    defn, url = get_urban("", key)
+def gen_urban(send, session, key):
+    defn, url = get_urban("", session, key)
     send(defn)
     if url:
         send("See full definition at %s" % url)
 
 
-@Command('botspam', ['config'])
+@Command('botspam', ['config', 'db'])
 def cmd(send, _, args):
     """Abuses the bot.
     Syntax: {command}
@@ -42,5 +42,5 @@ def cmd(send, _, args):
         send(gen_lenny(msg))
     key = args['config']['api']['googleapikey']
     cmds = [lambda: gen_fortune(lenny_send),
-            lambda: gen_urban(lenny_send, key)]
+            lambda: gen_urban(lenny_send, args['db'], key)]
     choice(cmds)()

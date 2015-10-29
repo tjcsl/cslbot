@@ -17,29 +17,28 @@
 # USA.
 
 import json
-from pkg_resources import Requirement, resource_string
 from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from urllib.request import urlopen
 from requests import post, get
 from requests.exceptions import ReadTimeout
 from requests_oauthlib import OAuth1Session
+from .orm import UrbanBlacklist
 from . import urlutils
 
 
-def get_rand_word():
-    excludes = json.loads(resource_string(Requirement.parse('CslBot'), 'cslbot/static/urban-names.json').decode())
-    term = 'Joe'
-    while term in excludes:
+def get_rand_word(session):
+    term = None
+    while term is None or session.query(UrbanBlacklist).filter(UrbanBlacklist.word == term).count():
         url = urlopen('http://www.urbandictionary.com/random.php').geturl()
         term = url.split('=')[1].replace('+', ' ')
         term = unquote(term)
     return term
 
 
-def get_urban(msg, key):
+def get_urban(msg, session, key):
     if not msg:
-        msg = get_rand_word()
+        msg = get_rand_word(session)
         defn, url = get_urban_definition(msg, key)
         defn = "%s: %s" % (msg, defn)
     else:

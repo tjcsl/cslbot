@@ -209,6 +209,6 @@ def split_msg(msgs, max_len):
 def truncate_msg(msg, max_len):
     if len(msg.encode()) > max_len:
         msg = [x.encode() for x in msg]
-        msg, _ = split_msg(msg, max_len-3)
+        msg, _ = split_msg(msg, max_len - 3)
         return msg + "..."
     return msg

@@ -23,6 +23,7 @@ from . import backtrace, modutils
 
 
 class HookData(object):
+
     def __init__(self):
         self.known_hooks = {}
         self.disabled_hooks = set()

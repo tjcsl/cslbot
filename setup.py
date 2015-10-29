@@ -36,7 +36,6 @@ setup(
             'static/*.example',
             'static/slogans',
             'static/shakespeare-dictionary.json',
-            'static/urban-names.json',
             'static/wordlist',
             'templates/*.html'],
     },
