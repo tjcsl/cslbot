@@ -21,5 +21,5 @@ from ..helpers.hook import Hook
 def handle(send, _, args):
     if not args['config'].getboolean('feature', 'voiceactive'):
         return
-    if args['nick'] not in args['handler'].channels[args['target']].voiced():
+    if args['nick'].lower() not in args['handler'].channels[args['target']].voiced():
         args['handler'].connection.mode(args['target'], '+v %s' % args['nick'])
