@@ -44,7 +44,7 @@ class LogProcesser(object):
     def get_path(self, channel):
         if not abspath(join(self.outdir, channel)).startswith(self.outdir):
             raise Exception("Bailing out due to possible path traversal attack.")
-        return "%s/%s.log" % (self.outdir, channel)
+        return join(self.outdir, "%s.log" % channel)
 
     def check_day(self, row):
         # FIXME: print out new day messages for each day, not just the most recent one.
@@ -71,7 +71,7 @@ class LogProcesser(object):
 
 
 def get_id(outdir):
-    outfile = "%s/.dbid" % outdir
+    outfile = join(outdir, ".dbid")
     if not exists(outfile):
         return 0
     with open(outfile) as f:
@@ -79,7 +79,7 @@ def get_id(outdir):
 
 
 def save_id(outdir, new_id):
-    with open('%s/.dbid' % outdir, 'w') as f:
+    with open(join(outdir, '.dbid'), 'w') as f:
         f.write(str(new_id) + '\n')
 
 
@@ -129,7 +129,7 @@ def main(confdir="/etc/cslbot"):
     cmdargs = parser.parse_args()
     if not exists(cmdargs.outdir):
         makedirs(cmdargs.outdir)
-    lockfile = open('%s/.lock' % cmdargs.outdir, 'w')
+    lockfile = open(join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
     current_id = get_id(cmdargs.outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
