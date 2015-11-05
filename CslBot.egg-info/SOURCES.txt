@@ -169,6 +169,7 @@ cslbot/hooks/scores.py
 cslbot/hooks/stallman.py
 cslbot/hooks/understanding.py
 cslbot/hooks/url.py
+cslbot/hooks/voice.py
 cslbot/hooks/xkcd.py
 cslbot/static/config.example
 cslbot/static/groups.example
