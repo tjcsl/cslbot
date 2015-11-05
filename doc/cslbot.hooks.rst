@@ -108,6 +108,14 @@ cslbot.hooks.url module
     :undoc-members:
     :show-inheritance:
 
+cslbot.hooks.voice module
+-------------------------
+
+.. automodule:: cslbot.hooks.voice
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.hooks.xkcd module
 ------------------------
 

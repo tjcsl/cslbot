@@ -37,6 +37,7 @@ hooks: True
 capskick: True
 nickkick: True
 linkread: True
+voiceactive: True
 networktype: atheme
 servicestype: atheme
 [api]
