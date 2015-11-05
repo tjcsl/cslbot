@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from sys import path
-from os.path import dirname, exists, join
+from os.path import abspath, dirname, exists, join
 
 import argparse
 import configparser
@@ -41,8 +41,13 @@ class LogProcesser(object):
         for log in self.logs.values():
             log.close()
 
+    def get_path(self, channel):
+        if not abspath(join(self.outdir, channel)).startswith(self.outdir):
+            raise Exception("Bailing out due to possible path traversal attack.")
+        return "%s/%s.log" % (self.outdir, channel)
+
     def check_day(self, row):
-        # FIXME: print out new day messages for each day, not just the last one.
+        # FIXME: print out new day messages for each day, not just the most recent one.
         channel = row.target
         time = localtime(row.time)
         rowday = strftime('%d', time)
@@ -56,7 +61,7 @@ class LogProcesser(object):
 
     def write_log(self, channel, msg):
         if channel not in self.logs:
-            outfile = "%s/%s.log" % (self.outdir, channel)
+            outfile = self.get_path(channel)
             self.logs[channel] = open(outfile, 'a')
         self.logs[channel].write(msg + '\n')
 
