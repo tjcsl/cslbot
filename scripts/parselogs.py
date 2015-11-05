@@ -21,6 +21,7 @@ from os.path import abspath, dirname, exists, join
 import argparse
 import configparser
 import fcntl
+import re
 from time import strftime, localtime
 from os import makedirs
 
@@ -44,7 +45,7 @@ class LogProcesser(object):
     def get_path(self, channel):
         if not abspath(join(self.outdir, channel)).startswith(self.outdir):
             raise Exception("Bailing out due to possible path traversal attack.")
-        return join(self.outdir, "%s.log" % channel.replace('/', '_'))
+        return join(self.outdir, "%s.log" % re.sub('[^\w\-_\. ]', '_', channel))
 
     def check_day(self, row):
         # FIXME: print out new day messages for each day, not just the most recent one.
