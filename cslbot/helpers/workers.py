@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+import time
 import signal
 import threading
 import multiprocessing
@@ -51,6 +52,7 @@ class Workers():
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
+        self.defer(3600, False, self.check_active, handler, send)
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:
@@ -114,6 +116,19 @@ class Workers():
         admins = ": ".join(handler.admins)
         with handler.db.session_scope() as session:
             control.show_pending(session, admins, send, True)
+
+    def check_active(self, handler, send):
+        # Re-schedule check_active
+        self.defer(3600, False, self.check_active, handler, send)
+        if not self.handler.config.getboolean('feature', 'voiceactive'):
+            return
+        # Mark inactive after one hour.
+        active_time = time.time() - 3600
+        with handler.db.session_scope() as session:
+            for name, channel in handler.channels.items():
+                for nick in channel.voiced():
+                    if session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count():
+                        handler.connection.mode(name, '-v %s' % nick)
 
     def check_babble(self, handler, send):
         # Re-schedule check_babble
