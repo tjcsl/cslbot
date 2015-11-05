@@ -36,7 +36,7 @@ def toggle_module(type, name, enable=True):
     if not name:
         return "Missing argument."
     toggle = "enable_%s" % type if enable else "disable_%s" % type
-    return getattr(sys.modules["cslbot.helpers.%s" % type], toggle)(name[0])
+    return getattr(sys.modules["cslbot.helpers.%s" % type].registry, toggle)(name[0])
 
 
 def handle_disable(args):
