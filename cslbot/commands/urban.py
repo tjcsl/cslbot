@@ -24,7 +24,7 @@ def blacklist_word(session, msg):
     if session.query(UrbanBlacklist).filter(UrbanBlacklist.word == msg).count():
         return "Word %s already blacklisted" % msg
     session.add(UrbanBlacklist(word=msg))
-    return "Blacklisted word %s" % msg
+    return "Blacklisted %s" % msg
 
 
 def unblacklist_word(session, msg):
@@ -32,7 +32,7 @@ def unblacklist_word(session, msg):
     if term is None:
         return "Word %s is not blacklisted" % msg
     session.delete(term)
-    return "Removed blacklisting of word %s" % msg
+    return "Removed blacklisting of %s" % msg
 
 
 @Command('urban', ['config', 'db', 'is_admin', 'nick'])
