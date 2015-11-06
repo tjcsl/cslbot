@@ -48,7 +48,7 @@ def cmd(send, msg, args):
             setmode(channel, " +b ~q:%s!*@*" % user)
             defer_args = [channel, " -b ~q:%s!*@*" % user]
         elif args['config']['feature']['networktype'] == 'atheme':
-            setmode(channel, " +q %s!*@*" % user)
+            setmode(channel, " +q-v %s!*@* %s" % (user, user))
             defer_args = [channel, " -q %s!*@*" % user]
         else:
             raise Exception("networktype undefined or unknown in config.cfg")
