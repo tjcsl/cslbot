@@ -118,6 +118,10 @@ def cmd(send, msg, args):
     list_parser = subparser.add_parser('list')
     list_parser.set_defaults(func=list_stopwatch, nick=args['nick'], send=send)
 
+    if not msg:
+        send("Please specify a command.")
+        return
+
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
