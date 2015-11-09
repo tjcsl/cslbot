@@ -20,12 +20,12 @@ from os.path import dirname, exists, join
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
+import threading
 import unittest
 from unittest import mock
 import configparser
 import socket
 import irc.client
-import threading
 from cslbot.helpers import core, server
 
 
