@@ -122,8 +122,8 @@ class Workers():
         self.defer(3600, False, self.check_active, handler, send)
         if not self.handler.config.getboolean('feature', 'voiceactive'):
             return
-        # Mark inactive after 24 hours.
-        active_time = time.time() - 3600*24
+        # Mark inactive after 12 hours.
+        active_time = time.time() - 3600*12
         with handler.db.session_scope() as session:
             for name, channel in handler.channels.items():
                 for nick in list(channel.voiced()):
