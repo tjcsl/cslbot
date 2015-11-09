@@ -73,12 +73,11 @@ class BotTest(unittest.TestCase):
         sock.connect(('localhost', port))
         msg = '%s\nreload' % passwd
         sock.send(msg.encode())
-        output = []
-        while len(output) < 3:
-            resp = sock.recv(4096)
-            output.append(resp)
+        output = "".encode()
+        while len(output) < 20:
+            output += sock.recv(4096)
         sock.close()
-        self.reload_output = "".join([x.decode() for x in output])
+        self.reload_output = output.decode()
 
     def test_handle_msg(self):
         """Make sure the bot can handle a simple message."""
@@ -94,7 +93,6 @@ class BotTest(unittest.TestCase):
         # We need to run this in a seperate thread for it to work correctly.
         thread = threading.Thread(target=self.do_reload)
         thread.start()
-        # FIXME: sometimes this hangs, not clear why.
         thread.join()
         self.setup_handler()
         self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
