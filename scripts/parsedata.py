@@ -40,7 +40,7 @@ def get_quotes(session):
 
 
 def get_scores(session):
-    return session.query(Scores).order_by(Scores.score).all()
+    return session.query(Scores).order_by(Scores.score.desc()).all()
 
 
 def get_urls(session):
