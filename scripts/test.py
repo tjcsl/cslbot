@@ -94,6 +94,7 @@ class BotTest(unittest.TestCase):
         # We need to run this in a seperate thread for it to work correctly.
         thread = threading.Thread(target=self.do_reload)
         thread.start()
+        # FIXME: sometimes this hangs, not clear why.
         thread.join()
         self.setup_handler()
         self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
