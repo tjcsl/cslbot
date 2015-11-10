@@ -17,9 +17,13 @@
 
 from setuptools import setup, find_packages
 
+with open('README.rst', 'r') as f:
+    long_description = f.read()
+
 setup(
     name="CslBot",
     description="An easily extensible, modular irc bot.",
+    long_description=long_description,
     author="The TJHSST Computer Systems Lab",
     author_email="cslbot@pefoley.com",
     url="https://github.com/tjcsl/cslbot",
