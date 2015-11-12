@@ -36,6 +36,14 @@ cslbot.commands.acronym module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.active module
+-----------------------------
+
+.. automodule:: cslbot.commands.active
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.admins module
 -----------------------------
 

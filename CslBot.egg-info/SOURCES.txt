@@ -26,6 +26,7 @@ cslbot/commands/__init__.py
 cslbot/commands/about.py
 cslbot/commands/abuse.py
 cslbot/commands/acronym.py
+cslbot/commands/active.py
 cslbot/commands/admins.py
 cslbot/commands/babble.py
 cslbot/commands/bard.py
