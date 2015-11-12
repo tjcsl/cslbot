@@ -11,8 +11,8 @@ python:
 
 env:
     global:
-        secure: UmNKNYhivdYf9Nm85vnvkPz2ZCEI9GuoQVBwj32alqq1PjUNyIqiGn1pp+J9m/KEyyJTGh8Hlm+57SE0LM7U1/sfu4Rx7hDJNzAbwFo1SJN98nksIPz9CexeaYcKK6z2Cx5rcHi+x39rNNrykXXOMFhwrLuQmKcMrbecylW65j0=
         secure: ksEkBn8IqgTkE5CDSlvV6PxQ5Cvvls9MjU4fYwBtZw32uSarIK9qkR6dtgbSxN37vS/lRgDM2yIDedhMTUUnYtL+qfC3866DnwHgN9tHdvFqB7+bZGFTg1lnuJN9IW/CdCaDgNSkZjNqNY6t4lzdrAsEYR4KDsqYwjsbJEqZRkw=
+        secure: ip77J4FX2xc984JaYfA7g7topgCKndI+bGiAdAQD361YEufJEumNJyMaM+K+u8XMfb7AvQe7gsBUaKVZummlEGhAK3lWkPEJTXqktd9lTLoRF86mEOXaf5gL9R7W2T98FWt549n3kOtyOD6LlmBDL9u2YNckjzi76a7+mts3O2M=
 
 cache:
     directories:
