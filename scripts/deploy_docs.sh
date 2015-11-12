@@ -1,5 +1,6 @@
 #!/bin/bash
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+set -e
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.5" ]; then
   echo "Pushing docs to Github Pages"
 
   git config --global user.email "tjhsstBot@tjhsst.edu"
@@ -15,7 +16,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   if [ "$latest" -ge "$TRAVIS_BUILD_NUMBER" ]; then
       echo "Not overwriting newer docs."
   else
-      git push origin gh-pages |& sed s/${GH_TOKEN}/[secure]/g
+      git push origin gh-pages |& sed s/$GH_TOKEN/[secure]/g
       echo "Pushed docs to Github Pages"
   fi
 fi
