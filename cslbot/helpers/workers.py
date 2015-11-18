@@ -126,8 +126,8 @@ class Workers():
         active_time = time.time() - 3600*24
         with handler.db.session_scope() as session:
             for name in handler.channels.keys():
-                for nick in handler.voiced[name]:
-                    if session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
+                for nick, voiced in handler.voiced[name].items():
+                    if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
                         handler.connection.mode(name, '-v %s' % nick)
 
     def check_babble(self, handler, send):
