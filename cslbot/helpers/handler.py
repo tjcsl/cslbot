@@ -54,6 +54,8 @@ class BotHandler():
         self.kick_enabled = True
         self.caps = []
         self.abuselist = {}
+        self.voiced = collections.defaultdict(dict)
+        self.who_map = {}
         self.flood_lock = threading.Lock()
         self.last_msg_time = time.time()
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
@@ -68,6 +70,7 @@ class BotHandler():
         data['caps'] = self.caps[:]
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
+        data['voiced'] = self.voiced.copy()
         data['features'] = self.features.copy()
         data['uptime'] = self.uptime.copy()
         data['abuselist'] = self.abuselist.copy()
@@ -81,7 +84,9 @@ class BotHandler():
 
     def update_nickstatus(self, nick):
         if self.features['whox']:
-            self.connection.who('%s %%na' % nick)
+            tag = random.randint(0, 999)
+            self.who_map[tag] = nick
+            self.connection.who('%s %%naft,%d' % (nick, tag))
         elif self.config['feature']['servicestype'] == "ircservices":
             self.connection.privmsg('NickServ', 'STATUS %s' % nick)
         elif self.config['feature']['servicestype'] == "atheme":
@@ -214,7 +219,7 @@ class BotHandler():
         if target in self.channels:
             if nick in self.channels[target].opers():
                 flags |= 1
-            if nick in self.channels[target].voiced():
+            if nick in self.voiced[target]:
                 flags |= 2
         else:
             target = 'private'
@@ -290,10 +295,13 @@ class BotHandler():
 
     def do_mode(self, target, msg, nick, send):
         """ reop and handle guard violations """
+        mode_changes = modes.parse_channel_modes(msg)
+        for change in mode_changes:
+            if change[1] == 'v':
+                self.update_nickstatus(change[2])
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
-        mode_changes = list(filter(self.check_mode, modes.parse_channel_modes(msg)))
-        if mode_changes:
+        if list(filter(self.check_mode, mode_changes)):
             send("%s: :(" % nick, target=target)
             send("OP %s" % target, target='ChanServ')
             send("UNBAN %s" % target, target='ChanServ')
@@ -408,9 +416,13 @@ class BotHandler():
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
         if e.type == 'whospcrpl':
-            if e.arguments[0] in self.admins:
-                if e.arguments[1] != '0':
-                    self.admins[e.arguments[0]] = time.time()
+            # arguments: type,nick,modes,account
+            # properly track voiced status.
+            location = self.who_map[int(e.arguments[0])]
+            self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
+            if e.arguments[1] in self.admins:
+                if e.arguments[3] != '0':
+                    self.admins[e.arguments[1]] = time.time()
         elif e.type == 'account':
             if e.source.nick in self.admins:
                 if e.target == '*':
@@ -442,8 +454,7 @@ class BotHandler():
         elif e.type == 'nick':
             for channel in misc.get_channels(self.channels, e.target):
                 self.do_log(channel, e.source.nick, e.target, 'nick')
-            if e.target in self.admins:
-                self.update_nickstatus(e.target)
+            self.update_nickstatus(e.target)
             if identity.handle_nick(self, e):
                 for x in misc.get_channels(self.channels, e.target):
                     self.do_kick(send, x, e.target, "identity crisis")
@@ -497,7 +508,9 @@ class BotHandler():
         if e.type == 'join':
             if e.source.nick == c.real_nickname:
                 if self.features['whox']:
-                    c.who('%s %%na' % target)
+                    tag = random.randint(0, 999)
+                    self.who_map[tag] = target
+                    c.who('%s %%naft,%d' % (target, tag))
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
             elif self.features['extended-join']:
                 if e.source.nick in self.admins:

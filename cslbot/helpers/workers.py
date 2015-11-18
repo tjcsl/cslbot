@@ -125,8 +125,8 @@ class Workers():
         # Mark inactive after 24 hours.
         active_time = time.time() - 3600*24
         with handler.db.session_scope() as session:
-            for name, channel in handler.channels.items():
-                for nick in list(channel.voiced()):
+            for name in handler.channels.keys():
+                for nick in handler.voiced[name]:
                     if session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
                         handler.connection.mode(name, '-v %s' % nick)
 

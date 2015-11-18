@@ -26,6 +26,6 @@ def cmd(send, _, args):
         send("You're all alone!")
         return
     channel = args['handler'].channels[args['target']]
-    voiced = len(channel.voiced())
+    voiced = len([x for x in args['handler'].voiced[args['target']].values() if x])
     total = len(channel.users())
     send("%d active users, %d total users, %g%% active" % (voiced, total, voiced/total*100))
