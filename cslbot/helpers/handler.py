@@ -298,7 +298,7 @@ class BotHandler():
         mode_changes = modes.parse_channel_modes(msg)
         for change in mode_changes:
             if change[1] == 'v':
-                self.update_nickstatus(change[2])
+                self.voiced[change[2]] = True if change[0] == '+' else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
         if list(filter(self.check_mode, mode_changes)):
