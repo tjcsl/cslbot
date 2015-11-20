@@ -512,12 +512,17 @@ class BotHandler():
                     self.who_map[tag] = target
                     c.who('%s %%naft,%d' % (target, tag))
                 send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
-            elif self.features['extended-join']:
-                if e.source.nick in self.admins:
-                    if e.arguments[0] == '*':
-                        self.admins[e.source.nick] = None
-                    else:
-                        self.admins[e.source.nick] = time.time()
+            else:
+                if self.features['whox']:
+                    tag = random.randint(0, 999)
+                    self.who_map[tag] = e.source.nick
+                    c.who('%s %%naft,%d' % (e.source.nick, tag))
+                if self.features['extended-join']:
+                    if e.source.nick in self.admins:
+                        if e.arguments[0] == '*':
+                            self.admins[e.source.nick] = None
+                        else:
+                            self.admins[e.source.nick] = time.time()
             return
 
         if e.type == 'part':
