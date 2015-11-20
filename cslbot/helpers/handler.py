@@ -506,23 +506,21 @@ class BotHandler():
             return
 
         if e.type == 'join':
-            if e.source.nick == c.real_nickname:
-                if self.features['whox']:
-                    tag = random.randint(0, 999)
-                    self.who_map[tag] = target
+            if self.features['whox']:
+                tag = random.randint(0, 999)
+                self.who_map[tag] = target
+                if e.source.nick == c.real_nickname:
                     c.who('%s %%naft,%d' % (target, tag))
-                send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
-            else:
-                if self.features['whox']:
-                    tag = random.randint(0, 999)
-                    self.who_map[tag] = e.source.nick
+                else:
                     c.who('%s %%naft,%d' % (e.source.nick, tag))
-                if self.features['extended-join']:
-                    if e.source.nick in self.admins:
-                        if e.arguments[0] == '*':
-                            self.admins[e.source.nick] = None
-                        else:
-                            self.admins[e.source.nick] = time.time()
+            if e.source.nick == c.real_nickname:
+                send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
+            elif self.features['extended-join']:
+                if e.source.nick in self.admins:
+                    if e.arguments[0] == '*':
+                        self.admins[e.source.nick] = None
+                    else:
+                        self.admins[e.source.nick] = time.time()
             return
 
         if e.type == 'part':
