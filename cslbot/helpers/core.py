@@ -195,7 +195,7 @@ def init(confdir="/etc/cslbot"):
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(level=loglevel)
+    logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(message)s")
 
     bot = IrcBot(confdir)
 
