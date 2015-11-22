@@ -46,13 +46,11 @@ setup(
     exclude_package_data={
         '': ['templates/analytics.html']},
     install_requires=[
-        'SQLAlchemy>=1.0.0',
-        'requests>=2.4.0',
+        'SQLAlchemy>=1.0.0',  # bulk_insert_mappings
+        'requests>=2.4.0',  # ConnectTimeout
         'alembic',
         'geoip2',
-        'irc>=12.2',
-        # FIXME: remove once irc library is updated to fix
-        'jaraco.collections<1.2',
+        'irc>=12.2',  # WHOX support
         'jinja2',
         'lxml',
         'python-dateutil',

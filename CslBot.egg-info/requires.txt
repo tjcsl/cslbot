@@ -3,7 +3,6 @@ requests>=2.4.0
 alembic
 geoip2
 irc>=12.2
-jaraco.collections<1.2
 jinja2
 lxml
 python-dateutil
