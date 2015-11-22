@@ -40,10 +40,15 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     name = type(ex).__name__
     ctrlchan = config['core']['ctrlchan']
     prettyerrors = config['feature'].getboolean('prettyerrors')
+    # If we've disconnected, there isn't much point sending errors to the network.
+    if c.is_connected:
+        send = lambda targ, msg: c.privmsg(targ, msg)
+    else:
+        send = lambda _, msg: logging.error(msg)
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors and target != ctrlchan:
         if name == 'CommandFailedException':
-            c.privmsg(target, "%s -- %s" % (source, output))
+            send(target, "%s -- %s" % (source, output))
         else:
-            c.privmsg(target, "%s occured in %s. See the control channel for details." % (name, source))
-    c.privmsg(errtarget, 'Error in channel %s -- %s -- %s' % (target, source, msg))
+            send(target, "%s occured in %s. See the control channel for details." % (name, source))
+    send(errtarget, 'Error in channel %s -- %s -- %s' % (target, source, msg))
