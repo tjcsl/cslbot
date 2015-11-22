@@ -73,7 +73,7 @@ def get_title(url):
                 title = ctype
             else:
                 title = "Title Not Found"
-    except socket.timeout as e:
+    except (socket.timeout, ssl.CertificateError) as e:
         raise CommandFailedException(e)
     except HTTPError as e:
         title = 'HTTP Error %d' % e.code
