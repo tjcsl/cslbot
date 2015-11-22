@@ -180,6 +180,7 @@ class IrcBot(bot.SingleServerIRCBot):
                     if self.config['feature'].getboolean('server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
+                logging.info("Successfully reloaded")
             except Exception as ex:
                 backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
