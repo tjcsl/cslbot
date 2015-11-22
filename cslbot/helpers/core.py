@@ -15,9 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import sys
-if sys.version_info < (3, 4):
-    # Dependency on importlib.reload
-    raise Exception("Need Python 3.4 or higher.")
+if sys.version_info < (3, 4, 3):
+    # Dependency on importlib.reload and urlopen(context=context)
+    raise Exception("Need Python 3.4.3 or higher.")
 import argparse
 import functools
 import logging

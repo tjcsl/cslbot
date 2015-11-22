@@ -19,7 +19,7 @@ import socket
 import ssl
 import re
 from lxml.html import parse
-from urllib import request
+from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from urllib.parse import urlsplit, urlunsplit
 from requests import post
@@ -55,11 +55,7 @@ def get_title(url):
         url = url.encode('ascii', 'replace').decode()
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        # We don't care if the cert is valid or not.
-        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        # FIXME: use urlopen(context=context) once 3.4.3 is released to travis.
-        opener = request.build_opener(request.HTTPSHandler(context=context))
-        req = opener.open(request.Request(url, headers=headers), timeout=10)
+        req = urlopen(Request(url, headers=headers), timeout=10, context=ssl.create_default_context())
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
