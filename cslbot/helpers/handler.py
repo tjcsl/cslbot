@@ -195,16 +195,16 @@ class BotHandler():
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':
-                self.connection.action(target, i)
+                self.rate_limited_send('action', target, i)
             else:
-                self.rate_limited_send(target, i)
+                self.rate_limited_send('privmsg', target, i)
 
-    def rate_limited_send(self, target, msg):
+    def rate_limited_send(self, type, target, msg):
         with self.flood_lock:
             elapsed = time.time() - self.last_msg_time
             # Don't send messages more then once every 0.5 sec.
             time.sleep(max(0, 0.5 - elapsed))
-            self.connection.privmsg(target, msg)
+            getattr(self.connection, type)(target, msg)
             self.last_msg_time = time.time()
 
     def do_log(self, target, nick, msg, msgtype):
