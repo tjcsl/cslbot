@@ -56,12 +56,13 @@ def cmd(send, msg, args):
             return
         score = session.query(Scores).filter(Scores.nick == name).scalar()
         if score is not None:
+            plural = '' if abs(score.score) == 1 else 's'
             if name == args['botnick'].lower():
                 emote = ':)' if score.score > 0 else ':(' if score.score < 0 else ':|'
-                output = 'has %s points! %s' % (score.score, emote)
+                output = 'has %s point%s! %s' % (score.score, plural, emote)
                 send(output, 'action')
             else:
-                send("%s has %i points!" % (name, score.score))
+                send("%s has %i points!" % (name, plural, score.score))
         else:
             send("Nobody cares about %s" % name)
     else:
@@ -69,4 +70,5 @@ def cmd(send, msg, args):
             send("Nobody cares about anything =(")
         else:
             query = session.query(Scores).order_by(func.random()).first()
-            send("%s has %i point%s!" % (query.nick, query.score, '' if abs(query.score) == 1 else 's'))
+            plural = '' if abs(query.score) == 1 else 's'
+            send("%s has %i point%s!" % (query.nick, query.score, plural))
