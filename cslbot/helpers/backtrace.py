@@ -18,6 +18,7 @@
 
 import logging
 import traceback
+from irc.client import ServerNotConnectedError
 from os.path import basename
 
 
@@ -41,10 +42,10 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     ctrlchan = config['core']['ctrlchan']
     prettyerrors = config['feature'].getboolean('prettyerrors')
     # If we've disconnected, there isn't much point sending errors to the network.
-    if c.is_connected:
-        send = lambda targ, msg: c.privmsg(targ, msg)
-    else:
+    if isinstance(ex, ServerNotConnectedError):
         send = lambda _, msg: logging.error(msg)
+    else:
+        send = lambda targ, msg: c.privmsg(targ, msg)
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors and target != ctrlchan:
         if name == 'CommandFailedException':
