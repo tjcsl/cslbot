@@ -80,7 +80,9 @@ def do_nuke(c, nick, target, channel):
 def ping(ping_map, c, e, pongtime):
     if e.arguments[1] == 'No such nick/channel':
         nick = e.arguments[0]
-        target = ping_map.pop(nick) if nick in ping_map else nick
+        if nick not in ping_map:
+            return
+        target = ping_map.pop(nick)
         c.privmsg(target, "%s: %s" % (e.arguments[1], e.arguments[0]))
         return
     nick = e.source.split('!')[0]
