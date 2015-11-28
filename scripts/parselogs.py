@@ -63,7 +63,7 @@ class LogProcesser(object):
     def write_log(self, channel, msg):
         if channel not in self.logs:
             outfile = self.get_path(channel)
-            self.logs[channel] = open(outfile, 'a')
+            self.logs[channel] = open(outfile, 'a', encoding='utf-8')
         self.logs[channel].write(msg + '\n')
 
     def process_line(self, row):
