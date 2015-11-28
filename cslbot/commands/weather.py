@@ -82,20 +82,28 @@ def set_default(nick, location, session, send, apikey):
 def get_weather(cmdargs, send, apikey):
     if cmdargs.string.startswith("-"):
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string[1:])).json()
-        if 'current_observation' not in data:
+        if 'current_observation' in data:
+            data = {'display_location': {'full': cmdargs.string[1:]},
+                    'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92.6', 'relative_humidity': '60%', 'pressure_in': '29.98',
+                    'wind_string': 'Calm'}
+            forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
+                            'high': {'fahrenheit': '3841'}, 'low': {'fahrenheit': '-6666'}}
+            alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
+        elif 'results' in data['response']:
+            send("%d results found, please be more specific" % len(data['response']['results']))
+            return False
+        else:
             send("Invalid or Ambiguous Location")
             return False
-        data = {'display_location': {'full': cmdargs.string[1:]},
-                'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92.6', 'relative_humidity': '60%', 'pressure_in': '29.98', 'wind_string': 'Calm'}
-        forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
-                        'high': {'fahrenheit': '3841'}, 'low': {'fahrenheit': '-6666'}}
-        alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
     else:
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
         forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
         alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, cmdargs.string)).json()
         if 'current_observation' in data:
             data = data['current_observation']
+        elif 'results' in data['response']:
+            send("%d results found, please be more specific" % len(data['response']['results']))
+            return False
         else:
             send("Invalid or Ambiguous Location")
             return False
@@ -113,23 +121,27 @@ def get_weather(cmdargs, send, apikey):
         forecastdata['high']['fahrenheit'],
         forecastdata['low']['fahrenheit'])
     send(current)
-    send("Forecast: " + forecast)
+    send("Forecast: %s" % forecast)
     if alertdata['alerts']:
         alertlist = []
         for alert in alertdata['alerts']:
             alertlist.append("%s, expires %s" % (
                 alert['description'],
                 alert['expires']))
-        send("Weather Alerts: " + ', '.join(alertlist))
+        send("Weather Alerts: %" % ', '.join(alertlist))
     return True
 
 
 def get_forecast(cmdargs, send, apikey):
     forecastdata = get('http://api.wunderground.com/api/%s/forecast10day/q/%s.json' % (apikey, cmdargs.string)).json()
-    if 'forecast' not in forecastdata:
+    if 'forecast' in forecastdata:
+        forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
+    elif 'results' in forecastdata['response']:
+        send("%d results found, please be more specific" % len(forecastdata['response']['results']))
+        return False
+    else:
         send("Invalid or Ambiguous Location")
         return False
-    forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
     for day in forecastdata:
         if (day['date']['day'], day['date']['month'], day['date']['year']) == (cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
             forecast = '%s, High: %s, Low: %s' % (
@@ -143,12 +155,16 @@ def get_forecast(cmdargs, send, apikey):
 
 def get_hourly(cmdargs, send, apikey):
     forecastdata = get('http://api.wunderground.com/api/%s/hourly10day/q/%s.json' % (apikey, cmdargs.string)).json()
-    if 'hourly_forecast' not in forecastdata:
+    if 'hourly_forecast' in forecastdata:
+        forecastdata = forecastdata['hourly_forecast']
+    elif 'results' in forecastdata['response']:
+        send("%d results found, please be more specific" % len(forecastdata['response']['results']))
+        return False
+    else:
         send("Invalid or Ambiguous Location")
         return False
     if not cmdargs.date:
         cmdargs.date = datetime.datetime.now()
-    forecastdata = forecastdata['hourly_forecast']
     for hour in forecastdata:
         # wunderground's API returns strings rather than ints for the date for some reason, so casting is needed here
         if (int(hour['FCTTIME']['hour']), int(hour['FCTTIME']['mday']), int(hour['FCTTIME']['mon']), int(hour['FCTTIME']['year'])) == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
@@ -163,7 +179,7 @@ def get_hourly(cmdargs, send, apikey):
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
 def cmd(send, msg, args):
     """Gets the weather.
-    Syntax: {command} <[--date date] [--hour hour] location|--set default>
+    Syntax: {command} <[--date (date)] [--hour (hour)] (location)|--set (default)>
     Powered by Weather Underground, www.wunderground.com
     """
     apikey = args['config']['api']['weatherapikey']
