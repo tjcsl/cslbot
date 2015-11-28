@@ -62,7 +62,7 @@ def cmd(send, msg, args):
                 output = 'has %s point%s! %s' % (score.score, plural, emote)
                 send(output, 'action')
             else:
-                send("%s has %i points!" % (name, plural, score.score))
+                send("%s has %i points%s!" % (name, score.score, plural))
         else:
             send("Nobody cares about %s" % name)
     else:
