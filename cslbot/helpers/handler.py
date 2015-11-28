@@ -303,8 +303,10 @@ class BotHandler():
         # FIXME: handle -o+o msbobBot msbobBot
         if list(filter(self.check_mode, mode_changes)):
             send("%s: :(" % nick, target=target)
-            send("OP %s" % target, target='ChanServ')
-            send("UNBAN %s" % target, target='ChanServ')
+            # Assume bot admins know what they're doing.
+            if not self.is_admin(None, nick):
+                send("OP %s" % target, target='ChanServ')
+                send("UNBAN %s" % target, target='ChanServ')
 
         if len(self.guarded) > 0:
             # if user is guarded and quieted, devoiced, or deopped, fix that
