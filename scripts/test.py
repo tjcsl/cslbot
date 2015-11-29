@@ -21,6 +21,7 @@ if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
 import threading
+import logging
 import unittest
 from unittest import mock
 import configparser
@@ -29,12 +30,29 @@ import irc.client
 from cslbot.helpers import core, server
 
 
+def config_mock(config, section, option):
+    ret = int(config[section][option])
+    # Avoid port conflicts with running bot
+    if section == 'core' and option == 'serverport':
+        return ret + 1000
+    return ret
+
+
+def connect_mock(conn, *args, **kwargs):
+    conn.real_nickname = 'testBot'
+    conn.handlers = {}
+    conn.socket = mock.MagicMock()
+
+
 class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         confdir = join(dirname(__file__), '..')
-        mock.patch.object(configparser.ConfigParser, 'getint', cls.config_mock).start()
+        mock.patch.object(configparser.ConfigParser, 'getint', config_mock).start()
+        mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
+        # FIXME: don't request oauth tokens
+        # mock.patch('cslbot.helpers.tokens.update_all_tokens').start()
         cls.bot = core.IrcBot(confdir)
         cls.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
@@ -47,18 +65,9 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def setup_handler(cls):
-        cls.bot.handler.connection = mock.MagicMock(real_nickname='testBot')
         cls.bot.handler.channels = {'#test-channel': mock.MagicMock()}
         cls.bot.handler.is_ignored = mock.MagicMock(return_value=False)
         cls.bot.handler.db = mock.MagicMock()
-
-    @staticmethod
-    def config_mock(config, section, option):
-        ret = int(config[section][option])
-        # Avoid port conflicts with running bot
-        if section == 'core' and option == 'serverport':
-            return ret + 1000
-        return ret
 
     def restart_workers(self):
         """Force all the workers to restart so we get the log message."""
@@ -98,4 +107,5 @@ class BotTest(unittest.TestCase):
         self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     unittest.main()
