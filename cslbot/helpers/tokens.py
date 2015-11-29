@@ -47,6 +47,6 @@ token_cache = {'translate': Token(update_translate_token)}
 
 def update_all_tokens(config):
     for token in token_cache.values():
-        # The cache is valid for 10 minutes, refresh it only if it will expire in 5 seconds or less.
-        if time.time() - token.time > 10 * 60 - 5:
+        # The cache is valid for 10 minutes, refresh it only if it will expire in 1 minute or less.
+        if time.time() - token.time > 9 * 60:
             token.update(config, token)

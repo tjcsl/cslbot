@@ -22,7 +22,7 @@ import multiprocessing
 import concurrent.futures
 from collections import namedtuple
 from threading import Timer
-from . import backtrace, babble, control
+from . import backtrace, babble, control, tokens
 from .orm import Babble_last, Log
 from sqlalchemy import or_
 
@@ -46,10 +46,10 @@ class Workers():
         with executor_lock:
             self.executor = concurrent.futures.ThreadPoolExecutor(4)
         self.handler = handler
-        # Set-up notifications for pending admin approval.
 
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+        self.defer(0, False, self.update_tokens, handler)
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
@@ -116,6 +116,11 @@ class Workers():
         admins = ": ".join(handler.admins)
         with handler.db.session_scope() as session:
             control.show_pending(session, admins, send, True)
+
+    def update_tokens(self, handler):
+        # Re-schedule update_tokens
+        self.defer(600, False, self.update_tokens, handler)
+        tokens.update_all_tokens(handler.config)
 
     def check_active(self, handler, send):
         # Re-schedule check_active
