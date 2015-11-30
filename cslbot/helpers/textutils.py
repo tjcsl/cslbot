@@ -252,15 +252,6 @@ def transform_text(msg):
     return data['sentence'] if data['ec'] == 0 else data['em']
 
 
-def gen_paraphrase(msg):
-    # Don't die if no api key
-    if token_cache['translate'] == 'invalid':
-        return msg
-    headers = {'Authorization': 'Bearer %s' % token_cache['translate']}
-    data = get('http://api.microsofttranslator.com/V3/json/paraphrase', params={'language': 'en', 'sentence': transform_text(msg)}, headers=headers).json()
-    return choice(data['paraphrases']) if data['ec'] == 0 else data['em']
-
-
 def gen_translate(msg, outputlang='en'):
     # Don't die if no api key
     if token_cache['translate'] == 'invalid':
@@ -325,5 +316,4 @@ output_filters = {
     "underscore": gen_underscore,
     "translate": gen_translate,
     "randtrans": gen_random_translate,
-    "paraphrase": gen_paraphrase
 }

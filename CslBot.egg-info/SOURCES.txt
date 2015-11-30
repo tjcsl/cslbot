@@ -85,7 +85,6 @@ cslbot/commands/msg.py
 cslbot/commands/nicks.py
 cslbot/commands/note.py
 cslbot/commands/nuke.py
-cslbot/commands/paraphrase.py
 cslbot/commands/part.py
 cslbot/commands/pester.py
 cslbot/commands/ping.py
