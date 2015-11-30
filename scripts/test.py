@@ -20,7 +20,6 @@ from os.path import dirname, exists, join
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-import threading
 import logging
 import unittest
 from unittest import mock
@@ -75,19 +74,6 @@ class BotTest(unittest.TestCase):
         self.bot.handler.workers.__init__(self.bot.handler)
         self.bot.server = server.init_server(self.bot)
 
-    def do_reload(self):
-        sock = socket.socket()
-        port = self.bot.config.getint('core', 'serverport')
-        passwd = self.bot.config['auth']['ctrlpass']
-        sock.connect(('localhost', port))
-        msg = '%s\nreload' % passwd
-        sock.send(msg.encode())
-        output = "".encode()
-        while len(output) < 20:
-            output += sock.recv(4096)
-        sock.close()
-        self.reload_output = output.decode()
-
     def test_handle_msg(self):
         """Make sure the bot can handle a simple message."""
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
@@ -99,12 +85,18 @@ class BotTest(unittest.TestCase):
 
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
-        # We need to run this in a seperate thread for it to work correctly.
-        thread = threading.Thread(target=self.do_reload)
-        thread.start()
-        thread.join()
+        sock = socket.socket()
+        port = self.bot.config.getint('core', 'serverport')
+        passwd = self.bot.config['auth']['ctrlpass']
+        sock.connect(('localhost', port))
+        msg = '%s\nreload' % passwd
+        sock.send(msg.encode())
+        output = "".encode()
+        while len(output) < 20:
+            output += sock.recv(4096)
+        sock.close()
         self.setup_handler()
-        self.assertEqual(self.reload_output, "Password: \nAye Aye Capt'n\n")
+        self.assertEqual(output.decode(), "Password: \nAye Aye Capt'n\n")
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

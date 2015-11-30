@@ -22,31 +22,31 @@ from requests import post
 
 class Token():
 
-    def __init__(self, update):
+    def __init__(self):
         self.time = 0
         self.key = 'invalid'
-        self.update = update
 
     def __str__(self):
         return self.key
 
 
-def update_translate_token(config, token):
-    client_id, secret = config['api']['translateid'], config['api']['translatesecret']
-    # Don't die if we didn't setup the translate api.
-    if not client_id:
-        token.key = 'invalid'
-        return
-    postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
-    data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
-    token.key = data['access_token']
-    token.time = time.time()
+class TranslateToken(Token):
+    def update(self, config):
+        client_id, secret = config['api']['translateid'], config['api']['translatesecret']
+        # Don't die if we didn't setup the translate api.
+        if not client_id:
+            self.key = 'invalid'
+            return
+        postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
+        data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
+        self.key = data['access_token']
+        self.time = time.time()
 
-token_cache = {'translate': Token(update_translate_token)}
+token_cache = {'translate': TranslateToken()}
 
 
 def update_all_tokens(config):
     for token in token_cache.values():
         # The cache is valid for 10 minutes, refresh it only if it will expire in 1 minute or less.
         if time.time() - token.time > 9 * 60:
-            token.update(config, token)
+            token.update(config)

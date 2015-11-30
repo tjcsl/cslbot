@@ -57,13 +57,13 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def get_data(self):
         SIZE = 4096
-        msg = ""
+        msg = "".encode()
         while True:
-            data = self.request.recv(SIZE).decode()
+            data = self.request.recv(SIZE)
             msg += data
             if len(data) != SIZE:
                 break
-        return msg
+        return msg.decode()
 
     def handle(self):
         try:
