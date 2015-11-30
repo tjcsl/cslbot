@@ -197,6 +197,8 @@ def init(confdir="/etc/cslbot"):
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(message)s")
+    # We don't need a bunch of output from the requests module.
+    logging.getLogger("requests").setLevel(logging.WARNING)
 
     bot = IrcBot(confdir)
 
