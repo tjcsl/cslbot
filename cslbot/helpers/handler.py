@@ -25,7 +25,7 @@ import random
 import time
 import threading
 from irc import modes
-from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, workers
+from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, tokens, workers
 
 
 class BotHandler():
@@ -374,6 +374,7 @@ class BotHandler():
         | Join the primary channel.
         | Join the control channel.
         """
+        tokens.update_all_tokens(self.config)
         self.connection.join(self.config['core']['channel'])
         self.connection.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         # We use this to pick up info on admins who aren't currently in a channel.

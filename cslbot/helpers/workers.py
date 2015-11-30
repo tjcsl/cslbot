@@ -49,7 +49,7 @@ class Workers():
 
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-        self.defer(0, False, self.update_tokens, handler)
+        self.defer(60, False, self.update_tokens, handler)
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
