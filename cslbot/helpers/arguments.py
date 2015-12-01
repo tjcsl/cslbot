@@ -15,8 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import argparse
-import dateutil.parser
 import re
+import dateutil.parser
 from requests import get
 
 

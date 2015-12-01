@@ -199,12 +199,12 @@ class BotHandler():
             else:
                 self.rate_limited_send('privmsg', target, i)
 
-    def rate_limited_send(self, type, target, msg):
+    def rate_limited_send(self, mtype, target, msg):
         with self.flood_lock:
             elapsed = time.time() - self.last_msg_time
             # Don't send messages more then once every 0.5 sec.
             time.sleep(max(0, 0.5 - elapsed))
-            getattr(self.connection, type)(target, msg)
+            getattr(self.connection, mtype)(target, msg)
             self.last_msg_time = time.time()
 
     def do_log(self, target, nick, msg, msgtype):
@@ -301,7 +301,7 @@ class BotHandler():
                 self.voiced[target][change[2]] = True if change[0] == '+' else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
-        if list(filter(self.check_mode, mode_changes)):
+        if [x for x in mode_changes if self.check_mode(x)]:
             send("%s: :(" % nick, target=target)
             # Assume bot admins know what they're doing.
             if not self.is_admin(None, nick):

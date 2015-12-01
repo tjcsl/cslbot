@@ -19,9 +19,9 @@
 import functools
 import re
 import threading
-from . import modutils, backtrace
 from inspect import getdoc
 from datetime import datetime, timedelta
+from . import modutils, backtrace
 from .orm import Commands, Log
 
 
@@ -109,7 +109,6 @@ def check_command(cursor, nick, msg, target):
 class Command():
 
     def __init__(self, names, args=[], limit=0, admin=False):
-        global _known_commands
         self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -139,7 +138,7 @@ class Command():
         return wrapper
 
     def run(self, send, msg, args, command, nick, target, handler):
-        if any(map(registry.is_disabled, self.names)):
+        if [x for x in self.names if registry.is_disabled(x)]:
             send("Sorry, that command is disabled.")
         else:
             self.target = target

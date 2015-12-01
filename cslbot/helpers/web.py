@@ -17,9 +17,9 @@
 # USA.
 
 import json
-from simplejson import JSONDecodeError
 from urllib.parse import unquote
 from urllib.request import urlopen
+from simplejson import JSONDecodeError
 from requests import post, get
 from requests.exceptions import ReadTimeout
 from requests_oauthlib import OAuth1Session
@@ -86,13 +86,13 @@ def create_issue(title, desc, nick, repo, apikey):
         return "Unknown error", False
 
 
-def post_tumblr(config, blog, post):
+def post_tumblr(config, blog, body):
     tumblr = OAuth1Session(
         client_key=config['api']['tumblrconsumerkey'],
         client_secret=config['api']['tumblrconsumersecret'],
         resource_owner_key=config['api']['tumblroauthkey'],
         resource_owner_secret=config['api']['tumblroauthsecret'])
-    data = {'body': post}
+    data = {'body': body}
     response = tumblr.post('https://api.tumblr.com/v2/blog/%s/post' % blog, params={'type': 'text'}, data=data).json()
     if response['meta']['status'] == 201:
         return "Posted!", True

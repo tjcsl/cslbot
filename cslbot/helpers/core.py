@@ -15,9 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import sys
-if sys.version_info < (3, 4, 3):
-    # Dependency on importlib.reload and urlopen(context=context)
-    raise Exception("Need Python 3.4.3 or higher.")
 import argparse
 import functools
 import logging
@@ -29,6 +26,9 @@ import ssl
 import threading
 import traceback
 from os import path
+if sys.version_info < (3, 4, 3):
+    # Dependency on importlib.reload and urlopen(context=context)
+    raise Exception("Need Python 3.4.3 or higher.")
 from irc import bot, connection, client
 from . import backtrace, config, handler, misc, reloader, server
 
@@ -196,22 +196,22 @@ def init(confdir="/etc/cslbot"):
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(message)s")
+    logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(module)s:%(message)s")
     # We don't need a bunch of output from the requests module.
     logging.getLogger("requests").setLevel(logging.WARNING)
 
-    bot = IrcBot(confdir)
+    cslbot = IrcBot(confdir)
 
     try:
-        bot.start()
+        cslbot.start()
     except KeyboardInterrupt:
         # KeyboardInterrupt means someone tried to ^C, so shut down the bot
-        bot.disconnect('Bot received a Ctrl-C')
-        bot.shutdown_mp()
+        cslbot.disconnect('Bot received a Ctrl-C')
+        cslbot.shutdown_mp()
         sys.exit(0)
     except Exception as ex:
-        bot.shutdown_mp(False)
-        logging.error("The bot died! %s" % ex)
+        cslbot.shutdown_mp(False)
+        logging.error("The bot died! %s", ex)
         output = "".join(traceback.format_exc()).strip()
         for line in output.split('\n'):
             logging.error(line)

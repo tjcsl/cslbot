@@ -17,9 +17,9 @@
 # USA.
 
 from contextlib import contextmanager
+from time import time
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from time import time
 from .orm import setup_db, Log
 
 
@@ -51,7 +51,7 @@ class Sql():
         finally:
             session.close()
 
-    def log(self, source, target, flags, msg, type):
+    def log(self, source, target, flags, msg, mtype):
         """ Logs a message to the database
 
         | source: The source of the message.
@@ -61,7 +61,7 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=type, time=time())
+        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=time())
         with self.session_scope() as session:
             session.add(entry)
             session.flush()

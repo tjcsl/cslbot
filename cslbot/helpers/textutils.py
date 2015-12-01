@@ -19,11 +19,11 @@
 import json
 import re
 import string
+from html import escape, unescape
+from random import random, choice, randrange, randint
 from pkg_resources import Requirement, resource_string
 from requests import get, post
 from lxml import etree, html
-from html import escape, unescape
-from random import random, choice, randrange, randint
 from .tokens import token_cache
 
 slogan_cache = []
@@ -114,10 +114,10 @@ def gen_morse(msg):
                    ")": "-.--.-", "&": ".-...", ":": "---...", ";": "-.-.-.", "=": "-...-",
                    "+": ".-.-.", "-": "-....-", "_": "..--.-", '"': ".-..-.", "$": "...-..-", "@": ".--.-."}
     morse = ""
-    for i in msg:
-        try:
-            morse += morse_codes[i.lower()] + " "
-        except Exception:
+    for i in msg.lower():
+        if i in morse_codes:
+            morse += morse_codes[i] + " "
+        else:
             morse += "? "
     return morse
 

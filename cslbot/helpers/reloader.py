@@ -15,8 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import importlib
 import logging
-from . import config, command, handler, hook, misc, modutils
 from os.path import exists, join
+from . import config, command, handler, hook, misc, modutils
 
 
 def do_log(c, target, msg):
@@ -24,9 +24,9 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(config, confdir, send=logging.error):
-    modutils.init_aux(config['core'])
-    modutils.init_groups(config['groups'], confdir)
+def load_modules(cfg, confdir, send=logging.error):
+    modutils.init_aux(cfg['core'])
+    modutils.init_groups(cfg['groups'], confdir)
     errored_commands = command.registry.scan_for_commands()
     if errored_commands:
         logging.error("Failed to load some commands.")

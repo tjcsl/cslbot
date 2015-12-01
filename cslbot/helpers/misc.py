@@ -20,15 +20,15 @@ import subprocess
 import logging
 import re
 import os
-import pkg_resources
 from os.path import exists, join
 from random import choice, random
 from datetime import timedelta
+import pkg_resources
 from . import orm
 
 
 def get_users(args):
-    return (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
+    return list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
 
 
 def parse_time(time):
@@ -147,10 +147,10 @@ def list_fortunes(offensive=False):
     if offensive:
         cmd.append('-o')
     output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
-    output = re.sub('[0-9]{1,2}\.[0-9]{2}%', '', output)
+    output = re.sub(r'[0-9]{1,2}\.[0-9]{2}%', '', output)
     fortunes = [x.strip() for x in output.splitlines()[1:]]
     if offensive:
-        fortunes = map(lambda x: 'off/%s' % x, fortunes)
+        fortunes = ['off/%s' % x for x in fortunes]
     return sorted(fortunes)
 
 

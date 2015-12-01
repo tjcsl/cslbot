@@ -18,10 +18,10 @@ import json
 import socket
 import ssl
 import re
-from lxml.html import parse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from urllib.parse import urlsplit, urlunsplit
+from lxml.html import parse
 from requests import post
 from requests.exceptions import ConnectTimeout
 from . import misc
@@ -43,13 +43,17 @@ def get_short(msg, key):
         return data['id']
 
 
+def ensure_prefix(url):
+    url = url.split('://', maxsplit=1)
+    if len(url) == 1:
+        url = ['http', url[0]]
+    return "://".join(url)
+
+
 def get_title(url):
     title = 'No Title Found'
     try:
-        url = url.split('://', maxsplit=1)
-        if len(url) == 1:
-            url = ['http', url[0]]
-        url = "://".join(url)
+        url = ensure_prefix(url)
         url = urlsplit(url)
         url = urlunsplit((url[0], url[1].encode('idna').decode(), url[2], url[3], url[4]))
         url = url.encode('ascii', 'replace').decode()

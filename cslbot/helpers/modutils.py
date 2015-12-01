@@ -18,11 +18,11 @@
 
 import configparser
 import sys
-from pkg_resources import Requirement, resource_filename, resource_string
 from os.path import basename, join
 import importlib
 import logging
 from glob import glob
+from pkg_resources import Requirement, resource_filename, resource_string
 from . import backtrace
 
 GROUPS = {'commands': set(), 'hooks': set()}
@@ -123,7 +123,7 @@ def safe_reload(modname):
         importlib.reload(modname)
         return None
     except Exception as e:
-        logging.error("Failed to reimport module: %s" % modname)
+        logging.error("Failed to reimport module: %s", modname)
         msg, _ = backtrace.output_traceback(e)
         return msg
 
@@ -137,7 +137,7 @@ def safe_load(modname):
         importlib.import_module(modname)
         return None
     except Exception as ex:
-        logging.error("Failed to import module: %s" % modname)
+        logging.error("Failed to import module: %s", modname)
         msg, _ = backtrace.output_traceback(ex)
         return msg
 
@@ -146,7 +146,7 @@ def scan_and_reimport(mod_type):
     """ Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []
-    for mod in (mod_enabled + mod_disabled):
+    for mod in mod_enabled + mod_disabled:
         if mod in sys.modules:
             msg = safe_reload(sys.modules[mod])
         else:

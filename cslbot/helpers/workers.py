@@ -21,10 +21,9 @@ import threading
 import multiprocessing
 import concurrent.futures
 from collections import namedtuple
-from threading import Timer
+from sqlalchemy import or_
 from . import backtrace, babble, control, tokens
 from .orm import Babble_last, Log
-from sqlalchemy import or_
 
 worker_lock = threading.Lock()
 executor_lock = threading.Lock()
@@ -72,7 +71,7 @@ class Workers():
     def run_action(self, func, args):
         try:
             thread = threading.current_thread()
-            thread_id = re.match('Thread-\d+', thread.name).group(0)
+            thread_id = re.match(r'Thread-\d+', thread.name).group(0)
             thread.name = '%s running %s' % (thread_id, func.__name__)
             func(*args)
         except Exception as ex:
@@ -80,7 +79,7 @@ class Workers():
             backtrace.handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
 
     def defer(self, t, run_on_cancel, func, *args):
-        event = Timer(t, self.run_action, kwargs={'func': func, 'args': args})
+        event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
         with worker_lock:

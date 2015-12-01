@@ -14,9 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import time
 from requests import get
 from .urlutils import get_title, get_short
-import time
 
 
 def check_exists(subreddit):
