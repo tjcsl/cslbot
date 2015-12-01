@@ -17,13 +17,13 @@
 
 from sys import path
 from os.path import dirname, exists, join
+import configparser
+from alembic import command, config
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-import configparser
-from alembic import command, config
 from pkg_resources import Requirement, resource_filename
 
 

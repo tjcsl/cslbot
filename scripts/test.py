@@ -16,16 +16,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from sys import path
 from os.path import dirname, exists, join
-# Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
-
 import logging
 import unittest
 from unittest import mock
 import configparser
 import socket
 import irc.client
+# Make this work from git.
+if exists(join(dirname(__file__), '../.git')):
+    path.insert(0, join(dirname(__file__), '..'))
+
 from cslbot.helpers import core, server
 
 
@@ -37,7 +37,7 @@ def config_mock(config, section, option):
     return ret
 
 
-def connect_mock(conn, *args, **kwargs):
+def connect_mock(conn, *args, **_):
     conn.real_nickname = 'testBot'
     conn.handlers = {}
     conn.socket = mock.MagicMock()

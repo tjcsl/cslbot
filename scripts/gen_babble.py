@@ -16,13 +16,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from os.path import exists, dirname, join
 from sys import path
+import argparse
+import configparser
+import time
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-import argparse
-import configparser
-import time
 from cslbot.helpers import babble, sql
 
 

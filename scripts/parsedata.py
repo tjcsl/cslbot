@@ -14,13 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-from sys import path
-from os.path import dirname, exists, join
-
-# Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
-
+import sys
+from os import makedirs, path
 import argparse
 import collections
 import configparser
@@ -28,8 +23,11 @@ import fcntl
 from time import strftime, mktime
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
-from os import makedirs
 from pkg_resources import Requirement, resource_filename
+
+# Make this work from git.
+if path.exists(path.join(path.dirname(__file__), '..', '.git')):
+    sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 
 from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
 from cslbot.helpers.sql import get_session
@@ -123,7 +121,7 @@ def output_urls(env, session, outdir, time):
 
 def main(confdir="/etc/cslbot"):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The output dir.')
@@ -132,9 +130,9 @@ def main(confdir="/etc/cslbot"):
     env = Environment(loader=FileSystemLoader(resource_filename(Requirement.parse('CslBot'), 'cslbot/templates')))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
-    if not exists(cmdargs.outdir):
+    if not path.exists(cmdargs.outdir):
         makedirs(cmdargs.outdir)
-    lockfile = open('%s/.lock' % cmdargs.outdir, 'w')
+    lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     output_quotes(env, session, cmdargs.outdir, time)
@@ -148,4 +146,4 @@ def main(confdir="/etc/cslbot"):
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(path.join(path.dirname(__file__), '..'))

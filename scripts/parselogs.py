@@ -15,19 +15,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sys import path
-from os.path import abspath, dirname, exists, join
+import sys
+from os import makedirs, path
 
 import argparse
 import configparser
 import fcntl
 import re
 from time import strftime, localtime
-from os import makedirs
 
 # Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+if path.exists(path.join(path.dirname(__file__), '..', '.git')):
+    sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 from cslbot.helpers.orm import Log
 from cslbot.helpers.sql import get_session
 
@@ -43,9 +42,9 @@ class LogProcesser(object):
             log.close()
 
     def get_path(self, channel):
-        if not abspath(join(self.outdir, channel)).startswith(self.outdir):
+        if not path.abspath(path.join(self.outdir, channel)).startswith(self.outdir):
             raise Exception("Bailing out due to possible path traversal attack.")
-        return join(self.outdir, "%s.log" % re.sub('[^\w#\-_\. ]', '_', channel))
+        return path.join(self.outdir, "%s.log" % re.sub(r'[^\w#\-_\. ]', '_', channel))
 
     def check_day(self, row):
         # FIXME: print out new day messages for each day, not just the most recent one.
@@ -72,15 +71,15 @@ class LogProcesser(object):
 
 
 def get_id(outdir):
-    outfile = join(outdir, ".dbid")
-    if not exists(outfile):
+    outfile = path.join(outdir, ".dbid")
+    if not path.exists(outfile):
         return 0
     with open(outfile) as f:
         return int(f.read())
 
 
 def save_id(outdir, new_id):
-    with open(join(outdir, '.dbid'), 'w') as f:
+    with open(path.join(outdir, '.dbid'), 'w') as f:
         f.write(str(new_id) + '\n')
 
 
@@ -122,15 +121,15 @@ def gen_log(row):
 
 def main(confdir="/etc/cslbot"):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)
     session = get_session(config)()
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', help='The directory to write logs too.')
     cmdargs = parser.parse_args()
-    if not exists(cmdargs.outdir):
+    if not path.exists(cmdargs.outdir):
         makedirs(cmdargs.outdir)
-    lockfile = open(join(cmdargs.outdir, '.lock'), 'w')
+    lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
     current_id = get_id(cmdargs.outdir)
     new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
@@ -148,4 +147,4 @@ def main(confdir="/etc/cslbot"):
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(path.join(path.dirname(__file__), '..'))

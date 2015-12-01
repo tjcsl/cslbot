@@ -73,13 +73,13 @@ def main():
     with open('config.cfg') as f:
         config.read_file(f)
     CTRLNICK = "bot-controller"
-    client = IrcClient(CTRLNICK, config)
+    ircclient = IrcClient(CTRLNICK, config)
     if config.getboolean('core', 'ssl'):
         factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
     else:
         factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
-    client.connect(config['core']['host'], config.getint('core', 'ircport'), CTRLNICK, config['auth']['serverpass'], connect_factory=factory)
-    client.start()
+    ircclient.connect(config['core']['host'], config.getint('core', 'ircport'), CTRLNICK, config['auth']['serverpass'], connect_factory=factory)
+    ircclient.start()
 
 if __name__ == '__main__':
     main()
