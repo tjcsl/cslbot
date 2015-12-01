@@ -14,9 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.hook import Hook
 from threading import Lock
 import string
+from ..helpers.hook import Hook
 
 _caps = []
 _caps_lock = Lock()
