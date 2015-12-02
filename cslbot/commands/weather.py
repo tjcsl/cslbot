@@ -128,7 +128,7 @@ def get_weather(cmdargs, send, apikey):
             alertlist.append("%s, expires %s" % (
                 alert['description'],
                 alert['expires']))
-        send("Weather Alerts: %" % ', '.join(alertlist))
+        send("Weather Alerts: %s" % ', '.join(alertlist))
     return True
 
 
