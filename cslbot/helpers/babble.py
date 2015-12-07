@@ -35,7 +35,8 @@ def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     return query.order_by(Log.id).all()
 
 
-exclude_re = re.compile('https?://|^[0-9%s]+$' % string.punctuation)
+# Don't exclude (, because lenny.
+exclude_re = re.compile('https?://|^[0-9%s]+$' % string.punctuation.replace('(', ''))
 
 
 def clean_msg(msg):
