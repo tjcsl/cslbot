@@ -124,14 +124,6 @@ cslbot.commands.cancel module
     :undoc-members:
     :show-inheritance:
 
-cslbot.commands.celebrate module
---------------------------------
-
-.. automodule:: cslbot.commands.celebrate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cslbot.commands.channels module
 -------------------------------
 

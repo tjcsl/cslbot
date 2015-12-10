@@ -16,15 +16,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from sys import path
 from os.path import dirname, exists, join
+import configparser
+import socket
 import logging
 import unittest
 from unittest import mock
-import configparser
-import socket
-import irc.client
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
+# Imports pkg_resources, so must come after the path is modified
+import irc.client
 
 from cslbot.helpers import core, server
 
