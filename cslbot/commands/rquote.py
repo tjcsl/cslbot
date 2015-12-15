@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -38,7 +38,7 @@ def cmd(send, msg, args):
     if nick:
         quote = quote.filter(Log.source == nick)
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
-    quote = quote.filter(Log.target == target, func.length(Log.msg) > 5).order_by(func.random()).first()
+    quote = quote.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target, func.length(Log.msg) > 5).order_by(func.random()).first()
     if quote:
         send("%s -- %s" % quote)
     elif nick:
