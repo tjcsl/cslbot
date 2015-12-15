@@ -588,6 +588,14 @@ cslbot.commands.roman module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.rquote module
+-----------------------------
+
+.. automodule:: cslbot.commands.rquote
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.s module
 ------------------------
 
