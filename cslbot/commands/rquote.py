@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Log
 
 
-@Command('rquote', ['db', 'config'])
+@Command('rquote', ['db', 'config', 'botnick'])
 def cmd(send, msg, args):
     """Returns a random line from $nick.
     Syntax: {command} (--channel <channel>) (nick)
@@ -37,6 +37,8 @@ def cmd(send, msg, args):
     nick = ' '.join(cmdargs.nick) if cmdargs.nick else ""
     if nick:
         quote = quote.filter(Log.source == nick)
+    else:
+        quote = quote.filter(Log.source != args['botnick'])
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
     quote = quote.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target, func.length(Log.msg) > 5).order_by(func.random()).first()
     if quote:
