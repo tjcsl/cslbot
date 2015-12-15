@@ -15,24 +15,33 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from sqlalchemy import func
+from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
 
 
-@Command('rquote', ['db', 'target'])
+@Command('rquote', ['db', 'config'])
 def cmd(send, msg, args):
     """Returns a random line from $nick.
-    Syntax: {command} <nick>
+    Syntax: {command} (--channel <channel>) (nick)
     """
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('--channel', action=arguments.ChanParser)
+    parser.add_argument('nick', nargs='*')
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
     quote = args['db'].query(Log.msg, Log.source)
-    if msg:
-        quote = quote.filter(Log.source == msg, Log.target == args['target'])
-    else:
-        quote = quote.filter(Log.target == args['target'])
-    quote = quote.order_by(func.random()).first()
+    nick = ' '.join(cmdargs.nick) if cmdargs.nick else ""
+    if nick:
+        quote = quote.filter(Log.source == nick)
+    target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
+    quote = quote.filter(Log.target == target, func.length(Log.msg) > 5).order_by(func.random()).first()
     if quote:
         send("%s -- %s" % quote)
-    elif msg:
-        send("%s isn't very quotable." % msg)
+    elif nick:
+        send("%s isn't very quotable." % nick)
     else:
         send("Nobody is very quotable :(")
