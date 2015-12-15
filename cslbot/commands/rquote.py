@@ -21,7 +21,7 @@ from ..helpers.orm import Log
 
 @Command('rquote', ['db', 'target'])
 def cmd(send, msg, args):
-    """Returns a random quote from $nick.
+    """Returns a random line from $nick.
     Syntax: {command} <nick>
     """
     quote = args['db'].query(Log.msg, Log.source)
