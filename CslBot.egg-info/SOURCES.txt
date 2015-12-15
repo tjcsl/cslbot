@@ -95,6 +95,7 @@ cslbot/commands/random.py
 cslbot/commands/randtranslate.py
 cslbot/commands/reddit.py
 cslbot/commands/roman.py
+cslbot/commands/rquote.py
 cslbot/commands/s.py
 cslbot/commands/score.py
 cslbot/commands/seen.py

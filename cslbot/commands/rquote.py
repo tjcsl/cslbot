@@ -30,7 +30,9 @@ def cmd(send, msg, args):
     else:
         quote = quote.filter(Log.target == args['target'])
     quote = quote.order_by(func.random()).first()
-    if quote:
+    if quote and msg:
+        send(quote.msg)
+    elif quote:
         send("%s -- %s" % quote)
     elif msg:
         send("%s isn't very quotable." % msg)
