@@ -37,7 +37,7 @@ def parse_time(time):
         time = int(time)
     else:
         return None
-    conv = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
+    conv = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800, 'y': 31540000}
     if unit in conv.keys():
         return time * conv[unit]
     else:
