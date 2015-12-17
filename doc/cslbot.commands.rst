@@ -412,6 +412,14 @@ cslbot.commands.kill module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.line module
+---------------------------
+
+.. automodule:: cslbot.commands.line
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.lmgtfy module
 -----------------------------
 
@@ -584,14 +592,6 @@ cslbot.commands.roman module
 ----------------------------
 
 .. automodule:: cslbot.commands.roman
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cslbot.commands.rquote module
------------------------------
-
-.. automodule:: cslbot.commands.rquote
     :members:
     :undoc-members:
     :show-inheritance:

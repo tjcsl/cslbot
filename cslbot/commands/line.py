@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Log
 
 
-@Command('rquote', ['db', 'config', 'botnick'])
+@Command(['line', 'rline'], ['db', 'config', 'botnick'])
 def cmd(send, msg, args):
     """Returns a random line from $nick.
     Syntax: {command} (--channel <channel>) (nick)

@@ -73,6 +73,7 @@ cslbot/commands/isup.py
 cslbot/commands/jargon.py
 cslbot/commands/join.py
 cslbot/commands/kill.py
+cslbot/commands/line.py
 cslbot/commands/lmgtfy.py
 cslbot/commands/man.py
 cslbot/commands/metar.py
@@ -95,7 +96,6 @@ cslbot/commands/random.py
 cslbot/commands/randtranslate.py
 cslbot/commands/reddit.py
 cslbot/commands/roman.py
-cslbot/commands/rquote.py
 cslbot/commands/s.py
 cslbot/commands/score.py
 cslbot/commands/seen.py
