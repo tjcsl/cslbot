@@ -38,18 +38,18 @@ def main(confdir="/etc/cslbot"):
     users = session.query(Log.source, func.count(Log.id)).filter(Log.target == channel,
                                                                  or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 100).group_by(Log.source).order_by(func.count(Log.id)).all()
     users = [x[0] for x in users]
-    freq = {}
+    freq = []
     for user in users:
         lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user, or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
         output = '\n'.join([x[0] for x in lines])
         with open('/tmp/foo', 'w') as f:
             f.write(output)
-        output = subprocess.check_output(['zpaq', 'add', 'bob', '/tmp/foo', '-test', '-summary'], stderr=subprocess.STDOUT)
+        output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '-method', '5'], stderr=subprocess.STDOUT)
         sizes = output.decode().splitlines()[-2]
         before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
-        freq[user] = (len(lines), float(after) / float(before) * 100)
-    for k, v in freq.items():
-        print("%s: (%d lines) %f" % (k, v[0], v[1]))
+        freq.append((user, len(lines), float(after) / float(before) * 100))
+    for x in sorted(freq, key=lambda x: x[2]):
+        print("%s: (%d lines) %f" % x)
 
 
 if __name__ == '__main__':
