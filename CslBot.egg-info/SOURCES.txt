@@ -191,6 +191,7 @@ doc/modules.rst
 scripts/__init__.py
 scripts/client.py
 scripts/deploy_docs.sh
+scripts/entropy.py
 scripts/gen_babble.py
 scripts/gendocs.sh
 scripts/ircbot
