@@ -33,23 +33,23 @@ def main(confdir="/etc/cslbot"):
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)
-    channel = '#tjhsst'
     session = get_session(config)()
-    users = session.query(Log.source, func.count(Log.id)).filter(Log.target == channel,
-                                                                 or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 100).group_by(Log.source).order_by(func.count(Log.id)).all()
-    users = [x[0] for x in users]
+    channel = '#tjhsst'
+    users = session.query(Log.source).filter(Log.target == channel,
+                                             or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 100).group_by(Log.source).all()
     freq = []
     for user in users:
-        lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user, or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
-        output = '\n'.join([x[0] for x in lines])
+        lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0], or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
+        text = '\n'.join([x[0] for x in lines])
         with open('/tmp/foo', 'w') as f:
-            f.write(output)
+            f.write(text)
         output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '-method', '5'], stderr=subprocess.STDOUT)
         sizes = output.decode().splitlines()[-2]
         before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
-        freq.append((user, len(lines), float(after) / float(before) * 100))
+        count = 1024*1024*float(after) / len(text)
+        freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
     for x in sorted(freq, key=lambda x: x[2]):
-        print("%s: (%d lines) %f" % x)
+        print("%s: (%d lines) (%f%% compressed) (%f bits per char)" % x)
 
 
 if __name__ == '__main__':
