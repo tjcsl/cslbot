@@ -19,6 +19,7 @@ from os import path
 import subprocess
 import configparser
 import re
+import json
 from sqlalchemy import or_, func
 
 # Make this work from git.
@@ -36,7 +37,7 @@ def main(confdir="/etc/cslbot"):
     session = get_session(config)()
     channel = '#tjhsst'
     users = session.query(Log.source).filter(Log.target == channel,
-                                             or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 100).group_by(Log.source).all()
+                                             or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 500).group_by(Log.source).all()
     freq = []
     for user in users:
         lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0], or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
@@ -46,8 +47,11 @@ def main(confdir="/etc/cslbot"):
         output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '-method', '5'], stderr=subprocess.STDOUT)
         sizes = output.decode().splitlines()[-2]
         before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
-        count = 1024*1024*float(after) / len(text)
+        # 8 bits = 1 byte
+        count = 1024*1024*8*float(after) / len(text)
         freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
+    with open('freq.json', 'w') as f:
+        json.dump(freq, f, indent=True)
     for x in sorted(freq, key=lambda x: x[2]):
         print("%s: (%d lines) (%f%% compressed) (%f bits per char)" % x)
 
