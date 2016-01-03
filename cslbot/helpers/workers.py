@@ -129,6 +129,7 @@ class Workers():
         # Mark inactive after 24 hours.
         active_time = time.time() - 3600*24
         with handler.db.session_scope() as session:
+            # FIXME: actually lock instead of just making a copy
             for name in list(handler.channels.keys()):
                 for nick, voiced in list(handler.voiced[name].items()):
                     if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
