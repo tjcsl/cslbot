@@ -101,13 +101,13 @@ def build_rows(cursor, length, markov, initial_run):
                     count_source[source] += 1
                     count_target[target] += 1
                 else:
-                    update_count(cursor, source, target)
+                    update_count(cursor, length, source, target)
                 data.append((source, target, key, word, freq))
     count_data = []
     for source, count in count_source.items():
-        count_data.append({'type': 'source', 'key': source, 'count': count})
+        count_data.append({'type': 'source', 'key': source, 'count': count, 'length': length})
     for target, count in count_target.items():
-        count_data.append({'type': 'target', 'key': target, 'count': count})
+        count_data.append({'type': 'target', 'key': target, 'count': count, 'length': length})
     return data, count_data
 
 

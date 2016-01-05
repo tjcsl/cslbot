@@ -67,7 +67,10 @@ def build_msg(cursor, speaker, length, start):
             break
         next_word = weighted_next(data)
         msg = "%s %s" % (msg, next_word)
-        prev = "%s %s" % (prev.split()[1], next_word)
+        if length == 2:
+            prev = "%s %s" % (prev.split()[1], next_word)
+        else:
+            prev = next_word
     return "%s says: %s" % (speaker, msg)
 
 
@@ -78,7 +81,7 @@ def cmd(send, msg, args):
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('speaker', nargs='?', default=args['config']['core']['channel'])
-    parser.add_argument('--length', choices=[1, 2], default=2)
+    parser.add_argument('--length', type=int, choices=[1, 2], default=2)
     parser.add_argument('--start', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
