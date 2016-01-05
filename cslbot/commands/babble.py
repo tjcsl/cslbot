@@ -42,19 +42,19 @@ def build_msg(cursor, speaker, length, start):
     if count is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
-        prev = cursor.query(getattr(table, 'key')).filter(getattr(table, location) == speaker).offset(random.random() * count).limit(1).scalar()
+        prev = cursor.query(table.key).filter(getattr(table, location) == speaker).offset(random.random() * count).limit(1).scalar()
     else:
         # FIXME: use Babble_count?
-        markov = cursor.query(getattr(table, 'key'))
+        markov = cursor.query(table.key)
         if length == 2:
             if len(start) == 1:
-                markov = markov.filter(getattr(table, 'key').like('%s %%' % start[0]))
+                markov = markov.filter(table.key.like('%s %%' % start[0]))
             elif len(start) == 2:
-                markov = markov.filter(getattr(table, 'key') == " ".join(start))
+                markov = markov.filter(table.key == " ".join(start))
             else:
                 return "Please specify either one or two words for --start"
         elif len(start) == 1:
-            markov = markov.filter(getattr(table, 'key') == start[0])
+            markov = markov.filter(table.key == start[0])
         else:
             return "Please specify one word for --start"
         prev = markov.filter(getattr(table, location) == speaker).order_by(func.random()).limit(1).scalar()
@@ -62,7 +62,7 @@ def build_msg(cursor, speaker, length, start):
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
     while len(msg) < 512:
-        data = cursor.query(table).filter(getattr(table, 'key') == prev, getattr(table, location) == speaker).all()
+        data = cursor.query(table).filter(table.key == prev, getattr(table, location) == speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
