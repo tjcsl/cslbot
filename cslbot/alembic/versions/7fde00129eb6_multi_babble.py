@@ -30,12 +30,9 @@ def upgrade():
     op.create_index(op.f('ix_babble2_key'), 'babble2', ['key'], unique=False)
     op.add_column('babble_count', sa.Column(
         'length', sa.Integer(), nullable=True))
-    op.add_column('babble_last', sa.Column(
-        'length', sa.Integer(), nullable=True))
 
 
 def downgrade():
-    op.drop_column('babble_last', 'length')
     op.drop_column('babble_count', 'length')
     op.drop_index(op.f('ix_babble2_key'), table_name='babble2')
     op.drop_table('babble2')

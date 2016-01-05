@@ -19,7 +19,7 @@ import random
 from sqlalchemy.sql.expression import func
 from ..helpers import arguments
 from ..helpers.command import Command
-from ..helpers.orm import Babble, Babble_count
+from ..helpers.orm import Babble, Babble2, Babble_count
 
 
 def weighted_next(data):
@@ -35,27 +35,34 @@ def weighted_next(data):
     return tags[bisect.bisect_right(partialSums, x)]
 
 
-def build_msg(cursor, speaker, start):
+def build_msg(cursor, speaker, length, start):
+    table = Babble if length == 1 else Babble2
     location = 'target' if speaker.startswith('#') else 'source'
-    count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.key == speaker).scalar()
+    count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.length == length, Babble_count.key == speaker).scalar()
     if count is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
-        prev = cursor.query(Babble.key).filter(getattr(Babble, location) == speaker).offset(random.random() * count).limit(1).scalar()
+        prev = cursor.query(getattr(table, 'key')).filter(getattr(table, location) == speaker).offset(random.random() * count).limit(1).scalar()
     else:
         # FIXME: use Babble_count?
-        if len(start) == 1:
-            markov = cursor.query(Babble.key).filter(Babble.key.like('%s %%' % start[0]))
-        elif len(start) == 2:
-            markov = cursor.query(Babble.key).filter(Babble.key == " ".join(start))
+        markov = cursor.query(getattr(table, 'key'))
+        if length == 2:
+            if len(start) == 1:
+                markov = markov.filter(getattr(table, 'key').like('%s %%' % start[0]))
+            elif len(start) == 2:
+                markov = markov.filter(getattr(table, 'key') == " ".join(start))
+            else:
+                return "Please specify either one or two words for --start"
+        elif len(start) == 1:
+            markov = markov.filter(getattr(table, 'key') == start[0])
         else:
-            return "Please specify either one or two words for --start"
-        prev = markov.filter(getattr(Babble, location) == speaker).order_by(func.random()).limit(1).scalar()
+            return "Please specify one word for --start"
+        prev = markov.filter(getattr(table, location) == speaker).order_by(func.random()).limit(1).scalar()
         if prev is None:
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
     while len(msg) < 512:
-        data = cursor.query(Babble).filter(Babble.key == prev, getattr(Babble, location) == speaker).all()
+        data = cursor.query(table).filter(getattr(table, 'key') == prev, getattr(table, location) == speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
@@ -67,10 +74,11 @@ def build_msg(cursor, speaker, start):
 @Command('babble', ['db', 'config', 'handler'])
 def cmd(send, msg, args):
     """Babbles like a user
-    Syntax: {command} [nick] [--start <word>]
+    Syntax: {command} [nick] [--length <1|2>] [--start <word>]
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('speaker', nargs='?', default=args['config']['core']['channel'])
+    parser.add_argument('--length', choices=[1, 2], default=2)
     parser.add_argument('--start', nargs='*')
     try:
         cmdargs = parser.parse_args(msg)
@@ -78,6 +86,6 @@ def cmd(send, msg, args):
         send(str(e))
         return
     if args['db'].query(Babble).count():
-        send(build_msg(args['db'], cmdargs.speaker, cmdargs.start))
+        send(build_msg(args['db'], cmdargs.speaker, cmdargs.length, cmdargs.start))
     else:
         send("Please run ./scripts/gen_babble.py to initialize the babble cache")

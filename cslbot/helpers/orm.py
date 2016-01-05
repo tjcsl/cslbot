@@ -138,7 +138,6 @@ class Babble2(Base):
 
 
 class Babble_last(Base):
-    length = Column(Integer)
     last = Column(Integer)
 
 
