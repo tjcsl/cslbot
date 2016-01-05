@@ -128,12 +128,23 @@ class Babble(Base):
     freq = Column(Integer)
 
 
+class Babble2(Base):
+    __table_args__ = {'mysql_row_format': 'dynamic'}
+    key = Column(Unicode(length=512), index=True)
+    source = Column(UnicodeText)
+    target = Column(UnicodeText)
+    word = Column(UnicodeText)
+    freq = Column(Integer)
+
+
 class Babble_last(Base):
+    length = Column(Integer)
     last = Column(Integer)
 
 
 class Babble_count(Base):
     type = Column(UnicodeText)
+    length = Column(Integer)
     key = Column(UnicodeText)
     count = Column(Integer)
 
