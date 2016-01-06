@@ -18,6 +18,7 @@
 
 import re
 import time
+import logging
 import collections
 import string
 from sqlalchemy import Index, or_
@@ -88,7 +89,9 @@ def build_rows(cursor, length, markov, initial_run):
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
+    logging.info("%g items in markov" % len(markov))
     for node, word_freqs in markov.items():
+        logging.info("%g items in %s" % (len(word_freqs), node[0]))
         for word, freq in word_freqs.items():
             row = None
             key, source, target = node
