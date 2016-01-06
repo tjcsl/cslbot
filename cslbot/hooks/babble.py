@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import logging
 from ..helpers.hook import Hook
 from ..helpers.orm import Babble
 from ..helpers.babble import update_markov
@@ -25,6 +24,4 @@ def hook(send, msg, args):
     # No babble cache, so nothing to update
     if not args['db'].query(Babble).count():
         return
-    logging.info("Beginning babble update")
     update_markov(args['db'], args['config'])
-    logging.info("Babble update finished")
