@@ -62,7 +62,7 @@ def build_msg(cursor, speaker, length, start):
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
     while len(msg) < 512:
-        data = cursor.query(table).filter(table.key == prev, getattr(table, location) == speaker).all()
+        data = cursor.query(table.freq, table.word).filter(table.key == prev, getattr(table, location) == speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
