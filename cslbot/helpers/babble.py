@@ -148,10 +148,6 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
     # FIXME: count can be too low if speaker is not None
     curr = messages[-1].id if messages else None
-    # Don't update unless we've got more than 100 new lines
-    # isinstance() handles both NoneType and MagicMock
-    # if not initial_run and isinstance(curr, int) and curr - lastrow.last < 100:
-    #    return
     markov = generate_markov(cursor, 1, messages, initial_run)
     markov2 = generate_markov(cursor, 2, messages, initial_run)
     if debug:
