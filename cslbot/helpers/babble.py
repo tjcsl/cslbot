@@ -91,12 +91,17 @@ def build_rows(cursor, length, markov, initial_run):
     count_target = collections.defaultdict(int)
     logging.info("%g items in markov" % len(markov))
     for node, word_freqs in markov.items():
-        logging.info("%g items in %s" % (len(word_freqs), node[0]))
+        key, source, target = node
+        logging.info("%g items in %s" % (len(word_freqs), key))
+        if not initial_run:
+                rows = cursor.query(table).filter(table.key == key, table.source == source, table.target == target).all()
         for word, freq in word_freqs.items():
             row = None
-            key, source, target = node
             if not initial_run:
-                row = cursor.query(table).filter(table.key == key, table.source == source, table.target == target, table.word == word).first()
+                try:
+                    row = next(r for r in rows if r.word == word)
+                except StopIteration:
+                    pass
             if row:
                 row.freq = freq
             else:
