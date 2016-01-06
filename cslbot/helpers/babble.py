@@ -54,16 +54,16 @@ def get_markov(cursor, length, node, initial_run):
     return ret
 
 
-def update_count(cursor, length, source, target):
-    count_source = cursor.query(Babble_count).filter(Babble_count.type == 'source', Babble_count.length == length, Babble_count.key == source).first()
-    if count_source:
+def update_count(cursor, rows, length, source, target):
+    try:
+        count_source = next(r for r in rows if r.type == 'source' and r.key == source)
         count_source.count = count_source.count + 1
-    else:
+    except StopIteration:
         cursor.add(Babble_count(type='source', length=length, key=source, count=1))
-    count_target = cursor.query(Babble_count).filter(Babble_count.type == 'target', Babble_count.length == length, Babble_count.key == target).first()
-    if count_target:
+    try:
+        count_target = next(r for r in rows if r.type == 'target' and r.key == target)
         count_target.count = count_target.count + 1
-    else:
+    except StopIteration:
         cursor.add(Babble_count(type='target', length=length, key=target, count=1))
 
 
@@ -88,6 +88,7 @@ def build_rows(cursor, length, markov, initial_run):
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
+    count_rows = cursor.query(Babble_count).filter(Babble_count.length == length).all()
     for node, word_freqs in markov.items():
         key, source, target = node
         if not initial_run:
@@ -106,7 +107,7 @@ def build_rows(cursor, length, markov, initial_run):
                     count_source[source] += 1
                     count_target[target] += 1
                 else:
-                    update_count(cursor, length, source, target)
+                    update_count(cursor, count_rows, length, source, target)
                 data.append((source, target, key, word, freq))
     count_data = []
     for source, count in count_source.items():
@@ -149,8 +150,8 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     curr = messages[-1].id if messages else None
     # Don't update unless we've got more than 100 new lines
     # isinstance() handles both NoneType and MagicMock
-    if not initial_run and isinstance(curr, int) and curr - lastrow.last < 100:
-        return
+    # if not initial_run and isinstance(curr, int) and curr - lastrow.last < 100:
+    #    return
     markov = generate_markov(cursor, 1, messages, initial_run)
     markov2 = generate_markov(cursor, 2, messages, initial_run)
     if debug:
