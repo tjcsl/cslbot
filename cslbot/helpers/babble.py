@@ -92,14 +92,14 @@ def build_rows(cursor, length, markov, initial_run):
     for node, word_freqs in markov.items():
         key, source, target = node
         if not initial_run:
-                rows = cursor.query(table).filter(table.key == key, table.source == source, table.target == target).all()
+            row_dict = {}
+            for row in cursor.query(table).filter(table.key == key, table.source == source, table.target == target):
+                row_dict[row.word] = row
         for word, freq in word_freqs.items():
             row = None
             if not initial_run:
-                try:
-                    row = next(r for r in rows if r.word == word)
-                except StopIteration:
-                    pass
+                if word in row_dict.keys():
+                    row = row_dict[word]
             if row:
                 row.freq = freq
             else:
