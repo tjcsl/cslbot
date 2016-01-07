@@ -20,6 +20,7 @@ import argparse
 import collections
 import configparser
 import fcntl
+import shutil
 from time import strftime, mktime
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
@@ -127,13 +128,16 @@ def main(confdir="/etc/cslbot"):
     parser.add_argument('outdir', help='The output dir.')
     cmdargs = parser.parse_args()
     session = get_session(config)()
-    env = Environment(loader=FileSystemLoader(resource_filename(Requirement.parse('CslBot'), 'cslbot/templates')))
+    template_path = resource_filename(Requirement.parse('CslBot'), 'cslbot/templates')
+    env = Environment(loader=FileSystemLoader(template_path))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not path.exists(cmdargs.outdir):
         makedirs(cmdargs.outdir)
     lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    # Copy the js
+    shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
 
     output_quotes(env, session, cmdargs.outdir, time)
     output_scores(env, session, cmdargs.outdir, time)
