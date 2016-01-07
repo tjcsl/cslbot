@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Polls Page{% endblock %}
 {% block content %}
-<table class="table table-bordered table-hover table-striped sortable">
+<table class="table table-bordered sortable">
     <tr style="cursor: pointer">
         <th>Number</th>
         <th>Question</th>
@@ -12,7 +12,7 @@
         <td>{{ id|trim }}</td>
         <td>{{ question|trim|e }}</td>
         <td>
-            <table class="table table-bordered table-hover table-striped">
+            <table class="table table-hover">
                 {% for response,votes in responses[id].items() %}
                 <tr>
                     <td>{{ response|trim|e }}</td>
