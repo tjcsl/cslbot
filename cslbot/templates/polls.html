@@ -12,7 +12,7 @@
         <td>{{ id|trim }}</td>
         <td>{{ question|trim|e }}</td>
         <td>
-            <table>
+            <table class="table table-bordered table-hover table-striped">
                 {% for response,votes in responses[id].items() %}
                 <tr>
                     <td>{{ response|trim|e }}</td>
