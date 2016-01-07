@@ -41,6 +41,7 @@ setup(
             'static/slogans',
             'static/shakespeare-dictionary.json',
             'static/wordlist',
+            'templates/sorttable.js',
             'templates/*.html'],
     },
     exclude_package_data={

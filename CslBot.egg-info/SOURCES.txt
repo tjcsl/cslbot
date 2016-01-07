@@ -181,6 +181,7 @@ cslbot/templates/base.html
 cslbot/templates/polls.html
 cslbot/templates/quotes.html
 cslbot/templates/scores.html
+cslbot/templates/sorttable.js
 cslbot/templates/urls.html
 doc/conf.py
 doc/cslbot.commands.rst
