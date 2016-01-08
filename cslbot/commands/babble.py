@@ -61,16 +61,12 @@ def build_msg(cursor, speaker, length, start):
         if prev is None:
             return "%s hasn't said %s" % (speaker, " ".join(start))
     msg = prev
-    max_len = 512 - len("%s says: " % speaker)
-    while len(msg) < max_len:
+    while len(msg) < 400:
         data = cursor.query(table.freq, table.word).filter(table.key == prev, getattr(table, location) == speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
-        new_msg = "%s %s" % (msg, next_word)
-        if len(new_msg) > max_len:
-            break
-        msg = new_msg
+        msg = "%s %s" % (msg, next_word)
         if length == 2:
             prev = "%s %s" % (prev.split()[1], next_word)
         else:
