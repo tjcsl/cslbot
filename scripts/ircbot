@@ -9,6 +9,6 @@ pidfile="/run/ircbot.pid"
 
 depend() {
 	use net
-        need postgresql-9.4
+        need postgresql-9.5
 }
 
