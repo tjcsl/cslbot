@@ -67,7 +67,10 @@ def build_msg(cursor, speaker, length, start):
         if not data:
             break
         next_word = weighted_next(data)
-        msg = "%s %s" % (msg, next_word)
+        new_msg = "%s %s" % (msg, next_word)
+        if len(new_msg) > max_len:
+            break
+        msg = new_msg
         if length == 2:
             prev = "%s %s" % (prev.split()[1], next_word)
         else:
