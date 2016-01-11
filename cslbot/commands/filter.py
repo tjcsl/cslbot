@@ -44,7 +44,7 @@ def cmd(send, msg, args):
     group.add_argument('--reset', '--clear', action='store_true')
     group.add_argument('--chain')
     if not msg:
-        send(get_filters(args['handler']))
+        send(get_filters(args['handler'], args['target']))
         return
     try:
         cmdargs = parser.parse_args(msg)
