@@ -167,7 +167,8 @@ def get_hourly(cmdargs, send, apikey):
         cmdargs.date = datetime.datetime.now()
     for hour in forecastdata:
         # wunderground's API returns strings rather than ints for the date for some reason, so casting is needed here
-        if (int(hour['FCTTIME']['hour']), int(hour['FCTTIME']['mday']), int(hour['FCTTIME']['mon']), int(hour['FCTTIME']['year'])) == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
+        date = (int(hour['FCTIME'][x]) for x in ['hour', 'mday', 'mon', 'year'])
+        if date == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
             forecast = '%s, Temperature: %s' % (
                 hour['condition'],
                 hour['temp']['english'])
