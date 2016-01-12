@@ -65,6 +65,38 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 break
         return msg.decode()
 
+    def handle_cmd(self, cmd, bot, send):
+        if cmd[0] == "help":
+            send(HELP)
+        elif cmd[0] == "admins":
+            admins = ", ".join(bot.handler.admins.keys())
+            send("%s\n" % admins)
+        elif cmd[0] == "reload":
+            cmdargs = cmd[1] if len(cmd) > 1 else ''
+            ctrlchan = bot.config['core']['ctrlchan']
+            bot.reload_event.set()
+            if reloader.do_reload(bot, ctrlchan, cmdargs, send):
+                bot.server = init_server(bot)
+                bot.reload_event.clear()
+                send("Aye Aye Capt'n\n")
+                bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
+            self.request.close()
+            return False
+        elif cmd[0] == "raw":
+            while cmd[0] != "endraw":
+                send("ircbot-raw> ")
+                cmd = self.get_data().strip()
+                if cmd == "endraw":
+                    return False
+                bot.handler.connection.send_raw(cmd)
+        elif cmd[0] == "quit":
+            send("Goodbye.\n")
+            self.request.close()
+            return False
+        else:
+            send("Unknown command. Type help for more info.\n")
+        return True
+
     def handle(self):
         try:
             def send(msg):
@@ -97,36 +129,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                         return
                 if not cmd:
                     continue
-                if cmd[0] == "help":
-                    send(HELP)
-                elif cmd[0] == "admins":
-                    admins = ", ".join(bot.handler.admins.keys())
-                    send("%s\n" % admins)
-                elif cmd[0] == "reload":
-                    cmdargs = cmd[1] if len(cmd) > 1 else ''
-                    ctrlchan = bot.config['core']['ctrlchan']
-                    bot.reload_event.set()
-                    if reloader.do_reload(bot, ctrlchan, cmdargs, send):
-                        bot.server = init_server(bot)
-                        bot.reload_event.clear()
-                        send("Aye Aye Capt'n\n")
-                        bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
-                    self.request.close()
+                if not self.handle_cmd(cmd, bot, send):
                     break
-                elif cmd[0] == "raw":
-                    while cmd[0] != "endraw":
-                        send("ircbot-raw> ")
-                        cmd = self.get_data().strip()
-                        if cmd == "endraw":
-                            break
-                        bot.handler.connection.send_raw(cmd)
-                    continue
-                elif cmd[0] == "quit":
-                    send("Goodbye.\n")
-                    self.request.close()
-                    break
-                else:
-                    send("Unknown command. Type help for more info.\n")
         except Exception as ex:
             msg, _ = backtrace.output_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']

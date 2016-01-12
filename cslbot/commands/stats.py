@@ -38,6 +38,24 @@ def get_nick_totals(session, command=None):
     return {x[0]: x[1] for x in query.all()}
 
 
+def get_nick(session, nick):
+    totals = get_nick_totals(session)
+    if nick not in totals.keys():
+        return "%s has never used a bot command." % nick
+    else:
+        return "%s has used %d bot commands." % (nick, totals[nick])
+
+
+def get_command(session, command, totals):
+    nicktotals = get_nick_totals(session, command)
+    maxuser = sorted(nicktotals, key=nicktotals.get)
+    if not maxuser:
+        return "Nobody has used that command."
+    else:
+        maxuser = maxuser[-1]
+        return "%s is the most frequent user of %s with %d out of %d uses." % (maxuser, command, nicktotals[maxuser], totals[command])
+
+
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
@@ -60,13 +78,7 @@ def cmd(send, msg, args):
     totals = get_command_totals(session, commands)
     sortedtotals = sorted(totals, key=totals.get)
     if registry.is_registered(cmdargs.command):
-        nicktotals = get_nick_totals(session, cmdargs.command)
-        maxuser = sorted(nicktotals, key=nicktotals.get)
-        if not maxuser:
-            send("Nobody has used that command.")
-        else:
-            maxuser = maxuser[-1]
-            send("%s is the most frequent user of %s with %d out of %d uses." % (maxuser, cmdargs.command, nicktotals[maxuser], totals[cmdargs.command]))
+        send(get_command(session, cmdargs.command, totals))
     elif cmdargs.command and not registry.is_registered(cmdargs.command):
         send("Command %s not found." % cmdargs.command)
     elif cmdargs.high:
@@ -90,11 +102,7 @@ def cmd(send, msg, args):
             if x < len(high):
                 send("%s: %s" % (high[x], totals[high[x]]))
     elif cmdargs.nick:
-        totals = get_nick_totals(session)
-        if cmdargs.nick not in totals.keys():
-            send("%s has never used a bot command." % cmdargs.nick)
-        else:
-            send("%s has used %d bot commands." % (cmdargs.nick, totals[cmdargs.nick]))
+        send(get_nick(session, cmdargs.nick))
     else:
         command = choice(list(totals.keys()))
         send("%s has been used %s times." % (command, totals[command]))

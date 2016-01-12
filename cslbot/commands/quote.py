@@ -76,7 +76,9 @@ def do_list_quotes(session, quote_url):
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 
-def do_delete_quote(session, qid):
+def do_delete_quote(args, session, qid):
+    if not args['is_admin'](args['nick']):
+        return "You aren't allowed to delete quotes. Please ask a bot admin to do it"
     quote = session.query(Quotes).get(qid)
     if quote is None:
         return "That quote doesn't exist!"
@@ -136,10 +138,7 @@ def cmd(send, msg, args):
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:
-        if args['is_admin'](args['nick']):
-            send(do_delete_quote(session, cmdargs.delete))
-        else:
-            send("You aren't allowed to delete quotes. Please ask a bot admin to do it")
+            send(do_delete_quote(args, session, cmdargs.delete))
     elif cmdargs.edit:
         if args['is_admin'](args['nick']):
             send(do_update_quote(session, cmdargs.edit, cmdargs.nick, cmdargs.quote))

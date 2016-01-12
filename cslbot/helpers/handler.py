@@ -416,21 +416,12 @@ class BotHandler():
             c.join(e.arguments[0])
 
     def handle_event(self, msg, send, c, e):
-        passwd = self.config['auth']['serverpass']
-        user = self.config['core']['nick']
         if e.type == 'whospcrpl':
             self.handle_who(e)
         elif e.type == 'account':
-            if e.source.nick in self.admins:
-                if e.target == '*':
-                    self.admins[e.source.nick] = None
-                else:
-                    self.admins[e.source.nick] = time.time()
+            self.handle_account(e)
         elif e.type == 'authenticate':
-            if e.target == '+':
-                token = base64.b64encode('\0'.join([user, user, passwd]).encode())
-                self.connection.send_raw('AUTHENTICATE %s' % token.decode())
-                self.connection.cap('END')
+            self.handle_authenticate(e)
         elif e.type == 'bannedfromchan':
             self.workers.defer(5, False, self.do_rejoin, c, e)
         elif e.type == 'cap':
@@ -450,10 +441,30 @@ class BotHandler():
             if e.source.nick == 'NickServ':
                 admin.set_admin(msg, self)
         elif e.type == 'welcome':
-            logging.info("Connected to server %s", self.config['core']['host'])
-            if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
-                self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
-            self.do_welcome()
+            self.handle_welcome(e)
+
+    def handle_authenticate(self, e):
+        passwd = self.config['auth']['serverpass']
+        user = self.config['core']['nick']
+        if e.target == '+':
+            token = base64.b64encode('\0'.join([user, user, passwd]).encode())
+            self.connection.send_raw('AUTHENTICATE %s' % token.decode())
+            self.connection.cap('END')
+
+    def handle_account(self, e):
+        if e.source.nick in self.admins:
+            if e.target == '*':
+                self.admins[e.source.nick] = None
+            else:
+                self.admins[e.source.nick] = time.time()
+
+    def handle_welcome(self, e):
+        passwd = self.config['auth']['serverpass']
+        user = self.config['core']['nick']
+        logging.info("Connected to server %s", self.config['core']['host'])
+        if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
+            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
+        self.do_welcome()
 
     def handle_who(self, e):
         # arguments: type,nick,modes,account
@@ -531,6 +542,18 @@ class BotHandler():
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
         cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
 
+    def handle_kick(self, c, e, target, send):
+        if e.arguments[0] == c.real_nickname:
+            send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
+            # Auto-rejoin after 5 seconds.
+            self.workers.defer(5, False, self.connection.join, target)
+
+    def handle_hooks(self, send, nick, target, e, msg):
+        if self.config['feature'].getboolean('hooks'):
+            for h in hook.registry.get_hook_objects():
+                realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
+                h.run(send, msg, e.type, self, target, realargs)
+
     def handle_msg(self, c, e):
         """The Heart and Soul of IrcBot."""
 
@@ -574,10 +597,7 @@ class BotHandler():
             return
 
         if e.type == 'kick':
-            if e.arguments[0] == c.real_nickname:
-                send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
-                # Auto-rejoin after 5 seconds.
-                self.workers.defer(5, False, self.connection.join, target)
+            self.handle_kick(c, e, target, send)
             return
 
         if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):
@@ -586,10 +606,7 @@ class BotHandler():
         if self.is_ignored(nick) and not self.is_admin(None, nick):
             return
 
-        if self.config['feature'].getboolean('hooks'):
-            for h in hook.registry.get_hook_objects():
-                realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
-                h.run(send, msg, e.type, self, target, realargs)
+        self.handle_hooks(send, nick, target, e, msg)
 
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
@@ -598,6 +615,5 @@ class BotHandler():
         if command.registry.is_registered(cmd_name):
             self.run_cmd(send, nick, target, cmd_name, cmdargs, e)
         # special commands
-        elif cmd_name == 'reload':
-            if nick in admins:
-                send("Aye Aye Capt'n")
+        elif cmd_name == 'reload' and nick in admins:
+            send("Aye Aye Capt'n")

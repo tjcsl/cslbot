@@ -135,6 +135,18 @@ def postgres_hack(cursor, length, data):
         raw_cursor.execute(args_str)
 
 
+def delete_tables(cursor):
+    if cursor.bind.dialect.name == 'mysql':
+        cursor.execute('DROP INDEX ix_babble_key ON babble')
+        cursor.execute('DROP INDEX ix_babble2_key ON babble2')
+    else:
+        cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
+        cursor.execute('DROP INDEX IF EXISTS ix_babble2_key')
+    cursor.execute(Babble.__table__.delete())
+    cursor.execute(Babble2.__table__.delete())
+    cursor.execute(Babble_count.__table__.delete())
+
+
 def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False):
     """ Builds a markov dictionary."""
     if initial_run:
@@ -143,8 +155,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)
-    if debug:
-        t = time.time()
+    t = time.time()  # for debug
     messages = get_messages(cursor, cmdchar, ctrlchan, speaker, lastrow.last)
     # FIXME: count can be too low if speaker is not None
     curr = messages[-1].id if messages else None
@@ -158,19 +169,11 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     if debug:
         print('Rows built in %f' % (time.time() - t))
     if initial_run:
+        t = time.time()  # for debug
+        delete_tables(cursor)
         if debug:
-            t = time.time()
-        if cursor.bind.dialect.name == 'mysql':
-            cursor.execute('DROP INDEX ix_babble_key ON babble')
-            cursor.execute('DROP INDEX ix_babble2_key ON babble2')
-        else:
-            cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
-            cursor.execute('DROP INDEX IF EXISTS ix_babble2_key')
-        cursor.execute(Babble.__table__.delete())
-        cursor.execute(Babble2.__table__.delete())
-        cursor.execute(Babble_count.__table__.delete())
-    if debug:
-        t = time.time()
+            print('Tables deleted in %f' % (time.time() - t))
+    t = time.time()  # for debug
     if initial_run and cursor.bind.dialect.name == 'postgresql':
         postgres_hack(cursor, 1, data)
         postgres_hack(cursor, 2, data2)
@@ -194,8 +197,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         key_index2.create(cursor.connection())
         if debug:
             print('Created index in %f' % (time.time() - t))
-    if debug:
-        t = time.time()
+    t = time.time()  # for debug
     cursor.commit()
     if debug:
         print('Commited in %f' % (time.time() - t))
