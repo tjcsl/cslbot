@@ -45,10 +45,7 @@ def get_article():
 def check_article(name):
     params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': name}
     data = get('http://en.wikipedia.org/w/api.php', params=params).json()
-    if data['query']['search']:
-        return True
-    else:
-        return False
+    return data['query']['search']
 
 
 @Command('wikipath', ['config'])

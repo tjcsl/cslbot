@@ -22,7 +22,7 @@ from .orm import Log
 def handle_nick(handler, e):
     with handler.db.session_scope() as session:
         if handler.config['feature'].getboolean('nickkick'):
-            return do_kick(handler, session, e.target)
+            return do_kick(session, e.target)
         else:
             return False
 
@@ -45,7 +45,7 @@ def get_chain(session, nick, limit=0):
     return list(reversed(chain))
 
 
-def do_kick(handler, session, nick):
+def do_kick(session, nick):
     # only go 5 minutes back for identity crisis detection.
     limit = datetime.now() - timedelta(minutes=5)
     chain = get_chain(session, nick, limit.timestamp())

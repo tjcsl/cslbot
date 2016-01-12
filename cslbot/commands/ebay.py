@@ -16,8 +16,8 @@
 
 import json
 from random import choice
-from requests import get
 from urllib.request import urlopen, Request
+from requests import get
 from ..helpers.command import Command
 
 

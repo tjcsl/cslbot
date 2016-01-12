@@ -19,7 +19,7 @@ from ..helpers.command import Command
 
 
 @Command(['time', 'date'])
-def cmd(send, msg, args):
+def cmd(send, msg, _):
     """Tells the time.
     Syntax: {command}
     """

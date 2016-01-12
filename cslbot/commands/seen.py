@@ -21,8 +21,8 @@ from ..helpers.command import Command
 
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
-    cmd = '%sseen %s' % (cmdchar, nick)
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != cmd, Log.type != 'join').order_by(Log.time.desc()).first()
+    command = '%sseen %s' % (cmdchar, nick)
+    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command, Log.type != 'join').order_by(Log.time.desc()).first()
 
 
 @Command('seen', ['db', 'config'])

@@ -441,7 +441,7 @@ class BotHandler():
             if e.source.nick == 'NickServ':
                 admin.set_admin(msg, self)
         elif e.type == 'welcome':
-            self.handle_welcome(e)
+            self.handle_welcome()
 
     def handle_authenticate(self, e):
         passwd = self.config['auth']['serverpass']
@@ -458,7 +458,7 @@ class BotHandler():
             else:
                 self.admins[e.source.nick] = time.time()
 
-    def handle_welcome(self, e):
+    def handle_welcome(self):
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
         logging.info("Connected to server %s", self.config['core']['host'])

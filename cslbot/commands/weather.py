@@ -14,11 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import geoip2
 import datetime
 import re
 import socket
 from os.path import join
+import geoip2
 from requests import get
 from ..helpers import arguments
 from ..helpers.orm import Weather_prefs
@@ -27,7 +27,7 @@ from ..helpers.geoip import get_zipcode
 from pkg_resources import Requirement, resource_filename
 
 
-def get_default(nick, session, handler, send, config, source):
+def get_default(nick, session, send, config, source):
     location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
     if location is None:
         try:
@@ -176,7 +176,7 @@ def get_hourly(cmdargs, send, apikey):
     send("Couldn't find data for %s hour %s in the 10-day hourly forecast" % (cmdargs.date.strftime("%x"), cmdargs.hour))
 
 
-@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
+@Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
 def cmd(send, msg, args):
     """Gets the weather.
     Syntax: {command} <[--date (date)] [--hour (hour)] (location)|--set (default)>
@@ -203,7 +203,7 @@ def cmd(send, msg, args):
         cmdargs.hour = None
     nick = args['nick'] if args['name'] == 'weather' else '`bjones'
     if not cmdargs.string:
-        cmdargs.string = get_default(nick, args['db'], args['handler'], send, args['config'], args['source'])
+        cmdargs.string = get_default(nick, args['db'], send, args['config'], args['source'])
     if cmdargs.hour is not None:
         get_hourly(cmdargs, send, apikey)
     elif cmdargs.date:

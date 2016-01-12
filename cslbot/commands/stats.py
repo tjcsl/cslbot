@@ -26,7 +26,7 @@ def get_commands(session):
     return [row.command for row in rows]
 
 
-def get_command_totals(session, commands):
+def get_command_totals(session):
     rows = session.query(Commands.command, func.count(Commands.command)).group_by(Commands.command).all()
     return {x[0]: x[1] for x in rows}
 
@@ -75,7 +75,7 @@ def cmd(send, msg, args):
         return
     session = args['db']
     commands = get_commands(session)
-    totals = get_command_totals(session, commands)
+    totals = get_command_totals(session)
     sortedtotals = sorted(totals, key=totals.get)
     if registry.is_registered(cmdargs.command):
         send(get_command(session, cmdargs.command, totals))

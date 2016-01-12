@@ -138,7 +138,7 @@ def cmd(send, msg, args):
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:
-            send(do_delete_quote(args, session, cmdargs.delete))
+        send(do_delete_quote(args, session, cmdargs.delete))
     elif cmdargs.edit:
         if args['is_admin'](args['nick']):
             send(do_update_quote(session, cmdargs.edit, cmdargs.nick, cmdargs.quote))

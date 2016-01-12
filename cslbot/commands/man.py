@@ -33,12 +33,12 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    if(cmdargs.section):
+    if cmdargs.section:
         html = get('http://linux.die.net/man/%s/%s' % (cmdargs.section, cmdargs.command))
         try:
             short = fromstring(html.text).find('.//meta[@name="description"]').get('content')
             send("%s -- http://linux.die.net/man/%s/%s" % (short, cmdargs.section, cmdargs.command))
-        except:
+        except AttributeError:
             send("No manual entry for %s in section %s" % (cmdargs.command, cmdargs.section))
     else:
         for section in range(0, 8):

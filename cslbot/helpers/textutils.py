@@ -184,8 +184,8 @@ def char_to_bin(c):
     return ret[::-1]
 
 
-def gen_binary(string):
-    return "".join(map(char_to_bin, string))
+def gen_binary(text):
+    return "".join(map(char_to_bin, text))
 
 
 def gen_xkcd_sub(msg, hook=False):

@@ -15,9 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import operator
-from lxml.html import fromstring
-from requests import get
 from random import choice
+from requests import get
+from lxml.html import fromstring
 from ..helpers.command import Command
 
 

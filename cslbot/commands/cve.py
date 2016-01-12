@@ -32,7 +32,7 @@ def cmd(send, msg, args):
         return
     # If there are three fields, ignore the first (we don't actually need to send CVE-
     if len(elements) == 3:
-        if not elements[0].upper() == 'CVE':
+        if elements[0].upper() != 'CVE':
             send("Invalid CVE format")
             return
         elements.pop(0)
