@@ -419,13 +419,7 @@ class BotHandler():
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
         if e.type == 'whospcrpl':
-            # arguments: type,nick,modes,account
-            # properly track voiced status.
-            location = self.who_map[int(e.arguments[0])]
-            self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
-            if e.arguments[1] in self.admins:
-                if e.arguments[3] != '0':
-                    self.admins[e.arguments[1]] = time.time()
+            self.handle_who(e)
         elif e.type == 'account':
             if e.source.nick in self.admins:
                 if e.target == '*':
@@ -440,13 +434,7 @@ class BotHandler():
         elif e.type == 'bannedfromchan':
             self.workers.defer(5, False, self.do_rejoin, c, e)
         elif e.type == 'cap':
-            if e.arguments[0] == 'ACK':
-                if e.arguments[1].strip() == 'sasl':
-                    self.connection.send_raw('AUTHENTICATE PLAIN')
-                elif e.arguments[1].strip() == 'account-notify':
-                    self.features['account-notify'] = True
-                elif e.arguments[1].strip() == 'extended-join':
-                    self.features['extended-join'] = True
+            self.handle_cap(self, e)
         elif e.type in ['ctcpreply', 'nosuchnick']:
             misc.ping(self.ping_map, c, e, time.time())
         elif e.type == 'error':
@@ -455,12 +443,7 @@ class BotHandler():
             if 'WHOX' in e.arguments:
                 self.features['whox'] = True
         elif e.type == 'nick':
-            for channel in misc.get_channels(self.channels, e.target):
-                self.do_log(channel, e.source.nick, e.target, 'nick')
-            self.update_nickstatus(e.target)
-            if identity.handle_nick(self, e):
-                for x in misc.get_channels(self.channels, e.target):
-                    self.do_kick(send, x, e.target, "identity crisis")
+            self.handle_nick(send, e)
         elif e.type == 'nicknameinuse':
             self.connection.nick('Guest%d' % random.getrandbits(20))
         elif e.type == 'privnotice':
@@ -471,6 +454,82 @@ class BotHandler():
             if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
                 self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
             self.do_welcome()
+
+    def handle_who(self, e):
+        # arguments: type,nick,modes,account
+        # properly track voiced status.
+        location = self.who_map[int(e.arguments[0])]
+        self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
+        if e.arguments[1] in self.admins:
+            if e.arguments[3] != '0':
+                self.admins[e.arguments[1]] = time.time()
+
+    def handle_cap(self, e):
+        if e.arguments[0] == 'ACK':
+            if e.arguments[1].strip() == 'sasl':
+                self.connection.send_raw('AUTHENTICATE PLAIN')
+            elif e.arguments[1].strip() == 'account-notify':
+                self.features['account-notify'] = True
+            elif e.arguments[1].strip() == 'extended-join':
+                self.features['extended-join'] = True
+
+    def handle_nick(self, send, e):
+        for channel in misc.get_channels(self.channels, e.target):
+            self.do_log(channel, e.source.nick, e.target, 'nick')
+        self.update_nickstatus(e.target)
+        if identity.handle_nick(self, e):
+            for x in misc.get_channels(self.channels, e.target):
+                self.do_kick(send, x, e.target, "identity crisis")
+
+    def handle_join(self, c, e, target, send):
+        if self.features['whox']:
+            tag = random.randint(0, 999)
+            self.who_map[tag] = target
+            if e.source.nick == c.real_nickname:
+                c.who('%s %%naft,%d' % (target, tag))
+            else:
+                c.who('%s %%naft,%d' % (e.source.nick, tag))
+        if e.source.nick == c.real_nickname:
+            send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
+        elif self.features['extended-join']:
+            if e.source.nick in self.admins:
+                if e.arguments[0] == '*':
+                    self.admins[e.source.nick] = None
+                else:
+                    self.admins[e.source.nick] = time.time()
+
+    def get_cmd(self, msg):
+        cmd = msg.split()[0]
+        cmdchar = self.config['core']['cmdchar']
+
+        cmdlen = len(cmd) + 1
+        # FIXME: figure out a better way to handle !s
+        if cmd.startswith('%ss' % cmdchar):
+            # escape special regex chars
+            raw_cmdchar = '\\' + cmdchar if re.match(r'[\[\].^$*+?]', cmdchar) else cmdchar
+            match = re.match(r'%ss(\W)' % raw_cmdchar, cmd)
+            if match:
+                cmd = cmd.split(match.group(1))[0]
+                cmdlen = len(cmd)
+
+        cmdargs = msg[cmdlen:]
+        cmd_name = cmd[len(cmdchar):].lower() if cmd.startswith(cmdchar) else None
+        return cmd_name, cmdargs
+
+    def run_cmd(self, send, nick, target, cmd_name, cmdargs, e):
+        cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
+        if filtersend is None:
+            send(cmdargs)
+            return
+
+        cmd_obj = command.registry.get_command(cmd_name)
+        if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
+            return
+        if cmd_obj.requires_admin() and not self.is_admin(send, nick):
+            send("This command requires admin privileges.")
+            return
+        args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
+        cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
 
     def handle_msg(self, c, e):
         """The Heart and Soul of IrcBot."""
@@ -506,21 +565,7 @@ class BotHandler():
             return
 
         if e.type == 'join':
-            if self.features['whox']:
-                tag = random.randint(0, 999)
-                self.who_map[tag] = target
-                if e.source.nick == c.real_nickname:
-                    c.who('%s %%naft,%d' % (target, tag))
-                else:
-                    c.who('%s %%naft,%d' % (e.source.nick, tag))
-            if e.source.nick == c.real_nickname:
-                send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
-            elif self.features['extended-join']:
-                if e.source.nick in self.admins:
-                    if e.arguments[0] == '*':
-                        self.admins[e.source.nick] = None
-                    else:
-                        self.admins[e.source.nick] = time.time()
+            self.handle_join(c, e, target, send)
             return
 
         if e.type == 'part':
@@ -547,38 +592,12 @@ class BotHandler():
                 h.run(send, msg, e.type, self, target, realargs)
 
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
-        cmd = msg.split()[0]
-        cmdchar = self.config['core']['cmdchar']
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
-
-        cmdlen = len(cmd) + 1
-        # FIXME: figure out a better way to handle !s
-        if cmd.startswith('%ss' % cmdchar):
-            # escape special regex chars
-            raw_cmdchar = '\\' + cmdchar if re.match(r'[\[\].^$*+?]', cmdchar) else cmdchar
-            match = re.match(r'%ss(\W)' % raw_cmdchar, cmd)
-            if match:
-                cmd = cmd.split(match.group(1))[0]
-                cmdlen = len(cmd)
-
-        cmdargs = msg[cmdlen:]
-        cmd_name = cmd[len(cmdchar):].lower() if cmd.startswith(cmdchar) else None
+        cmd_name, cmdargs = self.get_cmd(msg)
 
         if command.registry.is_registered(cmd_name):
-            cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
-            if filtersend is None:
-                send(cmdargs)
-                return
-
-            cmd_obj = command.registry.get_command(cmd_name)
-            if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd[len(cmdchar):]):
-                return
-            if cmd_obj.requires_admin() and not self.is_admin(send, nick):
-                send("This command requires admin privileges.")
-                return
-            args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
-            cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
+            self.run_cmd(send, nick, target, cmd_name, cmdargs, e)
         # special commands
-        elif cmd == '%sreload' % cmdchar:
+        elif cmd_name == 'reload':
             if nick in admins:
                 send("Aye Aye Capt'n")
