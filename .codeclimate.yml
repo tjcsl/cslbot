@@ -1,6 +1,12 @@
 ratings:
     paths:
         - "**.py"
+exclude_paths:
+    - "CslBot.egg-info/**"
+    - "cslbot/static/**"
+    - "cslbot/templates/**"
+    - "**.rst"
+    - "**.sh"
 engines:
     fixme:
         enabled: true
