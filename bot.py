@@ -17,9 +17,10 @@
 
 from sys import path
 from os.path import abspath, dirname
+
 path.insert(0, dirname(abspath(__file__)))
 
-from cslbot.helpers import core
+from cslbot.helpers import core  # noqa
 
 if __name__ == '__main__':
     core.init(dirname(abspath(__file__)))

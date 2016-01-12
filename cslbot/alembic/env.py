@@ -13,18 +13,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+import configparser
+import logging
 from sys import path
 from os.path import exists, dirname, join
+from alembic import context
+from sqlalchemy import create_engine
+
 # Make this work from git.
 if exists(join(dirname(__file__), '../../.git')):
     path.insert(0, join(dirname(__file__), '../..'))
 
-import configparser
-import logging
-from alembic import context
-from sqlalchemy import create_engine
-
-from cslbot.helpers import orm
+from cslbot.helpers import orm  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
