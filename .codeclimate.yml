@@ -7,6 +7,11 @@ exclude_paths:
     - "cslbot/templates/**"
     - "**.rst"
     - "**.sh"
+    - "**.mako"
+    - "**.in"
+    - "scripts/ircbot"
+    - "COPYING"
+    - ".pylintrc"
 engines:
     fixme:
         enabled: true
