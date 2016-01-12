@@ -1,4 +1,15 @@
-languages:
-  Python: true
-exclude_paths:
-- "cslbot/alembic/versions/3614b38ddf9_kick_logging_change.py"
+ratings:
+    paths:
+        - "**.py"
+engines:
+    fixme:
+        enabled: true
+    duplication:
+        enabled: true
+        config:
+            languages:
+                - python
+    radon:
+        enabled: true
+    pep8:
+        enabled: true
