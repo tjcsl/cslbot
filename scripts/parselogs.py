@@ -27,8 +27,8 @@ from time import strftime, localtime
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
-from cslbot.helpers.orm import Log
-from cslbot.helpers.sql import get_session
+from cslbot.helpers.orm import Log  # noqa
+from cslbot.helpers.sql import get_session  # noqa
 
 
 class LogProcesser(object):

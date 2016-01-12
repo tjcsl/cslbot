@@ -23,8 +23,8 @@ import configparser
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-from alembic import command, config
-from pkg_resources import Requirement, resource_filename
+from alembic import command, config  # noqa
+from pkg_resources import Requirement, resource_filename  # noqa
 
 
 def main(confdir="/etc/cslbot"):

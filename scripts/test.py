@@ -24,10 +24,10 @@ from unittest import mock
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
-# Imports pkg_resources, so must come after the path is modified
-import irc.client
 
-from cslbot.helpers import core, server
+# Imports pkg_resources, so must come after the path is modified
+import irc.client  # noqa
+from cslbot.helpers import core, server  # noqa
 
 
 def config_mock(config, section, option):

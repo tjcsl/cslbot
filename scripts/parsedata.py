@@ -30,8 +30,8 @@ from pkg_resources import Requirement, resource_filename
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 
-from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls
-from cslbot.helpers.sql import get_session
+from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls  # noqa
+from cslbot.helpers.sql import get_session  # noqa
 
 
 def get_quotes(session):

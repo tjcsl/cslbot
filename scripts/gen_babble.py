@@ -23,7 +23,7 @@ import time
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-from cslbot.helpers import babble, sql
+from cslbot.helpers import babble, sql  # noqa
 
 
 def main(confdir="/etc/cslbot"):

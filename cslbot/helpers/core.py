@@ -20,7 +20,6 @@ import functools
 import logging
 import importlib
 import multiprocessing
-import queue
 import signal
 import ssl
 import threading
@@ -29,8 +28,9 @@ from os import path
 if sys.version_info < (3, 4, 3):
     # Dependency on importlib.reload and urlopen(context=context)
     raise Exception("Need Python 3.4.3 or higher.")
-from irc import bot, connection, client
-from . import backtrace, config, handler, misc, reloader, server
+import queue  # noqa
+from irc import bot, connection, client  # noqa
+from . import backtrace, config, handler, misc, reloader, server  # noqa
 
 
 class IrcBot(bot.SingleServerIRCBot):
