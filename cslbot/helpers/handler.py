@@ -425,7 +425,7 @@ class BotHandler():
         elif e.type == 'bannedfromchan':
             self.workers.defer(5, False, self.do_rejoin, c, e)
         elif e.type == 'cap':
-            self.handle_cap(self, e)
+            self.handle_cap(e)
         elif e.type in ['ctcpreply', 'nosuchnick']:
             misc.ping(self.ping_map, c, e, time.time())
         elif e.type == 'error':
