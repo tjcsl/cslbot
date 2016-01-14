@@ -17,8 +17,10 @@ CslBot.egg-info/top_level.txt
 cslbot/__init__.py
 cslbot/alembic/env.py
 cslbot/alembic/script.py.mako
+cslbot/alembic/versions/243c9cf0eb7d_use_datetime_not_float.py
 cslbot/alembic/versions/3614b38ddf9_kick_logging_change.py
 cslbot/alembic/versions/385c29e42d9_remove_nicks.py
+cslbot/alembic/versions/4d165186b4ed_fix_nullable.py
 cslbot/alembic/versions/55efdbb748c_merge_pending.py
 cslbot/alembic/versions/7fde00129eb6_multi_babble.py
 cslbot/alembic/versions/ef7ccebeff_initial_commit.py
