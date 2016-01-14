@@ -16,6 +16,7 @@
 
 import multiprocessing
 import re
+
 import sre_constants
 
 from ..helpers.command import Command

@@ -27,7 +27,6 @@ from alembic import command, config  # noqa
 from pkg_resources import Requirement, resource_filename  # noqa
 
 
-
 def main(confdir="/etc/cslbot"):
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(join(confdir, 'config.cfg')) as f:
