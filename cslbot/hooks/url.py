@@ -17,7 +17,7 @@
 import logging
 import multiprocessing
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ..helpers import urlutils
 from ..helpers.exception import CommandFailedException
@@ -48,7 +48,7 @@ def handle(send, msg, args):
         return
     for url in urls:
         # Prevent botloops
-        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - 10).count() > 1:
+        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1:
             return
         title = None
         ex = None
