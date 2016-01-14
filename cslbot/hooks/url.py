@@ -66,7 +66,7 @@ def handle(send, msg, args):
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
             if last is not None:
-                lasttime = datetime.time.strftime('%H:%M:%S on %Y-%m-%d')
+                lasttime = last.time.strftime('%H:%M:%S on %Y-%m-%d')
                 send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
             else:
                 send('** %s - %s' % (title, short))
