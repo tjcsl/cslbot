@@ -216,6 +216,9 @@ class BotHandler():
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
         target = target.lower()
         flags = 0
+        # Properly handle /msg +#channel
+        if target.startswith(('+', '@')):
+            target = target[1:]
         if target in self.channels:
             if nick in self.channels[target].opers():
                 flags |= 1
@@ -249,7 +252,7 @@ class BotHandler():
                 return
             else:
                 cmdargs = target
-        if cmdargs[0] != '#':
+        if not cmdargs.startswith(('#', '+', '@')):
             cmdargs = '#' + cmdargs
         # don't leave the primary channel
         if cmdargs == channel:
@@ -273,7 +276,7 @@ class BotHandler():
         if cmdargs == '0':
             send("I'm sorry, Dave. I'm afraid I can't do that.")
             return
-        if cmdargs[0] != '#':
+        if not cmdargs.startswith(('#', '+', '@')):
             cmdargs = '#' + cmdargs
         cmd = cmdargs.split()
         # FIXME: use argparse

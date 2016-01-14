@@ -30,7 +30,7 @@ def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     # Ignore commands, and messages addressed to the ctrlchan
     query = query.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
     if speaker is not None:
-        location = 'target' if speaker.startswith('#') else 'source'
+        location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
         query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
     return query.order_by(Log.id).all()
 
