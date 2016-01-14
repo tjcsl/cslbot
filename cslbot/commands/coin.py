@@ -33,6 +33,6 @@ def cmd(send, msg, _):
         if msg < 0:
             send("Negative Flipping requires the (optional) quantum coprocessor.")
             return
-        headFlips = randint(0, msg)
-        tailFlips = msg - headFlips
-        send('The coins land on heads %g times and on tails %g times.' % (headFlips, tailFlips))
+        headflips = randint(0, msg)
+        tailflips = msg - headflips
+        send('The coins land on heads %g times and on tails %g times.' % (headflips, tailflips))

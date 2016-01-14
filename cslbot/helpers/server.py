@@ -56,12 +56,12 @@ class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 class BotNetHandler(socketserver.BaseRequestHandler):
 
     def get_data(self):
-        SIZE = 4096
+        size = 4096
         msg = "".encode()
         while True:
-            data = self.request.recv(SIZE)
+            data = self.request.recv(size)
             msg += data
-            if len(data) != SIZE:
+            if len(data) != size:
                 break
         return msg.decode()
 

@@ -48,7 +48,7 @@ def main(confdir="/etc/cslbot"):
         sizes = output.decode().splitlines()[-2]
         before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
         # 8 bits = 1 byte
-        count = 1024*1024*8*float(after) / len(text)
+        count = 1024 * 1024 * 8 * float(after) / len(text)
         freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
     with open('freq.json', 'w') as f:
         json.dump(freq, f, indent=True)

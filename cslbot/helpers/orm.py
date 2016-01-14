@@ -69,13 +69,13 @@ class Polls(Base):
     submitter = Column(UnicodeText)
 
 
-class Poll_responses(Base):
+class Poll_responses(Base):  # noqa
     response = Column(UnicodeText)
     voter = Column(UnicodeText)
     pid = Column(Integer, ForeignKey("polls.id"))
 
 
-class Weather_prefs(Base):
+class Weather_prefs(Base):  # noqa
     nick = Column(Unicode(length=20), unique=True)
     location = Column(UnicodeText)
 
@@ -137,11 +137,11 @@ class Babble2(Base):
     freq = Column(Integer)
 
 
-class Babble_last(Base):
+class Babble_last(Base):  # noqa
     last = Column(Integer)
 
 
-class Babble_count(Base):
+class Babble_count(Base):  # noqa
     type = Column(UnicodeText)
     length = Column(Integer)
     key = Column(UnicodeText)

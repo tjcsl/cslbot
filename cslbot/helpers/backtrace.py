@@ -43,7 +43,8 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     prettyerrors = config['feature'].getboolean('prettyerrors')
     # If we've disconnected, there isn't much point sending errors to the network.
     if isinstance(ex, ServerNotConnectedError):
-        def send(_, msg): logging.error(msg)
+        def send(_, msg):
+            logging.error(msg)
     else:
         send = c.privmsg
     errtarget = ctrlchan if prettyerrors else target

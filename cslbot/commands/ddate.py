@@ -24,7 +24,7 @@ def cmd(send, *_):
     Syntax: {command}
     """
     try:
-        toSend = subprocess.check_output(['ddate']).decode().rstrip()
+        output = subprocess.check_output(['ddate']).decode().rstrip()
     except subprocess.CalledProcessError:
-        toSend = 'Today is the day you install ddate!'
-    send(toSend)
+        output = 'Today is the day you install ddate!'
+    send(output)

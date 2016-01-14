@@ -127,7 +127,7 @@ class Workers():
         if not self.handler.config.getboolean('feature', 'voiceactive'):
             return
         # Mark inactive after 24 hours.
-        active_time = time.time() - 3600*24
+        active_time = time.time() - 3600 * 24
         with handler.db.session_scope() as session:
             # FIXME: actually lock instead of just making a copy
             for name in list(handler.channels.keys()):

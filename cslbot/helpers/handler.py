@@ -161,10 +161,10 @@ class BotHandler():
         # FIXME: what the hell is up w/ message length limits?
         if msgtype == 'action':
             overhead += "\001ACTION \001"
-            MAX = 454  # 512
+            max_len = 454  # 512
         else:
-            MAX = 453  # 512
-        return MAX - len(overhead.encode())
+            max_len = 453  # 512
+        return max_len - len(overhead.encode())
 
     def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
         """ Send a message.
@@ -180,10 +180,10 @@ class BotHandler():
             if target != self.config['core']['ctrlchan']:
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
-        MAX_LEN = 650
+        max_len = 650
         msg = [x.encode() for x in msg]
-        if functools.reduce(lambda x, y: x + len(y), msg, 0) > MAX_LEN and not ignore_length:
-            msg, _ = misc.split_msg(msg, MAX_LEN)
+        if functools.reduce(lambda x, y: x + len(y), msg, 0) > max_len and not ignore_length:
+            msg, _ = misc.split_msg(msg, max_len)
             msg += "..."
             msg = [x.encode() for x in msg]
         max_len = self.get_max_length(target, msgtype)

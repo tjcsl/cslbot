@@ -32,18 +32,18 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    apiOutput = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
+    api_output = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
     commit, version = misc.get_version(args['handler'].confdir)
     if not cmdargs.action:
         send(version)
         return
     if cmdargs.action == 'master':
-        send(apiOutput['commit']['sha'])
+        send(api_output['commit']['sha'])
     elif cmdargs.action == 'check':
         if commit is None:
             send("Not running from git, version %s" % version)
         else:
-            check = 'Same' if apiOutput['commit']['sha'] == commit else 'Different'
+            check = 'Same' if api_output['commit']['sha'] == commit else 'Different'
             send(check)
     elif cmdargs.action == 'commit':
         if commit is None:
