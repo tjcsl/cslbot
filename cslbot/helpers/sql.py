@@ -17,7 +17,7 @@
 # USA.
 
 from contextlib import contextmanager
-from time import time
+from datetime import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -63,7 +63,7 @@ class Sql():
         | msg: The type of message.
         | time: The current time (Unix Epoch).
         """
-        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=time())
+        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=datetime.now())
         with self.session_scope() as session:
             session.add(entry)
             session.flush()

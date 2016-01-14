@@ -24,6 +24,7 @@ import random
 import re
 import threading
 import time
+from datetime import datetime, timedelta
 
 from irc import modes
 
@@ -49,7 +50,7 @@ class BotHandler():
         self.config = config
         self.db = sql.Sql(config, confdir)
         self.workers = workers.Workers(self)
-        start = time.time()
+        start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
         self.guarded = []
         self.ping_map = {}
@@ -60,7 +61,7 @@ class BotHandler():
         self.voiced = collections.defaultdict(dict)
         self.who_map = {}
         self.flood_lock = threading.Lock()
-        self.last_msg_time = time.time()
+        self.last_msg_time = datetime.now()
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: None for nick in admins}
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
@@ -83,7 +84,7 @@ class BotHandler():
         """Called from :func:`bot.IrcBot.do_reload` to restore the handler's data."""
         for key, val in data.items():
             setattr(self, key, val)
-        self.uptime['reloaded'] = time.time()
+        self.uptime['reloaded'] = datetime.now()
 
     def update_nickstatus(self, nick):
         if self.features['whox']:
@@ -119,7 +120,7 @@ class BotHandler():
         else:
             if not self.features['account-notify']:
                 # reverify every 5min
-                if int(time.time()) - self.admins[nick] > 300:
+                if datetime.now() - self.admins[nick] > timedelta(minutes=5):
                     self.update_nickstatus(nick)
             return True
 
@@ -143,13 +144,13 @@ class BotHandler():
         if nick not in self.abuselist:
             self.abuselist[nick] = {}
         if cmd not in self.abuselist[nick]:
-            self.abuselist[nick][cmd] = [time.time()]
+            self.abuselist[nick][cmd] = [datetime.now()]
         else:
-            self.abuselist[nick][cmd].append(time.time())
+            self.abuselist[nick][cmd].append(datetime.now())
         count = 0
         for x in self.abuselist[nick][cmd]:
             # 60 seconds - arbitrary cuttoff
-            if (time.time() - x) < 60:
+            if datetime.now() - x < timedelta(seconds=60):
                 count = count + 1
         if count > limit:
             msg = "%s: don't abuse scores!" if cmd == 'scores' else "%s: stop abusing the bot!"
@@ -204,11 +205,11 @@ class BotHandler():
 
     def rate_limited_send(self, mtype, target, msg):
         with self.flood_lock:
-            elapsed = time.time() - self.last_msg_time
+            elapsed = datetime.now() - self.last_msg_time
             # Don't send messages more then once every 0.5 sec.
-            time.sleep(max(0, 0.5 - elapsed))
+            time.sleep(max(0, 0.5 - elapsed.total_seconds()))
             getattr(self.connection, mtype)(target, msg)
-            self.last_msg_time = time.time()
+            self.last_msg_time = datetime.now()
 
     def do_log(self, target, nick, msg, msgtype):
         """ Handles logging.
@@ -433,7 +434,7 @@ class BotHandler():
         elif e.type == 'cap':
             self.handle_cap(e)
         elif e.type in ['ctcpreply', 'nosuchnick']:
-            misc.ping(self.ping_map, c, e, time.time())
+            misc.ping(self.ping_map, c, e, datetime.now())
         elif e.type == 'error':
             logging.error(e.target)
         elif e.type == 'featurelist':
@@ -462,7 +463,7 @@ class BotHandler():
             if e.target == '*':
                 self.admins[e.source.nick] = None
             else:
-                self.admins[e.source.nick] = time.time()
+                self.admins[e.source.nick] = datetime.now()
 
     def handle_welcome(self):
         passwd = self.config['auth']['serverpass']
@@ -479,7 +480,7 @@ class BotHandler():
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         if e.arguments[1] in self.admins:
             if e.arguments[3] != '0':
-                self.admins[e.arguments[1]] = time.time()
+                self.admins[e.arguments[1]] = datetime.now()
 
     def handle_cap(self, e):
         if e.arguments[0] == 'ACK':
@@ -513,7 +514,7 @@ class BotHandler():
                 if e.arguments[0] == '*':
                     self.admins[e.source.nick] = None
                 else:
-                    self.admins[e.source.nick] = time.time()
+                    self.admins[e.source.nick] = datetime.now()
 
     def get_cmd(self, msg):
         cmd = msg.split()[0]

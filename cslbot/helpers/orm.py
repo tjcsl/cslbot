@@ -16,9 +16,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+from datetime import datetime
+
 from alembic import command, config
 from pkg_resources import Requirement, resource_filename
-from sqlalchemy import Column, Float, ForeignKey, Integer, Unicode, UnicodeText
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -50,7 +52,7 @@ class Log(Base):
     flags = Column(Integer)
     msg = Column(UnicodeText)
     type = Column(UnicodeText)
-    time = Column(Float)
+    time = Column(DateTime(timezone=True))
 
 
 class Quotes(Base):
@@ -92,15 +94,15 @@ class Commands(Base):
 
 class Stopwatches(Base):
     active = Column(Integer, default=1)
-    time = Column(Integer)
-    elapsed = Column(Float, default=0)
+    time = Column(DateTime)
+    elapsed = Column(DateTime, default=datetime.min)
 
 
 class Urls(Base):
     url = Column(UnicodeText)
     title = Column(UnicodeText)
     nick = Column(UnicodeText)
-    time = Column(Float)
+    time = Column(DateTime(timezone=True))
 
 
 class Issues(Base):
@@ -114,7 +116,7 @@ class Notes(Base):
     note = Column(UnicodeText)
     submitter = Column(UnicodeText)
     nick = Column(UnicodeText)
-    time = Column(Float)
+    time = Column(DateTime(timezone=True))
     pending = Column(Integer, default=1)
 
 
@@ -149,7 +151,7 @@ class Babble_count(Base):  # noqa
 
 class Ignore(Base):
     nick = Column(UnicodeText)
-    expire = Column(Float)
+    expire = Column(DateTime)
 
 
 class Tumblrs(Base):

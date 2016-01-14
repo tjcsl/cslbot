@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from datetime import timedelta
-from time import time
+from datetime import datetime
 
 from ..helpers.command import Command
 
@@ -25,9 +24,9 @@ def cmd(send, _, args):
     """Shows the bot's uptime.
     Syntax: {command}
     """
-    curr = time()
+    curr = datetime.now()
     uptime = args['handler'].uptime
     starttime = curr - uptime['start']
     reloaded = curr - uptime['reloaded']
-    send("Time since start: %s" % timedelta(seconds=starttime))
-    send("Time since reload: %s" % timedelta(seconds=reloaded))
+    send("Time since start: %s" % starttime)
+    send("Time since reload: %s" % reloaded)

@@ -21,7 +21,6 @@ import fcntl
 import re
 import sys
 from os import makedirs, path
-from time import localtime, strftime
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
@@ -50,14 +49,13 @@ class LogProcesser(object):
     def check_day(self, row):
         # FIXME: print out new day messages for each day, not just the most recent one.
         channel = row.target
-        time = localtime(row.time)
-        rowday = strftime('%d', time)
+        rowday = row.time.strftime('%d')
         if channel not in self.day:
             self.day[channel] = rowday
             return
         if self.day[channel] != rowday:
             self.day[channel] = rowday
-            log = strftime('New Day: %a, %b %d, %Y', time)
+            log = row.time.strftime('New Day: %a, %b %d, %Y')
             self.write_log(channel, log)
 
     def write_log(self, channel, msg):
@@ -85,7 +83,7 @@ def save_id(outdir, new_id):
 
 
 def gen_log(row):
-    logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
+    logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
     nick = row.source.split('!')[0]
     if row.type == 'join':
         log = '%s --> %s (%s) has joined %s' % (logtime, nick, row.source, row.target)

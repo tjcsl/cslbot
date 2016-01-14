@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import time
-from datetime import timedelta
+from datetime import datetime
 
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -39,8 +38,7 @@ def cmd(send, msg, args):
     if last is None:
         send("%s has never shown his face." % msg)
         return
-    elapsed = time.time() - last.time
-    delta = timedelta(seconds=int(elapsed))
+    delta = datetime.now() - last.time
     output = "%s was last seen %s ago " % (msg, delta)
     if last.type == 'pubmsg' or last.type == 'privmsg':
         output += 'saying "%s"' % last.msg

@@ -14,8 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import localtime, strftime
-
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -51,7 +49,7 @@ def cmd(send, msg, args):
     rows = query.order_by(Log.time.desc()).all()
     if rows:
         row = rows[0]
-        logtime = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
+        logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
         send("%s was last said by %s at %s (%d occurrences)" % (row.msg, row.source, logtime, len(rows)))
     elif cmdargs.nick:
         send('%s has never said %s.' % (cmdargs.nick, term))

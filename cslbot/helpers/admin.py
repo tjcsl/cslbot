@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-from time import time
+from datetime import datetime
 
 
 def set_admin(msg, handler):
@@ -31,4 +31,4 @@ def set_admin(msg, handler):
         status = int(match.group(2))
         nick = match.group(1)
         if status == 3:
-            handler.admins[nick] = int(time())
+            handler.admins[nick] = datetime.now()

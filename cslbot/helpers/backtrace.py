@@ -54,4 +54,8 @@ def handle_traceback(ex, c, target, config, source="the bot"):
             send(target, "%s -- %s" % (source, output))
         else:
             send(target, "%s occured in %s. See the control channel for details." % (name, source))
-    send(errtarget, 'Error in channel %s -- %s -- %s' % (target, source, msg))
+    msg = 'Error in channel %s -- %s -- %s' % (target, source, msg)
+    # Handle over-long exceptions.
+    if len(msg) > 480:
+        msg = msg[:480] + '...'
+    send(errtarget, msg)

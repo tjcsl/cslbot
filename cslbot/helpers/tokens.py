@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import time
+from datetime import datetime, timedelta
 
 from requests import post
 
@@ -24,7 +24,7 @@ from requests import post
 class Token():
 
     def __init__(self):
-        self.time = 0
+        self.time = datetime.min
         self.key = 'invalid'
 
     def __str__(self):
@@ -41,7 +41,7 @@ class TranslateToken(Token):
         postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
         data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
         self.key = data['access_token']
-        self.time = time.time()
+        self.time = datetime.now()
 
 token_cache = {'translate': TranslateToken()}
 
@@ -49,5 +49,5 @@ token_cache = {'translate': TranslateToken()}
 def update_all_tokens(config):
     for token in token_cache.values():
         # The cache is valid for 10 minutes, refresh it only if it will expire in 1 minute or less.
-        if time.time() - token.time > 9 * 60:
+        if datetime.now() - token.time > timedelta(minutes=9):
             token.update(config)

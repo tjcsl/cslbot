@@ -20,7 +20,7 @@ import logging
 import os
 import re
 import subprocess
-from datetime import timedelta
+from datetime import datetime
 from os.path import exists, join
 from random import choice, random
 
@@ -91,7 +91,7 @@ def ping(ping_map, c, e, pongtime):
     response = e.arguments[1].replace(' ', '.')
     try:
         pingtime = float(response)
-        delta = timedelta(seconds=pongtime - pingtime)
+        delta = pongtime - datetime.fromtimestamp(pingtime)
         elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
     except (ValueError, OverflowError):
         elapsed = response
@@ -178,7 +178,7 @@ def ignore(session, nick):
     row = session.query(orm.Ignore).filter(orm.Ignore.nick == nick).first()
     if row is None:
         # FIXME: support expiration times for ignores
-        session.add(orm.Ignore(nick=nick, expire=-1))
+        session.add(orm.Ignore(nick=nick, expire=datetime.min))
         return "Now ignoring %s" % nick
     else:
         return "%s is already ignored." % nick

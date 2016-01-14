@@ -14,8 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from datetime import timedelta
-from time import time
+from datetime import datetime
 
 from ..helpers import arguments
 from ..helpers.command import Command
@@ -23,7 +22,7 @@ from ..helpers.orm import Stopwatches
 
 
 def create_stopwatch(args):
-    row = Stopwatches(time=time())
+    row = Stopwatches(time=datetime.now())
     args.session.add(row)
     args.session.flush()
     return "Created new stopwatch with ID %d" % row.id
@@ -35,8 +34,8 @@ def get_elapsed(session, sw):
         return "No stopwatch exists with that ID!"
     etime = stopwatch.elapsed
     if stopwatch.active == 1:
-        etime = time() - stopwatch.time
-    return str(timedelta(seconds=etime))
+        etime = datetime.now() - stopwatch.time
+    return str(etime)
 
 
 def stop_stopwatch(args):
@@ -46,7 +45,7 @@ def stop_stopwatch(args):
     if stopwatch.active == 0:
         return "That stopwatch is already stopped!"
     etime = stopwatch.elapsed
-    etime = time() - stopwatch.time
+    etime = datetime.now() - stopwatch.time
     stopwatch.elapsed = etime
     stopwatch.active = 0
     return "Stopwatch stopped at %s" % get_elapsed(args.session, args.id)
@@ -71,7 +70,7 @@ def resume_stopwatch(args):
     if stopwatch.active == 1:
         return "That stopwatch is not paused!"
     stopwatch.active = 1
-    stopwatch.time = time()
+    stopwatch.time = datetime.now()
     return "Stopwatch resumed!"
 
 

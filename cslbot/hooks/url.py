@@ -17,7 +17,7 @@
 import logging
 import multiprocessing
 import re
-import time
+from datetime import datetime
 
 from ..helpers import urlutils
 from ..helpers.exception import CommandFailedException
@@ -48,7 +48,7 @@ def handle(send, msg, args):
         return
     for url in urls:
         # Prevent botloops
-        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > time.time() - 10).count() > 1:
+        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - 10).count() > 1:
             return
         title = None
         ex = None
@@ -66,8 +66,8 @@ def handle(send, msg, args):
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
             if last is not None:
-                lasttime = time.strftime('%H:%M:%S on %Y-%m-%d', time.localtime(last.time))
+                lasttime = datetime.time.strftime('%H:%M:%S on %Y-%m-%d')
                 send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
             else:
                 send('** %s - %s' % (title, short))
-        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=time.time()))
+        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=datetime.now()))

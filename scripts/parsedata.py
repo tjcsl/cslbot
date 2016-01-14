@@ -21,8 +21,8 @@ import fcntl
 import shutil
 import sys
 from datetime import datetime, timedelta
+from time import strftime
 from os import makedirs, path
-from time import mktime, strftime
 
 from jinja2 import Environment, FileSystemLoader
 from pkg_resources import Requirement, resource_filename
@@ -47,11 +47,10 @@ def get_scores(session):
 def get_urls(session):
     # FIXME: support stuff older than one week
     limit = datetime.now() - timedelta(weeks=1)
-    limit = mktime(limit.timetuple())
     rows = session.query(Urls).filter(Urls.time > limit).order_by(Urls.time.desc()).all()
     urls = []
     for row in rows:
-        urls.append({'time': datetime.fromtimestamp(row.time), 'title': row.title, 'url': row.url})
+        urls.append({'time': row.time, 'title': row.title, 'url': row.url})
     return urls
 
 

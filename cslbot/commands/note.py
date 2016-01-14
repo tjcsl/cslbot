@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
-from time import time
+from datetime import datetime
 
 from ..helpers.command import Command
 from ..helpers.orm import Notes
@@ -43,7 +43,7 @@ def cmd(send, msg, args):
     failed_nicks = []
     for nick in nicks:
         if re.match(nickregex, nick):
-            row = Notes(note=note, submitter=args['nick'], nick=nick, time=time())
+            row = Notes(note=note, submitter=args['nick'], nick=nick, time=datetime.now())
             args['db'].add(row)
             successful_nicks.append(nick)
         else:

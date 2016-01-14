@@ -14,8 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import localtime, strftime
-
 from ..helpers.hook import Hook
 from ..helpers.orm import Notes
 
@@ -25,7 +23,7 @@ def handle(send, _, args):
     nick = args['nick']
     notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:
-        time = strftime('%Y-%m-%d %H:%M:%S', localtime(note.time))
+        time = note.time.strftime('%Y-%m-%d %H:%M:%S')
         send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))
         note.pending = 0
     if notes:

@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import time
 from datetime import datetime, timedelta
 
 from .orm import Log
@@ -31,7 +30,7 @@ def handle_nick(handler, e):
 def get_chain(session, nick, limit=0):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
     chain = []
-    curr_time = time.time()
+    curr_time = datetime.now()
     curr = nick
     while curr is not None:
         row = session.query(Log).filter(Log.msg == curr, Log.type == 'nick', ~Log.source.startswith('Guest'), Log.time < curr_time, Log.time >= limit).order_by(Log.time.desc()).limit(1).first()
@@ -49,6 +48,6 @@ def get_chain(session, nick, limit=0):
 def do_kick(session, nick):
     # only go 5 minutes back for identity crisis detection.
     limit = datetime.now() - timedelta(minutes=5)
-    chain = get_chain(session, nick, limit.timestamp())
+    chain = get_chain(session, nick, limit)
     # more than 2 nick changes in 5 minutes.
     return True if len(chain) > 3 else False

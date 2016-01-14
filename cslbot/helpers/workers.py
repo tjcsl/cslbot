@@ -20,7 +20,7 @@ import multiprocessing
 import re
 import signal
 import threading
-import time
+from datetime import datetime, timedelta
 from collections import namedtuple
 
 from sqlalchemy import or_
@@ -130,7 +130,7 @@ class Workers():
         if not self.handler.config.getboolean('feature', 'voiceactive'):
             return
         # Mark inactive after 24 hours.
-        active_time = time.time() - 3600 * 24
+        active_time = datetime.now() - timedelta(hours=24)
         with handler.db.session_scope() as session:
             # FIXME: actually lock instead of just making a copy
             for name in list(handler.channels.keys()):

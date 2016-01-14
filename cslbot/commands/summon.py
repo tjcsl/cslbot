@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import time
+from datetime import datetime
 
 from ..helpers.command import Command
 from ..helpers.orm import Notes
@@ -37,6 +37,6 @@ def cmd(send, msg, args):
         return
     nick = arguments[0]
     message = "You have been summoned!"
-    row = Notes(note=message, submitter="The Dark Gods", nick=nick, time=time())
+    row = Notes(note=message, submitter="The Dark Gods", nick=nick, time=datetime.now())
     args['db'].add(row)
     send("%s has been summoned!" % nick)

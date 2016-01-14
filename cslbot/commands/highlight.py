@@ -14,8 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import localtime, strftime
-
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -44,5 +42,5 @@ def cmd(send, msg, args):
     if row is None:
         send("%s has never been pinged." % cmdargs.nick)
     else:
-        time = strftime('%Y-%m-%d %H:%M:%S', localtime(row.time))
+        time = row.time.strftime('%Y-%m-%d %H:%M:%S')
         send("<%s> %s: %s" % (time, row.source, row.msg))
