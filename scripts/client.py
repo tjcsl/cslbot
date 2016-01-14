@@ -17,8 +17,9 @@
 
 import configparser
 import logging
-import sys
 import ssl
+import sys
+
 from irc import client, connection
 
 

@@ -15,8 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sys import path
 from os.path import abspath, dirname
+from sys import path
 
 path.insert(0, dirname(abspath(__file__)))
 

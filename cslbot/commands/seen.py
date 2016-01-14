@@ -16,8 +16,9 @@
 
 import time
 from datetime import timedelta
-from ..helpers.orm import Log
+
 from ..helpers.command import Command
+from ..helpers.orm import Log
 
 
 def get_last(cursor, cmdchar, ctrlchan, nick):

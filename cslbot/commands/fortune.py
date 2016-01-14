@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.misc import list_fortunes, get_fortune
 from ..helpers.command import Command
+from ..helpers.misc import get_fortune, list_fortunes
 
 
 @Command(['fortune', 'bofh', 'excuse'], ['name'])

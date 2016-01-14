@@ -20,10 +20,12 @@ import json
 import re
 import string
 from html import escape, unescape
-from random import random, choice, randrange, randint
+from random import choice, randint, random, randrange
+
+from lxml import etree, html
 from pkg_resources import Requirement, resource_string
 from requests import get, post
-from lxml import etree, html
+
 from .tokens import token_cache
 
 slogan_cache = []

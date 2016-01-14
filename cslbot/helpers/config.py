@@ -19,7 +19,8 @@
 import configparser
 import re
 from os import mkdir
-from os.path import exists, dirname, join
+from os.path import dirname, exists, join
+
 from pkg_resources import Requirement, resource_string
 
 

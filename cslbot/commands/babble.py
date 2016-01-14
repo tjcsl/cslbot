@@ -16,7 +16,9 @@
 
 import bisect
 import random
+
 from sqlalchemy.sql.expression import func
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Babble, Babble2, Babble_count

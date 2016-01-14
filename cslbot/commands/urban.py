@@ -15,9 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers import arguments
-from ..helpers.web import get_urban
-from ..helpers.orm import UrbanBlacklist
 from ..helpers.command import Command
+from ..helpers.orm import UrbanBlacklist
+from ..helpers.web import get_urban
 
 
 def blacklist_word(session, msg):

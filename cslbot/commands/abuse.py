@@ -15,8 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers import arguments
-from ..helpers.orm import Ignore
 from ..helpers.command import Command
+from ..helpers.orm import Ignore
 
 
 @Command('abuse', ['config', 'db', 'handler'], admin=True)

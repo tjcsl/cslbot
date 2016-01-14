@@ -16,8 +16,9 @@
 
 import subprocess
 import tempfile
-from ..helpers.textutils import gen_slogan
+
 from ..helpers.command import Command
+from ..helpers.textutils import gen_slogan
 
 
 @Command('gcc', ['type', 'nick'])

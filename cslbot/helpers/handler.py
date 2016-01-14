@@ -20,12 +20,15 @@ import base64
 import collections
 import functools
 import logging
-import re
 import random
-import time
+import re
 import threading
+import time
+
 from irc import modes
-from . import admin, arguments, command, control, hook, identity, misc, orm, sql, textutils, tokens, workers
+
+from . import (admin, arguments, command, control, hook, identity, misc, orm,
+               sql, textutils, tokens, workers)
 
 
 class BotHandler():

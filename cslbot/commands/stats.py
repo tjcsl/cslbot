@@ -15,10 +15,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+
 from sqlalchemy import func
-from ..helpers.orm import Commands
+
 from ..helpers import arguments
 from ..helpers.command import Command, registry
+from ..helpers.orm import Commands
 
 
 def get_command_totals(session):

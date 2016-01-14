@@ -17,6 +17,7 @@
 import logging
 import subprocess
 from os.path import exists, join
+
 from ..helpers.command import Command
 from ..helpers.misc import do_pull
 

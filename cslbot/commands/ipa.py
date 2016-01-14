@@ -16,7 +16,6 @@
 
 from ..helpers.command import Command
 
-
 nato_codes = {"A": "Alpha", "B": "Bravo", "C": "Charlie", "D": "Delta",
               "E": "Echo", "F": "Foxtrot", "G": "Golf", "H": "Hotel",
               "I": "India", "J": "Juliet", "K": "Kilo", "L": "Lima",

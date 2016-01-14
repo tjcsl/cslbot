@@ -18,8 +18,7 @@
 
 from alembic import command, config
 from pkg_resources import Requirement, resource_filename
-
-from sqlalchemy import Column, Float, Integer, ForeignKey, Unicode, UnicodeText
+from sqlalchemy import Column, Float, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 

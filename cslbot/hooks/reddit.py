@@ -15,7 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+
 from requests import get
+
 from ..helpers.hook import Hook
 from ..helpers.reddit import check_exists
 from ..helpers.urlutils import get_short

@@ -15,15 +15,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import re
 import socket
 import ssl
-import re
-from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, urlunsplit
+from urllib.request import Request, urlopen
+
 from lxml.html import parse
 from requests import post
 from requests.exceptions import ConnectTimeout
+
 from . import misc
 from .exception import CommandFailedException
 

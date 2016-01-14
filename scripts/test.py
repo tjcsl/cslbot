@@ -14,13 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-from sys import path
-from os.path import dirname, exists, join
 import configparser
-import socket
 import logging
+import socket
 import unittest
+from os.path import dirname, exists, join
+from sys import path
 from unittest import mock
+
+
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))

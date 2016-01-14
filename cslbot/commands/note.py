@@ -16,8 +16,9 @@
 
 import re
 from time import time
-from ..helpers.orm import Notes
+
 from ..helpers.command import Command
+from ..helpers.orm import Notes
 
 
 @Command('note', ['db', 'nick', 'type', 'config'], limit=5)

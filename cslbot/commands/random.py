@@ -16,6 +16,7 @@
 
 import re
 from random import getrandbits, randrange
+
 from ..helpers.command import Command
 
 

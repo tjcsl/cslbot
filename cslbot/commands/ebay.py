@@ -16,8 +16,10 @@
 
 import json
 from random import choice
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
+
 from requests import get
+
 from ..helpers.command import Command
 
 

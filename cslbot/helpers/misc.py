@@ -16,14 +16,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import subprocess
 import logging
-import re
 import os
+import re
+import subprocess
+from datetime import timedelta
 from os.path import exists, join
 from random import choice, random
-from datetime import timedelta
+
 import pkg_resources
+
 from . import orm
 
 

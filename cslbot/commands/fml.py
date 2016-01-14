@@ -16,6 +16,7 @@
 
 from lxml.etree import fromstring
 from requests import get
+
 from ..helpers.command import Command
 
 

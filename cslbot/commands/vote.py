@@ -15,9 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import collections
+
 from ..helpers import arguments
-from ..helpers.orm import Polls, Poll_responses
 from ..helpers.command import Command
+from ..helpers.orm import Poll_responses, Polls
 
 
 def start_poll(args):

@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
 import logging
+from os.path import dirname, exists, join
 from sys import path
-from os.path import exists, dirname, join
+
 from alembic import context
 from sqlalchemy import create_engine
 

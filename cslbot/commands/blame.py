@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-from ..helpers.misc import get_users
+
 from ..helpers.command import Command
+from ..helpers.misc import get_users
 
 
 @Command('blame', ['handler', 'target', 'nick', 'config'])

@@ -15,9 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sys import path
-from os.path import dirname, exists, join
 import configparser
+from os.path import dirname, exists, join
+from sys import path
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
@@ -25,6 +25,7 @@ if exists(join(dirname(__file__), '../.git')):
 
 from alembic import command, config  # noqa
 from pkg_resources import Requirement, resource_filename  # noqa
+
 
 
 def main(confdir="/etc/cslbot"):

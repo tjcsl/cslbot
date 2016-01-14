@@ -16,8 +16,9 @@
 
 import re
 from random import choice
-from ..helpers.misc import get_users
+
 from ..helpers.command import Command
+from ..helpers.misc import get_users
 
 
 @Command('throw', ['handler', 'target'])

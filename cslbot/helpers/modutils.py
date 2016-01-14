@@ -17,12 +17,14 @@
 # USA.
 
 import configparser
-import sys
-from os.path import basename, join
 import importlib
 import logging
+import sys
 from glob import glob
+from os.path import basename, join
+
 from pkg_resources import Requirement, resource_filename, resource_string
+
 from . import backtrace
 
 GROUPS = {'commands': set(), 'hooks': set()}

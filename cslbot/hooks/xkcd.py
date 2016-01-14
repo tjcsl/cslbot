@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.hook import Hook
 from ..helpers import textutils
+from ..helpers.hook import Hook
 
 
 @Hook('xkcd', ['pubmsg', 'action'], ['nick', 'type'])

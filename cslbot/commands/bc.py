@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import subprocess
-from ..helpers.orm import Scores
+
 from ..helpers.command import Command
+from ..helpers.orm import Scores
 
 
 def get_scores(cursor):

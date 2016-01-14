@@ -14,12 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import re
 import multiprocessing
+import re
 import sre_constants
+
+from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException
 from ..helpers.orm import Log
-from ..helpers.command import Command
 
 
 def get_log(conn, target, user):

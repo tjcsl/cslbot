@@ -14,10 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import logging
 import re
 import sys
-import logging
-from . import command, orm, hook, arguments, web
+
+from . import arguments, command, hook, orm, web
 
 
 def handle_chanserv(args):

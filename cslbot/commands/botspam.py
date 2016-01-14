@@ -15,10 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+
 from ..helpers.command import Command
 from ..helpers.misc import get_fortune
-from ..helpers.web import get_urban
 from ..helpers.textutils import gen_lenny
+from ..helpers.web import get_urban
 
 
 def gen_fortune(send):

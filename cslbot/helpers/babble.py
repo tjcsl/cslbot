@@ -16,13 +16,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import re
-import time
 import collections
+import re
 import string
+import time
+
 from sqlalchemy import Index, or_
 from sqlalchemy.exc import OperationalError
-from .orm import Log, Babble, Babble2, Babble_last, Babble_count
+
+from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):

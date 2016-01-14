@@ -14,9 +14,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from ..helpers.babble import update_markov
 from ..helpers.hook import Hook
 from ..helpers.orm import Babble
-from ..helpers.babble import update_markov
 
 
 @Hook('babble', ['pubmsg', 'privmsg'], ['db', 'config'])

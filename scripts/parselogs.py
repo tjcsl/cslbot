@@ -15,18 +15,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import sys
-from os import makedirs, path
-
 import argparse
 import configparser
 import fcntl
 import re
-from time import strftime, localtime
+import sys
+from os import makedirs, path
+from time import localtime, strftime
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
+
 from cslbot.helpers.orm import Log  # noqa
 from cslbot.helpers.sql import get_session  # noqa
 

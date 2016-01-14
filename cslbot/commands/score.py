@@ -15,9 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from sqlalchemy import func
+
 from ..helpers import arguments
-from ..helpers.orm import Scores
 from ..helpers.command import Command
+from ..helpers.orm import Scores
 
 
 @Command(['score', 'points'], ['config', 'db', 'botnick'])

@@ -16,7 +16,8 @@
 import importlib
 import logging
 from os.path import exists, join
-from . import config, command, handler, hook, misc, modutils
+
+from . import command, config, handler, hook, misc, modutils
 
 
 def do_log(c, target, msg):

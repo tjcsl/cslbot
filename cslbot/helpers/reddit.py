@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import time
+
 from requests import get
-from .urlutils import get_title, get_short
+
+from .urlutils import get_short, get_title
 
 
 def check_exists(subreddit):

@@ -15,7 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
+
 from . import backtrace, reloader
+
 
 WELCOME = """
 Welcome to the IRCbot console.

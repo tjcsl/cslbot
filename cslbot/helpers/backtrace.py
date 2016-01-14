@@ -19,6 +19,7 @@
 import logging
 import traceback
 from os.path import basename
+
 from irc.client import ServerNotConnectedError
 
 

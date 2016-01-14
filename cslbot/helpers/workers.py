@@ -14,15 +14,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import concurrent.futures
+import multiprocessing
 import re
-import time
 import signal
 import threading
-import multiprocessing
-import concurrent.futures
+import time
 from collections import namedtuple
+
 from sqlalchemy import or_
-from . import backtrace, babble, control, tokens
+
+from . import babble, backtrace, control, tokens
 from .orm import Babble_last, Log
 
 worker_lock = threading.Lock()

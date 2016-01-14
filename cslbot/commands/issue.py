@@ -15,10 +15,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
+
 from requests import get
+
 from ..helpers import arguments
-from ..helpers.orm import Issues
 from ..helpers.command import Command
+from ..helpers.orm import Issues
 from ..helpers.web import create_issue
 
 

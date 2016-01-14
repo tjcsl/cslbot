@@ -19,12 +19,14 @@
 import json
 from urllib.parse import unquote
 from urllib.request import urlopen
-from simplejson import JSONDecodeError
-from requests import post, get
+
+from requests import get, post
 from requests.exceptions import ReadTimeout
 from requests_oauthlib import OAuth1Session
-from .orm import UrbanBlacklist
+from simplejson import JSONDecodeError
+
 from . import urlutils
+from .orm import UrbanBlacklist
 
 
 def get_rand_word(session):

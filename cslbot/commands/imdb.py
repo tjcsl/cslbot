@@ -14,10 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from requests import get
 from lxml.html import fromstring
-from ..helpers.urlutils import get_short
+from requests import get
+
 from ..helpers.command import Command
+from ..helpers.urlutils import get_short
 
 
 @Command(['movie', 'imdb'], ['config'])

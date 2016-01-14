@@ -19,9 +19,10 @@
 import functools
 import re
 import threading
-from inspect import getdoc
 from datetime import datetime, timedelta
-from . import modutils, backtrace
+from inspect import getdoc
+
+from . import backtrace, modutils
 from .orm import Commands, Log
 
 

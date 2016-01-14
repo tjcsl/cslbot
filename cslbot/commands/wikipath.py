@@ -15,8 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from datetime import datetime
+
 from lxml.html import fromstring
 from requests import get
+
 from ..helpers import arguments
 from ..helpers.command import Command
 

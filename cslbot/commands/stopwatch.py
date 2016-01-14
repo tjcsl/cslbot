@@ -14,11 +14,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from time import time
 from datetime import timedelta
-from ..helpers.orm import Stopwatches
+from time import time
+
 from ..helpers import arguments
 from ..helpers.command import Command
+from ..helpers.orm import Stopwatches
 
 
 def create_stopwatch(args):

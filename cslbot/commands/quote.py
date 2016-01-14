@@ -16,6 +16,7 @@
 
 import re
 from random import choice
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Quotes

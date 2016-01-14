@@ -16,6 +16,7 @@
 
 from lxml.html import fromstring
 from requests import get
+
 from ..helpers import arguments
 from ..helpers.command import Command
 

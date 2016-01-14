@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from random import choice
-from ..helpers.identity import get_chain
+
 from ..helpers.command import Command
+from ..helpers.identity import get_chain
 
 
 @Command('nicks', ['db', 'handler', 'target', 'nick'])

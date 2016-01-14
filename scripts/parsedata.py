@@ -14,15 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import sys
-from os import makedirs, path
 import argparse
 import collections
 import configparser
 import fcntl
 import shutil
-from time import strftime, mktime
+import sys
 from datetime import datetime, timedelta
+from os import makedirs, path
+from time import mktime, strftime
+
 from jinja2 import Environment, FileSystemLoader
 from pkg_resources import Requirement, resource_filename
 
@@ -30,7 +31,8 @@ from pkg_resources import Requirement, resource_filename
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 
-from cslbot.helpers.orm import Scores, Quotes, Polls, Poll_responses, Urls  # noqa
+from cslbot.helpers.orm import (Poll_responses, Polls, Quotes, Scores,  # noqa
+                                Urls)
 from cslbot.helpers.sql import get_session  # noqa
 
 

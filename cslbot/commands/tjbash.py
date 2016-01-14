@@ -16,8 +16,10 @@
 
 import operator
 from random import choice
-from requests import get
+
 from lxml.html import fromstring
+from requests import get
+
 from ..helpers.command import Command
 
 

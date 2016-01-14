@@ -18,9 +18,11 @@
 
 from contextlib import contextmanager
 from time import time
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .orm import setup_db, Log
+
+from .orm import Log, setup_db
 
 
 def get_session(config):

@@ -15,9 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from time import localtime, strftime
+
 from ..helpers import arguments
-from ..helpers.orm import Log
 from ..helpers.command import Command
+from ..helpers.orm import Log
 
 
 @Command('highlight', ['db', 'nick', 'config', 'target', 'botnick'])

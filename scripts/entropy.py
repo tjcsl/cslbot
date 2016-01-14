@@ -14,13 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+import configparser
+import json
+import re
+import subprocess
 import sys
 from os import path
-import subprocess
-import configparser
-import re
-import json
-from sqlalchemy import or_, func
+
+from sqlalchemy import func, or_
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):

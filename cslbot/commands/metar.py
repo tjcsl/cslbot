@@ -15,7 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from xml.etree import ElementTree
+
 from requests import get
+
 from ..helpers import arguments
 from ..helpers.command import Command
 

@@ -18,13 +18,15 @@ import datetime
 import re
 import socket
 from os.path import join
+
 import geoip2
+from pkg_resources import Requirement, resource_filename
 from requests import get
+
 from ..helpers import arguments
-from ..helpers.orm import Weather_prefs
 from ..helpers.command import Command
 from ..helpers.geoip import get_zipcode
-from pkg_resources import Requirement, resource_filename
+from ..helpers.orm import Weather_prefs
 
 
 def get_default(nick, session, send, config, source):

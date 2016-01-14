@@ -14,22 +14,25 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import sys
 import argparse
 import functools
-import logging
 import importlib
+import logging
 import multiprocessing
 import signal
 import ssl
+import sys
 import threading
 import traceback
 from os import path
+
+
 if sys.version_info < (3, 4, 3):
     # Dependency on importlib.reload and urlopen(context=context)
     raise Exception("Need Python 3.4.3 or higher.")
+
 import queue  # noqa
-from irc import bot, connection, client  # noqa
+from irc import bot, client, connection  # noqa
 from . import backtrace, config, handler, misc, reloader, server  # noqa
 
 
