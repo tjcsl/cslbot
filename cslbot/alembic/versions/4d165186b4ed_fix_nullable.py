@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """fix nullable
 
 Revision ID: 4d165186b4ed

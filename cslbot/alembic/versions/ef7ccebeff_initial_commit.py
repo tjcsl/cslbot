@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Initial commit
 
 Revision ID: ef7ccebeff

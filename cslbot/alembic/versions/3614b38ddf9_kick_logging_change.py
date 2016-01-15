@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """kick logging change
 
 Revision ID: 3614b38ddf9

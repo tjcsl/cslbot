@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """merge pending
 
 Revision ID: 55efdbb748c

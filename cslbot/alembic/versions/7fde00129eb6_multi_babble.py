@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """multi-babble
 
 Revision ID: 7fde00129eb6
