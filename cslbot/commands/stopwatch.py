@@ -44,7 +44,6 @@ def stop_stopwatch(args):
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 0:
         return "That stopwatch is already stopped!"
-    etime = stopwatch.elapsed
     etime = datetime.now() - stopwatch.time
     stopwatch.elapsed = etime
     stopwatch.active = 0
