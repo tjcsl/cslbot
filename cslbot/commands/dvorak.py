@@ -29,8 +29,8 @@ def get_log(conn, user, target):
 
 
 def translate(msg, encode=True):
-    dv_orig = r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
-    dv_dvor = r'[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'
+    dv_orig = r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'  # noqa
+    dv_dvor = r'[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'  # noqa
     dv_encode = str.maketrans(dv_orig, dv_dvor)
     dv_decode = str.maketrans(dv_dvor, dv_orig)
     return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
