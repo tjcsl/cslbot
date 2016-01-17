@@ -36,6 +36,10 @@ Description: ======
         -------------
         See http://tjcsl.github.io/cslbot for api docs.
         
+        Changelog
+        ---------
+        See https://github.com/tjcsl/cslbot/releases for the changelog.
+        
         Setup
         -----
         Run ./bot.py to setup the initial configuration and change values in config.cfg as needed.
