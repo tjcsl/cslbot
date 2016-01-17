@@ -21,7 +21,7 @@ import logging
 import os
 import re
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
 
@@ -40,7 +40,8 @@ def parse_time(time):
         time = int(time)
     else:
         return None
-    conv = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800, 'y': 31540000}
+    conv = {'s': 1, 'm': 60, 'h': timedelta(hours=1).total_seconds(), 'd': timedelta(days=1).total_seconds(),
+            'w': timedelta(weeks=1).total_seconds(), 'y': timedelta(weeks=52).total_seconds()}
     if unit in conv.keys():
         return time * conv[unit]
     else:
