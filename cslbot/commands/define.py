@@ -19,6 +19,7 @@ import random
 import re
 
 from lxml import etree
+
 from requests import get
 
 from ..helpers import arguments, textutils

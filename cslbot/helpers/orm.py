@@ -18,7 +18,9 @@
 # USA.
 
 from alembic import command, config
+
 from pkg_resources import Requirement, resource_filename
+
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 

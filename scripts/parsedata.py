@@ -22,10 +22,11 @@ import fcntl
 import shutil
 import sys
 from datetime import datetime, timedelta
-from time import strftime
 from os import makedirs, path
+from time import strftime
 
 from jinja2 import Environment, FileSystemLoader
+
 from pkg_resources import Requirement, resource_filename
 
 # Make this work from git.

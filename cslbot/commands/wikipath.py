@@ -18,6 +18,7 @@
 from datetime import datetime
 
 from lxml.html import fromstring
+
 from requests import get
 
 from ..helpers import arguments

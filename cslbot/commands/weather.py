@@ -21,7 +21,9 @@ import socket
 from os.path import join
 
 import geoip2
+
 from pkg_resources import Requirement, resource_filename
+
 from requests import get
 
 from ..helpers import arguments

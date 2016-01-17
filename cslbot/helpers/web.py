@@ -23,7 +23,9 @@ from urllib.request import urlopen
 
 from requests import get, post
 from requests.exceptions import ReadTimeout
+
 from requests_oauthlib import OAuth1Session
+
 from simplejson import JSONDecodeError
 
 from . import urlutils

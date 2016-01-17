@@ -24,6 +24,7 @@ from urllib.parse import urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 from lxml.html import parse
+
 from requests import post
 from requests.exceptions import ConnectTimeout
 
