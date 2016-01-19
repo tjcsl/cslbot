@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import os
 from datetime import datetime
 
 from ..helpers.command import Command
@@ -27,7 +28,8 @@ def cmd(send, _, args):
     """
     curr = datetime.now()
     uptime = args['handler'].uptime
+    load_avg = ', '.join([str(x) for x in os.getloadavg()])
     starttime = curr - uptime['start']
     reloaded = curr - uptime['reloaded']
-    send("Time since start: %s" % starttime)
+    send("Time since start: %s, load average: %s" % (starttime, load_avg))
     send("Time since reload: %s" % reloaded)
