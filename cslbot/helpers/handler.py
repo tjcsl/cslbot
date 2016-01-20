@@ -229,7 +229,7 @@ class BotHandler():
             target = target[1:]
         with self.data_lock:
             if target in self.channels:
-                if nick in self.channels[target].opers():
+                if nick in self.opers[target]:
                     flags |= 1
                 if nick in self.voiced[target]:
                     flags |= 2
@@ -308,10 +308,12 @@ class BotHandler():
     def do_mode(self, target, msg, nick, send):
         """ reop and handle guard violations """
         mode_changes = modes.parse_channel_modes(msg)
-        for change in mode_changes:
-            if change[1] == 'v':
-                with self.data_lock:
-                    self.voiced[target][change[2]] = True if change[0] == '+' else False
+        with self.data_lock:
+            for change in mode_changes:
+                if change[1] == 'v':
+                        self.voiced[target][change[2]] = True if change[0] == '+' else False
+                if change[1] == 'o':
+                        self.opers[target][change[2]] = True if change[0] == '+' else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
         if [x for x in mode_changes if self.check_mode(x)]:
@@ -342,7 +344,8 @@ class BotHandler():
         if target not in self.channels:
             send("%s: you're lucky, private message kicking hasn't been implemented yet." % nick)
             return
-        ops = list(self.channels[target].opers())
+        with self.data_lock:
+            ops = self.opers[target].copy()
         botnick = self.config['core']['nick']
         if botnick not in ops:
             ops = ['someone'] if not ops else ops
@@ -484,6 +487,7 @@ class BotHandler():
         # properly track voiced status.
         location = self.who_map[int(e.arguments[0])]
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
+        self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
         if e.arguments[1] in self.admins:
             if e.arguments[3] != '0':
                 self.admins[e.arguments[1]] = datetime.now()

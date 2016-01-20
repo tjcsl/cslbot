@@ -34,5 +34,5 @@ def handle(_, msg, args):
     else:
         with args['handler'].data_lock:
             for nick in to_deop:
-                if nick in args['handler'].channels[args['target']].opers():
+                if nick in args['handler'].opers[args['target']]:
                     args['handler'].connection.mode(args['target'], '-o %s' % nick)

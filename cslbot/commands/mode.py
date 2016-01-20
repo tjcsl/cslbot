@@ -41,7 +41,7 @@ def cmd(send, msg, args):
         with args['handler'].data_lock:
             if target not in args['handler'].channels:
                 send("Bot not in channel %s" % target)
-            elif args['botnick'] not in list(args['handler'].channels[target].opers()):
+            elif args['botnick'] not in args['handler'].opers[target]:
                 send("Bot must be opped in channel %s" % target)
             else:
                 args['handler'].connection.mode(target, mode)
