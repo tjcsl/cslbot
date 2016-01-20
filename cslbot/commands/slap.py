@@ -29,7 +29,8 @@ def cmd(send, msg, args):
     methods = ['around a bit', 'upside the head']
     if not msg:
         channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
-        users = list(args['handler'].channels[channel].users())
+        with args['handler'].data_lock:
+            users = list(args['handler'].channels[channel].users())
         slap = 'slaps %s %s with %s'
         send(slap % (choice(users), choice(methods), choice(implements)), 'action')
     else:

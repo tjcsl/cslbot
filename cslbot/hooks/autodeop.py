@@ -32,6 +32,7 @@ def handle(_, msg, args):
             if re.match(r'^\+[^ ]*o.+%s.*$' % nick, msg):
                 args['handler'].connection.mode(args['target'], '-o %s' % nick)
     else:
-        for nick in to_deop:
-            if nick in args['handler'].channels[args['target']].opers():
-                args['handler'].connection.mode(args['target'], '-o %s' % nick)
+        with args['handler'].data_lock:
+            for nick in to_deop:
+                if nick in args['handler'].channels[args['target']].opers():
+                    args['handler'].connection.mode(args['target'], '-o %s' % nick)

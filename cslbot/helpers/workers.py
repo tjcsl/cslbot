@@ -134,11 +134,11 @@ class Workers():
         # Mark inactive after 24 hours.
         active_time = datetime.now() - timedelta(hours=24)
         with handler.db.session_scope() as session:
-            # FIXME: actually lock instead of just making a copy
-            for name in list(handler.channels.keys()):
-                for nick, voiced in list(handler.voiced[name].items()):
-                    if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
-                        handler.rate_limited_send('mode', name, '-v %s' % nick)
+            with handler.data_lock:
+                for name in handler.channels.keys():
+                    for nick, voiced in handler.voiced[name].items():
+                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
+                            handler.rate_limited_send('mode', name, '-v %s' % nick)
 
     def check_babble(self, handler, send):
         # Re-schedule check_babble

@@ -27,7 +27,8 @@ def cmd(send, msg, args):
     Syntax: {command} <nick>
     """
     if not msg:
-        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else [args['nick']]
+        with args['handler'].data_lock:
+            users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else [args['nick']]
         msg = choice(users)
     chain = get_chain(args['db'], msg)
     if chain:

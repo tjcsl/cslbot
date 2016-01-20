@@ -26,5 +26,6 @@ def cmd(send, _, args):
     if args['type'] == 'privmsg':
         send('Channels should remain public knowledge!')
     else:
-        channels = ", ".join(sorted(args['handler'].channels))
+        with args['handler'].data_lock:
+            channels = ", ".join(sorted(args['handler'].channels))
         send(channels)

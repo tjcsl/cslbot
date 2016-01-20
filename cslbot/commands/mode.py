@@ -37,11 +37,13 @@ def cmd(send, msg, args):
         send('Please specify a mode.')
     elif target == 'private':
         send("Modes don't work in a PM!")
-    elif target not in args['handler'].channels:
-        send("Bot not in channel %s" % target)
-    elif args['botnick'] not in list(args['handler'].channels[target].opers()):
-        send("Bot must be opped in channel %s" % target)
     else:
-        args['handler'].connection.mode(target, mode)
-        if args['target'] != args['config']['core']['ctrlchan']:
-            send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])
+        with args['handler'].data_lock:
+            if target not in args['handler'].channels:
+                send("Bot not in channel %s" % target)
+            elif args['botnick'] not in list(args['handler'].channels[target].opers()):
+                send("Bot must be opped in channel %s" % target)
+            else:
+                args['handler'].connection.mode(target, mode)
+                if args['target'] != args['config']['core']['ctrlchan']:
+                    send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])

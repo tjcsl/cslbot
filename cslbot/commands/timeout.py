@@ -30,7 +30,8 @@ def cmd(send, msg, args):
     nickregex = args['config']['core']['nickregex']
     setmode = args['handler'].connection.mode
     channel = args['target']
-    ops = list(args['handler'].channels[channel].opers())
+    with args['handler'].data_lock:
+        ops = list(args['handler'].channels[channel].opers())
     if args['botnick'] not in ops:
         send("Bot must be an op.")
         return

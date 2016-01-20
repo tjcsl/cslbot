@@ -60,8 +60,10 @@ class BotHandler():
         self.caps = []
         self.abuselist = {}
         self.voiced = collections.defaultdict(dict)
+        self.opers = collections.defaultdict(dict)
         self.who_map = {}
         self.flood_lock = threading.Lock()
+        self.data_lock = threading.RLock()
         self.last_msg_time = datetime.now()
         admins = [x.strip() for x in config['auth']['admins'].split(',')]
         self.admins = {nick: None for nick in admins}
@@ -76,6 +78,7 @@ class BotHandler():
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
         data['voiced'] = self.voiced.copy()
+        data['opers'] = self.opers.copy()
         data['features'] = self.features.copy()
         data['uptime'] = self.uptime.copy()
         data['abuselist'] = self.abuselist.copy()
@@ -224,13 +227,14 @@ class BotHandler():
         # Properly handle /msg +#channel
         if target.startswith(('+', '@')):
             target = target[1:]
-        if target in self.channels:
-            if nick in self.channels[target].opers():
-                flags |= 1
-            if nick in self.voiced[target]:
-                flags |= 2
-        else:
-            target = 'private'
+        with self.data_lock:
+            if target in self.channels:
+                if nick in self.channels[target].opers():
+                    flags |= 1
+                if nick in self.voiced[target]:
+                    flags |= 2
+            else:
+                target = 'private'
         # FIXME: should we special-case this?
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
@@ -306,7 +310,8 @@ class BotHandler():
         mode_changes = modes.parse_channel_modes(msg)
         for change in mode_changes:
             if change[1] == 'v':
-                self.voiced[target][change[2]] = True if change[0] == '+' else False
+                with self.data_lock:
+                    self.voiced[target][change[2]] = True if change[0] == '+' else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
         if [x for x in mode_changes if self.check_mode(x)]:

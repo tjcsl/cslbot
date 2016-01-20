@@ -29,7 +29,9 @@ def cmd(send, msg, args):
     if not msg:
         send("Nuke who?")
         return
-    if msg in args['handler'].channels[channel].users():
+    with args['handler'].data_lock:
+        users = args['handler'].channels[channel].users()
+    if msg in users:
         do_nuke(c, nick, msg, channel)
     elif msg == args['botnick']:
         send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")

@@ -31,7 +31,9 @@ from . import orm
 
 
 def get_users(args):
-    return list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
+    with args['handler'].data_lock:
+        users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you']
+    return users
 
 
 def parse_time(time):

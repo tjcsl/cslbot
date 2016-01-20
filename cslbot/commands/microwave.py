@@ -59,9 +59,11 @@ def cmd(send, msg, args):
                 return
             elif msg == args['botnick']:
                 send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
-            elif target not in args['handler'].channels[channel].users():
-                send("I'm sorry. Anonymous Nuking is not allowed")
-                return
+            else:
+                with args['handler'].data_lock:
+                    if target not in args['handler'].channels[channel].users():
+                        send("I'm sorry. Anonymous Nuking is not allowed")
+                        return
 
         msg = levels[1]
         for i in range(2, level + 1):
