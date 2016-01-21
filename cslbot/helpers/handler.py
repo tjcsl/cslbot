@@ -19,6 +19,7 @@
 
 import base64
 import collections
+import copy
 import functools
 import logging
 import random
@@ -51,23 +52,22 @@ class BotHandler():
         self.config = config
         self.db = sql.Sql(config, confdir)
         self.workers = workers.Workers(self)
+        self.caps = []
+        self.guarded = []
+        self.admins = {nick.strip(): None for nick in config['auth']['admins'].split(',')}
+        self.voiced = collections.defaultdict(dict)
+        self.opers = collections.defaultdict(dict)
+        self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
-        self.guarded = []
+        self.abuselist = {}
         self.ping_map = {}
         self.outputfilter = collections.defaultdict(list)
         self.kick_enabled = True
-        self.caps = []
-        self.abuselist = {}
-        self.voiced = collections.defaultdict(dict)
-        self.opers = collections.defaultdict(dict)
         self.who_map = {}
         self.flood_lock = threading.Lock()
         self.data_lock = threading.RLock()
         self.last_msg_time = datetime.now()
-        admins = [x.strip() for x in config['auth']['admins'].split(',')]
-        self.admins = {nick: None for nick in admins}
-        self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         self.confdir = confdir
         self.log_to_ctrlchan = False
 
@@ -77,8 +77,8 @@ class BotHandler():
         data['caps'] = self.caps[:]
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
-        data['voiced'] = self.voiced.copy()
-        data['opers'] = self.opers.copy()
+        data['voiced'] = copy.deepcopy(self.voiced)
+        data['opers'] = copy.deepcopy(self.opers)
         data['features'] = self.features.copy()
         data['uptime'] = self.uptime.copy()
         data['abuselist'] = self.abuselist.copy()
