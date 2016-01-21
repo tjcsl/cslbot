@@ -345,7 +345,7 @@ class BotHandler():
             send("%s: you're lucky, private message kicking hasn't been implemented yet." % nick)
             return
         with self.data_lock:
-            ops = self.opers[target].copy()
+            ops = [x for x in self.opers[target] if x]
         botnick = self.config['core']['nick']
         if botnick not in ops:
             ops = ['someone'] if not ops else ops
