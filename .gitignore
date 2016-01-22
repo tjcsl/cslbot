@@ -4,6 +4,8 @@ build
 deploy
 dist
 db.sqlite
+fuzz_input
+fuzz_output
 *.cfg
 __pycache__
 *.py[co]
