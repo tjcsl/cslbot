@@ -311,9 +311,9 @@ class BotHandler():
         with self.data_lock:
             for change in mode_changes:
                 if change[1] == 'v':
-                        self.voiced[target][change[2]] = True if change[0] == '+' else False
+                    self.voiced[target][change[2]] = True if change[0] == '+' else False
                 if change[1] == 'o':
-                        self.opers[target][change[2]] = True if change[0] == '+' else False
+                    self.opers[target][change[2]] = True if change[0] == '+' else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
         if [x for x in mode_changes if self.check_mode(x)]:

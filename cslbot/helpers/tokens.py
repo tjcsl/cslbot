@@ -33,6 +33,7 @@ class Token():
 
 
 class TranslateToken(Token):
+
     def update(self, config):
         client_id, secret = config['api']['translateid'], config['api']['translatesecret']
         # Don't die if we didn't setup the translate api.
