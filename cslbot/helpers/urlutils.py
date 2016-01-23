@@ -19,9 +19,9 @@ import json
 import re
 import socket
 import ssl
+from urllib import request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, urlunsplit
-from urllib.request import Request, urlopen
 
 from lxml.html import parse
 
@@ -63,7 +63,7 @@ def get_title(url):
         url = url.encode('ascii', 'replace').decode()
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = urlopen(Request(url, headers=headers), timeout=10, context=ssl.create_default_context())
+        req = request.build_opener(request.HTTPCookieProcessor).open(request.Request(url, headers=headers), timeout=10)
         ctype = req.getheader('Content-Type')
         if ctype is not None and ctype.startswith('image/'):
             title = 'Image'
