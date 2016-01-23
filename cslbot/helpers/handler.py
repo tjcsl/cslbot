@@ -89,9 +89,10 @@ class BotHandler():
             setattr(self, key, val)
         self.uptime['reloaded'] = datetime.now()
 
-    def update_nickstatus(self, nick):
+    def update_authstatus(self, nick):
         if self.features['whox']:
             tag = random.randint(0, 999)
+            # This just maps it off into nothingness, but that's okay, we just care about the auth
             self.who_map[tag] = nick
             self.connection.who('%s %%naft,%d' % (nick, tag))
         elif self.config['feature']['servicestype'] == "ircservices":
@@ -115,7 +116,7 @@ class BotHandler():
         if nick not in self.admins:
             self.admins[nick] = None
         if self.admins[nick] is None:
-            self.update_nickstatus(nick)
+            self.update_authstatus(nick)
             # We don't necessarily want to complain in all cases.
             if send is not None:
                 send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
@@ -124,7 +125,7 @@ class BotHandler():
             if not self.features['account-notify']:
                 # reverify every 5min
                 if datetime.now() - self.admins[nick] > timedelta(minutes=5):
-                    self.update_nickstatus(nick)
+                    self.update_authstatus(nick)
             return True
 
     def get_admins(self):
@@ -134,7 +135,7 @@ class BotHandler():
             return
         for i, a in enumerate(self.admins):
             if a is None:
-                self.workers.defer(i, False, self.update_nickstatus, a)
+                self.workers.defer(i, False, self.update_authstatus, a)
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -501,9 +502,12 @@ class BotHandler():
                 self.features['extended-join'] = True
 
     def handle_nick(self, send, e):
-        for channel in misc.get_channels(self.channels, e.target):
-            self.do_log(channel, e.source.nick, e.target, 'nick')
-        self.update_nickstatus(e.target)
+        with self.data_lock:
+            for channel in misc.get_channels(self.channels, e.target):
+                self.do_log(channel, e.source.nick, e.target, 'nick')
+                # Move the voice+op status to the new nick
+                self.voiced[channel][e.target] = self.voiced[channel].pop(e.source.nick)
+                self.opers[channel][e.target] = self.opers[channel].pop(e.source.nick)
         if identity.handle_nick(self, e):
             for x in misc.get_channels(self.channels, e.target):
                 self.do_kick(send, x, e.target, "identity crisis")
@@ -513,6 +517,7 @@ class BotHandler():
             tag = random.randint(0, 999)
             self.who_map[tag] = target
             if e.source.nick == c.real_nickname:
+                # http://faerion.sourceforge.net/doc/irc/whox.var
                 c.who('%s %%naft,%d' % (target, tag))
             else:
                 c.who('%s %%naft,%d' % (e.source.nick, tag))
