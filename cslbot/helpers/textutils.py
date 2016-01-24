@@ -299,6 +299,11 @@ def append_filters(filters):
             return None, "Invalid filter %s." % next_filter
     return filter_list, "Okay!"
 
+
+def gen_randfilter(msg):
+    randfilter = choice(list(output_filters.values()))
+    return randfilter(msg)
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
@@ -321,4 +326,5 @@ output_filters = {
     "underscore": gen_underscore,
     "translate": gen_translate,
     "randtrans": gen_random_translate,
+    "randfilter": gen_randfilter
 }
