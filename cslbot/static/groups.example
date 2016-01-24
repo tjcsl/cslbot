@@ -126,5 +126,6 @@ optional: 8ball,
     word,
     wtf,
     xkcd,
-    yoda
+    yoda,
+    zipcode
 disabled: brain

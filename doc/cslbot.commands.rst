@@ -860,6 +860,14 @@ cslbot.commands.yoda module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.zipcode module
+------------------------------
+
+.. automodule:: cslbot.commands.zipcode
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

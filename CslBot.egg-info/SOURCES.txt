@@ -133,6 +133,7 @@ cslbot/commands/word.py
 cslbot/commands/wtf.py
 cslbot/commands/xkcd.py
 cslbot/commands/yoda.py
+cslbot/commands/zipcode.py
 cslbot/helpers/__init__.py
 cslbot/helpers/admin.py
 cslbot/helpers/arguments.py
