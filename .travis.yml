@@ -38,10 +38,10 @@ script:
     - flake8 --max-line-length=200 .
     - coverage run ./setup.py test
     - coverage run -a ./bot.py --validate
-    - coverage run -a cslbot-migrate
-    - coverage run -a cslbot-genbabble
-    - coverage run -a cslbot-parselogs /tmp/ircbot
-    - coverage run -a cslbot-parsedata /tmp/ircbot
+    - coverage run -a `which cslbot-migrate`
+    - coverage run -a `which cslbot-genbabble`
+    - coverage run -a `which cslbot-parselogs` /tmp/ircbot
+    - coverage run -a `which cslbot-parsedata` /tmp/ircbot
     - ./scripts/gendocs.sh
 
 after_success:
