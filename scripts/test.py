@@ -45,6 +45,8 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # We don't need the alembic output.
+        logging.getLogger("alembic").setLevel(logging.WARNING)
         mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
         cls.setup_config()
         cls.bot = core.IrcBot(cls.confdir.name)
@@ -122,6 +124,4 @@ class BotTest(unittest.TestCase):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    # We don't need the alembic output.
-    logging.getLogger("alembic").setLevel(logging.WARNING)
     unittest.main()
