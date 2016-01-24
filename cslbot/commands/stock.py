@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
+# Copyright (C) 2013-2016 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,35 +23,15 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-def get_quote(symbol):
-    params = {'q': "select BidRealtime,Bid,Name,ChangeinPercent,YearRange from yahoo.finance.quotes WHERE symbol='%s'" % symbol,
-              'format': 'json', 'env': 'store://datatables.org/alltableswithkeys'}
-    data = get("http://query.yahooapis.com/v1/public/yql", params=params).json()
-    return data['query']['results']
-
-
 def gen_stock(msg):
-    quote = None
-    num = 0
-    while quote is None:
-        if num > 5:
-            break
-        num += 1
-        quote = get_quote(msg)
-    if quote is not None:
-        quote = quote['quote']
+    quote = get("http://dev.markitondemand.com/Api/v2/Quote/json", params={'symbol': msg}).json()
+    if 'Message' in quote.keys():
+        return quote['Message']
     else:
-        return "No Results"
-    if quote['Name'] is None:
-        return "Invalid Symbol."
-    else:
-        if quote['BidRealtime']:
-            val = quote['BidRealtime']
-        elif quote['Bid']:
-            val = quote['Bid']
-        else:
-            val = "No Data"
-        return "%s (%s) -- %s %s 52wk: %s" % (quote['Name'], msg, val, quote['ChangeinPercent'], quote['YearRange'])
+        changepercent = "%.3f%%" % quote['ChangePercent']
+        if quote['ChangePercent'] >= 0:
+            changepercent = '+' + changepercent
+        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent, quote['High'], quote['Low'])
 
 
 def random_stock():
@@ -63,6 +43,7 @@ def random_stock():
 def cmd(send, msg, args):
     """Gets a stock quote.
     Syntax: {command} [symbol]
+    Powered by markit on demand (http://dev.markitondemand.com)
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('stock', nargs='?', default=random_stock())
