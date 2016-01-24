@@ -122,4 +122,6 @@ class BotTest(unittest.TestCase):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
+    # We don't need the alembic output.
+    logging.getLogger("alembic").setLevel(logging.WARNING)
     unittest.main()
