@@ -80,8 +80,7 @@ class BotTest(unittest.TestCase):
                 config_obj.read_file(f)
         # Prevent server port conflicts
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + 1000)
-        # FIXME: use an in-memory db
-        config_obj['db']['engine'] = 'sqlite:///%s' % join(cls.confdir.name, 'db.sqlite')
+        config_obj['db']['engine'] = 'sqlite://'
         with open(config_file, 'w') as f:
                 config_obj.write(f)
 

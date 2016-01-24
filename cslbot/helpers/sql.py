@@ -22,6 +22,7 @@ from datetime import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from .orm import Log, setup_db
 
@@ -29,7 +30,10 @@ from .orm import Log, setup_db
 def get_session(config):
     if not config['db']['engine']:
         raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
-    engine = create_engine(config['db']['engine'])
+    if config['db']['engine'].startswith('sqlite'):
+        engine = create_engine(config['db']['engine'], connect_args={'check_same_thread': False}, poolclass=StaticPool)
+    else:
+        engine = create_engine(config['db']['engine'])
     return sessionmaker(bind=engine)
 
 
