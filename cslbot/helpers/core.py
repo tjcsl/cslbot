@@ -157,6 +157,8 @@ class IrcBot(bot.SingleServerIRCBot):
             backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
     def is_reload(self, e):
+        if not e.arguments:
+            return None
         cmd = e.arguments[0].strip()
         if not cmd:
             return None
@@ -181,7 +183,7 @@ class IrcBot(bot.SingleServerIRCBot):
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
             try:
                 if reloader.do_reload(self, self.get_target(e), cmdargs):
-                    if self.config['feature'].getboolean('server'):
+                    if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
                 logging.info("Successfully reloaded")
