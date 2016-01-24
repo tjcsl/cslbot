@@ -200,6 +200,7 @@ def init(confdir="/etc/cslbot"):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
+    parser.add_argument('--validate', help='Initialize the db and perform other sanity checks.', action='store_true')
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(module)s:%(message)s")
@@ -207,6 +208,11 @@ def init(confdir="/etc/cslbot"):
     logging.getLogger("requests").setLevel(logging.WARNING)
 
     cslbot = IrcBot(confdir)
+
+    if args.validate:
+        cslbot.shutdown_mp()
+        print("Everything is ready to go!")
+        return
 
     try:
         cslbot.start()
