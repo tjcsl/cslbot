@@ -1,3 +1,5 @@
 [run]
+branch = True
+concurrency = thread
 source = cslbot, scripts
 omit = */alembic/versions/*

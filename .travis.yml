@@ -35,13 +35,13 @@ before_script:
     - sed -i 's#extramodules.=.#\0 cslbot-tjhsst#' $TRAVIS_BUILD_DIR/config.cfg
 
 script:
-    - flake8 --max-line-length=1000 .
+    - flake8 --max-line-length=100 .
     - coverage run ./setup.py test
-    - ./bot.py --validate
-    - cslbot-migrate
-    - cslbot-genbabble
-    - cslbot-parselogs /tmp/ircbot
-    - cslbot-parsedata /tmp/ircbot
+    - coverage run -a ./bot.py --validate
+    - coverage run -a cslbot-migrate
+    - coverage run -a cslbot-genbabble
+    - coverage run -a cslbot-parselogs /tmp/ircbot
+    - coverage run -a cslbot-parsedata /tmp/ircbot
     - ./scripts/gendocs.sh
 
 after_success:
