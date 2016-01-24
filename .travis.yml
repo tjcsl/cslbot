@@ -35,7 +35,7 @@ before_script:
     - sed -i 's#extramodules.=.#\0 cslbot-tjhsst#' $TRAVIS_BUILD_DIR/config.cfg
 
 script:
-    - flake8 --max-line-length=100 .
+    - flake8 --max-line-length=200 .
     - coverage run ./setup.py test
     - coverage run -a ./bot.py --validate
     - coverage run -a cslbot-migrate
