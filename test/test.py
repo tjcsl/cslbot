@@ -171,15 +171,17 @@ class BotTest(unittest.TestCase):
         """Test a valid definition"""
         mock_response = mock.Mock()
         with open(join(dirname(__file__), 'data/define_potato.xml')) as test_data_file:
-            expected_response = test_data_file.read()  # If we don't force the encoding, the XML parser complains
-        mock_response.content = expected_response.encode()
+            expected_response = test_data_file.read().encode()
+        mock_response.content = expected_response
         mock_get.return_value = mock_response
         self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potato'])
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potato', 'pubmsg'), ('testBot', '#test-channel', 0, 'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg')])
+        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potato', 'pubmsg'),
+                                 ('testBot', '#test-channel', 0,
+                                     'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg')])
         self.log_mock.reset_mock()
 
     @mock.patch('cslbot.commands.define.get')
@@ -187,8 +189,8 @@ class BotTest(unittest.TestCase):
         """Test an invalid definition"""
         mock_response = mock.Mock()
         with open(join(dirname(__file__), 'data/define_potatwo.xml')) as test_data_file:
-            expected_response = test_data_file.read()  # If we don't force the encoding, the XML parser complains
-        mock_response.content = expected_response.encode()
+            expected_response = test_data_file.read().encode()
+        mock_response.content = expected_response
         mock_get.return_value = mock_response
         self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potatwo'])

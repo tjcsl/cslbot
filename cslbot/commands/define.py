@@ -50,5 +50,6 @@ def cmd(send, msg, args):
         send("Invalid index %d for term %s" % (cmdargs.entry, cmdargs.word))
         return
     term = xml[cmdargs.entry].find('term').text
-    definition = xml[cmdargs.entry].find('definition').text.replace('\n', ' ').replace('\r', '')  # Newlines will trigger errors
+    definition = xml[cmdargs.entry].find('definition').text
+    definition = ' '.join(definition.splitlines()).strip()
     send("%s: %s" % (term, definition))
