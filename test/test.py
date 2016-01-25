@@ -32,7 +32,7 @@ if exists(join(dirname(__file__), '../.git')):
 
 # Imports pkg_resources, so must come after the path is modified
 import irc.client  # noqa
-from cslbot.helpers import core, server, sql, workers  # noqa
+from cslbot.helpers import core, workers  # noqa
 
 # We don't need the alembic output.
 logging.getLogger("alembic").setLevel(logging.WARNING)
@@ -41,89 +41,90 @@ logging.getLogger("alembic").setLevel(logging.WARNING)
 def connect_mock(conn, *args, **_):
     conn.real_nickname = 'testBot'
     conn.handlers = {}
-    conn.socket = mock.MagicMock()
+    conn.socket = mock.Mock()
 
 
 def start_thread(self, func, *args, **kwargs):
     # We need to actually run the server thread to avoid blocking.
     if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
-        with workers.worker_lock:
+        with self.worker_lock:
             self.executor.submit(func, *args, **kwargs)
     else:
         func(*args, **kwargs)
 
 
+# TODO: break this up more
 class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.confdir = tempfile.TemporaryDirectory()
+        srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
+        config_file = join(cls.confdir.name, 'config.cfg')
+        shutil.copy(join(srcdir, 'config.example'), config_file)
+        shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
+        config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+        with open(config_file) as f:
+                config_obj.read_file(f)
+
+        # Prevent server port conflicts
+        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + 1000)
+        # Use an in-memory sqlite db for testing
+        config_obj['db']['engine'] = 'sqlite://'
+
+        with open(config_file, 'w') as f:
+                config_obj.write(f)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.confdir.cleanup()
+
+    def setUp(self):
         mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
-        cls.setup_config()
-        cls.bot = core.IrcBot(cls.confdir.name)
-        cls.setup_handler()
+        self.bot = core.IrcBot(self.confdir.name)
+        self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
-            cls.bot.start()
+            self.bot.start()
+        self.join_channel('testBot', '#test-channel')
+
+    def setup_handler(self):
+        self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
+        mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
+
+    def tearDown(self):
+        self.bot.shutdown_mp()
 
     def join_channel(self, nick, channel):
         e = irc.client.Event('join', irc.client.NickMask(nick), channel)
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
+        calls = self.send_msg(e)
         expected_calls = [(nick, channel, 0, '', 'join')]
         if nick == 'testBot':
             expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.bot.shutdown_mp()
-        cls.confdir.cleanup()
-
-    def tearDown(self):
-        self.log_mock.reset_mock()
-
-    @classmethod
-    def setup_config(cls):
-        cls.confdir = tempfile.TemporaryDirectory()
-        srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
-        shutil.copy(join(srcdir, 'config.example'), join(cls.confdir.name, 'config.cfg'))
-        shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
-        config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-        config_file = join(cls.confdir.name, 'config.cfg')
-        with open(config_file) as f:
-                config_obj.read_file(f)
-        # Prevent server port conflicts
-        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + 1000)
-        # Use an in-memory sqlite db for testing
-        config_obj['db']['engine'] = 'sqlite://'
-        with open(config_file, 'w') as f:
-                config_obj.write(f)
-
-    @classmethod
-    def setup_handler(cls):
-        cls.log_mock = mock.patch.object(cls.bot.handler.db, 'log').start()
-        mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
+    def send_msg(self, e):
+        # We mocked out the actual irc processing, so call the internal method here.
+        self.bot.connection._handle_event(e)
+        # Make hermetic
+        return sorted([x[0] for x in self.log_mock.call_args_list])
 
     def test_handle_msg(self):
         """Make sure the bot can handle a simple message."""
-        self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!morse bob', 'pubmsg'), ('testBot', '#test-channel', 0, '-... --- -...', 'privmsg')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '-... --- -...', 'privmsg'), ('testnick', '#test-channel', 0, '!morse bob', 'pubmsg')])
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
         # Hack: since we don't have a real IRC connection, we must manually "join" the nicks
-        self.join_channel('testnick', '#test-channel')
         self.join_channel('testBot', '#test-channel2')
+        self.join_channel('testnick', '#test-channel')
         self.join_channel('testnick', '#test-channel2')
         e = irc.client.Event('nick', irc.client.NickMask('testnick'), 'testnick2')
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(sorted(calls), [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
@@ -144,58 +145,37 @@ class BotTest(unittest.TestCase):
     @mock.patch('cslbot.commands.zipcode.get')
     def test_zipcode_valid(self, mock_get):
         """Test a correct zip code"""
-        mock_response = mock.Mock()
-        with open(join(dirname(__file__), 'data/zipcode_12345.xml')) as test_data_file:
-            expected_response = test_data_file.read()  # If we don't force the encoding, the XML parser complains
-        mock_response.content = expected_response.encode()
-        mock_get.return_value = mock_response
-        self.join_channel('testBot', '#test-channel')
+        with open(join(dirname(__file__), 'data', 'zipcode_12345.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode 12345'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg'), ('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg')])
 
     def test_zipcode_invalid(self):
         """Test incorrect zip codes"""
-        self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode potato'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg'), ('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg')])
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_valid(self, mock_get):
         """Test a valid definition"""
-        mock_response = mock.Mock()
-        with open(join(dirname(__file__), 'data/define_potato.xml')) as test_data_file:
-            expected_response = test_data_file.read().encode()
-        mock_response.content = expected_response
-        mock_get.return_value = mock_response
-        self.join_channel('testBot', '#test-channel')
+        with open(join(dirname(__file__), 'data', 'define_potato.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potato'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potato', 'pubmsg'),
-                                 ('testBot', '#test-channel', 0,
-                                     'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls,
+                         [('testBot', '#test-channel', 0, 'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg'),
+                          ('testnick', '#test-channel', 0, '!define potato', 'pubmsg')])
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_invalid(self, mock_get):
         """Test an invalid definition"""
-        mock_response = mock.Mock()
-        with open(join(dirname(__file__), 'data/define_potatwo.xml')) as test_data_file:
-            expected_response = test_data_file.read().encode()
-        mock_response.content = expected_response
-        mock_get.return_value = mock_response
-        self.join_channel('testBot', '#test-channel')
+        with open(join(dirname(__file__), 'data', 'define_potatwo.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potatwo'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potatwo', 'pubmsg'), ('testBot', '#test-channel', 0, 'No results found for potatwo', 'privmsg')])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No results found for potatwo', 'privmsg'), ('testnick', '#test-channel', 0, '!define potatwo', 'pubmsg')])
 
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
