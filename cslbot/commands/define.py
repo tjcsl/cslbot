@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     token = args['config']['api']['stands4token']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--entry', type=int, default=0, nargs='?')
-    parser.add_argument('word', nargs='*')
+    parser.add_argument('word', nargs='+')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
