@@ -21,6 +21,7 @@ import importlib
 import logging
 import multiprocessing
 import signal
+import socket
 import ssl
 import sys
 import threading
@@ -129,6 +130,8 @@ class IrcBot(bot.SingleServerIRCBot):
         """
         # The server runs on a worker thread, so we need to shut it down first.
         if hasattr(self, 'server'):
+            # Shutdown the server quickly.
+            self.server.socket.shutdown(socket.SHUT_RDWR)
             self.server.socket.close()
             self.server.shutdown()
         if hasattr(self, 'handler'):
