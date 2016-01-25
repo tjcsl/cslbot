@@ -184,6 +184,54 @@ class BotTest(unittest.TestCase):
         calls = self.send_msg(e)
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No results found for potatwo', 'privmsg'), ('testnick', '#test-channel', 0, '!define potatwo', 'pubmsg')])
 
+    @mock.patch('cslbot.commands.wisdom.get')
+    def test_wisdom_valid(self, mock_get):
+        """Test a valid wisdom lookup"""
+        with open(join(dirname(__file__), 'data/wisdom_asimov.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --author Isaac Asimov'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0,
+                                  "One, a robot may not injure a human being, or through inaction, allow a human being to come to harm " +
+                                  "Two, a robot must obey the orders given it by human beings except where such orders would conflict with the First Law " +
+                                  "Three, a robot must protect its own existence as long as such protection does not conflict with the First or Second Laws. -- Isaac Asimov", 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!wisdom --author Isaac Asimov', 'pubmsg')])
+
+    @mock.patch('cslbot.commands.wisdom.get')
+    def test_wisdom_invalid(self, mock_get):
+        """Test wisdom with no results"""
+        with open(join(dirname(__file__), 'data/wisdom_jibberjabber.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search jibberjabber'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No words of wisdom found', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!wisdom --search jibberjabber', 'pubmsg')])
+
+    def test_wisdom_author_nosearch(self):
+        """Check that we error if we specify an author search with no terms"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --author'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No author specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --author', 'pubmsg')])
+
+    def test_wisdom_search_nosearch(self):
+        """Check that we error if we specify a search with no terms"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No search terms specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --search', 'pubmsg')])
+
+    def test_wisdom_search_author_invalid(self):
+        """Check that we error if we specify both search and author"""
+        self.join_channel('testBot', '#test-channel')
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search --author'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'argument --author: not allowed with argument --search', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!wisdom --search --author', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)

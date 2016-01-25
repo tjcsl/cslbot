@@ -820,6 +820,14 @@ cslbot.commands.wikipath module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.wisdom module
+-----------------------------
+
+.. automodule:: cslbot.commands.wisdom
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.wolf module
 ---------------------------
 
