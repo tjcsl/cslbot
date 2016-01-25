@@ -146,6 +146,24 @@ class WisdomTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'argument --author: not allowed with argument --search', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!wisdom --search --author', 'pubmsg')])
 
+    @mock.patch('cslbot.commands.define.get')
+    def test_definition_empty(self, mock_get):
+        """Test an invalid definition"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: word', 'privmsg'), ('testnick', '#test-channel', 0, '!define', 'pubmsg')])
+
+    @mock.patch('cslbot.commands.define.get')
+    def test_definition_invalid_index(self, mock_get):
+        """Test an invalid definition index"""
+        with open(join(dirname(__file__), 'data', 'define_potato.xml')) as test_data_file:
+            mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potato --entry 5'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls,
+                         [('testBot', '#test-channel', 0, 'Invalid index 5 for term potato', 'privmsg'),
+                          ('testnick', '#test-channel', 0, '!define potato --entry 5', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
