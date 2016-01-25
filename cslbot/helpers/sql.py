@@ -30,7 +30,8 @@ from .orm import Log, setup_db
 def get_session(config):
     if not config['db']['engine']:
         raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
-    if config['db']['engine'].startswith('sqlite'):
+    # In-memory sqlite db, only really useful for testing.
+    if config['db']['engine'] == 'sqlite://':
         engine = create_engine(config['db']['engine'], connect_args={'check_same_thread': False}, poolclass=StaticPool)
     else:
         engine = create_engine(config['db']['engine'])
