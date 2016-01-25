@@ -208,4 +208,5 @@ scripts/parsedata.py
 scripts/parselogs.py
 scripts/reload.py
 scripts/stats.sh
-scripts/test.py
+test/__init__.py
+test/test.py

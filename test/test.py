@@ -34,6 +34,9 @@ if exists(join(dirname(__file__), '../.git')):
 import irc.client  # noqa
 from cslbot.helpers import core, server, sql, workers  # noqa
 
+# We don't need the alembic output.
+logging.getLogger("alembic").setLevel(logging.WARNING)
+
 
 def connect_mock(conn, *args, **_):
     conn.real_nickname = 'testBot'
@@ -42,7 +45,7 @@ def connect_mock(conn, *args, **_):
 
 
 def start_thread(self, func, *args, **kwargs):
-    # We need to spin the server thread out to avoid blocking.
+    # We need to actually run the server thread to avoid blocking.
     if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
         with workers.worker_lock:
             self.executor.submit(func, *args, **kwargs)
@@ -54,8 +57,6 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # We don't need the alembic output.
-        logging.getLogger("alembic").setLevel(logging.WARNING)
         mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
         cls.setup_config()
         cls.bot = core.IrcBot(cls.confdir.name)
@@ -91,6 +92,7 @@ class BotTest(unittest.TestCase):
                 config_obj.read_file(f)
         # Prevent server port conflicts
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + 1000)
+        # Use an in-memory sqlite db for testing
         config_obj['db']['engine'] = 'sqlite://'
         with open(config_file, 'w') as f:
                 config_obj.write(f)
@@ -100,19 +102,12 @@ class BotTest(unittest.TestCase):
         cls.log_mock = mock.patch.object(cls.bot.handler.db, 'log').start()
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
-    def restart_workers(self):
-        """Force all the workers to restart so we get the log message."""
-        self.bot.shutdown_mp()
-        self.bot.handler.workers.__init__(self.bot.handler)
-        self.bot.server = server.init_server(self.bot)
-
     def test_handle_msg(self):
         """Make sure the bot can handle a simple message."""
         self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
-        self.restart_workers()
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!morse bob', 'pubmsg'), ('testBot', '#test-channel', 0, '-... --- -...', 'privmsg')])
         self.log_mock.reset_mock()
@@ -125,7 +120,6 @@ class BotTest(unittest.TestCase):
         self.join_channel('testnick', '#test-channel2')
         e = irc.client.Event('nick', irc.client.NickMask('testnick'), 'testnick2')
         self.bot.connection._handle_event(e)
-        self.restart_workers()
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(sorted(calls), [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
         self.log_mock.reset_mock()
@@ -150,15 +144,14 @@ class BotTest(unittest.TestCase):
     def test_zipcode_valid(self, mock_get):
         """Test a correct zip code"""
         mock_response = mock.Mock()
-        with open(join(dirname(__file__), 'testdata/zipcode_12345.xml'), 'r') as test_data_file:
-            expected_response = test_data_file.read().encode('ascii')  # If we don't force the encoding, the XML parser complains
-        mock_response.content = expected_response
+        with open(join(dirname(__file__), 'data/zipcode_12345.xml')) as test_data_file:
+            expected_response = test_data_file.read()  # If we don't force the encoding, the XML parser complains
+        mock_response.content = expected_response.encode()
         mock_get.return_value = mock_response
         self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode 12345'])
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
-        self.restart_workers()
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg'), ('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg')])
         self.log_mock.reset_mock()
@@ -169,7 +162,6 @@ class BotTest(unittest.TestCase):
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode potato'])
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
-        self.restart_workers()
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg'), ('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg')])
         self.log_mock.reset_mock()
