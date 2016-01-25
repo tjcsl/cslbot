@@ -73,9 +73,9 @@ class BotTest(unittest.TestCase):
     @classmethod
     def setup_config(cls):
         cls.confdir = tempfile.TemporaryDirectory()
-        srcdir = join(dirname(__file__), '..')
-        shutil.copy(join(srcdir, 'config.cfg'), cls.confdir.name)
-        shutil.copy(join(srcdir, 'groups.cfg'), cls.confdir.name)
+        srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
+        shutil.copy(join(srcdir, 'config.example'), join(cls.confdir.name, 'config.cfg'))
+        shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
         config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         config_file = join(cls.confdir.name, 'config.cfg')
         with open(config_file) as f:
