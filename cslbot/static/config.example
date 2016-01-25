@@ -41,7 +41,6 @@ voiceactive: True
 networktype: atheme
 servicestype: atheme
 [api]
-dictionaryapikey:
 weatherapikey:
 ebayapikey:
 githubapikey:
