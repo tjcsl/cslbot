@@ -33,7 +33,7 @@ if exists(join(dirname(__file__), '../.git')):
 
 # Imports pkg_resources, so must come after the path is modified
 import irc.client  # noqa
-from cslbot.helpers import core, workers  # noqa
+from cslbot.helpers import core, handler, workers  # noqa
 
 # We don't need the alembic output.
 logging.getLogger("alembic").setLevel(logging.WARNING)
@@ -52,6 +52,10 @@ def start_thread(self, func, *args, **kwargs):
             self.executor.submit(func, *args, **kwargs)
     else:
         func(*args, **kwargs)
+
+
+def rate_limited_send(self, mtype, target, msg):
+    getattr(self.connection, mtype)(target, msg)
 
 
 # TODO: break this up more
@@ -90,6 +94,8 @@ class BotTest(unittest.TestCase):
         self.join_channel('testBot', '#test-channel')
 
     def setup_handler(self):
+        # We don't need to rate-limit sending.
+        mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
         self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
