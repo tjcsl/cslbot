@@ -13,6 +13,10 @@ CslBot
 .. image:: https://coveralls.io/repos/tjcsl/cslbot/badge.svg?branch=master&service=github
     :target: https://coveralls.io/github/tjcsl/cslbot?branch=master
     :alt: Coverage
+    
+.. image:: https://readthedocs.org/projects/ion/badge/?version=latest
+    :target: http://cslbot.readthedocs.org/en/latest
+    :alt: Docs
 
 A bot written by the TJHSST CSL for IRC. 
 
