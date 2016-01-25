@@ -217,6 +217,12 @@ class WisdomTest(BotTest):
                                   'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
+    def test_signal_valid(self):
+        """Test signal, basic check only since errno covers most of the backend"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!signal 9'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define SIGKILL 9', 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
