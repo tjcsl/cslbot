@@ -506,8 +506,10 @@ class BotHandler():
             for channel in misc.get_channels(self.channels, e.target):
                 self.do_log(channel, e.source.nick, e.target, 'nick')
                 # Move the voice+op status to the new nick
-                self.voiced[channel][e.target] = self.voiced[channel].pop(e.source.nick)
-                self.opers[channel][e.target] = self.opers[channel].pop(e.source.nick)
+                if e.source.nick in self.voiced[channel].keys():  # In case we somehow didn't set the voice state on the old nick
+                    self.voiced[channel][e.target] = self.voiced[channel].pop(e.source.nick)
+                if e.source.nick in self.opers[channel].keys():  # As above, for ops
+                    self.opers[channel][e.target] = self.opers[channel].pop(e.source.nick)
         if identity.handle_nick(self, e):
             for x in misc.get_channels(self.channels, e.target):
                 self.do_kick(send, x, e.target, "identity crisis")
