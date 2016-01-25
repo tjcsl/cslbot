@@ -80,6 +80,9 @@ class BotTest(unittest.TestCase):
         cls.bot.shutdown_mp()
         cls.confdir.cleanup()
 
+    def tearDown(self):
+        self.log_mock.reset_mock()
+
     @classmethod
     def setup_config(cls):
         cls.confdir = tempfile.TemporaryDirectory()
@@ -110,7 +113,6 @@ class BotTest(unittest.TestCase):
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!morse bob', 'pubmsg'), ('testBot', '#test-channel', 0, '-... --- -...', 'privmsg')])
-        self.log_mock.reset_mock()
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
@@ -122,7 +124,6 @@ class BotTest(unittest.TestCase):
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(sorted(calls), [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
-        self.log_mock.reset_mock()
 
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
@@ -154,7 +155,6 @@ class BotTest(unittest.TestCase):
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg'), ('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg')])
-        self.log_mock.reset_mock()
 
     def test_zipcode_invalid(self):
         """Test incorrect zip codes"""
@@ -164,7 +164,6 @@ class BotTest(unittest.TestCase):
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg'), ('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg')])
-        self.log_mock.reset_mock()
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_valid(self, mock_get):
@@ -182,7 +181,6 @@ class BotTest(unittest.TestCase):
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potato', 'pubmsg'),
                                  ('testBot', '#test-channel', 0,
                                      'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg')])
-        self.log_mock.reset_mock()
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_invalid(self, mock_get):
@@ -198,7 +196,6 @@ class BotTest(unittest.TestCase):
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
         self.assertEqual(calls, [('testnick', '#test-channel', 0, '!define potatwo', 'pubmsg'), ('testBot', '#test-channel', 0, 'No results found for potatwo', 'privmsg')])
-        self.log_mock.reset_mock()
 
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
