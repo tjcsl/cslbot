@@ -76,6 +76,12 @@ class ZipcodeTest(BotTest):
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode 12345'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg')])
 
+    def test_zipcode_blank(self):
+        """Test a blank zip code"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: zipcode', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode', 'pubmsg')])
+
     def test_zipcode_invalid(self):
         """Test incorrect zip codes"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode potato'])
