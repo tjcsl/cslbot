@@ -176,13 +176,46 @@ class WisdomTest(BotTest):
 
     def test_morse_too_long(self):
         """Test morse with an overlength argument"""
-            """Test morse with no arguments"""
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel',
                              ['!morse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'])
         calls = self.send_msg(e)
         self.assertEqual(calls,
                          [('testBot', '#test-channel', 0, 'Your morse is too long. Have you considered Western Union?', 'privmsg'),
                           ('testnick', '#test-channel', 0, '!morse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'pubmsg')])
+
+    @mock.patch('cslbot.helpers.misc.choice')
+    def test_errno_valid_no_input(self, mock_choice):
+        """Test errno run with no input, this also tests name -> number mapping"""
+        mock_choice.return_value = 'EOVERFLOW'
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!errno'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define EOVERFLOW 75', 'privmsg'), ('testnick', '#test-channel', 0, '!errno', 'pubmsg')])
+
+    def test_errno_valid_number(self):
+        """Test errno number -> name mapping"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!errno 75'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define EOVERFLOW 75', 'privmsg'), ('testnick', '#test-channel', 0, '!errno 75', 'pubmsg')])
+
+    def test_errno_invalid_name(self):
+        """Test errno run with an invalid name"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!errno ENOPANTS'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ENOPANTS not found in errno.h', 'privmsg'), ('testnick', '#test-channel', 0, '!errno ENOPANTS', 'pubmsg')])
+
+    def test_errno_list(self):
+        """Test errno list command"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!errno list'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0,
+                                  'EACCES, EADDRINUSE, EADDRNOTAVAIL, EADV, EAFNOSUPPORT, EAGAIN, EALREADY, EBADE, EBADF, EBADFD, EBADMSG, ' +
+                                  'EBADR, EBADRQC, EBADSLT, EBFONT, EBUSY, ECANCELED, ECHILD, ECHRNG, ECOMM, ECONNABORTED, ECONNREFUSED, ECONNRESET, ' +
+                                  'EDEADLK, EDESTADDRREQ, EDOM, EDOTDOT, EDQUOT, EEXIST, EFAULT, EFBIG, EHOSTDOWN, EHOSTUNREACH, EHWPOISON, EIDRM, ' +
+                                  'EILSEQ, EINPROGRESS, EINTR, EINVAL, EIO, EISCONN, EISDIR, EISNAM, EKEYEXPIRED, EKEYREJECTED,', 'privmsg'),
+                                 ('testBot', '#test-channel', 0,
+                                  'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, ' +
+                                  'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
