@@ -164,6 +164,26 @@ class WisdomTest(BotTest):
                          [('testBot', '#test-channel', 0, 'Invalid index 5 for term potato', 'privmsg'),
                           ('testnick', '#test-channel', 0, '!define potato --entry 5', 'pubmsg')])
 
+    @mock.patch('cslbot.commands.morse.gen_word')
+    def test_morse_noarg(self, mock_gen_word):
+        """Test morse with no arguments"""
+        mock_gen_word.return_value = 'test'
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls,
+                         [('testBot', '#test-channel', 0, '- . ... -', 'privmsg'),
+                          ('testnick', '#test-channel', 0, '!morse', 'pubmsg')])
+
+    def test_morse_too_long(self):
+        """Test morse with an overlength argument"""
+            """Test morse with no arguments"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel',
+                             ['!morse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls,
+                         [('testBot', '#test-channel', 0, 'Your morse is too long. Have you considered Western Union?', 'privmsg'),
+                          ('testnick', '#test-channel', 0, '!morse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
