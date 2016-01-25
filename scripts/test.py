@@ -64,13 +64,13 @@ class BotTest(unittest.TestCase):
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
             cls.bot.start()
 
-    def join_channel(self, nick):
-        e = irc.client.Event('join', irc.client.NickMask(nick), '#test-channel')
+    def join_channel(self, nick, channel):
+        e = irc.client.Event('join', irc.client.NickMask(nick), channel)
         self.bot.connection._handle_event(e)
         calls = [x[0] for x in self.log_mock.call_args_list]
-        expected_calls = [(nick, '#test-channel', 0, '', 'join')]
+        expected_calls = [(nick, channel, 0, '', 'join')]
         if nick == 'testBot':
-            expected_calls.append((nick, 'private', 0, 'Joined channel #test-channel', 'privmsg'))
+            expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
@@ -108,7 +108,7 @@ class BotTest(unittest.TestCase):
 
     def test_handle_msg(self):
         """Make sure the bot can handle a simple message."""
-        self.join_channel('testBot')
+        self.join_channel('testBot', '#test-channel')
         e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
@@ -119,12 +119,15 @@ class BotTest(unittest.TestCase):
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
-        self.join_channel('testnick')  # Hack: since we don't have a real IRC connection, we must join with the source or target nick
-        e = irc.client.Event('nick', irc.client.NickMask('testnick'), 'testnick2', [])
+        # Hack: since we don't have a real IRC connection, we must manually "join" the nicks
+        self.join_channel('testnick', '#test-channel')
+        self.join_channel('testBot', '#test-channel2')
+        self.join_channel('testnick', '#test-channel2')
+        e = irc.client.Event('nick', irc.client.NickMask('testnick'), 'testnick2')
         self.bot.connection._handle_event(e)
         self.restart_workers()
         calls = [x[0] for x in self.log_mock.call_args_list]
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick')])  # Not sure why this thinks it's a chan-specific message
+        self.assertEqual(sorted(calls), [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
         self.log_mock.reset_mock()
 
     def test_bot_reload(self):
