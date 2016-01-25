@@ -145,6 +145,35 @@ class BotTest(unittest.TestCase):
         self.setup_handler()
         self.assertEqual(output.decode(), "Password: \nAye Aye Capt'n\n")
 
+    # Command-specific messages
+    @mock.patch('cslbot.commands.zipcode.get')
+    def test_zipcode_valid(self, mock_get):
+        """Test a correct zip code"""
+        mock_response = mock.Mock()
+        with open(join(dirname(__file__), 'testdata/zipcode_12345.xml'), 'r') as test_data_file:
+            expected_response = test_data_file.read().encode('ascii')  # If we don't force the encoding, the XML parser complains
+        mock_response.content = expected_response
+        mock_get.return_value = mock_response
+        self.join_channel('testBot', '#test-channel')
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode 12345'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        self.bot.connection._handle_event(e)
+        self.restart_workers()
+        calls = [x[0] for x in self.log_mock.call_args_list]
+        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg'), ('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg')])
+        self.log_mock.reset_mock()
+
+    def test_zipcode_invalid(self):
+        """Test incorrect zip codes"""
+        self.join_channel('testBot', '#test-channel')
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode potato'])
+        # We mocked out the actual irc processing, so call the internal method here.
+        self.bot.connection._handle_event(e)
+        self.restart_workers()
+        calls = [x[0] for x in self.log_mock.call_args_list]
+        self.assertEqual(calls, [('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg'), ('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg')])
+        self.log_mock.reset_mock()
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
