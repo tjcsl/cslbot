@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?><results><result><term>potato, white potato, Irish potato, murphy, spud, tater</term><definition>an edible tuber native to South America; a staple food of Ireland</definition><example></example><partofspeech>noun</partofspeech></result><result><term>potato, white potato, white potato vine, Solanum tuberosum</term><definition>annual native to South America having underground stolons bearing edible starchy tubers; widely cultivated as a garden vegetable; vines are poisonous</definition><example></example><partofspeech>noun</partofspeech></result><result><term>potato</term><definition>A plant tuber, Solanum tuberosum, eaten as a starchy vegetable, particularly in the Americas and Europe</definition><example></example><partofspeech>Noun</partofspeech></result><result><term>potato</term><definition>A conspicuous hole in a sock or stocking</definition><example></example><partofspeech>Noun</partofspeech></result><result><term>Potato</term><definition>The potato is a starchy, tuberous crop from the perennial Solanum tuberosum of the Solanaceae family. The word may refer to the plant itself as well as the edible tuber. In the region of the Andes, there are some other closely related cultivated potato species. Potatoes were introduced outside the Andes region four centuries ago, and have become an integral part of much of the world\'s cuisine. It is the world\'s fourth-largest food crop, following rice, wheat and maize. Long-term storage of potatoes requires specialised care in cold warehouses.\nWild potato species occur throughout the Americas, from the United States to southern Chile. The potato was originally believed to have been domesticated independently in multiple locations, but later genetic testing of the wide variety of cultivars and wild species proved a single origin for potatoes in the area of present-day southern Peru and extreme northwestern Bolivia, where they were domesticated 7,000\xe2\x80\x9310,000 years ago. Following centuries of selective breeding, there are now over a thousand different types of potatoes. Of these subspecies, a variety that at one point grew in the Chilo\xc3\xa9 Archipelago left its germplasm on over 99% of the cultivated potatoes worldwide.</definition><example></example><partofspeech></partofspeech></result></results>
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <result>
+    <term>potato, white potato, Irish potato, murphy, spud, tater</term>
+    <definition>an edible tuber native to South America; a staple food of Ireland</definition>
+    <example/>
+    <partofspeech>noun</partofspeech>
+  </result>
+  <result>
+    <term>potato, white potato, white potato vine, Solanum tuberosum</term>
+    <definition>annual native to South America having underground stolons bearing edible starchy tubers; widely cultivated as a garden vegetable; vines are poisonous</definition>
+    <example/>
+    <partofspeech>noun</partofspeech>
+  </result>
+  <result>
+    <term>potato</term>
+    <definition>A plant tuber, Solanum tuberosum, eaten as a starchy vegetable, particularly in the Americas and Europe</definition>
+    <example/>
+    <partofspeech>Noun</partofspeech>
+  </result>
+  <result>
+    <term>potato</term>
+    <definition>A conspicuous hole in a sock or stocking</definition>
+    <example/>
+    <partofspeech>Noun</partofspeech>
+  </result>
+  <result>
+    <term>Potato</term>
+    <definition>The potato is a starchy, tuberous crop from the perennial Solanum tuberosum of the Solanaceae family. The word may refer to the plant itself as well as the edible tuber. In the region of the Andes, there are some other closely related cultivated potato species. Potatoes were introduced outside the Andes region four centuries ago, and have become an integral part of much of the world\'s cuisine. It is the world\'s fourth-largest food crop, following rice, wheat and maize. Long-term storage of potatoes requires specialised care in cold warehouses.\nWild potato species occur throughout the Americas, from the United States to southern Chile. The potato was originally believed to have been domesticated independently in multiple locations, but later genetic testing of the wide variety of cultivars and wild species proved a single origin for potatoes in the area of present-day southern Peru and extreme northwestern Bolivia, where they were domesticated 7,000\xe2\x80\x9310,000 years ago. Following centuries of selective breeding, there are now over a thousand different types of potatoes. Of these subspecies, a variety that at one point grew in the Chilo\xc3\xa9 Archipelago left its germplasm on over 99% of the cultivated potatoes worldwide.</definition>
+    <example/>
+    <partofspeech/>
+  </result>
+</results>

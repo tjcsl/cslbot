@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<results><location>Schenectady, NY</location><longitude></longitude><latitude></latitude></results>
+<results>
+  <location>Schenectady, NY</location>
+  <longitude/>
+  <latitude/>
+</results>
