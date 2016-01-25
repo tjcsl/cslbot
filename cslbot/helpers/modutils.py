@@ -28,14 +28,23 @@ from pkg_resources import Requirement, resource_filename, resource_string
 
 from . import backtrace
 
-GROUPS = {'commands': set(), 'hooks': set()}
-DISABLED = {'commands': set(), 'hooks': set()}
-AUX = []
+
+class ModuleData(object):
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.groups = {'commands': set(), 'hooks': set()}
+        self.disabled = {'commands': set(), 'hooks': set()}
+        self.aux = []
+
+
+registry = ModuleData()
 
 
 def init_aux(config):
-    AUX.clear()
-    AUX.extend([x.strip() for x in config['extramodules'].split(',')])
+    registry.reset()
+    registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
 
 
 def load_groups(confdir):
@@ -63,13 +72,13 @@ def add_to_groups(config, groups, mod_type):
             if loaded(mod_type, x):
                 raise Exception('Module %s cannot occur multiple times in groups.cfg' % x)
             if name in enabled_groups:
-                GROUPS[mod_type].add(x)
+                registry.groups[mod_type].add(x)
             else:
-                DISABLED[mod_type].add(x)
+                registry.disabled[mod_type].add(x)
 
 
 def loaded(mod_type, name):
-    return name in GROUPS[mod_type] or name in DISABLED[mod_type]
+    return name in registry.groups[mod_type] or name in registry.disabled[mod_type]
 
 
 def parse_group(cfg):
@@ -82,15 +91,15 @@ def parse_group(cfg):
 def group_enabled(mod_type, name):
     if mod_type == 'helpers':
         return True
-    return name in GROUPS[mod_type]
+    return name in registry.groups[mod_type]
 
 
 def group_disabled(mod_type, name):
-    return name in DISABLED[mod_type]
+    return name in registry.disabled[mod_type]
 
 
 def get_disabled(mod_type):
-    return DISABLED[mod_type]
+    return registry.disabled[mod_type]
 
 
 def get_enabled(mod_type, package='CslBot'):
@@ -110,7 +119,7 @@ def get_enabled(mod_type, package='CslBot'):
 
 def get_modules(mod_type):
     core_enabled, core_disabled = get_enabled(mod_type)
-    for package in filter(None, AUX):
+    for package in filter(None, registry.aux):
         aux_enabled, aux_disabled = get_enabled(mod_type, package)
         core_enabled.extend(aux_enabled)
         core_disabled.extend(aux_disabled)
