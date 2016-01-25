@@ -100,7 +100,8 @@ class Hook():
             if msgtype in self.types:
                 try:
                     thread = threading.current_thread()
-                    thread_id = re.match(r'Thread-\d+', thread.name).group(0)
+                    thread_id = re.match(r'Thread-\d+', thread.name)
+                    thread_id = "Unknown" if thread_id is None else thread_id.group(0)
                     thread.name = "%s running %s" % (thread_id, func.__module__)
                     with self.handler.db.session_scope() as args['db']:
                         func(send, msg, args)

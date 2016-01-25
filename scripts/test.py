@@ -19,26 +19,35 @@ import configparser
 import logging
 import shutil
 import socket
+import sys
 import tempfile
 import unittest
 from os.path import dirname, exists, join
-from sys import path
 from unittest import mock
 
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+    sys.path.insert(0, join(dirname(__file__), '..'))
 
 # Imports pkg_resources, so must come after the path is modified
 import irc.client  # noqa
-from cslbot.helpers import core, server, sql  # noqa
+from cslbot.helpers import core, server, sql, workers  # noqa
 
 
 def connect_mock(conn, *args, **_):
     conn.real_nickname = 'testBot'
     conn.handlers = {}
     conn.socket = mock.MagicMock()
+
+
+def start_thread(self, func, *args, **kwargs):
+    # We need to spin the server thread out to avoid blocking.
+    if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
+        with workers.worker_lock:
+            self.executor.submit(func, *args, **kwargs)
+    else:
+        func(*args, **kwargs)
 
 
 class BotTest(unittest.TestCase):
@@ -89,6 +98,7 @@ class BotTest(unittest.TestCase):
     @classmethod
     def setup_handler(cls):
         cls.log_mock = mock.patch.object(cls.bot.handler.db, 'log').start()
+        mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
     def restart_workers(self):
         """Force all the workers to restart so we get the log message."""
@@ -123,5 +133,6 @@ class BotTest(unittest.TestCase):
         self.assertEqual(output.decode(), "Password: \nAye Aye Capt'n\n")
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
+    logging.basicConfig(level=loglevel)
     unittest.main()

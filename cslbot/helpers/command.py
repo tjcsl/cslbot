@@ -125,7 +125,8 @@ class Command():
         def wrapper(send, msg, args):
             try:
                 thread = threading.current_thread()
-                thread_id = re.match(r'Thread-\d+', thread.name).group(0)
+                thread_id = re.match(r'Thread-\d+', thread.name)
+                thread_id = "Unknown" if thread_id is None else thread_id.group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
