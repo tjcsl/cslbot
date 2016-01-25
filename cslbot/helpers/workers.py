@@ -30,7 +30,6 @@ from sqlalchemy import or_
 from . import babble, backtrace, control, tokens
 from .orm import Babble_last, Log
 
-worker_lock = threading.Lock()
 executor_lock = threading.Lock()
 
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
@@ -44,7 +43,8 @@ def pool_init():
 class Workers():
 
     def __init__(self, handler):
-        with worker_lock:
+        self.worker_lock = threading.Lock()
+        with self.worker_lock:
             self.pool = multiprocessing.Pool(initializer=pool_init)
             self.events = {}
         with executor_lock:
@@ -63,12 +63,12 @@ class Workers():
             self.executor.submit(func, *args, **kwargs)
 
     def run_pool(self, func, args):
-        with worker_lock:
+        with self.worker_lock:
             result = self.pool.apply_async(func, args)
         return result
 
     def restart_pool(self):
-        with worker_lock:
+        with self.worker_lock:
             self.pool.terminate()
             self.pool.join()
             self.pool = multiprocessing.Pool(initializer=pool_init)
@@ -87,12 +87,12 @@ class Workers():
         event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
-        with worker_lock:
+        with self.worker_lock:
             self.events[event.ident] = Event(event, run_on_cancel)
         return event.ident
 
     def cancel(self, eventid):
-        with worker_lock:
+        with self.worker_lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
                 self.events[eventid].event.function(**self.events[eventid].event.kwargs)
@@ -103,7 +103,7 @@ class Workers():
         with executor_lock:
             self.executor.shutdown(clean)
             del self.executor
-        with worker_lock:
+        with self.worker_lock:
             if clean:
                 self.pool.close()
             else:
