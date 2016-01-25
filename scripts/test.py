@@ -127,7 +127,6 @@ class BotTest(unittest.TestCase):
         self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick')])  # Not sure why this thinks it's a chan-specific message
         self.log_mock.reset_mock()
 
-
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
         sock = socket.socket()
