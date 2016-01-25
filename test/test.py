@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
 import logging
+import random
 import shutil
 import socket
 import sys
@@ -68,7 +69,7 @@ class BotTest(unittest.TestCase):
                 config_obj.read_file(f)
 
         # Prevent server port conflicts
-        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + 1000)
+        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
         # Use an in-memory sqlite db for testing
         config_obj['db']['engine'] = 'sqlite://'
 
