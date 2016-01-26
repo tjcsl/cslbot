@@ -229,6 +229,34 @@ class WisdomTest(BotTest):
         calls = self.send_msg(e)
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define SIGKILL 9', 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
 
+    @mock.patch('cslbot.commands.coin.choice')
+    def test_coin_valid(self, mock_choice):
+        """Test the default coin flip"""
+        mock_choice.return_value = 'heads'
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!coin'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coin lands on... heads', 'privmsg'), ('testnick', '#test-channel', 0, '!coin', 'pubmsg')])
+
+    def test_coin_noninteger(self):
+        """Test a non-digit argument"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!coin potato'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Not A Valid Positive Integer.', 'privmsg'), ('testnick', '#test-channel', 0, '!coin potato', 'pubmsg')])
+
+    def test_coin_negative(self):
+        """Test a negative argument"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!coin -1'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Negative Flipping requires the (optional) quantum coprocessor.', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!coin -1', 'pubmsg')])
+
+    def test_coin_zero(self):
+        """Test coin flipping with arguments"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!coin 0'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coins land on heads 0 times and on tails 0 times.', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!coin 0', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
