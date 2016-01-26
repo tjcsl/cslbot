@@ -66,6 +66,18 @@ class CoreTest(BotTest):
         self.assertEqual(self.buffer.getvalue(), 'Connected to server localhost.localhost\n')
         self.assertEqual(calls, [])  # It appears that this shouldn't produce any messages?
 
+    def test_handle_whospcrpl(self):
+        """Test the bot's ability to handle whospcrpl (special who messages)"""
+        self.bot.handler.who_map = {123: '#test-channel'}
+        self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'].keys())
+        self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'].keys())
+        calls = self.send_msg('whospcrpl', 'localhost.localhost', 'testBot', ['123', 'testnick', 'H@+', 'testnick'])
+        self.assertIn('testnick', self.bot.handler.voiced['#test-channel'].keys())
+        self.assertIn('testnick', self.bot.handler.opers['#test-channel'].keys())
+        self.assertTrue(self.bot.handler.voiced['#test-channel']['testnick'])
+        self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
+        self.assertEqual(calls, [])  # This shouldn't produce any messages
+
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
         sock = socket.socket()
