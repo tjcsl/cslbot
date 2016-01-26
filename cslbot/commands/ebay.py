@@ -15,9 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import json
 from random import choice
-from urllib.request import Request, urlopen
 
 from requests import get
 
@@ -34,20 +32,15 @@ def get_categories(apikey):
     return categories
 
 
-# Only works with urllib's unencoded query strings.
 def get_item(category, apikey):
-    url = 'http://svcs.ebay.com/services/search/FindingService/v1'
-    url += '?itemFilter(0).name=FreeShippingOnly&itemFilter(0).value=true'
-    url += '&itemFilter(1).name=MaxPrice&itemFilter(1).value=1'
-    url += '&itemFilter(1).paramName=Currency&itemFilter(1).paramValue=USD'
-    url += '&itemFilter(2).name=ListingType'
-    url += '&itemFilter(2).value(0)=StoreInventory&itemFilter(2).value(1)=FixedPrice&itemFilter(2).value(2)=AuctionWithBIN'
-    url += '&categoryId=' + category
-    req = Request(url)
-    req.add_header('X-EBAY-SOA-RESPONSE-DATA-FORMAT', 'json')
-    req.add_header('X-EBAY-SOA-OPERATION-NAME', 'findItemsAdvanced')
-    req.add_header('X-EBAY-SOA-SECURITY-APPNAME', apikey)
-    data = json.loads(urlopen(req).read().decode())
+    url = 'http://svcs.ebay.com/services/search/FindingService/v1?'
+    params = [('itemFilter(0).name', 'FreeShippingOnly'), ('itemFilter(0).value', 'true'), ('itemFilter(1).name', 'MaxPrice'), ('itemFilter(1).value', '1'),
+              ('itemFilter(1).paramName', 'Currency'), ('itemFilter(1).paramValue', 'USD'), ('itemFilter(2).name', 'ListingType'), ('itemFilter(2).value(0)', 'StoreInventory'),
+              ('itemFilter(2).value(1)', 'FixedPrice'), ('itemFilter(2).value(2)', 'AuctionWithBIN'), ('categoryId', category)]
+    # If we use params=, requests will urlencode the (), making ebay very sad.
+    url += "&".join("%s=%s" % x for x in params)
+    headers = {'X-EBAY-SOA-RESPONSE-DATA-FORMAT': 'json', 'X-EBAY-SOA-OPERATION-NAME': 'findItemsAdvanced', 'X-EBAY-SOA-SECURITY-APPNAME': apikey}
+    data = get(url, headers=headers).json()
     item = data['findItemsAdvancedResponse'][0]['searchResult'][0]
     if int(item['@count']) == 0:
         return None

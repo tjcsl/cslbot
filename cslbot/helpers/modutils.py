@@ -30,6 +30,7 @@ from . import backtrace
 
 
 class ModuleData(object):
+
     def __init__(self):
         self.reset()
 

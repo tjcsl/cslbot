@@ -18,8 +18,6 @@
 # USA.
 
 import json
-from urllib.parse import unquote
-from urllib.request import urlopen
 
 from requests import get, post
 from requests.exceptions import ReadTimeout
@@ -35,9 +33,8 @@ from .orm import UrbanBlacklist
 def get_rand_word(session):
     term = None
     while term is None or session.query(UrbanBlacklist).filter(UrbanBlacklist.word == term).count():
-        url = urlopen('http://www.urbandictionary.com/random.php').geturl()
+        url = get('http://www.urbandictionary.com/random.php').url
         term = url.split('=')[1].replace('+', ' ')
-        term = unquote(term)
     return term
 
 

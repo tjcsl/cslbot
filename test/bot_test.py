@@ -61,7 +61,7 @@ class BotTest(unittest.TestCase):
         shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
         config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         with open(config_file) as f:
-                config_obj.read_file(f)
+            config_obj.read_file(f)
 
         # Prevent server port conflicts
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
@@ -69,7 +69,7 @@ class BotTest(unittest.TestCase):
         config_obj['db']['engine'] = 'sqlite://'
 
         with open(config_file, 'w') as f:
-                config_obj.write(f)
+            config_obj.write(f)
 
     @classmethod
     def tearDownClass(cls):
