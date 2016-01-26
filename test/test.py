@@ -78,6 +78,18 @@ class CoreTest(BotTest):
         self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
         self.assertEqual(calls, [])  # This shouldn't produce any messages
 
+    def test_handle_cap_account_notify(self):
+        """Test the bot's ability to handle the account-notify caps"""
+        self.assertFalse(self.bot.handler.features['account-notify'])
+        self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'account-notify '])
+        self.assertTrue(self.bot.handler.features['account-notify'])
+
+    def test_handle_cap_extended_join(self):
+        """Test the bot's ability to handle the extended-join caps"""
+        self.assertFalse(self.bot.handler.features['extended-join'])
+        self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'extended-join '])
+        self.assertTrue(self.bot.handler.features['extended-join'])
+
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
         sock = socket.socket()
