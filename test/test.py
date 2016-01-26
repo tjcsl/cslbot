@@ -235,6 +235,9 @@ class DefinitionTest(BotTest):
                          [('testBot', '#test-channel', 0, 'Invalid index 5 for term potato', 'privmsg'),
                           ('testnick', '#test-channel', 0, '!define potato --entry 5', 'pubmsg')])
 
+
+class ErrnoTest(BotTest):
+
     @mock.patch('cslbot.helpers.misc.choice')
     def test_errno_valid_no_input(self, mock_choice):
         """Test errno run with no input, this also tests name -> number mapping"""
@@ -265,10 +268,16 @@ class DefinitionTest(BotTest):
                                   'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
+
+class SignalTest(BotTest):
+
     def test_signal_valid(self):
         """Test signal, basic check only since errno covers most of the backend"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!signal 9'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define SIGKILL 9', 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
+
+
+class CoinTest(BotTest):
 
     @mock.patch('cslbot.commands.coin.choice')
     def test_coin_valid(self, mock_choice):
@@ -293,6 +302,9 @@ class DefinitionTest(BotTest):
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!coin 0'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coins land on heads 0 times and on tails 0 times.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!coin 0', 'pubmsg')])
+
+
+class BotsnackTest(BotTest):
 
     def test_botsnack_valid_noargs(self):
         """Test botsnack with no arguments"""
