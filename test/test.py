@@ -20,7 +20,6 @@ import logging
 import socket
 import sys
 import unittest
-from io import StringIO
 from os.path import dirname, exists, join
 from unittest import mock
 
@@ -44,28 +43,10 @@ class CoreTest(BotTest):
 
     def test_handle_welcome(self):
         """Test the bot's ability to handle welcome messages"""
-        self.bot.config['core']['host'] = 'localhost.localhost'  # Override the config value
         self.bot.config['core']['extrachans'] = '#test-channel2'  # Override the config value
-        # Set up buffer capture
-        self.buffer = StringIO()
-        self.log_handler = logging.StreamHandler(self.buffer)
-        self.log_handler.setLevel(logging.INFO)
-        self.logger = logging.getLogger()
-        # Don't log to stdout
-        handlers = self.logger.handlers
-        for handler in handlers:
-            self.logger.removeHandler(handler)
-        self.logger.addHandler(self.log_handler)
-
-        calls = self.send_msg('welcome', 'localhost.localhost', 'testBot', ['Welcome to TestIRC, testBot!'])
-        # Restore logging
-        for handler in handlers:
-            self.logger.addHandler(handler)
-        self.logger.removeHandler(self.log_handler)
-        self.log_handler.flush()
-        self.buffer.flush()
-        self.assertLogs(self.log_handler, logging.INFO)
-        self.assertEqual(self.buffer.getvalue(), 'Connected to server localhost.localhost\n')
+        with self.assertLogs('cslbot.helpers.handler') as mock_log:
+            calls = self.send_msg('welcome', 'localhost.localhost', 'testBot', ['Welcome to TestIRC, testBot!'])
+        self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server localhost.localhost'])
         self.assertEqual(calls, [])  # It appears that this shouldn't produce any messages?
 
     def test_handle_whospcrpl(self):
