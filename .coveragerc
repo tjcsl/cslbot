@@ -2,4 +2,4 @@
 branch = True
 concurrency = thread
 source = cslbot, scripts
-omit = */alembic/versions/*
+omit = */alembic/versions/*, scripts/client.py, scripts/entropy.py, scripts/fuzz.py
