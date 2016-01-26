@@ -210,4 +210,5 @@ scripts/parselogs.py
 scripts/reload.py
 scripts/stats.sh
 test/__init__.py
+test/bot_test.py
 test/test.py

@@ -15,113 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import configparser
+
 import logging
-import random
-import shutil
 import socket
 import sys
-import tempfile
 import unittest
 from os.path import dirname, exists, join
 from unittest import mock
-
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     sys.path.insert(0, join(dirname(__file__), '..'))
 
-# Imports pkg_resources, so must come after the path is modified
-import irc.client  # noqa
-from cslbot.helpers import core, handler, workers  # noqa
-
-# We don't need the alembic output.
-logging.getLogger("alembic").setLevel(logging.WARNING)
+from test.bot_test import BotTest  # noqa
 
 
-def connect_mock(conn, *args, **_):
-    conn.real_nickname = 'testBot'
-    conn.handlers = {}
-    conn.socket = mock.Mock()
-
-
-def start_thread(self, func, *args, **kwargs):
-    # We need to actually run the server thread to avoid blocking.
-    if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
-        with self.worker_lock:
-            self.executor.submit(func, *args, **kwargs)
-    else:
-        func(*args, **kwargs)
-
-
-def rate_limited_send(self, mtype, target, msg):
-    getattr(self.connection, mtype)(target, msg)
-
-
-# TODO: break this up more
-class BotTest(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.confdir = tempfile.TemporaryDirectory()
-        srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
-        config_file = join(cls.confdir.name, 'config.cfg')
-        shutil.copy(join(srcdir, 'config.example'), config_file)
-        shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
-        config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-        with open(config_file) as f:
-                config_obj.read_file(f)
-
-        # Prevent server port conflicts
-        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
-        # Use an in-memory sqlite db for testing
-        config_obj['db']['engine'] = 'sqlite://'
-
-        with open(config_file, 'w') as f:
-                config_obj.write(f)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.confdir.cleanup()
-
-    def setUp(self):
-        mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
-        self.bot = core.IrcBot(self.confdir.name)
-        self.setup_handler()
-        # We don't actually connect to an irc server, so fake the event loop
-        with mock.patch.object(irc.client.Reactor, 'process_forever'):
-            self.bot.start()
-        self.join_channel('testBot', '#test-channel')
-
-    def setup_handler(self):
-        # We don't need to rate-limit sending.
-        mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
-        self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
-        mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
-
-    def tearDown(self):
-        self.bot.shutdown_mp()
-
-    def join_channel(self, nick, channel):
-        e = irc.client.Event('join', irc.client.NickMask(nick), channel)
-        calls = self.send_msg(e)
-        expected_calls = [(nick, channel, 0, '', 'join')]
-        if nick == 'testBot':
-            expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
-        self.assertEqual(calls, expected_calls)
-        self.log_mock.reset_mock()
-
-    def send_msg(self, e):
-        # We mocked out the actual irc processing, so call the internal method here.
-        self.bot.connection._handle_event(e)
-        # Make hermetic
-        return sorted([x[0] for x in self.log_mock.call_args_list])
-
-    def test_handle_msg(self):
-        """Make sure the bot can handle a simple message."""
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!morse bob'])
-        calls = self.send_msg(e)
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, '-... --- -...', 'privmsg'), ('testnick', '#test-channel', 0, '!morse bob', 'pubmsg')])
+class CoreTest(BotTest):
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
@@ -129,8 +38,7 @@ class BotTest(unittest.TestCase):
         self.join_channel('testBot', '#test-channel2')
         self.join_channel('testnick', '#test-channel')
         self.join_channel('testnick', '#test-channel2')
-        e = irc.client.Event('nick', irc.client.NickMask('testnick'), 'testnick2')
-        calls = self.send_msg(e)
+        calls = self.send_msg('nick', 'testnick', 'testnick2')
         self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
     def test_bot_reload(self):
@@ -148,29 +56,41 @@ class BotTest(unittest.TestCase):
         self.setup_handler()
         self.assertEqual(output.decode(), "Password: \nAye Aye Capt'n\n")
 
-    # Command-specific messages
+
+class MorseTest(BotTest):
+
+    def test_morse_encode(self):
+        """Make sure the bot properly encodes morse."""
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!morse bob'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '-... --- -...', 'privmsg'), ('testnick', '#test-channel', 0, '!morse bob', 'pubmsg')])
+
+
+class ZipcodeTest(BotTest):
+
     @mock.patch('cslbot.commands.zipcode.get')
     def test_zipcode_valid(self, mock_get):
         """Test a correct zip code"""
         with open(join(dirname(__file__), 'data', 'zipcode_12345.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode 12345'])
-        calls = self.send_msg(e)
+
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode 12345'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg')])
 
     def test_zipcode_invalid(self):
         """Test incorrect zip codes"""
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!zipcode potato'])
-        calls = self.send_msg(e)
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode potato'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg')])
+
+
+class DefinitionTest(BotTest):
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_valid(self, mock_get):
         """Test a valid definition"""
         with open(join(dirname(__file__), 'data', 'define_potato.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potato'])
-        calls = self.send_msg(e)
+
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define potato'])
         self.assertEqual(calls,
                          [('testBot', '#test-channel', 0, 'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg'),
                           ('testnick', '#test-channel', 0, '!define potato', 'pubmsg')])
@@ -180,18 +100,19 @@ class BotTest(unittest.TestCase):
         """Test an invalid definition"""
         with open(join(dirname(__file__), 'data', 'define_potatwo.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!define potatwo'])
-        calls = self.send_msg(e)
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define potatwo'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No results found for potatwo', 'privmsg'), ('testnick', '#test-channel', 0, '!define potatwo', 'pubmsg')])
+
+
+class WisdomTest(BotTest):
 
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_valid(self, mock_get):
         """Test a valid wisdom lookup"""
         with open(join(dirname(__file__), 'data/wisdom_asimov.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --author Isaac Asimov'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        calls = self.send_msg(e)
+
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --author Isaac Asimov'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0,
                                   "One, a robot may not injure a human being, or through inaction, allow a human being to come to harm " +
                                   "Two, a robot must obey the orders given it by human beings except where such orders would conflict with the First Law " +
@@ -203,32 +124,25 @@ class BotTest(unittest.TestCase):
         """Test wisdom with no results"""
         with open(join(dirname(__file__), 'data/wisdom_jibberjabber.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search jibberjabber'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        calls = self.send_msg(e)
+
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search jibberjabber'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No words of wisdom found', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!wisdom --search jibberjabber', 'pubmsg')])
 
     def test_wisdom_author_nosearch(self):
         """Check that we error if we specify an author search with no terms"""
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --author'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        calls = self.send_msg(e)
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --author'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No author specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --author', 'pubmsg')])
 
     def test_wisdom_search_nosearch(self):
         """Check that we error if we specify a search with no terms"""
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        calls = self.send_msg(e)
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No search terms specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --search', 'pubmsg')])
 
     def test_wisdom_search_author_invalid(self):
         """Check that we error if we specify both search and author"""
         self.join_channel('testBot', '#test-channel')
-        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!wisdom --search --author'])
-        # We mocked out the actual irc processing, so call the internal method here.
-        calls = self.send_msg(e)
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search --author'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'argument --author: not allowed with argument --search', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!wisdom --search --author', 'pubmsg')])
 
