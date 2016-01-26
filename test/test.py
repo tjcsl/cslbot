@@ -49,6 +49,7 @@ class CoreTest(BotTest):
         # Set up buffer capture
         self.buffer = StringIO()
         self.log_handler = logging.StreamHandler(self.buffer)
+        self.log_handler.setLevel(logging.INFO)
         self.logger = logging.getLogger()
         # Don't log to stdout
         handlers = self.logger.handlers
@@ -63,6 +64,7 @@ class CoreTest(BotTest):
         self.logger.removeHandler(self.log_handler)
         self.log_handler.flush()
         self.buffer.flush()
+        self.assertLogs(self.log_handler, logging.INFO)
         self.assertEqual(self.buffer.getvalue(), 'Connected to server localhost.localhost\n')
         self.assertEqual(calls, [])  # It appears that this shouldn't produce any messages?
 
