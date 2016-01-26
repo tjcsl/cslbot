@@ -81,6 +81,7 @@ class BotHandler():
         data['features'] = self.features.copy()
         data['uptime'] = self.uptime.copy()
         data['abuselist'] = self.abuselist.copy()
+        data['who_map'] = self.who_map.copy()
         return data
 
     def set_data(self, data):
@@ -92,8 +93,7 @@ class BotHandler():
     def update_authstatus(self, nick):
         if self.features['whox']:
             tag = random.randint(0, 999)
-            # This just maps it off into nothingness, but that's okay, we just care about the auth
-            self.who_map[tag] = nick
+            self.who_map[tag] = None
             self.connection.who('%s %%naft,%d' % (nick, tag))
         elif self.config['feature']['servicestype'] == "ircservices":
             self.connection.privmsg('NickServ', 'STATUS %s' % nick)
@@ -486,6 +486,8 @@ class BotHandler():
         # arguments: type,nick,modes,account
         # properly track voiced status.
         location = self.who_map[int(e.arguments[0])]
+        if location is None:
+            return
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
         if e.arguments[1] in self.admins:
