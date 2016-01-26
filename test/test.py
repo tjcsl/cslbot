@@ -257,6 +257,27 @@ class WisdomTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coins land on heads 0 times and on tails 0 times.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!coin 0', 'pubmsg')])
 
+    def test_botsnack_valid_noargs(self):
+        """Test botsnack with no arguments"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!botsnack'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'This tastes yummy!', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!botsnack', 'pubmsg')])
+
+    def test_botsnack_valid_args(self):
+        """Test botsnack with no arguments"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!botsnack potatoes'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Potatoes tastes yummy!', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!botsnack potatoes', 'pubmsg')])
+
+    def test_botsnack_invalid_cannibal(self):
+        """Test botsnack with the bot's nick as argument"""
+        e = irc.client.Event('pubmsg', irc.client.NickMask('testnick'), '#test-channel', ['!botsnack testBot'])
+        calls = self.send_msg(e)
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'wyang says Cannibalism is generally frowned upon.', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!botsnack testBot', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
