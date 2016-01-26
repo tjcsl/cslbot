@@ -32,6 +32,8 @@ from irc import modes
 from . import (admin, arguments, command, control, hook, identity, misc, orm,
                sql, textutils, tokens, workers)
 
+logger = logging.getLogger(__name__)
+
 
 class BotHandler():
 
@@ -445,7 +447,7 @@ class BotHandler():
         elif e.type in ['ctcpreply', 'nosuchnick']:
             misc.ping(self.ping_map, c, e, datetime.now())
         elif e.type == 'error':
-            logging.error(e.target)
+            logger.error(e.target)
         elif e.type == 'featurelist':
             if 'WHOX' in e.arguments:
                 self.features['whox'] = True
@@ -477,7 +479,7 @@ class BotHandler():
     def handle_welcome(self):
         passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
-        logging.info("Connected to server %s", self.config['core']['host'])
+        logger.info("Connected to server %s", self.config['core']['host'])
         if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
             self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
         self.do_welcome()
