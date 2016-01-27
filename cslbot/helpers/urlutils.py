@@ -70,6 +70,8 @@ def get_title(url):
                 title = ctype
             else:
                 title = "Title Not Found"
+    except exceptions.MissingSchema:
+        return get_title('http://%s' % url)
     except exceptions.ConnectionError as e:
         raise CommandFailedException(e)
     title = misc.truncate_msg(title, 256)
