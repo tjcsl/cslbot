@@ -22,7 +22,6 @@ from lxml.html import document_fromstring
 from requests import Session, exceptions
 
 from . import misc
-from .exception import CommandFailedException
 
 
 sess = Session()
@@ -72,7 +71,5 @@ def get_title(url):
                 title = "Title Not Found"
     except exceptions.MissingSchema:
         return get_title('http://%s' % url)
-    except exceptions.ConnectionError as e:
-        raise CommandFailedException(e)
     title = misc.truncate_msg(title, 256)
     return title
