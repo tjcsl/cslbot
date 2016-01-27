@@ -29,9 +29,9 @@ import traceback
 from os import path
 
 
-if sys.version_info < (3, 4, 3):
-    # Dependency on importlib.reload and urlopen(context=context)
-    raise Exception("Need Python 3.4.3 or higher.")
+if sys.version_info < (3, 4):
+    # Dependency on importlib.reload
+    raise Exception("Need Python 3.4 or higher.")
 
 import queue  # noqa
 from irc import bot, client, connection  # noqa
