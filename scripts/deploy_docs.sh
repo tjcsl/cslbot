@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.5" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   echo "Pushing docs to Github Pages"
 
   git config --global user.email "tjhsstBot@tjhsst.edu"
