@@ -73,7 +73,7 @@ class BotHandler():
         self.log_to_ctrlchan = False
 
     def get_data(self):
-        """Saves the handler's data for :func:`bot.IrcBot.do_reload`"""
+        """Saves the handler's data for :func:`.reloader.do_reload`"""
         data = {}
         data['caps'] = self.caps[:]
         data['guarded'] = self.guarded[:]
@@ -87,7 +87,7 @@ class BotHandler():
         return data
 
     def set_data(self, data):
-        """Called from :func:`bot.IrcBot.do_reload` to restore the handler's data."""
+        """Called from :func:`.reloader.do_reload` to restore the handler's data."""
         for key, val in data.items():
             setattr(self, key, val)
         self.uptime['reloaded'] = datetime.now()
