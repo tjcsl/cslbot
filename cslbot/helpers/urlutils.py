@@ -33,7 +33,7 @@ def get_short(msg, key):
         return msg
     try:
         data = sess.post('https://www.googleapis.com/urlshortener/v1/url', params={'key': key}, json=({'longUrl': msg}),
-                         headers={'Content-Type': 'application/json'}, timeout=10).json()
+                         headers={'Content-Type': 'application/json'}).json()
     except exceptions.ConnectTimeout as e:
         # Sanitize the error before throwing it
         raise exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
@@ -48,7 +48,7 @@ def get_title(url):
     try:
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = sess.get(url, headers=headers, timeout=10)
+        req = sess.get(url, headers=headers, timeout=(10, 30))
         ctype = req.headers.get('Content-Type')
         if req.status_code != 200:
             title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
