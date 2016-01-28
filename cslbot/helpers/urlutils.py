@@ -19,22 +19,17 @@ import re
 
 from lxml.html import document_fromstring
 
-from requests import Session, exceptions
+from requests import exceptions, get, post
 
 from . import misc
-
-
-sess = Session()
-# User-Agent is really hard to get right :(
-sess.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
 
 
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
     try:
-        data = sess.post('https://www.googleapis.com/urlshortener/v1/url', params={'key': key}, json=({'longUrl': msg}),
-                         headers={'Content-Type': 'application/json'}).json()
+        data = post('https://www.googleapis.com/urlshortener/v1/url', params={'key': key}, json=({'longUrl': msg}),
+                    headers={'Content-Type': 'application/json'}).json()
     except exceptions.ConnectTimeout as e:
         # Sanitize the error before throwing it
         raise exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
@@ -47,7 +42,9 @@ def get_short(msg, key):
 def get_title(url):
     title = 'No Title Found'
     try:
-        req = sess.get(url)
+        # User-Agent is really hard to get right :(
+        headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
+        req = get(url, headers=headers)
         ctype = req.headers.get('Content-Type')
         if req.status_code != 200:
             title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
