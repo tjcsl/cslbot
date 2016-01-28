@@ -16,8 +16,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import warnings
 from os.path import abspath, dirname
 from sys import path
+
+warnings.simplefilter('default')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic')
 
 path.insert(0, dirname(abspath(__file__)))
 
