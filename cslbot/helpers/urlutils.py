@@ -22,6 +22,7 @@ from lxml.html import document_fromstring
 from requests import exceptions, get, post
 
 from . import misc
+from .exception import CommandFailedException
 
 
 def get_short(msg, key):
@@ -66,6 +67,8 @@ def get_title(url):
                 title = ctype
             else:
                 title = "Title Not Found"
+    except exceptions.InvalidSchema:
+        raise CommandFailedException('%s is not a supported url.' % url)
     except exceptions.MissingSchema:
         return get_title('http://%s' % url)
     title = misc.truncate_msg(title, 256)
