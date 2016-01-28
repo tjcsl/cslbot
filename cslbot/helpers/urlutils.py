@@ -25,6 +25,8 @@ from . import misc
 
 
 sess = Session()
+# User-Agent is really hard to get right :(
+sess.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
 
 
 def get_short(msg, key):
@@ -45,9 +47,7 @@ def get_short(msg, key):
 def get_title(url):
     title = 'No Title Found'
     try:
-        # User-Agent is really hard to get right :(
-        headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = sess.get(url, headers=headers, timeout=(10, 30))
+        req = sess.get(url)
         ctype = req.headers.get('Content-Type')
         if req.status_code != 200:
             title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
