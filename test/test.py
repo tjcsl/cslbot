@@ -38,23 +38,15 @@ class CoreTest(BotTest):
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
-        # Hack: since we don't have a real IRC connection, we must manually "join" the nicks
         self.join_channel('testBot', '#test-channel2')
         self.join_channel('testnick', '#test-channel')
         self.join_channel('testnick', '#test-channel2')
         calls = self.send_msg('nick', 'testnick', 'testnick2')
         self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
-    def test_handle_welcome(self):
-        """Test the bot's ability to handle welcome messages"""
-        self.bot.config['core']['extrachans'] = '#test-channel2'  # Override the config value
-        with self.assertLogs('cslbot.helpers.handler') as mock_log:
-            calls = self.send_msg('welcome', 'localhost.localhost', 'testBot', ['Welcome to TestIRC, testBot!'])
-        self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server localhost.localhost'])
-        self.assertEqual(calls, [])  # FIXME: should produce messages from joining channels.
-
     def test_handle_whospcrpl(self):
         """Test the bot's ability to handle whospcrpl (special who messages)"""
+        # FIXME: populate who_map "naturally"
         self.bot.handler.who_map = {123: '#test-channel'}
         self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'].keys())
         self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'].keys())

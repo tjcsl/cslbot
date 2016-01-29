@@ -31,12 +31,6 @@ import irc.client
 logging.getLogger("alembic").setLevel(logging.WARNING)
 
 
-def connect_mock(conn, *args, **_):
-    conn.real_nickname = 'testBot'
-    conn.handlers = {}
-    conn.socket = mock.Mock()
-
-
 def start_thread(self, func, *args, **kwargs):
     # We need to actually run the server thread to avoid blocking.
     if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
@@ -70,8 +64,12 @@ class BotTest(unittest.TestCase):
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
         # Use an in-memory sqlite db for testing
         config_obj['db']['engine'] = 'sqlite://'
-        # Override the default server
+
+        # Setup some default values.
+        config_obj['core']['nick'] = 'testBot'
         config_obj['core']['host'] = 'localhost.localhost'
+        config_obj['core']['channel'] = '#test-channel'
+        config_obj['core']['ctrlchan'] = '#test-control'
 
         with open(config_file, 'w') as f:
             config_obj.write(f)
@@ -80,14 +78,24 @@ class BotTest(unittest.TestCase):
     def tearDownClass(cls):
         cls.confdir.cleanup()
 
+    @staticmethod
+    def connect_mock(conn, *args, **_):
+        conn.real_nickname = 'testBot'
+        conn.handlers = {}
+        conn.socket = mock.Mock()
+
+    def join_mock(self, channel, key=None):
+        self.send_msg('join', self.nick, channel)
+
     def setUp(self):
-        mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
+        mock.patch.object(irc.client.ServerConnection, 'connect', self.connect_mock).start()
+        mock.patch.object(irc.client.ServerConnection, 'join', self.join_mock).start()
         self.bot = core.IrcBot(self.confdir.name)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         with mock.patch.object(irc.client.Reactor, 'process_forever'):
             self.bot.start()
-        self.join_channel('testBot', '#test-channel')
+        self.do_welcome()
 
     def tearDown(self):
         self.bot.shutdown_mp()
@@ -99,16 +107,35 @@ class BotTest(unittest.TestCase):
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
     def join_channel(self, nick, channel):
-        # FIXME: we should really just get a "welcome" message on setUp() and go from there.
         calls = self.send_msg('join', nick, channel)
         expected_calls = [(nick, channel, 0, '', 'join')]
-        if nick == 'testBot':
-            expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
+        if nick == self.nick:
+            expected_calls.append((nick, self.ctrlchan, 0, 'Joined channel %s' % channel, 'privmsg'))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
-    def send_msg(self, mtype, nick, target, arguments=[]):
-        e = irc.client.Event(mtype, irc.client.NickMask(nick), target, arguments)
+    @property
+    def nick(self):
+        return self.bot.connection.real_nickname
+
+    @property
+    def ctrlchan(self):
+        return self.bot.config['core']['ctrlchan']
+
+    def do_welcome(self):
+        with self.assertLogs('cslbot.helpers.handler') as mock_log:
+            calls = self.send_msg('welcome', 'localhost.localhost', self.nick, ['Welcome to TestIRC, %s!' % self.nick])
+        self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server localhost.localhost'])
+        channel = self.bot.config['core']['channel']
+        ctrlchan = self.bot.config['core']['ctrlchan']
+        expected_calls = [(self.nick, channel, 0, '', 'join'), (self.nick, ctrlchan, 0, '', 'join'),
+                          (self.nick, ctrlchan, 0, 'Joined channel %s' % ctrlchan, 'privmsg'),
+                          (self.nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg')]
+        self.assertEqual(calls, expected_calls)
+        self.log_mock.reset_mock()
+
+    def send_msg(self, mtype, source, target, arguments=[]):
+        e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments)
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         # Make hermetic
