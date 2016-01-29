@@ -46,8 +46,11 @@ def start_thread(self, func, *args, **kwargs):
         func(*args, **kwargs)
 
 
-def rate_limited_send(self, mtype, target, msg):
-    getattr(self.connection, mtype)(target, msg)
+def rate_limited_send(self, mtype, target, msg=None):
+    if msg is None:
+        getattr(self.connection, mtype)(target)
+    else:
+        getattr(self.connection, mtype)(target, msg)
 
 
 class BotTest(unittest.TestCase):

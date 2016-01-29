@@ -209,12 +209,15 @@ class BotHandler():
             else:
                 self.rate_limited_send('privmsg', target, i)
 
-    def rate_limited_send(self, mtype, target, msg):
+    def rate_limited_send(self, mtype, target, msg=None):
         with self.flood_lock:
             elapsed = datetime.now() - self.last_msg_time
             # Don't send messages more then once every 0.5 sec.
             time.sleep(max(0, 0.5 - elapsed.total_seconds()))
-            getattr(self.connection, mtype)(target, msg)
+            if msg is None:
+                getattr(self.connection, mtype)(target)
+            else:
+                getattr(self.connection, mtype)(target, msg)
             self.last_msg_time = datetime.now()
 
     def do_log(self, target, nick, msg, msgtype):
@@ -393,16 +396,14 @@ class BotHandler():
         | Join the control channel.
         """
         tokens.update_all_tokens(self.config)
-        self.connection.join(self.config['core']['channel'])
-        self.connection.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        self.rate_limited_send('join', self.config['core']['channel'])
+        self.rate_limited_send('join', self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         # We use this to pick up info on admins who aren't currently in a channel.
         self.workers.defer(5, False, self.get_admins)
         extrachans = self.config['core']['extrachans']
         if extrachans:
-            extrachans = [x.strip() for x in extrachans.split(',')]
-            # Delay joining extra channels to prevent excess flood.
-            for i, chan in enumerate(extrachans):
-                self.workers.defer(i, False, self.connection.join, chan)
+            for chan in [x.strip() for x in extrachans.split(',')]:
+                self.rate_limited_send('join', chan)
 
     def is_ignored(self, nick):
         with self.db.session_scope() as session:

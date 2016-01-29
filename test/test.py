@@ -20,12 +20,16 @@ import logging
 import socket
 import sys
 import unittest
+import warnings
 from os.path import dirname, exists, join
 from unittest import mock
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     sys.path.insert(0, join(dirname(__file__), '..'))
+
+warnings.simplefilter('default')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic')
 
 from test.bot_test import BotTest  # noqa
 
@@ -47,7 +51,7 @@ class CoreTest(BotTest):
         with self.assertLogs('cslbot.helpers.handler') as mock_log:
             calls = self.send_msg('welcome', 'localhost.localhost', 'testBot', ['Welcome to TestIRC, testBot!'])
         self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server localhost.localhost'])
-        self.assertEqual(calls, [])  # It appears that this shouldn't produce any messages?
+        self.assertEqual(calls, [])  # FIXME: should produce messages from joining channels.
 
     def test_handle_whospcrpl(self):
         """Test the bot's ability to handle whospcrpl (special who messages)"""
