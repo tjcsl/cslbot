@@ -239,9 +239,9 @@ class BotHandler():
             target = target[1:]
         with self.data_lock:
             if target in self.channels:
-                if self.opers[target]:
+                if self.opers[target].get(nick, False):
                     flags |= 1
-                if self.voiced[target]:
+                if self.voiced[target].get(nick, False):
                     flags |= 2
             else:
                 target = 'private'
