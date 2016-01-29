@@ -61,6 +61,12 @@ class CoreTest(BotTest):
         self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
         self.assertEqual(calls, [])  # This shouldn't produce any messages
 
+    def test_handle_cap_sasl(self):
+        """Test the bot's ability to handle SASL caps"""
+        calls = self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'sasl '])
+        self.assertEqual(sorted([x[0] for x in self.raw_mock.call_args_list]), [('AUTHENTICATE PLAIN',)])
+        self.assertEqual(calls, [])  # No calls should be made here
+
     def test_handle_cap_account_notify(self):
         """Test the bot's ability to handle the account-notify caps"""
         self.assertFalse(self.bot.handler.features['account-notify'])
