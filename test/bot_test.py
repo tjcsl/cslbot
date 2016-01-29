@@ -96,17 +96,16 @@ class BotTest(unittest.TestCase):
         # We don't need to rate-limit sending.
         mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
         self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
-        self.raw_mock = mock.patch.object(self.bot.handler.connection, 'send_raw').start()
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
     def join_channel(self, nick, channel):
+        # FIXME: we should really just get a "welcome" message on setUp() and go from there.
         calls = self.send_msg('join', nick, channel)
         expected_calls = [(nick, channel, 0, '', 'join')]
         if nick == 'testBot':
             expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
-        self.raw_mock.reset_mock()
 
     def send_msg(self, mtype, nick, target, arguments=[]):
         e = irc.client.Event(mtype, irc.client.NickMask(nick), target, arguments)
