@@ -67,6 +67,8 @@ class BotTest(unittest.TestCase):
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
         # Use an in-memory sqlite db for testing
         config_obj['db']['engine'] = 'sqlite://'
+        # Override the default server
+        config_obj['core']['host'] = 'localhost.localhost'
 
         with open(config_file, 'w') as f:
             config_obj.write(f)
@@ -91,6 +93,7 @@ class BotTest(unittest.TestCase):
         # We don't need to rate-limit sending.
         mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
         self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
+        self.raw_mock = mock.patch.object(self.bot.handler.connection, 'send_raw').start()
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
     def join_channel(self, nick, channel):
@@ -100,6 +103,7 @@ class BotTest(unittest.TestCase):
             expected_calls.append((nick, 'private', 0, 'Joined channel %s' % channel, 'privmsg'))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
+        self.raw_mock.reset_mock()
 
     def send_msg(self, mtype, nick, target, arguments=[]):
         e = irc.client.Event(mtype, irc.client.NickMask(nick), target, arguments)
