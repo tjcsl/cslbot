@@ -46,16 +46,14 @@ class CoreTest(BotTest):
 
     def test_handle_whospcrpl(self):
         """Test the bot's ability to handle whospcrpl (special who messages)"""
-        # FIXME: populate who_map "naturally"
-        self.bot.handler.who_map = {123: '#test-channel'}
-        self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'].keys())
-        self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'].keys())
-        calls = self.send_msg('whospcrpl', 'localhost.localhost', 'testBot', ['123', 'testnick', 'H@+', 'testnick'])
-        self.assertIn('testnick', self.bot.handler.voiced['#test-channel'].keys())
-        self.assertIn('testnick', self.bot.handler.opers['#test-channel'].keys())
-        self.assertTrue(self.bot.handler.voiced['#test-channel']['testnick'])
-        self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
-        self.assertEqual(calls, [])  # This shouldn't produce any messages
+        self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'])
+        self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'])
+        self.join_channel('testnick', '#test-channel')
+        self.assertIn('testnick', self.bot.handler.voiced['#test-channel'])
+        self.assertIn('testnick', self.bot.handler.opers['#test-channel'])
+        # FIXME: provide the proper modes in the WHOSPCRPL
+        self.assertFalse(self.bot.handler.voiced['#test-channel']['testnick'])
+        self.assertFalse(self.bot.handler.opers['#test-channel']['testnick'])
 
     def test_handle_cap_sasl(self):
         """Test the bot's ability to handle SASL caps"""
@@ -66,6 +64,7 @@ class CoreTest(BotTest):
 
     def test_handle_cap_account_notify(self):
         """Test the bot's ability to handle the account-notify caps"""
+        # FIXME: do_welcome() should handle CAP REQ
         self.assertFalse(self.bot.handler.features['account-notify'])
         self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'account-notify '])
         self.assertTrue(self.bot.handler.features['account-notify'])

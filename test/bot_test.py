@@ -17,6 +17,7 @@
 import configparser
 import logging
 import random
+import re
 import shutil
 import tempfile
 import unittest
@@ -82,9 +83,15 @@ class BotTest(unittest.TestCase):
         # Since we don't have a real server on the other end, we need to fake a JOIN reply.
         self.send_msg('join', self.nick, channel)
 
+    def who_mock(self, target, op=None):
+        # Since we don't have a real server on the other end, we need to fake a WHOSPCRPL.
+        nick, tag = re.match('(#?[\w-]+) %naft,(\d+)', target).groups()
+        self.send_msg('whospcrpl', self.server, self.nick, [tag, nick, 'H', nick])
+
     def setUp(self):
         mock.patch('irc.connection.Factory').start()
         mock.patch.object(irc.client.ServerConnection, 'join', self.join_mock).start()
+        mock.patch.object(irc.client.ServerConnection, 'who', self.who_mock).start()
         self.bot = core.IrcBot(self.confdir.name)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
@@ -130,6 +137,9 @@ class BotTest(unittest.TestCase):
         with self.assertLogs('cslbot.helpers.handler') as mock_log:
             calls = self.send_msg('welcome', self.server, self.nick, ['Welcome to TestIRC, %s!' % self.nick])
         self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server %s' % self.server])
+        # We support WHOX!
+        self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
+        self.assertTrue(self.bot.handler.features['whox'])
         expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'),
                           (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
                           (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
@@ -138,6 +148,7 @@ class BotTest(unittest.TestCase):
 
     def send_msg(self, mtype, source, target, arguments=[]):
         e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments)
+        logging.debug("type: %s, source: %s, target: %s, arguments: %s, tags: %s", e.type, e.source, e.target, e.arguments, e.tags)
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         # Make hermetic
