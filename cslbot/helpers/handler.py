@@ -96,11 +96,16 @@ class BotHandler():
         if self.features['whox']:
             tag = random.randint(0, 999)
             self.who_map[tag] = None
-            self.connection.who('%s %%naft,%d' % (nick, tag))
+            self.send_who(nick, tag)
         elif self.config['feature']['servicestype'] == "ircservices":
             self.connection.privmsg('NickServ', 'STATUS %s' % nick)
         elif self.config['feature']['servicestype'] == "atheme":
             self.connection.privmsg('NickServ', 'ACC %s' % nick)
+
+    def send_who(self, target, tag):
+        # http://faerion.sourceforge.net/doc/irc/whox.var
+        # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
+        self.connection.who('%s %%naft,%d' % (target, tag))
 
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
@@ -234,9 +239,9 @@ class BotHandler():
             target = target[1:]
         with self.data_lock:
             if target in self.channels:
-                if nick in self.opers[target]:
+                if self.opers[target]:
                     flags |= 1
-                if nick in self.voiced[target]:
+                if self.voiced[target]:
                     flags |= 2
             else:
                 target = 'private'
@@ -486,11 +491,14 @@ class BotHandler():
         self.do_welcome()
 
     def handle_who(self, e):
-        # arguments: type,nick,modes,account
+        # arguments: tag,nick,modes,account
+        # modes = H(here) or G(away), +(voice), @(oper)
+        # account is the nicksev account if authed, else 0
         # properly track voiced status.
         location = self.who_map[int(e.arguments[0])]
         if location is None:
             return
+        # FIXME: devoice if G in modes
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
         if e.arguments[1] in self.admins:
@@ -524,10 +532,9 @@ class BotHandler():
             tag = random.randint(0, 999)
             self.who_map[tag] = target
             if e.source.nick == c.real_nickname:
-                # http://faerion.sourceforge.net/doc/irc/whox.var
-                c.who('%s %%naft,%d' % (target, tag))
+                self.send_who(target, tag)
             else:
-                c.who('%s %%naft,%d' % (e.source.nick, tag))
+                self.send_who(e.source.nick, tag)
         if e.source.nick == c.real_nickname:
             send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
         elif self.features['extended-join']:
