@@ -19,3 +19,6 @@ flake8-string-format
 flake8-coding
 pep8-naming
 radon
+
+[test]
+pytest-xdist

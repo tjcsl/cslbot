@@ -207,6 +207,7 @@ scripts/ircbot
 scripts/migrate.py
 scripts/parsedata.py
 scripts/parselogs.py
+scripts/partest.sh
 scripts/reload.py
 scripts/stats.sh
 test/__init__.py

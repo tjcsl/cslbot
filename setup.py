@@ -62,6 +62,7 @@ setup(
     extras_require={
         'doc': ['sphinx'],
         'flake8': ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon'],
+        'test': ['pytest-xdist'],
     },
     classifiers=[
         'Development Status :: 4 - Beta',

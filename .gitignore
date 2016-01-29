@@ -11,6 +11,7 @@ __pycache__
 *.py[co]
 *.sw?
 *.*~
+.cache
 .coverage
 cslbot/templates/analytics.html
 cslbot/static/geoip.db
