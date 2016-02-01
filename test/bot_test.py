@@ -42,10 +42,7 @@ def start_thread(self, func, *args, **kwargs):
 
 
 def rate_limited_send(self, mtype, target, msg=None):
-    if msg is None:
-        getattr(self.connection, mtype)(target)
-    else:
-        getattr(self.connection, mtype)(target, msg)
+    getattr(self.connection, mtype)(target, msg)
 
 
 class BotTest(unittest.TestCase):
@@ -97,11 +94,11 @@ class BotTest(unittest.TestCase):
         if cmd == 'END':
             self.cap_done = True
         elif self.cap_done:
-            raise Exception('%s %s sent after CAP END' % (cmd, args))
+            raise Exception('%s %s sent after CAP END' % (cmd, arg))
         elif cmd == 'REQ' and arg is not None:
             self.cap_list.append(arg)
         else:
-            raise Exception("Unhandled CAP %s %s" % (cmd, args))
+            raise Exception("Unhandled CAP %s %s" % (cmd, arg))
 
     def user_mock(self, username, realname):
         self.bot.connection.send_raw("USER %s 0 * :%s" % (username, realname))
@@ -177,12 +174,13 @@ class BotTest(unittest.TestCase):
                           (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
                           (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
         self.assertEqual(calls, expected_calls)
-        self.assertEqual(sorted([x[0] for x in self.raw_mock.call_args_list]), [('AUTHENTICATE PLAIN',),
-            ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
-            ('NICK %s' % self.nick,),
-            ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
-            ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
-            ('USER %s 0 * :%s' % (self.nick, self.nick),)])
+        self.assertEqual(sorted([x[0] for x in self.raw_mock.call_args_list]),
+                         [('AUTHENTICATE PLAIN',),
+                          ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
+                          ('NICK %s' % self.nick,),
+                          ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
+                          ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
+                          ('USER %s 0 * :%s' % (self.nick, self.nick),)])
         self.log_mock.reset_mock()
 
     def send_msg(self, mtype, source, target, arguments=[]):

@@ -130,7 +130,7 @@ class WisdomTest(BotTest):
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_valid(self, mock_get):
         """Test a valid wisdom lookup"""
-        with open(join(dirname(__file__), 'data/wisdom_asimov.xml')) as test_data_file:
+        with open(join(dirname(__file__), 'data', 'wisdom_asimov.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --author Isaac Asimov'])
@@ -143,7 +143,7 @@ class WisdomTest(BotTest):
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_invalid(self, mock_get):
         """Test wisdom with no results"""
-        with open(join(dirname(__file__), 'data/wisdom_jibberjabber.xml')) as test_data_file:
+        with open(join(dirname(__file__), 'data', 'wisdom_jibberjabber.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search jibberjabber'])
