@@ -44,16 +44,23 @@ class CoreTest(BotTest):
         calls = self.send_msg('nick', 'testnick', 'testnick2')
         self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
-    def test_handle_whospcrpl(self):
-        """Test the bot's ability to handle whospcrpl (special who messages)"""
+    def test_handle_mode_tracking(self):
+        """Test the bot's ability to keep track of mode changes"""
         self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'])
         self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'])
         self.join_channel('testnick', '#test-channel')
         self.assertIn('testnick', self.bot.handler.voiced['#test-channel'])
         self.assertIn('testnick', self.bot.handler.opers['#test-channel'])
-        # FIXME: provide the proper modes in the WHOSPCRPL
         self.assertFalse(self.bot.handler.voiced['#test-channel']['testnick'])
         self.assertFalse(self.bot.handler.opers['#test-channel']['testnick'])
+
+        calls = self.send_msg('mode', self.nick, '#test-channel', ['+v', 'testnick'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '+v testnick', 'mode')])
+        self.assertTrue(self.bot.handler.voiced['#test-channel']['testnick'])
+        self.log_mock.reset_mock()
+        calls = self.send_msg('mode', self.nick, '#test-channel', ['+o', 'testnick'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '+o testnick', 'mode')])
+        self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
 
     def test_handle_cap_sasl(self):
         """Test the bot's ability to handle SASL caps"""

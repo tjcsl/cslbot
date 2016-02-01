@@ -105,6 +105,7 @@ class BotTest(unittest.TestCase):
     def setup_handler(self):
         # We don't need to rate-limit sending.
         mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
+        # Setup the mock to record log calls.
         self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
         # Force normally-threaded operations to execute synchronously
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
