@@ -38,6 +38,7 @@ class CoreTest(BotTest):
 
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
+        # We must be in a channel to track other people's joins
         self.join_channel('testBot', '#test-channel2')
         self.join_channel('testnick', '#test-channel')
         self.join_channel('testnick', '#test-channel2')
@@ -49,8 +50,6 @@ class CoreTest(BotTest):
         self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'])
         self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'])
         self.join_channel('testnick', '#test-channel')
-        self.assertIn('testnick', self.bot.handler.voiced['#test-channel'])
-        self.assertIn('testnick', self.bot.handler.opers['#test-channel'])
         self.assertFalse(self.bot.handler.voiced['#test-channel']['testnick'])
         self.assertFalse(self.bot.handler.opers['#test-channel']['testnick'])
 
@@ -58,17 +57,10 @@ class CoreTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '+v testnick', 'mode')])
         self.assertTrue(self.bot.handler.voiced['#test-channel']['testnick'])
         self.log_mock.reset_mock()
+
         calls = self.send_msg('mode', self.nick, '#test-channel', ['+o', 'testnick'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '+o testnick', 'mode')])
         self.assertTrue(self.bot.handler.opers['#test-channel']['testnick'])
-
-    def test_handle_cap_sasl(self):
-        """Test the bot's ability to handle SASL caps"""
-        # FIXME: should be handled by do_welcome
-        with mock.patch.object(self.bot.handler.connection, 'send_raw') as raw_mock:
-            calls = self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'sasl '])
-        self.assertEqual(sorted([x[0] for x in raw_mock.call_args_list]), [('AUTHENTICATE PLAIN',)])
-        self.assertEqual(calls, [])  # No calls should be made here
 
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""
