@@ -64,23 +64,11 @@ class CoreTest(BotTest):
 
     def test_handle_cap_sasl(self):
         """Test the bot's ability to handle SASL caps"""
+        # FIXME: should be handled by do_welcome
         with mock.patch.object(self.bot.handler.connection, 'send_raw') as raw_mock:
             calls = self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'sasl '])
         self.assertEqual(sorted([x[0] for x in raw_mock.call_args_list]), [('AUTHENTICATE PLAIN',)])
         self.assertEqual(calls, [])  # No calls should be made here
-
-    def test_handle_cap_account_notify(self):
-        """Test the bot's ability to handle the account-notify caps"""
-        # FIXME: do_welcome() should handle CAP REQ
-        self.assertFalse(self.bot.handler.features['account-notify'])
-        self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'account-notify '])
-        self.assertTrue(self.bot.handler.features['account-notify'])
-
-    def test_handle_cap_extended_join(self):
-        """Test the bot's ability to handle the extended-join caps"""
-        self.assertFalse(self.bot.handler.features['extended-join'])
-        self.send_msg('cap', 'localhost.localhost', '*', ['ACK', 'extended-join '])
-        self.assertTrue(self.bot.handler.features['extended-join'])
 
     def test_bot_reload(self):
         """Make sure the bot can reload without errors."""

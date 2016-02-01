@@ -52,6 +52,7 @@ class BotTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.cap_done = False
         cls.confdir = tempfile.TemporaryDirectory()
         srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
         config_file = join(cls.confdir.name, 'config.cfg')
@@ -88,10 +89,21 @@ class BotTest(unittest.TestCase):
         nick, tag = re.match('(#?[\w-]+) %naft,(\d+)', target).groups()
         self.send_msg('whospcrpl', self.server, self.nick, [tag, nick, 'H', nick])
 
+    def cap_mock(self, cmd, *args):
+        if cmd == 'END':
+            self.cap_done = True
+        elif self.cap_done:
+            raise Exception('%s %s sent after CAP END' % (cmd, args))
+        elif cmd == 'REQ' and len(args) == 1:
+            self.send_msg('cap', self.server, '*', ['ACK', args[0]])
+        else:
+            raise Exception("Unhandled CAP %s %s" % (cmd, args))
+
     def setUp(self):
         mock.patch('irc.connection.Factory').start()
         mock.patch.object(irc.client.ServerConnection, 'join', self.join_mock).start()
         mock.patch.object(irc.client.ServerConnection, 'who', self.who_mock).start()
+        mock.patch.object(irc.client.ServerConnection, 'cap', self.cap_mock).start()
         self.bot = core.IrcBot(self.confdir.name)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
@@ -138,6 +150,8 @@ class BotTest(unittest.TestCase):
         with self.assertLogs('cslbot.helpers.handler') as mock_log:
             calls = self.send_msg('welcome', self.server, self.nick, ['Welcome to TestIRC, %s!' % self.nick])
         self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server %s' % self.server])
+        self.assertTrue(self.bot.handler.features['account-notify'])
+        self.assertTrue(self.bot.handler.features['extended-join'])
         # We support WHOX!
         self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
         self.assertTrue(self.bot.handler.features['whox'])
