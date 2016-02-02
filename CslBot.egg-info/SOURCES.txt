@@ -154,6 +154,7 @@ cslbot/helpers/identity.py
 cslbot/helpers/misc.py
 cslbot/helpers/modutils.py
 cslbot/helpers/orm.py
+cslbot/helpers/orm.pyi
 cslbot/helpers/reddit.py
 cslbot/helpers/reloader.py
 cslbot/helpers/server.py
