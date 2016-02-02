@@ -42,7 +42,7 @@ def cmd(send, msg, args):
     cmdargs.word = ' '.join(cmdargs.word)
 
     req = get("http://www.stands4.com/services/v2/defs.php", params={'uid': uid, 'tokenid': token, 'word': cmdargs.word})
-    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
+    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))  # type: ignore
     if len(xml) == 0:
         send("No results found for %s" % cmdargs.word)
         return

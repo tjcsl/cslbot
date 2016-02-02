@@ -20,7 +20,7 @@ import re
 import socket
 from os.path import join
 
-import geoip2
+import geoip2  # type: ignore
 
 from pkg_resources import Requirement, resource_filename  # type: ignore
 

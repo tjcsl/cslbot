@@ -28,13 +28,14 @@ import threading
 import traceback
 from os import path
 
+from irc import bot, client, connection  # type: ignore
+
 
 if sys.version_info < (3, 4):
     # Dependency on importlib.reload
     raise Exception("Need Python 3.4 or higher.")
 
 import queue  # noqa
-from irc import bot, client, connection  # type: ignore
 from . import backtrace, config, handler, misc, reloader, server  # noqa
 
 
