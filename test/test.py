@@ -39,11 +39,11 @@ class CoreTest(BotTest):
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events"""
         # We must be in a channel to track other people's joins
-        self.join_channel('testBot', '#test-channel2')
-        self.join_channel('testnick', '#test-channel')
+        self.join_channel(self.nick, '#test-channel2')
+        self.join_channel('testnick', self.channel)
         self.join_channel('testnick', '#test-channel2')
         calls = self.send_msg('nick', 'testnick', 'testnick2')
-        self.assertEqual(calls, [('testnick', '#test-channel', 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
+        self.assertEqual(calls, [('testnick', self.channel, 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
     def test_handle_mode_tracking(self):
         """Test the bot's ability to keep track of mode changes"""

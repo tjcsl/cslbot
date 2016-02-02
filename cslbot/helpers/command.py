@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -22,6 +21,8 @@ import re
 import threading
 from datetime import datetime, timedelta
 from inspect import getdoc  # type: ignore
+
+from typing import Any, Callable, Dict, Union
 
 from . import backtrace, modutils
 from .orm import Commands, Log
@@ -92,12 +93,12 @@ class CommandData(object):
 registry = CommandData()
 
 
-def record_command(cursor, nick, command, channel):
+def record_command(cursor, nick: str, command: str, channel: str) -> None:
     record = Commands(nick=nick, command=command, channel=channel)
     cursor.add(record)
 
 
-def check_command(cursor, nick, msg, target):
+def check_command(cursor, nick: str, msg: str, target: str) -> bool:
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're currently executing, so get the penultimate one.
@@ -110,7 +111,7 @@ def check_command(cursor, nick, msg, target):
 
 class Command():
 
-    def __init__(self, names, args=[], limit=0, admin=False):
+    def __init__(self, names: Union[str, list], args=[], limit=0, admin=False) -> None:
         self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -120,11 +121,11 @@ class Command():
                 raise ValueError("There is already a command registered with the name %s" % t)
             registry.register(t, self)
 
-    def __call__(self, func):
+    def __call__(self, func: Callable[[Callable[[str], None], str, Dict[str, Any]], None]):
         @functools.wraps(func)
-        def wrapper(send, msg, args):
+        def wrapper(send, msg: str, args: Dict[str, Any]):
             try:
-                thread = threading.current_thread()
+                thread = threading.current_thread()  # type: ignore
                 thread_id = re.match(r'Thread-\d+', thread.name)
                 thread_id = "Unknown" if thread_id is None else thread_id.group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
@@ -140,7 +141,7 @@ class Command():
         self.exe = wrapper
         return wrapper
 
-    def run(self, send, msg, args, command, nick, target, handler):
+    def run(self, send: Callable[[str], None], msg: str, args: Dict[str, Any], command: str, nick: str, target: str, handler) -> None:
         if [x for x in self.names if registry.is_disabled(x)]:
             send("Sorry, that command is disabled.")
         else:

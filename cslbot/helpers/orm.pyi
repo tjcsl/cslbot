@@ -1,5 +1,12 @@
+from sqlalchemy import Column, UnicodeText, Unicode, Integer, DateTime  # type: ignore
 class Log:
   def __init__(self, **kwargs) -> None: ...
+  source = Column(UnicodeText)
+  target = Column(Unicode(length=512), index=True)
+  flags = Column(Integer)
+  msg = Column(UnicodeText)
+  type = Column(UnicodeText)
+  time = Column(DateTime)
 class Babble:
   def __init__(self, **kwargs) -> None: ...
 class Babble2:
