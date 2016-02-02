@@ -21,7 +21,7 @@ import functools
 import re
 import threading
 from datetime import datetime, timedelta
-from inspect import getdoc
+from inspect import getdoc  # type: ignore
 
 from . import backtrace, modutils
 from .orm import Commands, Log

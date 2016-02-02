@@ -21,13 +21,13 @@ import logging
 import traceback
 from os.path import basename
 
-from irc import client
+from irc import client  # type: ignore
 
 
 def output_traceback(ex):
     """ Returns a tuple of a prettyprinted error message and string representation of the error """
     # Dump full traceback to console.
-    output = "".join(traceback.format_exc()).strip()
+    output = "".join(traceback.format_exc()).strip()  # type: ignore
     for line in output.split('\n'):
         logging.error(line)
     trace = traceback.extract_tb(ex.__traceback__)[-1]

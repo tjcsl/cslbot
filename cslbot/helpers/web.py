@@ -21,7 +21,7 @@ import json
 from requests import get, post
 from requests.exceptions import ReadTimeout
 
-from requests_oauthlib import OAuth1Session
+from requests_oauthlib import OAuth1Session  # type: ignore
 
 from simplejson import JSONDecodeError  # type: ignore
 

@@ -20,7 +20,7 @@ from threading import Lock
 
 from ..helpers.hook import Hook
 
-_caps = []
+_caps = []  # type: List[str]
 _caps_lock = Lock()
 
 

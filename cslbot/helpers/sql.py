@@ -59,7 +59,7 @@ class Sql():
         finally:
             session.close()
 
-    def log(self, source, target, flags, msg, mtype):
+    def log(self, source: str, target: str, flags: int, msg: str, mtype: str) -> None:
         """ Logs a message to the database
 
         | source: The source of the message.

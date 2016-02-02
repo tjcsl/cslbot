@@ -27,7 +27,7 @@ import threading
 import time
 from datetime import datetime, timedelta
 
-from irc import modes
+from irc import modes  # type: ignore
 
 from . import (admin, arguments, command, control, hook, identity, misc, orm,
                sql, textutils, tokens, workers)
@@ -181,7 +181,7 @@ class BotHandler():
             max_len = 453  # 512
         return max_len - len(overhead.encode())
 
-    def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
+    def send(self, target, nick, msg: str, msgtype, ignore_length=False, filters=None):
         """ Send a message.
 
         Records the message in the log.
@@ -196,17 +196,17 @@ class BotHandler():
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
         max_len = 650
-        msg = [x.encode() for x in msg]
-        if functools.reduce(lambda x, y: x + len(y), msg, 0) > max_len and not ignore_length:
-            msg, _ = misc.split_msg(msg, max_len)
+        msg_enc = [x.encode() for x in msg]
+        if functools.reduce(lambda x, y: x + len(y), msg_enc, 0) > max_len and not ignore_length:  # type: ignore
+            msg, _ = misc.split_msg(msg_enc, max_len)
             msg += "..."
-            msg = [x.encode() for x in msg]
+            msg_enc = [x.encode() for x in msg]
         max_len = self.get_max_length(target, msgtype)
         # We can't send messages > 512 bytes to irc.
-        while functools.reduce(lambda x, y: x + len(y), msg, 0) > max_len:
-            split, msg = misc.split_msg(msg, max_len)
+        while functools.reduce(lambda x, y: x + len(y), msg_enc, 0) > max_len:  # type: ignore
+            split, msg_enc = misc.split_msg(msg_enc, max_len)
             msgs.append(split)
-        msgs.append(''.join([x.decode() for x in msg]).strip())
+        msgs.append(''.join([x.decode() for x in msg_enc]).strip())
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':

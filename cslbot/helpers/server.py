@@ -52,7 +52,7 @@ def init_server(bot):
     return server
 
 
-class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):  # type: ignore
     allow_reuse_address = True
 
 

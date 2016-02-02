@@ -34,7 +34,7 @@ if sys.version_info < (3, 4):
     raise Exception("Need Python 3.4 or higher.")
 
 import queue  # noqa
-from irc import bot, client, connection  # noqa
+from irc import bot, client, connection  # type: ignore
 from . import backtrace, config, handler, misc, reloader, server  # noqa
 
 
@@ -227,7 +227,7 @@ def init(confdir="/etc/cslbot"):
     except Exception as ex:
         cslbot.shutdown_mp(False)
         logging.error("The bot died! %s", ex)
-        output = "".join(traceback.format_exc()).strip()
+        output = "".join(traceback.format_exc()).strip()  # type: ignore
         for line in output.split('\n'):
             logging.error(line)
         sys.exit(1)

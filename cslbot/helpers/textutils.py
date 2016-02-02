@@ -23,7 +23,7 @@ import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
 
-from lxml import etree, html
+from lxml import etree, html  # type: ignore
 
 from pkg_resources import Requirement, resource_string  # type: ignore
 
@@ -31,7 +31,7 @@ from requests import get, post
 
 from .tokens import token_cache
 
-slogan_cache = []
+slogan_cache = []  # type: List[str]
 
 
 def gen_removevowels(msg):
@@ -53,7 +53,7 @@ def gen_yoda(msg):
 
 
 def gen_gizoogle(msg):
-    req = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})
+    req = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})  # type: ignore
     # This mess is needed because gizoogle has a malformed textarea, so the text isn't within the tag
     response = unescape(html.tostring(html.fromstring(req.text).find('.//textarea')).decode('utf-7')).strip()
     response = re.sub(".*</textarea>", '', response)
