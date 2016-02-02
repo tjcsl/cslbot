@@ -22,7 +22,7 @@ from os.path import join
 
 import geoip2
 
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename  # type: ignore
 
 from requests import get
 

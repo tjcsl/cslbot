@@ -18,7 +18,7 @@
 import operator
 from random import choice
 
-from lxml.html import fromstring
+from lxml.html import fromstring  # type: ignore
 
 from requests import get
 

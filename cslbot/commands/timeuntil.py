@@ -17,8 +17,8 @@
 
 import datetime
 
-import dateutil
-import dateutil.parser
+import dateutil  # type: ignore
+import dateutil.parser  # type: ignore
 
 from ..helpers import arguments
 from ..helpers.command import Command

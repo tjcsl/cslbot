@@ -18,7 +18,7 @@
 import bisect
 import random
 
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.expression import func  # type: ignore
 
 from ..helpers import arguments
 from ..helpers.command import Command

@@ -23,9 +23,9 @@ import threading
 from collections import namedtuple
 from datetime import datetime, timedelta
 
-import concurrent.futures
+import concurrent.futures  # type: ignore
 
-from sqlalchemy import or_
+from sqlalchemy import or_  # type: ignore
 
 from . import babble, backtrace, control, tokens
 from .orm import Babble_last, Log

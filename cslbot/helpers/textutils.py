@@ -25,7 +25,7 @@ from random import choice, randint, random, randrange
 
 from lxml import etree, html
 
-from pkg_resources import Requirement, resource_string
+from pkg_resources import Requirement, resource_string  # type: ignore
 
 from requests import get, post
 

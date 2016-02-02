@@ -17,7 +17,7 @@
 
 from datetime import datetime
 
-from lxml.html import fromstring
+from lxml.html import fromstring  # type: ignore
 
 from requests import get
 

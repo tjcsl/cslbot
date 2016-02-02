@@ -17,12 +17,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from alembic import command, config
+from alembic import command, config  # type: ignore
 
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename  # type: ignore
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Unicode, UnicodeText
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Unicode, UnicodeText  # type: ignore
+from sqlalchemy.ext.declarative import as_declarative, declared_attr  # type: ignore
 
 
 @as_declarative()

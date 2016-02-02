@@ -19,7 +19,7 @@ import string
 from itertools import groupby
 from random import choice
 
-from pkg_resources import Requirement, resource_string
+from pkg_resources import Requirement, resource_string  # type: ignore
 
 from ..helpers.command import Command
 

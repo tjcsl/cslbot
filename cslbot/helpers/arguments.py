@@ -18,7 +18,7 @@
 import argparse
 import re
 
-import dateutil.parser
+import dateutil.parser  # type: ignore
 
 from requests import get
 

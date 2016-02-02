@@ -17,12 +17,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import configparser
+import configparser  # type: ignore
 import re
 from os import mkdir
 from os.path import dirname, exists, join
 
-from pkg_resources import Requirement, resource_string
+from pkg_resources import Requirement, resource_string  # type: ignore
 
 
 def migrate_config(config_file, config_obj, send):

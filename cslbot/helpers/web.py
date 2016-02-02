@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -24,7 +23,7 @@ from requests.exceptions import ReadTimeout
 
 from requests_oauthlib import OAuth1Session
 
-from simplejson import JSONDecodeError
+from simplejson import JSONDecodeError  # type: ignore
 
 from . import urlutils
 from .orm import UrbanBlacklist

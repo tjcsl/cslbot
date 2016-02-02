@@ -17,14 +17,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import configparser
+import configparser  # type: ignore
 import importlib
 import logging
 import sys
 from glob import glob
 from os.path import basename, join
 
-from pkg_resources import Requirement, resource_filename, resource_string
+from pkg_resources import Requirement, resource_filename, resource_string  # type: ignore
 
 from . import backtrace
 
