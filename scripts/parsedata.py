@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import argparse
 import collections
-import configparser
+import configparser  # type: ignore
 import fcntl
 import shutil
 import sys
@@ -25,9 +25,9 @@ from datetime import datetime, timedelta
 from os import makedirs, path
 from time import strftime
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader  # type: ignore
 
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename  # type: ignore
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):

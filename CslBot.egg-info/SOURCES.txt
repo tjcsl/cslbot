@@ -221,3 +221,10 @@ test/data/define_potatwo.xml
 test/data/wisdom_asimov.xml
 test/data/wisdom_jibberjabber.xml
 test/data/zipcode_12345.xml
+test/stubs/pkg_resources.pyi
+test/stubs/alembic/__init__.pyi
+test/stubs/alembic/command.pyi
+test/stubs/alembic/config.pyi
+test/stubs/irc/__init__.pyi
+test/stubs/irc/client.pyi
+test/stubs/irc/connection.pyi

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import configparser
+import configparser  # type: ignore
 import logging
 import random
 import re
@@ -22,7 +22,7 @@ import shutil
 import tempfile
 import unittest
 from os.path import dirname, join
-from unittest import mock
+from unittest import mock  # type: ignore
 
 from cslbot.helpers import core, handler, workers
 

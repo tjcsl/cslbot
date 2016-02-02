@@ -27,6 +27,7 @@ install:
     - pip install flake8 sphinx psycopg2 coveralls .
       # We need to install this separately since it will pull in CslBot from pypi otherwise
     - pip install git+git://github.com/tjcsl/cslbot-tjhsst
+    - pip install git+git://github.com/JukkaL/mypy.git
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
@@ -36,6 +37,7 @@ before_script:
 
 script:
     - flake8 --max-line-length=200 .
+    - MYPYPATH=test/stubs mypy cslbot scripts test
     - coverage run ./setup.py test
     - coverage run -a ./bot.py --validate
     - coverage run -a ./scripts/migrate.py

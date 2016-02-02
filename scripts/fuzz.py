@@ -19,9 +19,9 @@ import socketserver
 import threading
 from os.path import dirname, exists, join
 from sys import path, stdin
-from unittest import mock
+from unittest import mock  # type: ignore
 
-import afl
+import afl  # type: ignore
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
@@ -71,7 +71,7 @@ bot = setup_bot()
 e = irc.client.Event('privmsg', irc.client.NickMask('dankmemes'), '#test-channel')
 while afl.loop(5):
     try:
-        e.arguments = stdin.readline()
+        e.arguments = [stdin.readline()]
     except UnicodeDecodeError:
         continue
     bot.handler.handle_msg(bot.connection, e)
