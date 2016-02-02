@@ -28,7 +28,7 @@ import threading
 import traceback
 from os import path
 
-from irc import bot, client, connection  # type: ignore
+from irc import bot, client, connection
 
 
 if sys.version_info < (3, 4):

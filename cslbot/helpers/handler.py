@@ -27,7 +27,7 @@ import threading
 import time
 from datetime import datetime, timedelta
 
-from irc import modes  # type: ignore
+from irc import modes
 
 from . import (admin, arguments, command, control, hook, identity, misc, orm,
                sql, textutils, tokens, workers)

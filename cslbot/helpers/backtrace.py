@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -21,13 +20,13 @@ import logging
 import traceback
 from os.path import basename
 
-from irc import client  # type: ignore
+from irc import client
 
 
 def output_traceback(ex):
     """ Returns a tuple of a prettyprinted error message and string representation of the error """
     # Dump full traceback to console.
-    output = "".join(traceback.format_exc()).strip()  # type: ignore
+    output = "".join(traceback.format_exc()).strip()
     for line in output.split('\n'):
         logging.error(line)
     trace = traceback.extract_tb(ex.__traceback__)[-1]
