@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import configparser  # type: ignore
+import configparser
 import subprocess
 import sys
 from os.path import dirname, join
@@ -29,7 +29,9 @@ def main(confdir="/etc/cslbot"):
     port = config['core']['serverport']
     msg = '%s\nreload' % passwd
     try:
-        output = subprocess.check_output(['nc', 'localhost', port], input=msg.encode()).decode().splitlines()  # type: ignore
+        proc = subprocess.run(['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT, universal_newlines=True, check=True)
+        output = proc.stdout.splitlines()
         for line in output:
             print(line)
         if output[-1] != "Aye Aye Capt'n":

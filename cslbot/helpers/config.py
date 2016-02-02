@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import configparser  # type: ignore
+import configparser
 import re
 from os import mkdir
 from os.path import dirname, exists, join
