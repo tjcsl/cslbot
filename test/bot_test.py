@@ -22,7 +22,7 @@ import shutil
 import tempfile
 import unittest
 from os.path import dirname, join
-from unittest import mock  # type: ignore
+from unittest import mock
 
 from cslbot.helpers import core, handler, workers
 

@@ -22,7 +22,7 @@ import sys
 import unittest
 import warnings
 from os.path import dirname, exists, join
-from unittest import mock  # type: ignore
+from unittest import mock
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):

@@ -19,7 +19,7 @@ import socketserver
 import threading
 from os.path import dirname, exists, join
 from sys import path, stdin
-from unittest import mock  # type: ignore
+from unittest import mock
 
 import afl  # type: ignore
 
