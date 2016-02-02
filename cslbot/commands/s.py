@@ -18,7 +18,7 @@
 import multiprocessing
 import re
 
-import sre_constants  # type: ignore
+import sre_constants
 
 from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException

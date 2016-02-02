@@ -228,7 +228,7 @@ def init(confdir="/etc/cslbot"):
     except Exception as ex:
         cslbot.shutdown_mp(False)
         logging.error("The bot died! %s", ex)
-        output = "".join(traceback.format_exc()).strip()  # type: ignore
+        output = "".join(traceback.format_exc()).strip()
         for line in output.split('\n'):
             logging.error(line)
         sys.exit(1)

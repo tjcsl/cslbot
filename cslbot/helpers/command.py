@@ -20,7 +20,7 @@ import functools
 import re
 import threading
 from datetime import datetime, timedelta
-from inspect import getdoc  # type: ignore
+from inspect import getdoc
 
 from typing import Any, Callable, Dict, Union
 
@@ -125,9 +125,9 @@ class Command():
         @functools.wraps(func)
         def wrapper(send, msg: str, args: Dict[str, Any]):
             try:
-                thread = threading.current_thread()  # type: ignore
-                thread_id = re.match(r'Thread-\d+', thread.name)
-                thread_id = "Unknown" if thread_id is None else thread_id.group(0)
+                thread = threading.current_thread()
+                match = re.match(r'Thread-\d+', thread.name)
+                thread_id = "Unknown" if match is None else match.group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)

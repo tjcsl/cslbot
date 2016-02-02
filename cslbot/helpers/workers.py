@@ -23,7 +23,7 @@ import threading
 from collections import namedtuple
 from datetime import datetime, timedelta
 
-import concurrent.futures  # type: ignore
+import concurrent.futures
 
 from sqlalchemy import or_  # type: ignore
 
