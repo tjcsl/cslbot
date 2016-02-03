@@ -21,9 +21,9 @@ import json
 from requests import get, post
 from requests.exceptions import ReadTimeout
 
-from requests_oauthlib import OAuth1Session  # type: ignore
+from requests_oauthlib import OAuth1Session
 
-from simplejson import JSONDecodeError  # type: ignore
+from simplejson import JSONDecodeError
 
 from . import urlutils
 from .orm import UrbanBlacklist

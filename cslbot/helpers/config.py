@@ -22,7 +22,7 @@ import re
 from os import mkdir
 from os.path import dirname, exists, join
 
-from pkg_resources import Requirement, resource_string  # type: ignore
+from pkg_resources import Requirement, resource_string
 
 
 def migrate_config(config_file, config_obj, send):

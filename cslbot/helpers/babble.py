@@ -22,8 +22,8 @@ import re
 import string
 import time
 
-from sqlalchemy import Index, or_  # type: ignore
-from sqlalchemy.exc import OperationalError  # type: ignore
+from sqlalchemy import Index, or_
+from sqlalchemy.exc import OperationalError
 
 from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 

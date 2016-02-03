@@ -20,9 +20,9 @@
 from contextlib import contextmanager
 from datetime import datetime
 
-from sqlalchemy import create_engine  # type: ignore
-from sqlalchemy.orm import sessionmaker  # type: ignore
-from sqlalchemy.pool import StaticPool  # type: ignore
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from .orm import Log, setup_db
 

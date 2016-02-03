@@ -41,6 +41,6 @@ def cmd(send, msg, args):
 
     req = get("http://www.stands4.com/services/v2/zip.php", params={'uid': uid, 'tokenid': token, 'zip': cmdargs.zipcode})
 
-    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))  # type: ignore
+    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     location = xml.find('location').text
     send("%s: %s" % (cmdargs.zipcode, location))

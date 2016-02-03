@@ -21,7 +21,7 @@ from os.path import dirname, exists, join
 from sys import path, stdin
 from unittest import mock
 
-import afl  # type: ignore
+import afl
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):

@@ -17,7 +17,7 @@
 
 import re
 
-from lxml.html import fromstring  # type: ignore
+from lxml.html import fromstring
 
 from requests import get
 

@@ -61,7 +61,7 @@ def cmd(send, msg, args):
     if cmdargs.query:
         cmdargs.query = ' '.join(cmdargs.query)
     req = get("http://www.stands4.com/services/v2/quotes.php", params={'uid': uid, 'tokenid': token, 'query': cmdargs.query, 'searchtype': searchtype})
-    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))  # type: ignore
+    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     if len(xml) == 0:
         send("No words of wisdom found")
         return

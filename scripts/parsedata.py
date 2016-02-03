@@ -25,9 +25,9 @@ from datetime import datetime, timedelta
 from os import makedirs, path
 from time import strftime
 
-from jinja2 import Environment, FileSystemLoader  # type: ignore
+from jinja2 import Environment, FileSystemLoader
 
-from pkg_resources import Requirement, resource_filename  # type: ignore
+from pkg_resources import Requirement, resource_filename
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):

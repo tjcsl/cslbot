@@ -22,7 +22,7 @@ import subprocess
 import sys
 from os import path
 
-from sqlalchemy import func, or_  # type: ignore
+from sqlalchemy import func, or_
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):

@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
 
-import pkg_resources  # type: ignore
+import pkg_resources
 
 from . import orm
 

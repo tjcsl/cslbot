@@ -17,7 +17,7 @@
 
 from random import choice
 
-from sqlalchemy import func  # type: ignore
+from sqlalchemy import func
 
 from ..helpers import arguments
 from ..helpers.command import Command, registry

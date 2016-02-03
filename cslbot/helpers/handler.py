@@ -197,13 +197,13 @@ class BotHandler():
         # Avoid spam from commands that produce excessive output.
         max_len = 650
         msg_enc = [x.encode() for x in msg]
-        if functools.reduce(lambda x, y: x + len(y), msg_enc, 0) > max_len and not ignore_length:  # type: ignore
+        if sum(map(len, msg_enc)) > max_len and not ignore_length:
             msg, _ = misc.split_msg(msg_enc, max_len)
             msg += "..."
             msg_enc = [x.encode() for x in msg]
         max_len = self.get_max_length(target, msgtype)
         # We can't send messages > 512 bytes to irc.
-        while functools.reduce(lambda x, y: x + len(y), msg_enc, 0) > max_len:  # type: ignore
+        while sum(map(len, msg_enc)) > max_len:
             split, msg_enc = misc.split_msg(msg_enc, max_len)
             msgs.append(split)
         msgs.append(''.join([x.decode() for x in msg_enc]).strip())

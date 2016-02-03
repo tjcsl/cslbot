@@ -25,7 +25,7 @@ from datetime import datetime, timedelta
 
 import concurrent.futures
 
-from sqlalchemy import or_  # type: ignore
+from sqlalchemy import or_
 
 from . import babble, backtrace, control, tokens
 from .orm import Babble_last, Log
