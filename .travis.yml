@@ -37,13 +37,13 @@ before_script:
 
 script:
     - flake8 --max-line-length=200 .
-    - MYPYPATH=test/stubs mypy cslbot scripts test
     - coverage run ./setup.py test
     - coverage run -a ./bot.py --validate
     - coverage run -a ./scripts/migrate.py
     - coverage run -a ./scripts/gen_babble.py
     - coverage run -a ./scripts/parselogs.py /tmp/ircbot
     - coverage run -a ./scripts/parsedata.py /tmp/ircbot
+    - ./scripts/mypy.sh
     - ./scripts/gendocs.sh
 
 after_success:
