@@ -31,8 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import (admin, arguments, command, control, hook, identity, misc, orm,
-               sql, textutils, tokens, workers)
+from . import admin, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
 
 logger = logging.getLogger(__name__)
 
@@ -567,7 +566,7 @@ class BotHandler(object):
             send(cmdargs)
             return
 
-        cmd_obj = command.registry.get_command(cmd_name)
+        cmd_obj = registry.command_registry.get_command(cmd_name)
         if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
             return
         if cmd_obj.requires_admin() and not self.is_admin(send, nick):
@@ -584,7 +583,7 @@ class BotHandler(object):
 
     def handle_hooks(self, send, nick, target, e, msg):
         if self.config['feature'].getboolean('hooks'):
-            for h in hook.registry.get_hook_objects():
+            for h in registry.hook_registry.get_hook_objects():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
                 h.run(send, msg, e.type, self, target, realargs)
 
@@ -646,7 +645,7 @@ class BotHandler(object):
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
         cmd_name, cmdargs = self.get_cmd(msg)
 
-        if command.registry.is_registered(cmd_name):
+        if registry.command_registry.is_registered(cmd_name):
             self.run_cmd(send, nick, target, cmd_name, cmdargs, e)
         # special commands
         elif cmd_name == 'reload' and nick in admins:

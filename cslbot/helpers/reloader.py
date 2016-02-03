@@ -18,7 +18,7 @@ import importlib
 import logging
 from os.path import exists, join
 
-from . import command, config, handler, hook, misc, modutils
+from . import config, handler, misc, modutils, registry
 
 
 def do_log(c, target, msg):
@@ -29,13 +29,13 @@ def do_log(c, target, msg):
 def load_modules(cfg, confdir, send=logging.error):
     modutils.init_aux(cfg['core'])
     modutils.init_groups(cfg['groups'], confdir)
-    errored_commands = command.registry.scan_for_commands()
+    errored_commands = registry.command_registry.scan_for_commands()
     if errored_commands:
         logging.error("Failed to load some commands.")
         for error in errored_commands:
             send("%s: %s" % error)
         return False
-    errored_hooks = hook.registry.scan_for_hooks()
+    errored_hooks = registry.hook_registry.scan_for_hooks()
     if errored_hooks:
         logging.error("Failed to reload some hooks.")
         for error in errored_hooks:

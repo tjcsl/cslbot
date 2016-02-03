@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.command import Command
-from ..helpers.hook import registry
+from ..helpers.registry import hook_registry
 
 
 @Command('hooks')
@@ -25,5 +25,5 @@ def cmd(send, *_):
     """Lists loaded hooks
     Syntax: {command}
     """
-    hooklist = ', '.join([str(x) for x in registry.get_known_hooks()])
+    hooklist = ', '.join([str(x) for x in hook_registry.get_known_hooks()])
     send('Loaded hooks: %s' % (hooklist))

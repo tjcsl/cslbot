@@ -15,7 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from ..helpers.command import Command, registry
+from ..helpers.command import Command
+from ..helpers.registry import command_registry
 
 
 @Command('help', ['nick', 'config'])
@@ -29,17 +30,17 @@ def cmd(send, msg, args):
             msg = msg[len(cmdchar):]
         if len(msg.split()) > 1:
             send("One argument only")
-        elif not registry.is_registered(msg):
+        elif not command_registry.is_registered(msg):
             send("Not a module.")
         else:
-            doc = registry.get_command(msg).get_doc()
+            doc = command_registry.get_command(msg).get_doc()
             if doc is None:
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
                     send(line.format(command=cmdchar + msg))
     else:
-        modules = sorted(registry.get_enabled_commands())
+        modules = sorted(command_registry.get_enabled_commands())
         cmdlist = (' %s' % cmdchar).join(modules)
         send('Commands: %s%s' % (cmdchar, cmdlist), target=args['nick'], ignore_length=True)
         send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])

@@ -20,8 +20,9 @@ from random import choice
 from sqlalchemy import func
 
 from ..helpers import arguments
-from ..helpers.command import Command, registry
+from ..helpers.command import Command
 from ..helpers.orm import Commands
+from ..helpers.registry import command_registry
 
 
 def get_command_totals(session):
@@ -74,9 +75,9 @@ def cmd(send, msg, args):
     session = args['db']
     totals = get_command_totals(session)
     sortedtotals = sorted(totals, key=totals.get)
-    if registry.is_registered(cmdargs.command):
+    if command_registry.is_registered(cmdargs.command):
         send(get_command(session, cmdargs.command, totals))
-    elif cmdargs.command and not registry.is_registered(cmdargs.command):
+    elif cmdargs.command and not command_registry.is_registered(cmdargs.command):
         send("Command %s not found." % cmdargs.command)
     elif cmdargs.high:
         send('Most Used Commands:')
