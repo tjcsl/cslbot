@@ -18,8 +18,8 @@
 
 import base64
 import collections
+import configparser
 import copy
-import functools
 import logging
 import random
 import re
@@ -27,7 +27,9 @@ import threading
 import time
 from datetime import datetime, timedelta
 
-from irc import modes
+from irc import client, modes
+
+from typing import Callable, Dict  # noqa
 
 from . import (admin, arguments, command, control, hook, identity, misc, orm,
                sql, textutils, tokens, workers)
@@ -35,37 +37,35 @@ from . import (admin, arguments, command, control, hook, identity, misc, orm,
 logger = logging.getLogger(__name__)
 
 
-class BotHandler():
+class BotHandler(object):
 
-    def __init__(self, config, connection, channels, confdir):
+    def __init__(self, config: configparser.ConfigParser, connection: client.ServerConnection, channels: Dict[str, str], confdir: str) -> None:
         """ Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
-        | caps is a array of the nicks who have abused capslock.
         | abuselist is a dict keeping track of how many times nicks have used
         |   rate-limited commands.
         | modules is a dict containing the commands the bot supports.
         | confdir is the path to the directory where the bot's config is stored.
         | db - Is a db wrapper for data storage.
         """
-        self.connection = connection
+        self.connection = connection  # type: client.ServerConnection
         self.channels = channels
-        self.config = config
-        self.db = sql.Sql(config, confdir)
-        self.workers = workers.Workers(self)
-        self.caps = []
-        self.guarded = []
-        self.admins = {nick.strip(): None for nick in config['auth']['admins'].split(',')}
-        self.voiced = collections.defaultdict(dict)
-        self.opers = collections.defaultdict(dict)
+        self.config = config  # type: configparser.ConfigParser
+        self.db = sql.Sql(config, confdir)  # type: sql.Sql
+        self.workers = workers.Workers(self)  # type: workers.Workers
+        self.guarded = []  # type: List[str]
+        self.admins = {nick.strip(): None for nick in config['auth']['admins'].split(',')}  # type: Dict[str,datetime]
+        self.voiced = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
+        self.opers = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
-        self.abuselist = {}
-        self.ping_map = {}
-        self.outputfilter = collections.defaultdict(list)
+        self.abuselist = {}  # type: Dict[str,Dict[str,datetime]]
+        self.ping_map = {}  # type: Dict[str,str]
+        self.outputfilter = collections.defaultdict(list)  # type: Dict[str,List[Callable[[str],str]]]
         self.kick_enabled = True
-        self.who_map = {}
+        self.who_map = {}  # type: Dict[int,str]
         self.flood_lock = threading.Lock()
         self.data_lock = threading.RLock()
         self.last_msg_time = datetime.now()
@@ -75,7 +75,6 @@ class BotHandler():
     def get_data(self):
         """Saves the handler's data for :func:`.reloader.do_reload`"""
         data = {}
-        data['caps'] = self.caps[:]
         data['guarded'] = self.guarded[:]
         data['admins'] = self.admins.copy()
         data['voiced'] = copy.deepcopy(self.voiced)

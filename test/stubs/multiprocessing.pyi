@@ -1,0 +1,3 @@
+from typing import Callable
+class Pool:
+  def __init__(self, initializer: Callable[[], None]) -> None: ...

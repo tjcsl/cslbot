@@ -40,13 +40,13 @@ def pool_init():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
-class Workers():
+class Workers(object):
 
-    def __init__(self, handler):
+    def __init__(self, handler) -> None:
         self.worker_lock = threading.Lock()
         with self.worker_lock:
             self.pool = multiprocessing.Pool(initializer=pool_init)
-            self.events = {}
+            self.events = {}  # type: Dict[int, Event]
         with executor_lock:
             self.executor = concurrent.futures.ThreadPoolExecutor(4)
         self.handler = handler

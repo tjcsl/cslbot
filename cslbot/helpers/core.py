@@ -31,9 +31,9 @@ from os import path
 from irc import bot, client, connection
 
 
-if sys.version_info < (3, 4):
-    # Dependency on importlib.reload
-    raise Exception("Need Python 3.4 or higher.")
+if sys.version_info < (3, 5):
+    # Dependency on typing
+    raise Exception("Need Python 3.5 or higher.")
 
 import queue  # noqa
 from . import backtrace, config, handler, misc, reloader, server  # noqa

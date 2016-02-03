@@ -24,6 +24,8 @@ from os.path import dirname, exists, join
 
 from pkg_resources import Requirement, resource_string
 
+from typing import Callable
+
 
 def migrate_config(config_file, config_obj, send):
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
@@ -55,7 +57,7 @@ def migrate_config(config_file, config_obj, send):
             config_obj.write(f)
 
 
-def load_config(config_file, send):
+def load_config(config_file: str, send: Callable[[str], None]) -> configparser.ConfigParser:
     config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(config_file) as f:
         config_obj.read_file(f)
