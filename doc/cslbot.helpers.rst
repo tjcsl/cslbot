@@ -140,6 +140,14 @@ cslbot.helpers.reddit module
     :undoc-members:
     :show-inheritance:
 
+cslbot.helpers.registry module
+------------------------------
+
+.. automodule:: cslbot.helpers.registry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.helpers.reloader module
 ------------------------------
 
