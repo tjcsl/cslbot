@@ -76,7 +76,7 @@ class Command(object):
         self.exe = wrapper
         return wrapper
 
-    def run(self, send: Callable[[str], None], msg: str, args: Dict[str, Any], command: str, nick: str, target: str, handler: 'BotHandler') -> None:
+    def run(self, send: Callable[[str], None], msg: str, args: Dict[str, Any], command: str, nick: str, target: str, handler) -> None:
         if [x for x in self.names if registry.command_registry.is_disabled(x)]:
             send("Sorry, that command is disabled.")
         else:

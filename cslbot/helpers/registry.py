@@ -16,20 +16,20 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from typing import Callable, Dict, List, Set, Union  # noqa
+from typing import Any, Callable, Dict, List, Set, Union  # noqa
 
 from . import modutils
 
 
 class Registry(object):
     def __init__(self) -> None:
-        self.known_objects = {}  # type: Dict[str,Union[Command,Hook]]
-        self.disabled_objects = set()  # type: Set[Union[Command,Hook]]
+        self.known_objects = {}  # type: Dict[str,Any]
+        self.disabled_objects = set()  # type: Set[Any]
 
     def is_disabled(self, obj: str) -> bool:
         return obj in self.disabled_objects
 
-    def register(self, obj: Union['Command', 'Hook'], name: str = None) -> None:
+    def register(self, obj: Any, name: str = None) -> None:
         if name is None:
             name = obj.name
         if name in self.known_objects:
@@ -77,10 +77,10 @@ class HookRegistry(Registry):
         return self.scan_for_objects("hooks")
 
     # FIXME: generalize these
-    def get_known_hooks(self) -> Dict[str, 'Hook']:
+    def get_known_hooks(self) -> Dict[str, Any]:
         return self.known_objects
 
-    def get_hook_objects(self) -> List['Hook']:
+    def get_hook_objects(self) -> List[Any]:
         return [self.known_objects[x] for x in self.known_objects if x not in self.disabled_objects]
 
     def get_enabled_hooks(self) -> List[str]:
@@ -111,7 +111,7 @@ class CommandRegistry(Registry):
         """
         return self.scan_for_objects("commands")
 
-    def get_known_commands(self) -> Dict[str, 'Command']:
+    def get_known_commands(self) -> Dict[str, Any]:
         return self.known_objects
 
     def get_enabled_commands(self) -> List[str]:
@@ -123,7 +123,7 @@ class CommandRegistry(Registry):
     def is_registered(self, command_name: str) -> bool:
         return command_name in self.known_objects
 
-    def get_command(self, command_name: str) -> 'Command':
+    def get_command(self, command_name: str) -> Any:
         return self.known_objects[command_name]
 
     def disable_command(self, command: str) -> str:
@@ -132,6 +132,6 @@ class CommandRegistry(Registry):
 
     def enable_command(self, command: str) -> str:
         """Removes a command from the disabled commands list."""
-        return self.enable_command("command", command)
+        return self.enable_object("command", command)
 
 command_registry = CommandRegistry()

@@ -57,7 +57,7 @@ class Hook(object):
     def __repr__(self) -> str:
         return self.name
 
-    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler: 'BotHandler', target: str, args: List[str]) -> None:
+    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler, target: str, args: List[str]) -> None:
         if registry.hook_registry.is_disabled(self.name):
             return
         self.handler = handler
