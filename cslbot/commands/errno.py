@@ -24,4 +24,7 @@ def cmd(send, msg, _):
     """Return either a random value or the specified one from errno.h.
     Syntax: {command} <errorcode|list>
     """
-    send(parse_header('errno', msg))
+    try:
+        send(parse_header('errno', msg))
+    except FileNotFoundError:
+        send("Please install gcc.")

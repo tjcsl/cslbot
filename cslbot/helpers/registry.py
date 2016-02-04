@@ -22,6 +22,7 @@ from . import modutils
 
 
 class Registry(object):
+
     def __init__(self) -> None:
         self.known_objects = {}  # type: Dict[str,Any]
         self.disabled_objects = set()  # type: Set[Any]

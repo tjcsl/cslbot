@@ -24,4 +24,7 @@ def cmd(send, msg, _):
     """Return either a random value or the specified one from signal.h.
     Syntax: {command} <signal|list>
     """
-    send(parse_header('signal', msg))
+    try:
+        send(parse_header('signal', msg))
+    except FileNotFoundError:
+        send("Please install gcc.")

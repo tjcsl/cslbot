@@ -132,7 +132,11 @@ class IrcBot(bot.SingleServerIRCBot):
         # The server runs on a worker thread, so we need to shut it down first.
         if hasattr(self, 'server'):
             # Shutdown the server quickly.
-            self.server.socket.shutdown(socket.SHUT_RDWR)
+            try:
+                # For some strange reason, this throws an OSError on windows.
+                self.server.socket.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
             self.server.socket.close()
             self.server.shutdown()
         if hasattr(self, 'handler'):

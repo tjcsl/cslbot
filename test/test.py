@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import logging
+import os
 import socket
 import sys
 import unittest
@@ -213,30 +214,36 @@ class ErrnoTest(BotTest):
         """Test errno run with no input, this also tests name -> number mapping"""
         mock_choice.return_value = 'EOVERFLOW'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define EOVERFLOW 75', 'privmsg'), ('testnick', '#test-channel', 0, '!errno', 'pubmsg')])
+        output = 'Please install gcc.' if os.name == 'nt' else '#define EOVERFLOW 75'
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno', 'pubmsg')])
 
     def test_errno_valid_number(self):
         """Test errno number -> name mapping"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno 75'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define EOVERFLOW 75', 'privmsg'), ('testnick', '#test-channel', 0, '!errno 75', 'pubmsg')])
+        output = 'Please install gcc.' if os.name == 'nt' else '#define EOVERFLOW 75'
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno 75', 'pubmsg')])
 
     def test_errno_invalid_name(self):
         """Test errno run with an invalid name"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno ENOPANTS'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ENOPANTS not found in errno.h', 'privmsg'), ('testnick', '#test-channel', 0, '!errno ENOPANTS', 'pubmsg')])
+        output = 'Please install gcc.' if os.name == 'nt' else 'ENOPANTS not found in errno.h'
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno ENOPANTS', 'pubmsg')])
 
     def test_errno_list(self):
         """Test errno list command"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno list'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0,
-                                  'EACCES, EADDRINUSE, EADDRNOTAVAIL, EADV, EAFNOSUPPORT, EAGAIN, EALREADY, EBADE, EBADF, EBADFD, EBADMSG, ' +
-                                  'EBADR, EBADRQC, EBADSLT, EBFONT, EBUSY, ECANCELED, ECHILD, ECHRNG, ECOMM, ECONNABORTED, ECONNREFUSED, ECONNRESET, ' +
-                                  'EDEADLK, EDESTADDRREQ, EDOM, EDOTDOT, EDQUOT, EEXIST, EFAULT, EFBIG, EHOSTDOWN, EHOSTUNREACH, EHWPOISON, EIDRM, ' +
-                                  'EILSEQ, EINPROGRESS, EINTR, EINVAL, EIO, EISCONN, EISDIR, EISNAM, EKEYEXPIRED, EKEYREJECTED,', 'privmsg'),
-                                 ('testBot', '#test-channel', 0,
-                                  'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, ' +
-                                  'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
+        if os.name == 'nt':
+            expected = [('testBot', '#test-channel', 0, 'Please install gcc.', 'privmsg')]
+        else:
+            expected = [('testBot', '#test-channel', 0,
+                         'EACCES, EADDRINUSE, EADDRNOTAVAIL, EADV, EAFNOSUPPORT, EAGAIN, EALREADY, EBADE, EBADF, EBADFD, EBADMSG, ' +
+                         'EBADR, EBADRQC, EBADSLT, EBFONT, EBUSY, ECANCELED, ECHILD, ECHRNG, ECOMM, ECONNABORTED, ECONNREFUSED, ECONNRESET, ' +
+                         'EDEADLK, EDESTADDRREQ, EDOM, EDOTDOT, EDQUOT, EEXIST, EFAULT, EFBIG, EHOSTDOWN, EHOSTUNREACH, EHWPOISON, EIDRM, ' +
+                         'EILSEQ, EINPROGRESS, EINTR, EINVAL, EIO, EISCONN, EISDIR, EISNAM, EKEYEXPIRED, EKEYREJECTED,', 'privmsg'),
+                        ('testBot', '#test-channel', 0,
+                         'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, ' +
+                         'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg')]
+        self.assertEqual(calls, expected + [('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
 
 class SignalTest(BotTest):
@@ -244,7 +251,8 @@ class SignalTest(BotTest):
     def test_signal_valid(self):
         """Test signal, basic check only since errno covers most of the backend"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!signal 9'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, '#define SIGKILL 9', 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
+        output = 'Please install gcc.' if os.name == 'nt' else '#define SIGKILL 9'
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
 
 
 class CoinTest(BotTest):

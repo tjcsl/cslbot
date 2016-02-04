@@ -129,11 +129,11 @@ def get_cmdchar(config, connection, msg, msgtype):
 
 
 def parse_header(header, msg):
-    preproc = subprocess.check_output(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'])
+    proc = subprocess.run(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'], stdout=subprocess.PIPE, universal_newlines=True, check=True)
     if header == 'errno':
-        defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+        defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     else:
-        defines = re.findall('^#define (SIG[A-Z]*) ([0-9]+)', preproc.decode(), re.MULTILINE)
+        defines = re.findall('^#define (SIG[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     deftoval = dict((x, y) for x, y in defines)
     valtodef = dict((y, x) for x, y in defines)
     if not msg:
@@ -152,8 +152,8 @@ def list_fortunes(offensive=False):
     cmd = ['fortune', '-f']
     if offensive:
         cmd.append('-o')
-    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode()
-    output = re.sub(r'[0-9]{1,2}\.[0-9]{2}%', '', output)
+    proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
+    output = re.sub(r'[0-9]{1,2}\.[0-9]{2}%', '', proc.stdout)
     fortunes = [x.strip() for x in output.splitlines()[1:]]
     if offensive:
         fortunes = ['off/%s' % x for x in fortunes]
