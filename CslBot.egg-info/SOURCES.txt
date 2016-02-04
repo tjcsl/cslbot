@@ -5,7 +5,6 @@
 .pylintrc
 .travis.yml
 COPYING
-MANIFEST.in
 README.rst
 bot.py
 setup.py
