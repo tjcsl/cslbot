@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('ignore', ['config', 'db'], admin=True)
+@Command('ignore', ['config', 'db'], role="admin")
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
     Syntax: {command} <--clear|--show/--list|--delete|nick>

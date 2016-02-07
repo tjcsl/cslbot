@@ -26,7 +26,7 @@ from sqlalchemy.orm import Session
 
 from typing import Any, Callable, Dict, List, Union
 
-from . import backtrace, registry
+from . import acl, backtrace, registry
 from .orm import Commands, Log
 
 
@@ -48,11 +48,11 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 class Command(object):
 
-    def __init__(self, names: Union[str, list], args: List[str] =[], limit: int =0, admin: bool =False) -> None:
+    def __init__(self, names: Union[str, list], args: List[str] =[], limit: int =0, role: str =None) -> None:
         self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
-        self.admin = admin
+        self.required_role = role
         for name in self.names:
             registry.command_registry.register(self, name)
 
@@ -92,5 +92,5 @@ class Command(object):
     def is_limited(self) -> bool:
         return self.limit != 0
 
-    def requires_admin(self) -> bool:
-        return self.admin
+    def has_role(self, nick) -> bool:
+        return acl.has_role(self.required_role, nick)

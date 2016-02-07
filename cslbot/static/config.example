@@ -22,7 +22,7 @@ commands: admin, core, useful, optional
 ctrlpass:
 serverpass:
 ctrlkey:
-admins: admin1, admin2
+owner:
 [db]
 engine:
 geoip: static/geoip.db

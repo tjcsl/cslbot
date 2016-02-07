@@ -18,7 +18,7 @@
 from ..helpers.command import Command
 
 
-@Command('inspect', ['handler'], admin=True)
+@Command('inspect', ['handler'], role="admin")
 def cmd(send, msg, args):
     """'Inspects a bot attribute.
     Syntax: {command} <attr>

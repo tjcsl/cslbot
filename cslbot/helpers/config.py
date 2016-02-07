@@ -85,18 +85,10 @@ def do_config(config):
         controlchannel = input(prompttext % "control channel")
     config['core']['ctrlchan'] = controlchannel
 
-    admins = ""
-    while not check_admins(admins, nickregex):
-        admins = input(prompttext % "comma-delimited list of admins")
-    config['auth']['admins'] = admins
-
-
-def check_admins(admins, nickregex):
-    admins = [x.strip() for x in admins.split(',')]
-    for x in admins:
-        if not re.match(nickregex, x):
-            return False
-    return True
+    owner = ""
+    while not re.match(nickregex, owner):
+        owner = input(prompttext % "nick of owner")
+    config['auth']['owner'] = owner
 
 
 def do_setup(configfile):

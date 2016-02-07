@@ -58,6 +58,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
             do_log(bot.connection, target, msg)
     confdir = bot.handler.confdir
 
+    # FIXME: restrict to owner
     if cmdargs == 'pull':
         if exists(join(confdir, '.git')):
             send(misc.do_pull(srcdir=confdir))

@@ -4,6 +4,14 @@ cslbot.helpers package
 Submodules
 ----------
 
+cslbot.helpers.acl module
+-------------------------
+
+.. automodule:: cslbot.helpers.acl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.helpers.admin module
 ---------------------------
 

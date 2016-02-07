@@ -21,7 +21,7 @@ from alembic import command, config
 
 from pkg_resources import Requirement, resource_filename
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Unicode, UnicodeText
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -164,3 +164,10 @@ class Tumblrs(Base):
 
 class UrbanBlacklist(Base):
     word = Column(UnicodeText)
+
+
+class Permissions(Base):
+    nick = Column(UnicodeText)
+    role = Column(Enum("owner", "admin", name="role_enum"))
+    registered = Column(Boolean)
+    time = Column(DateTime)

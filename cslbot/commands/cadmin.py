@@ -16,14 +16,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.command import Command
+from ..helpers.orm import Permissions
 
 
-@Command('cadmin', ['handler'], admin=True)
+@Command('cadmin', ['db', 'handler'], role="admin")
 def cmd(send, msg, args):
     """Clears the verified admin list
     Syntax: {command}
     """
-    admins = [x.strip() for x in args['handler'].config['auth']['admins'].split(',')]
-    args['handler'].admins = {nick: False for nick in admins}
+    args['db'].query(Permissions).update({"registered": False})
     args['handler'].get_admins()
     send("Verified admins reset.")

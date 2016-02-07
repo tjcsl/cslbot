@@ -54,6 +54,7 @@ class BotHandler(object):
         self.db = sql.Sql(config, confdir)  # type: sql.Sql
         self.workers = workers.Workers(self)  # type: workers.Workers
         self.guarded = []  # type: List[str]
+        # FIXME: use sql
         self.admins = {nick.strip(): None for nick in config['auth']['admins'].split(',')}  # type: Dict[str,datetime]
         self.voiced = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
         self.opers = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
@@ -112,6 +113,7 @@ class BotHandler(object):
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
+        # FIXME: use sql
         if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
             return False
         # no nickserv support, assume people are who they say they are.
@@ -135,6 +137,7 @@ class BotHandler(object):
 
     def get_admins(self):
         """Check verification for all admins."""
+        # FIXME: use sql
         # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
             return
@@ -383,7 +386,6 @@ class BotHandler(object):
                 'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
-                'is_admin': lambda nick: self.is_admin(send, nick),
                 'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
         for arg in modargs:
             if arg in args:
@@ -474,6 +476,7 @@ class BotHandler(object):
             self.connection.cap('END')
 
     def handle_account(self, e):
+        # FIXME: use sql
         if e.source.nick in self.admins:
             if e.target == '*':
                 self.admins[e.source.nick] = None
@@ -499,6 +502,7 @@ class BotHandler(object):
         # FIXME: devoice if G in modes
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
+        # FIXME: use sql
         if e.arguments[1] in self.admins:
             if e.arguments[3] != '0':
                 self.admins[e.arguments[1]] = datetime.now()
@@ -536,6 +540,7 @@ class BotHandler(object):
         if e.source.nick == c.real_nickname:
             send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
         elif self.features['extended-join']:
+            # FIXME: use sql
             if e.source.nick in self.admins:
                 if e.arguments[0] == '*':
                     self.admins[e.source.nick] = None
@@ -569,8 +574,8 @@ class BotHandler(object):
         cmd_obj = registry.command_registry.get_command(cmd_name)
         if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
             return
-        if cmd_obj.requires_admin() and not self.is_admin(send, nick):
-            send("This command requires admin privileges.")
+        if not cmd_obj.has_role(nick):
+            send("Insufficent privileges for command.")
             return
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
         cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
@@ -642,6 +647,7 @@ class BotHandler(object):
         self.handle_hooks(send, nick, target, e, msg)
 
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
+        # FIXME: use sql
         admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
         cmd_name, cmdargs = self.get_cmd(msg)
 

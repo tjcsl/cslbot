@@ -182,6 +182,7 @@ class IrcBot(bot.SingleServerIRCBot):
         cmd = self.is_reload(e)
         cmdchar = self.config['core']['cmdchar']
         if cmd is not None:
+            # FIXME: fallback to owner if in min_reload state
             admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
             if e.source.nick not in admins:
                 c.privmsg(self.get_target(e), "Nope, not gonna do it.")
