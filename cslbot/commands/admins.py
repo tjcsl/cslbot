@@ -16,19 +16,19 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from ..helpers.command import Command
+from ..helpers.orm import Permissions
 
 
-@Command('admins', ['handler', 'nick'])
+@Command('admins', ['db', 'nick'])
 def cmd(send, _, args):
     """Returns a list of admins.
     V = Verified (authed to NickServ), U = Unverified.
     Syntax: {command}
     """
-    admins = args['handler'].admins
     adminlist = []
-    for admin in sorted(admins):
-        if admins[admin] is None:
-            adminlist.append("%s (U)" % admin)
+    for admin in args['db'].query(Permissions).order_by(Permissions.nick).all():
+        if admin.registered:
+            adminlist.append("%s (V)" % admin.nick)
         else:
-            adminlist.append("%s (V)" % admin)
+            adminlist.append("%s (U)" % admin.nick)
     send(", ".join(adminlist), target=args['nick'])

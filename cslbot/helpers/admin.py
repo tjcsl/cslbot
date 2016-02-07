@@ -32,4 +32,5 @@ def set_admin(msg, handler):
         status = int(match.group(2))
         nick = match.group(1)
         if status == 3:
+            # FIXME: use sql
             handler.admins[nick] = datetime.now()

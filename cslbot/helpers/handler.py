@@ -54,8 +54,6 @@ class BotHandler(object):
         self.db = sql.Sql(config, confdir)  # type: sql.Sql
         self.workers = workers.Workers(self)  # type: workers.Workers
         self.guarded = []  # type: List[str]
-        # FIXME: use sql
-        self.admins = {nick.strip(): None for nick in config['auth']['admins'].split(',')}  # type: Dict[str,datetime]
         self.voiced = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
         self.opers = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
@@ -76,7 +74,6 @@ class BotHandler(object):
         """Saves the handler's data for :func:`.reloader.do_reload`"""
         data = {}
         data['guarded'] = self.guarded[:]
-        data['admins'] = self.admins.copy()
         data['voiced'] = copy.deepcopy(self.voiced)
         data['opers'] = copy.deepcopy(self.opers)
         data['features'] = self.features.copy()
@@ -97,32 +94,29 @@ class BotHandler(object):
             self.who_map[tag] = None
             self.send_who(nick, tag)
         elif self.config['feature']['servicestype'] == "ircservices":
-            self.connection.privmsg('NickServ', 'STATUS %s' % nick)
+            self.rate_limited_send('privmsg', 'NickServ', 'STATUS %s' % nick)
         elif self.config['feature']['servicestype'] == "atheme":
-            self.connection.privmsg('NickServ', 'ACC %s' % nick)
+            self.rate_limited_send('privmsg', 'NickServ', 'ACC %s' % nick)
 
     def send_who(self, target, tag):
         # http://faerion.sourceforge.net/doc/irc/whox.var
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
-        self.connection.who('%s %%naft,%d' % (target, tag))
+        self.rate_limited_send('who', '%s %%naft,%d' % (target, tag))
 
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
 
-        | If the nick is not in self.admins then it's not a admin.
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
-        # FIXME: use sql
-        if nick not in [x.strip() for x in self.config['auth']['admins'].split(',')]:
+        with self.db.session_scope() as session:
+            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == nick).first()
+        if admin is None:
             return False
         # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
             return True
-        # unauthed
-        if nick not in self.admins:
-            self.admins[nick] = None
-        if self.admins[nick] is None:
+        if not admin.registered:
             self.update_authstatus(nick)
             # We don't necessarily want to complain in all cases.
             if send is not None:
@@ -130,20 +124,20 @@ class BotHandler(object):
             return False
         else:
             if not self.features['account-notify']:
-                # reverify every 5min
-                if datetime.now() - self.admins[nick] > timedelta(minutes=5):
+                # reverify every 5min if we don't have the notification feature.
+                if datetime.now() - admin.time > timedelta(minutes=5):
                     self.update_authstatus(nick)
             return True
 
     def get_admins(self):
         """Check verification for all admins."""
-        # FIXME: use sql
         # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
             return
-        for i, a in enumerate(self.admins):
-            if a is None:
-                self.workers.defer(i, False, self.update_authstatus, a)
+        with self.db.session_scope() as session:
+            for a in session.query(orm.Permissions).all():
+                if not a.registered:
+                    self.update_authstatus(a.nick)
 
     def abusecheck(self, send, nick, target, limit, cmd):
         """ Rate-limits commands.
@@ -476,12 +470,13 @@ class BotHandler(object):
             self.connection.cap('END')
 
     def handle_account(self, e):
-        # FIXME: use sql
-        if e.source.nick in self.admins:
-            if e.target == '*':
-                self.admins[e.source.nick] = None
-            else:
-                self.admins[e.source.nick] = datetime.now()
+        with self.db.session_scope() as session:
+            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+            if admin is not None:
+                if e.target == '*':
+                    admin.registered = False
+                else:
+                    admin.time = datetime.now()
 
     def handle_welcome(self):
         passwd = self.config['auth']['serverpass']
@@ -502,10 +497,11 @@ class BotHandler(object):
         # FIXME: devoice if G in modes
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
-        # FIXME: use sql
-        if e.arguments[1] in self.admins:
-            if e.arguments[3] != '0':
-                self.admins[e.arguments[1]] = datetime.now()
+        with self.db.session_scope() as session:
+            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.arguments[1]).first()
+            if admin is not None:
+                if e.arguments[3] != '0':
+                    admin.time = datetime.now()
 
     def handle_cap(self, e):
         if e.arguments[0] == 'ACK':
@@ -540,12 +536,13 @@ class BotHandler(object):
         if e.source.nick == c.real_nickname:
             send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
         elif self.features['extended-join']:
-            # FIXME: use sql
-            if e.source.nick in self.admins:
-                if e.arguments[0] == '*':
-                    self.admins[e.source.nick] = None
-                else:
-                    self.admins[e.source.nick] = datetime.now()
+            with self.db.session_scope() as session:
+                admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+                if admin is not None:
+                    if e.arguments[0] == '*':
+                        admin.registered = False
+                    else:
+                        admin.time = datetime.now()
 
     def get_cmd(self, msg):
         cmd = msg.split()[0]
@@ -647,12 +644,12 @@ class BotHandler(object):
         self.handle_hooks(send, nick, target, e, msg)
 
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
-        # FIXME: use sql
-        admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
         cmd_name, cmdargs = self.get_cmd(msg)
 
         if registry.command_registry.is_registered(cmd_name):
             self.run_cmd(send, nick, target, cmd_name, cmdargs, e)
         # special commands
-        elif cmd_name == 'reload' and nick in admins:
-            send("Aye Aye Capt'n")
+        elif cmd_name == 'reload':
+            with self.db.session_scope() as session:
+                if session.query(orm.Permissions).filter(orm.Permissions.nick == nick).count():
+                    send("Aye Aye Capt'n")

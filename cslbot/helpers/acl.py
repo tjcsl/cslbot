@@ -17,5 +17,7 @@
 
 
 def has_role(role, nick):
+    if role is None:
+        return True
     # FIXME: do stuffs
     return False
