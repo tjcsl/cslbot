@@ -169,5 +169,5 @@ class UrbanBlacklist(Base):
 class Permissions(Base):
     nick = Column(UnicodeText)
     role = Column(Enum("owner", "admin", name="role_enum"))
-    registered = Column(Boolean)
+    registered = Column(Boolean, default=False)
     time = Column(DateTime)

@@ -15,6 +15,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from .orm import Permissions
+
+
+def load_permissions(db, config):
+    owner_nick = config['auth']['owner']
+    with db.session_scope() as session:
+        if not session.query(Permissions).filter(Permissions.nick == owner_nick).count():
+            session.add(Permissions(nick=owner_nick, role='owner'))
+
 
 def has_role(role, nick):
     if role is None:
