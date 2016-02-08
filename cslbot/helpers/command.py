@@ -101,7 +101,7 @@ class Command(object):
     def has_role(self, session, nick) -> bool:
         if self.required_role is None:
             return True
-        admin = session.query(Permissions).filter(Permissions.nick == nick)
+        admin = session.query(Permissions).filter(Permissions.nick == nick).first()
         if admin is None:
             return False
         if self.required_role == "owner":
