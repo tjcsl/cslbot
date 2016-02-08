@@ -58,7 +58,9 @@ def do_pull(srcdir=None, repo=None):
         else:
             proc = subprocess.run(['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                   env=os.environ.copy(), universal_newlines=True, check=True)
-            return proc.stdout.splitlines()[-1]
+            output = proc.stdout.splitlines()[-1]
+            # Strip ascii color codes
+            return re.sub(r'\x1b[^m]*h', '', output)
     except subprocess.CalledProcessError as e:
         for line in e.output.decode().splitlines():
             logging.error(line)
