@@ -22,6 +22,7 @@ admin: abuse,
     part,
     quit
 core: about,
+    acl,
     admins,
     cancel,
     channels,

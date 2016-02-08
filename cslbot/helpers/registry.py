@@ -34,7 +34,6 @@ class Registry(object):
         if name is None:
             name = obj.name
         if name in self.known_objects:
-            print(self.known_objects.keys())
             raise ValueError("There is already a object registered with the name %s" % obj)
         self.known_objects[name] = obj
 

@@ -28,6 +28,14 @@ cslbot.commands.abuse module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.acl module
+--------------------------
+
+.. automodule:: cslbot.commands.acl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.acronym module
 ------------------------------
 

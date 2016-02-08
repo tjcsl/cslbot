@@ -30,6 +30,7 @@ cslbot/commands/8ball.py
 cslbot/commands/__init__.py
 cslbot/commands/about.py
 cslbot/commands/abuse.py
+cslbot/commands/acl.py
 cslbot/commands/acronym.py
 cslbot/commands/active.py
 cslbot/commands/admins.py
