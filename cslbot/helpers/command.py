@@ -101,4 +101,10 @@ class Command(object):
     def has_role(self, session, nick) -> bool:
         if self.required_role is None:
             return True
-        return session.query(Permissions).filter(Permissions.nick == nick).count()
+        admin = session.query(Permissions).filter(Permissions.nick == nick)
+        if admin is None:
+            return False
+        if self.required_role == "owner":
+            return admin.role == "owner"
+        # owner is a superset of admin.
+        return True
