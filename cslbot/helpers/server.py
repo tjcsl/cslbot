@@ -29,7 +29,6 @@ Type "help" for a list of commands.
 """
 HELP = """
 help\t\t\tshow this help
-admins\t\t\tshow the list of admins
 reload\t\t\treload the bot
 raw\t\t\tenter raw mode
 endraw\t\t\texit raw mode
@@ -71,9 +70,6 @@ class BotNetHandler(socketserver.BaseRequestHandler):
     def handle_cmd(self, cmd, bot, send):
         if cmd[0] == "help":
             send(HELP)
-        elif cmd[0] == "admins":
-            admins = ", ".join(bot.handler.admins.keys())
-            send("%s\n" % admins)
         elif cmd[0] == "reload":
             cmdargs = cmd[1] if len(cmd) > 1 else ''
             ctrlchan = bot.config['core']['ctrlchan']

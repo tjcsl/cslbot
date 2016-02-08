@@ -131,8 +131,7 @@ def handle_show(args):
         if args.args:
             args.send("Invalid argument %s." % args.args[0])
         else:
-            admins = ": ".join(args.handler.admins)
-            show_pending(args.db, admins, args.send)
+            show_pending(args.db, args.send)
     elif args.cmd == "enabled":
         if not args.args:
             args.send("Missing argument.")
@@ -170,7 +169,8 @@ def show_pending_items(type, items, send):
             send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
 
 
-def show_pending(db, admins, send, ping=False):
+def show_pending(db, send, ping=False):
+    admins = ": ".join([x.nick for x in db.query(orm.Permissions).all()])
     pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
     for name in pending:
         table = getattr(orm, name.capitalize())

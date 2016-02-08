@@ -15,6 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import re
+from datetime import datetime
+
 from .orm import Permissions
 
 
@@ -25,8 +28,24 @@ def load_permissions(db, config):
             session.add(Permissions(nick=owner_nick, role='owner'))
 
 
-def has_role(role, nick):
-    if role is None:
-        return True
-    # FIXME: do stuffs
-    return False
+def set_admin(msg, handler):
+    """Handle admin verification responses from NickServ.
+
+    | If NickServ tells us that the nick is authed, mark it as verified.
+    """
+    if handler.config['feature']['servicestype'] == "ircservices":
+        match = re.match("STATUS (.*) ([0-3])", msg)
+    elif handler.config['feature']['servicestype'] == "atheme":
+        match = re.match("(.*) ACC ([0-3])", msg)
+    if match:
+        status = int(match.group(2))
+        nick = match.group(1)
+        if status != 3:
+            return
+        with handler.db.session_scope() as session:
+            admin = session.query(Permissions).filter(Permissions.nick == nick).first()
+            if admin is None:
+                session.add(Permissions(nick=nick, role='admin', registered=True, time=datetime.now()))
+            else:
+                admin.registered = True
+                admin.time = datetime.now()

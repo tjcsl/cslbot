@@ -26,8 +26,8 @@ from sqlalchemy.orm import Session
 
 from typing import Any, Callable, Dict, List, Union
 
-from . import acl, backtrace, registry
-from .orm import Commands, Log
+from . import backtrace, registry
+from .orm import Commands, Log, Permissions
 
 
 def record_command(cursor: Session, nick: str, command: str, channel: str) -> None:
@@ -93,4 +93,7 @@ class Command(object):
         return self.limit != 0
 
     def has_role(self, nick) -> bool:
-        return acl.has_role(self.required_role, nick)
+        if self.required_role is None:
+            return True
+        with self.handler.db.session_scope() as session:
+            return session.query(Permissions).filter(Permissions.nick == nick).count()

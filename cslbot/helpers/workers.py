@@ -28,7 +28,7 @@ import concurrent.futures
 from sqlalchemy import or_
 
 from . import babble, backtrace, control, tokens
-from .orm import Babble_last, Log, Permissions
+from .orm import Babble_last, Log
 
 executor_lock = threading.Lock()
 
@@ -118,8 +118,7 @@ class Workers(object):
         # Re-schedule handle_pending
         self.defer(3600, False, self.handle_pending, handler, send)
         with handler.db.session_scope() as session:
-            admins = ": ".join([x.nick for x in session.query(Permissions).all()])
-            control.show_pending(session, admins, send, True)
+            control.show_pending(session, send, True)
 
     def update_tokens(self, handler):
         # Re-schedule update_tokens

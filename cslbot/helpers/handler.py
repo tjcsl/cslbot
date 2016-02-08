@@ -31,7 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import acl, admin, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
+from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
 
 logger = logging.getLogger(__name__)
 
@@ -111,6 +111,7 @@ class BotHandler(object):
         | If NickServ hasn't responded yet, then the admin is unverified,
         | so assume they aren't a admin.
         """
+        # Current roles are admin and owner, which is a superset of admin.
         with self.db.session_scope() as session:
             admin = session.query(orm.Permissions).filter(orm.Permissions.nick == nick).first()
         if admin is None:
@@ -459,7 +460,8 @@ class BotHandler(object):
             self.connection.nick('Guest%d' % random.getrandbits(20))
         elif e.type == 'privnotice':
             if e.source.nick == 'NickServ':
-                admin.set_admin(msg, self)
+                # FIXME: don't pass self
+                acl.set_admin(msg, self)
         elif e.type == 'welcome':
             self.handle_welcome()
 

@@ -36,7 +36,7 @@ if sys.version_info < (3, 5):
     raise Exception("Need Python 3.5 or higher.")
 
 import queue  # noqa
-from . import backtrace, config, handler, misc, reloader, server  # noqa
+from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
 
 class IrcBot(bot.SingleServerIRCBot):
@@ -182,8 +182,11 @@ class IrcBot(bot.SingleServerIRCBot):
         cmd = self.is_reload(e)
         cmdchar = self.config['core']['cmdchar']
         if cmd is not None:
-            # FIXME: fallback to owner if in min_reload state
-            admins = [x.strip() for x in self.config['auth']['admins'].split(',')]
+            # If we're in a minimal reload state, only the owner can do stuff, as we can't rely on the db working.
+            if self.reload_event.set():
+                admins = [self.config['auth']['owner']]
+            else:
+                admins = [x.nick for x in self.handler.db.query(orm.Permissions).all()]
             if e.source.nick not in admins:
                 c.privmsg(self.get_target(e), "Nope, not gonna do it.")
                 return

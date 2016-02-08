@@ -12,14 +12,6 @@ cslbot.helpers.acl module
     :undoc-members:
     :show-inheritance:
 
-cslbot.helpers.admin module
----------------------------
-
-.. automodule:: cslbot.helpers.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cslbot.helpers.arguments module
 -------------------------------
 
