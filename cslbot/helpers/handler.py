@@ -383,6 +383,7 @@ class BotHandler(object):
                 'botnick': self.connection.real_nickname,
                 'target': target if target[0] == "#" else "private",
                 'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
+                'is_admin': lambda nick: self.is_admin(send, nick),
                 'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
         for arg in modargs:
             if arg in args:
