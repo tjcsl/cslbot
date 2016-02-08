@@ -31,7 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
+from . import arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,6 @@ class BotHandler(object):
         self.channels = channels
         self.config = config  # type: configparser.ConfigParser
         self.db = sql.Sql(config, confdir)  # type: sql.Sql
-        acl.load_permissions(self.db, config)
         # FIXME: don't pass in self
         self.workers = workers.Workers(self)  # type: workers.Workers
         self.guarded = []  # type: List[str]

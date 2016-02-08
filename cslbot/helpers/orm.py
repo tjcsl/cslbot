@@ -46,6 +46,13 @@ def setup_db(session, botconfig, confdir):
         conf_obj.set_main_option('bot_config_path', confdir)
         command.stamp(conf_obj, 'head')
 
+    # Populate permissions table with owner.
+    owner_nick = botconfig['auth']['owner']
+    if not session.query(Permissions).filter(Permissions.nick == owner_nick).count():
+        session.add(Permissions(nick=owner_nick, role='owner'))
+
+
+
 
 class Log(Base):
     source = Column(UnicodeText)

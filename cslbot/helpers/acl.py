@@ -18,16 +18,6 @@
 import re
 from datetime import datetime
 
-from .orm import Permissions
-
-
-def load_permissions(db, config):
-    owner_nick = config['auth']['owner']
-    with db.session_scope() as session:
-        if not session.query(Permissions).filter(Permissions.nick == owner_nick).count():
-            session.add(Permissions(nick=owner_nick, role='owner'))
-
-
 def set_admin(msg, handler):
     """Handle admin verification responses from NickServ.
 
