@@ -54,11 +54,11 @@ def do_pull(srcdir=None, repo=None):
     try:
         if repo is None:
             proc = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
-            return proc.output.splitlines()[-1]
+            return proc.stdout.splitlines()[-1]
         else:
             proc = subprocess.run(['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    env=os.environ.copy(), universal_newlines=True, check=True)
-            return proc.output.splitlines()[-1]
+                                  env=os.environ.copy(), universal_newlines=True, check=True)
+            return proc.stdout.splitlines()[-1]
     except subprocess.CalledProcessError as e:
         for line in e.output.decode().splitlines():
             logging.error(line)
