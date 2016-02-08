@@ -92,8 +92,7 @@ class Command(object):
     def is_limited(self) -> bool:
         return self.limit != 0
 
-    def has_role(self, nick) -> bool:
+    def has_role(self, session, nick) -> bool:
         if self.required_role is None:
             return True
-        with self.handler.db.session_scope() as session:
-            return session.query(Permissions).filter(Permissions.nick == nick).count()
+        return session.query(Permissions).filter(Permissions.nick == nick).count()

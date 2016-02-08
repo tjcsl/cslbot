@@ -44,7 +44,7 @@ def load_modules(cfg, confdir, send=logging.error):
     return True
 
 
-def do_reload(bot, target, cmdargs, server_send=None):
+def do_reload(bot, target, cmdargs, owner: bool, server_send=None):
     """The reloading magic.
 
     | First, reload handler.py.
@@ -58,9 +58,10 @@ def do_reload(bot, target, cmdargs, server_send=None):
             do_log(bot.connection, target, msg)
     confdir = bot.handler.confdir
 
-    # FIXME: restrict to owner
     if cmdargs == 'pull':
-        if exists(join(confdir, '.git')):
+        if not owner:
+            send("Only owner can pull.")
+        elif exists(join(confdir, '.git')):
             send(misc.do_pull(srcdir=confdir))
         else:
             send(misc.do_pull(repo=bot.config['api']['githubrepo']))

@@ -93,7 +93,7 @@ class BotHandler(object):
     def update_authstatus(self, nick):
         if self.features['whox']:
             tag = random.randint(0, 999)
-            self.who_map[tag] = None
+            self.who_map[tag] = nick
             self.send_who(nick, tag)
         elif self.config['feature']['servicestype'] == "ircservices":
             self.rate_limited_send('privmsg', 'NickServ', 'STATUS %s' % nick)
@@ -480,6 +480,7 @@ class BotHandler(object):
                 if e.target == '*':
                     admin.registered = False
                 else:
+                    admin.registered = True
                     admin.time = datetime.now()
 
     def handle_welcome(self):
@@ -505,6 +506,7 @@ class BotHandler(object):
             admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.arguments[1]).first()
             if admin is not None:
                 if e.arguments[3] != '0':
+                    admin.registered = True
                     admin.time = datetime.now()
 
     def handle_cap(self, e):
@@ -546,6 +548,7 @@ class BotHandler(object):
                     if e.arguments[0] == '*':
                         admin.registered = False
                     else:
+                        admin.registered = True
                         admin.time = datetime.now()
 
     def get_cmd(self, msg):
@@ -575,9 +578,10 @@ class BotHandler(object):
         cmd_obj = registry.command_registry.get_command(cmd_name)
         if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
             return
-        if not cmd_obj.has_role(nick):
-            send("Insufficent privileges for command.")
-            return
+        with self.db.session_scope() as session:
+            if not cmd_obj.has_role(session, nick):
+                send("Insufficent privileges for command.")
+                return
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
         cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
 

@@ -74,7 +74,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             cmdargs = cmd[1] if len(cmd) > 1 else ''
             ctrlchan = bot.config['core']['ctrlchan']
             bot.reload_event.set()
-            if reloader.do_reload(bot, ctrlchan, cmdargs, send):
+            # If we're using the server, assume we're the owner.
+            if reloader.do_reload(bot, ctrlchan, cmdargs, True, send):
                 bot.server = init_server(bot)
                 bot.reload_event.clear()
                 send("Aye Aye Capt'n\n")

@@ -186,7 +186,8 @@ class IrcBot(bot.SingleServerIRCBot):
             if self.reload_event.set():
                 admins = [self.config['auth']['owner']]
             else:
-                admins = [x.nick for x in self.handler.db.query(orm.Permissions).all()]
+                with self.handler.db.session_scope() as session:
+                    admins = [x.nick for x in session.query(orm.Permissions).all()]
             if e.source.nick not in admins:
                 c.privmsg(self.get_target(e), "Nope, not gonna do it.")
                 return
@@ -194,7 +195,8 @@ class IrcBot(bot.SingleServerIRCBot):
             self.reload_event.set()
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
             try:
-                if reloader.do_reload(self, self.get_target(e), cmdargs):
+                is_owner = e.source.nick == self.config['auth']['owner']
+                if reloader.do_reload(self, self.get_target(e), cmdargs, is_owner):
                     if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
