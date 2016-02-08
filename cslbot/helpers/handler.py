@@ -533,6 +533,7 @@ class BotHandler(object):
                 self.do_kick(send, x, e.target, "identity crisis")
 
     def handle_join(self, c, e, target, send):
+        # FIXME: do we need this if we have extended-join?
         if self.features['whox']:
             tag = random.randint(0, 999)
             self.who_map[tag] = target
