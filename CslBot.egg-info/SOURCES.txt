@@ -226,6 +226,7 @@ test/data/zipcode_12345.xml
 test/stubs/afl.pyi
 test/stubs/configparser.pyi
 test/stubs/html.pyi
+test/stubs/importlib.pyi
 test/stubs/inspect.pyi
 test/stubs/jinja2.pyi
 test/stubs/multiprocessing.pyi
