@@ -18,6 +18,9 @@
 import re
 from datetime import datetime
 
+from .orm import Permissions
+
+
 def set_admin(msg, handler):
     """Handle admin verification responses from NickServ.
 

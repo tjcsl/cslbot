@@ -52,8 +52,6 @@ def setup_db(session, botconfig, confdir):
         session.add(Permissions(nick=owner_nick, role='owner'))
 
 
-
-
 class Log(Base):
     source = Column(UnicodeText)
     target = Column(Unicode(length=512), index=True)

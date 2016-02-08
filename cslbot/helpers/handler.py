@@ -31,7 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
+from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
 
 logger = logging.getLogger(__name__)
 
@@ -497,8 +497,6 @@ class BotHandler(object):
         # account is the nicksev account if authed, else 0
         # properly track voiced status.
         location = self.who_map[int(e.arguments[0])]
-        if location is None:
-            return
         # FIXME: devoice if G in modes
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
