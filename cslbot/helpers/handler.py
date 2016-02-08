@@ -114,23 +114,23 @@ class BotHandler(object):
         # Current roles are admin and owner, which is a superset of admin.
         with self.db.session_scope() as session:
             admin = session.query(orm.Permissions).filter(orm.Permissions.nick == nick).first()
-        if admin is None:
-            return False
-        # no nickserv support, assume people are who they say they are.
-        if not self.config['feature'].getboolean('nickserv'):
-            return True
-        if not admin.registered:
-            self.update_authstatus(nick)
-            # We don't necessarily want to complain in all cases.
-            if send is not None:
-                send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
-            return False
-        else:
-            if not self.features['account-notify']:
-                # reverify every 5min if we don't have the notification feature.
-                if datetime.now() - admin.time > timedelta(minutes=5):
-                    self.update_authstatus(nick)
-            return True
+            if admin is None:
+                return False
+            # no nickserv support, assume people are who they say they are.
+            if not self.config['feature'].getboolean('nickserv'):
+                return True
+            if not admin.registered:
+                self.update_authstatus(nick)
+                # We don't necessarily want to complain in all cases.
+                if send is not None:
+                    send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
+                return False
+            else:
+                if not self.features['account-notify']:
+                    # reverify every 5min if we don't have the notification feature.
+                    if datetime.now() - admin.time > timedelta(minutes=5):
+                        self.update_authstatus(nick)
+                return True
 
     def get_admins(self):
         """Check verification for all admins."""
