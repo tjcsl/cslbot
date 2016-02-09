@@ -22,6 +22,7 @@ from sys import path
 
 warnings.simplefilter('default')
 warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='nltk')
 
 path.insert(0, dirname(abspath(__file__)))
 
