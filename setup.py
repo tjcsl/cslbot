@@ -59,6 +59,7 @@ setup(
         'python-dateutil',
         'simplejson',
         'requests_oauthlib',
+        'textblob',
     ],
     extras_require={
         'doc': ['sphinx'],
