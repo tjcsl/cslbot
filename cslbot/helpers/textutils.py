@@ -272,7 +272,8 @@ def gen_random_translate(msg):
     blob = TextBlob(msg)
     try:
         blob = blob.translate(from_lang=None, to=language)
-        return str(blob)
+        blob = blob.translate(from_lang=language, to='en')
+        return "%s (%s)" % (blob, language)
     except NotTranslated:
         return msg
 
