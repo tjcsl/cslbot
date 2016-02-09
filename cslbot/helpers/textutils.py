@@ -278,7 +278,7 @@ def gen_random_translate(msg):
 
 
 def gen_multi_translate(msg):
-    for _ in randrange(3, 10):
+    for _ in range(randint(3, 10)):
         msg = gen_random_translate(msg)
     return msg
 
