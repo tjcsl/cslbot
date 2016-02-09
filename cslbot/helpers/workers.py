@@ -27,7 +27,7 @@ import concurrent.futures
 
 from sqlalchemy import or_
 
-from . import babble, backtrace, control, tokens
+from . import babble, backtrace, control
 from .orm import Babble_last, Log
 
 executor_lock = threading.Lock()
@@ -53,7 +53,6 @@ class Workers(object):
 
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
-        self.defer(60, False, self.update_tokens, handler)
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
@@ -119,11 +118,6 @@ class Workers(object):
         self.defer(3600, False, self.handle_pending, handler, send)
         with handler.db.session_scope() as session:
             control.show_pending(session, send, True)
-
-    def update_tokens(self, handler):
-        # Re-schedule update_tokens
-        self.defer(600, False, self.update_tokens, handler)
-        tokens.update_all_tokens(handler.config)
 
     def check_active(self, handler, send):
         # Re-schedule check_active

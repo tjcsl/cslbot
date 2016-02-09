@@ -23,16 +23,14 @@ import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
 
-from lxml import etree, html
-
 from pkg_resources import Requirement, resource_string
 
 from requests import get, post
 
+from lxml import html
+
 from textblob import TextBlob
 from textblob.exceptions import NotTranslated
-
-from .tokens import token_cache
 
 slogan_cache = []  # type: List[str]
 
@@ -69,7 +67,7 @@ def gen_shakespeare(msg):
     replist = reversed(sorted(table.keys(), key=len))
     pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
     # Normalize text to hopefully match more words.
-    result = pattern.sub(lambda x: table[x.group().lower()], transform_text(msg))
+    result = pattern.sub(lambda x: table[x.group().lower()], msg)
     return result
 
 
@@ -263,7 +261,7 @@ def gen_translate(msg, fromlang=None, outputlang='en'):
 def gen_random_translate(msg):
     try:        
         languages = ['ko', 'eo', 'la', 'so', 'tg', 'zh', 'st', 'km', 'ja', 'su', 'ny', 'pl', 'gu', 'sk', 'bs', 'ur', 'jw', 'si', 'es', 'lt', 'yo', 'sw', 'hu', 'ka', 'be', 'hi', 'sv', 'el', 'de', 'ro', 'bn', 'ceb', 'eu', 'nl', 'ig', 'mg', 'te', 'no', 'yi', 'ar', 'ca', 'pt', 'uk', 'hr', 'iw', 'th', 'sl', 'et', 'id', 'mn', 'zh-TW', 'ga', 'mt', 'sr', 'sq', 'ml', 'zh-CN', 'mi', 'mr', 'cs', 'hy', 'gl', 'cy', 'vi', 'uz', 'pa', 'ht', 'is', 'ms', 'af', 'lo', 'ne', 'lv', 'bg', 'fr', 'tr', 'ha', 'mk', 'fa', 'it', 'kn', 'az', 'hmn', 'kk', 'my', 'fi', 'zu', 'ru', 'ta', 'da', 'tl']
-        language= choice(languages)
+        language = choice(languages)
         blob = TextBlob(msg)
         blob = blob.translate(from_lang=None, to=language)
         return str(blob)
