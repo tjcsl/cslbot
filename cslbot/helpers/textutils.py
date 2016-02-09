@@ -22,7 +22,6 @@ import re
 import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
-import urllib
 from textblob import TextBlob
 from lxml import etree, html
 
@@ -258,13 +257,12 @@ def transform_text(msg):
     return data['sentence'] if data['ec'] == 0 else data['em']
 
 
-def gen_translate(msg, outputlang='en'):
+def gen_translate(msg, fromlang=None, outputlang='en'):
     try:        
         blob = TextBlob(msg)
-        translated = blob.translate(to=outputlang)
-        return translated
-    except urllib.error.HTTPError as e:
-        return "Translation Server Error: %s" % str(e)
+        return blob.translate(from_lang=fromlang, to=outputlang)
+    except NotTranslated as e:
+        return msg
 
 def gen_random_translate(msg):
     # Don't die if no api key
@@ -281,7 +279,7 @@ def gen_random_translate(msg):
     # This Klingon variant seems to royally screw-up terminals.
     del langs['tlh-Qaak']
     outputlang = choice(list(langs.keys()))
-    translation = gen_translate(msg, outputlang)
+    translation = gen_translate(msg, None, outputlang)
     return "%s (%s)" % (translation, langs[outputlang])
 
 

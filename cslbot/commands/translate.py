@@ -23,15 +23,16 @@ from ..helpers.textutils import gen_translate
 @Command(['translate', 'trans'], ['config'])
 def cmd(send, msg, args):
     """Translate something.
-    Syntax: {command} [--lang <language code>] <text>
-    See https://msdn.microsoft.com/en-us/library/hh456380.aspx for a list of valid language codes
+    Syntax: {command} [--from <language code>] [--to <language code>] <text>
+    See https://cloud.google.com/translate/v2/using_rest#language-params for a list of valid language codes
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--lang', '--language', default='en')
+    parser.add_argument('--from', default=None)
+    parser.add_argument('--to', default='en')
     parser.add_argument('msg', nargs='+')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    send(gen_translate(' '.join(cmdargs.msg), outputlang=cmdargs.lang))
+    send(gen_translate(' '.join(cmdargs.msg), fromlang=cmdargs.from, outputlang=cmdargs.to))
