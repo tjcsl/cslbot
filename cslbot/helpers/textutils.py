@@ -277,6 +277,12 @@ def gen_random_translate(msg):
         return msg
 
 
+def gen_multi_translate(msg):
+    for _ in randrange(3, 10):
+        msg = gen_random_translate(msg)
+    return msg
+
+
 def append_filters(filters):
     filter_list = []
     for next_filter in filter(None, filters.split(',')):
@@ -313,5 +319,6 @@ output_filters = {
     "underscore": gen_underscore,
     "translate": gen_translate,
     "randtrans": gen_random_translate,
+    "multitrans": gen_multi_translate,
     "randfilter": gen_randfilter
 }
