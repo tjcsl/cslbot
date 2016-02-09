@@ -22,7 +22,8 @@ import re
 import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
-
+import urllib
+from textblob import TextBlob
 from lxml import etree, html
 
 from pkg_resources import Requirement, resource_string
@@ -258,18 +259,12 @@ def transform_text(msg):
 
 
 def gen_translate(msg, outputlang='en'):
-    # Don't die if no api key
-    if token_cache['translate'] == 'invalid':
-        return msg
-    headers = {'Authorization': 'Bearer %s' % token_cache['translate']}
-    req = get('http://api.microsofttranslator.com/V2/Http.svc/Translate', params={'text': transform_text(msg), 'to': outputlang}, headers=headers)
-    xml = etree.fromstring(req.content)
-    if xml.tag == 'html':
-        doc = ' '.join(xml.itertext())
-        doc = ' '.join(doc.splitlines())
-        return "An error occurred: %s" % doc
-    return xml.text
-
+    try:        
+        blob = TextBlob(msg)
+        translated = blob.translate(to=outputlang)
+        return translated
+    except urllib.error.HTTPError as e:
+        return "Translation Server Error: %s" % str(e)
 
 def gen_random_translate(msg):
     # Don't die if no api key
