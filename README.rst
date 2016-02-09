@@ -44,7 +44,7 @@ You must copy static/groups.example to groups.cfg and make any needed changes to
 
 If you want the tjhsst-specific commands, run `pip install git+git://github.com/tjcsl/cslbot-tjhsst` and add cslbot-tjhsst to extramodules.
 
-Python must be at least 3.4.
+Python must be at least 3.5.
 
 Run `pip install .` to install the required libraries.
 
@@ -70,8 +70,6 @@ STANDS4 (zip code): http://www.abbreviations.com/apiuser.php
 Note: you need to create a custom search app for xkcd.com to enable xkcd search as well as one for the whole internet to enable !google
 This can be done at https://cse.google.com/cse/manage/all
 Use the search engine IDs from this page with the api key from https://console.developers.google.com
-
-Translate: https://www.microsoft.com/translator/get-started.aspx
 
 Tumblr: http://www.tumblr.com/oauth/apps
 

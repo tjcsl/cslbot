@@ -19,8 +19,6 @@
 
 from datetime import datetime, timedelta
 
-from requests import post
-
 
 class Token():
 
@@ -30,22 +28,6 @@ class Token():
 
     def __str__(self):
         return self.key
-
-
-class TranslateToken(Token):
-
-    def update(self, config):
-        client_id, secret = config['api']['translateid'], config['api']['translatesecret']
-        # Don't die if we didn't setup the translate api.
-        if not client_id:
-            self.key = 'invalid'
-            return
-        postdata = {'grant_type': 'client_credentials', 'client_id': client_id, 'client_secret': secret, 'scope': 'http://api.microsofttranslator.com'}
-        data = post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', data=postdata).json()
-        self.key = data['access_token']
-        self.time = datetime.now()
-
-token_cache = {'translate': TranslateToken()}
 
 
 def update_all_tokens(config):

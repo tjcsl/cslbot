@@ -251,15 +251,6 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def transform_text(msg):
-    # Don't die if no api key
-    if token_cache['translate'] == 'invalid':
-        return msg
-    headers = {'Authorization': 'Bearer %s' % token_cache['translate']}
-    data = get('http://api.microsofttranslator.com/V3/json/TransformText', params={'language': 'en', 'sentence': msg}, headers=headers).json()
-    return data['sentence'] if data['ec'] == 0 else data['em']
-
-
 def gen_translate(msg, fromlang=None, outputlang='en'):
     try:
         blob = TextBlob(msg)
@@ -270,22 +261,14 @@ def gen_translate(msg, fromlang=None, outputlang='en'):
 
 
 def gen_random_translate(msg):
-    # Don't die if no api key
-    if token_cache['translate'] == 'invalid':
+    try:        
+        languages = ['ko', 'eo', 'la', 'so', 'tg', 'zh', 'st', 'km', 'ja', 'su', 'ny', 'pl', 'gu', 'sk', 'bs', 'ur', 'jw', 'si', 'es', 'lt', 'yo', 'sw', 'hu', 'ka', 'be', 'hi', 'sv', 'el', 'de', 'ro', 'bn', 'ceb', 'eu', 'nl', 'ig', 'mg', 'te', 'no', 'yi', 'ar', 'ca', 'pt', 'uk', 'hr', 'iw', 'th', 'sl', 'et', 'id', 'mn', 'zh-TW', 'ga', 'mt', 'sr', 'sq', 'ml', 'zh-CN', 'mi', 'mr', 'cs', 'hy', 'gl', 'cy', 'vi', 'uz', 'pa', 'ht', 'is', 'ms', 'af', 'lo', 'ne', 'lv', 'bg', 'fr', 'tr', 'ha', 'mk', 'fa', 'it', 'kn', 'az', 'hmn', 'kk', 'my', 'fi', 'zu', 'ru', 'ta', 'da', 'tl']
+        language= choice(languages)
+        blob = TextBlob(msg)
+        blob = blob.translate(from_lang=None, to=language)
+        return str(blob)
+    except NotTranslated:
         return msg
-    headers = {'Authorization': 'Bearer %s' % token_cache['translate'], 'Content-Type': 'text/xml'}
-    langs = get('http://api.microsofttranslator.com/V2/Http.svc/GetLanguagesForTranslate', headers=headers)
-    names = post('http://api.microsofttranslator.com/V2/Http.svc/GetLanguageNames', params={'locale': 'en'}, data=langs.text, headers=headers)
-    langs_xml = etree.fromstring(langs.content)
-    names_xml = etree.fromstring(names.content)
-    langs = {langs_xml[x].text: names_xml[x].text for x in range(len(langs_xml))}
-    # No point in english->english
-    del langs['en']
-    # This Klingon variant seems to royally screw-up terminals.
-    del langs['tlh-Qaak']
-    outputlang = choice(list(langs.keys()))
-    translation = gen_translate(msg, None, outputlang)
-    return "%s (%s)" % (translation, langs[outputlang])
 
 
 def append_filters(filters):
