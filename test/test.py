@@ -32,6 +32,7 @@ if exists(join(dirname(__file__), '../.git')):
 warnings.simplefilter('default')
 warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic')
 warnings.filterwarnings('ignore', category=DeprecationWarning, module='nltk')
+warnings.filterwarnings('ignore', category=PendingDeprecationWarning, module='nltk')
 
 from test.bot_test import BotTest  # noqa
 
