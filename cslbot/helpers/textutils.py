@@ -22,12 +22,15 @@ import re
 import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
-from textblob import TextBlob
+
 from lxml import etree, html
 
 from pkg_resources import Requirement, resource_string
 
 from requests import get, post
+
+from textblob import TextBlob
+from textblob.exceptions import NotTranslated
 
 from .tokens import token_cache
 
@@ -258,11 +261,13 @@ def transform_text(msg):
 
 
 def gen_translate(msg, fromlang=None, outputlang='en'):
-    try:        
+    try:
         blob = TextBlob(msg)
-        return blob.translate(from_lang=fromlang, to=outputlang)
-    except NotTranslated as e:
+        blob = blob.translate(from_lang=fromlang, to=outputlang)
+        return str(blob)
+    except NotTranslated:
         return msg
+
 
 def gen_random_translate(msg):
     # Don't die if no api key
