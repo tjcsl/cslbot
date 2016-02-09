@@ -31,7 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, tokens, workers
+from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
 logger = logging.getLogger(__name__)
 
@@ -397,7 +397,6 @@ class BotHandler(object):
         | Join the primary channel.
         | Join the control channel.
         """
-        tokens.update_all_tokens(self.config)
         self.rate_limited_send('join', self.config['core']['channel'])
         self.rate_limited_send('join', self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
         # We use this to pick up info on admins who aren't currently in a channel.
