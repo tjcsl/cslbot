@@ -31,7 +31,7 @@ from irc import client, modes
 
 from typing import Callable, Dict  # noqa
 
-from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils,  workers
+from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
 logger = logging.getLogger(__name__)
 
