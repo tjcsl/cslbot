@@ -8,6 +8,7 @@ lxml
 python-dateutil
 simplejson
 requests_oauthlib
+textblob
 
 [doc]
 sphinx
