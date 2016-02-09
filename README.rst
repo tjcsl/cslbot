@@ -159,9 +159,13 @@ The following values are supported:
 Contributing
 ------------
 Run flake8 --max-line-length 200 .
+
 Run ./scripts/build_docs.sh
+
 Run ./setup.py egg_info
+
 Commit the changes.
+
 Submit a PR and make sure the travis build is green.
 
 Credits
