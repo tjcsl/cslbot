@@ -306,14 +306,12 @@ class BotsnackTest(BotTest):
 
 
 class TranslateTest(BotTest):
-    @mock.patch('cslbot.commands.translate.gen_translate')
     def test_translate_valid_args(self):
         """Test translate with a valid string"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translation test', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate testen übersetzen', 'pubmsg')])
 
-    @mock.patch('cslbot.commands.translate.gen_translate')
     def test_translate_valid_to_lang(self):
         """Test translate with a valid 'to' language"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to es testen übersetzen'])
@@ -321,18 +319,18 @@ class TranslateTest(BotTest):
                                  ('testnick', '#test-channel', 0, '!translate --to es testen übersetzen', 'pubmsg')])
 
     @mock.patch('cslbot.commands.translate.gen_translate')
-    def test_translate_invalid_noargs(self):
+    def test_translate_invalid_noargs(self, mock_gen_translate):
         """Test translate with no arguments"""
+        mock_gen_translate.return_value = 'test'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: msg', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate', 'pubmsg')])
-    
-    @mock.patch('cslbot.commands.translate.gen_translate')
+
     def test_translate_invalid_to_lang(self):
         """Test translate with an invalid 'to' language"""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to ad translate this'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'translate this', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!translate --to ad translate this')])
+                                 ('testnick', '#test-channel', 0, '!translate --to ad translate this', 'pubmsg')])
 
 
 if __name__ == '__main__':
