@@ -45,12 +45,14 @@ def get_title(url):
     try:
         # User-Agent is really hard to get right :(
         headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = get(url, headers=headers)
+        req = get(url, headers=headers, timeout=10)
         ctype = req.headers.get('Content-Type')
         if req.status_code != 200:
             title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
         elif ctype is not None and ctype.startswith('image/'):
             title = 'Image'
+        elif ctype is not None and ctype.startswith('video/'):
+            title = 'Video'
         else:
             html = document_fromstring(req.content)
             t = html.find('.//title')
