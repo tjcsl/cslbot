@@ -40,7 +40,7 @@ from test.bot_test import BotTest  # noqa
 class CoreTest(BotTest):
 
     def test_handle_nick(self):
-        """Test the bot's ability to handle nick change events"""
+        """Test the bot's ability to handle nick change events."""
         # We must be in a channel to track other people's joins
         self.join_channel(self.nick, '#test-channel2')
         self.join_channel('testnick', self.channel)
@@ -49,7 +49,7 @@ class CoreTest(BotTest):
         self.assertEqual(calls, [('testnick', self.channel, 0, 'testnick2', 'nick'), ('testnick', '#test-channel2', 0, 'testnick2', 'nick')])
 
     def test_handle_mode_tracking(self):
-        """Test the bot's ability to keep track of mode changes"""
+        """Test the bot's ability to keep track of mode changes."""
         self.assertNotIn('testnick', self.bot.handler.voiced['#test-channel'])
         self.assertNotIn('testnick', self.bot.handler.opers['#test-channel'])
         self.join_channel('testnick', '#test-channel')
@@ -90,7 +90,7 @@ class MorseTest(BotTest):
 
     @mock.patch('cslbot.commands.morse.gen_word')
     def test_morse_noarg(self, mock_gen_word):
-        """Test morse with no arguments"""
+        """Test morse with no arguments."""
         mock_gen_word.return_value = 'test'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!morse'])
         self.assertEqual(calls,
@@ -98,7 +98,7 @@ class MorseTest(BotTest):
                           ('testnick', '#test-channel', 0, '!morse', 'pubmsg')])
 
     def test_morse_too_long(self):
-        """Test morse with an overlength argument"""
+        """Test morse with an overlength argument."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel',
                               ['!morse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'])
         self.assertEqual(calls,
@@ -110,7 +110,7 @@ class ZipcodeTest(BotTest):
 
     @mock.patch('cslbot.commands.zipcode.get')
     def test_zipcode_valid(self, mock_get):
-        """Test a correct zip code"""
+        """Test a correct zip code."""
         with open(join(dirname(__file__), 'data', 'zipcode_12345.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
@@ -118,12 +118,12 @@ class ZipcodeTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, '12345: Schenectady, NY', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode 12345', 'pubmsg')])
 
     def test_zipcode_blank(self):
-        """Test a blank zip code"""
+        """Test a blank zip code."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: zipcode', 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode', 'pubmsg')])
 
     def test_zipcode_invalid(self):
-        """Test incorrect zip codes"""
+        """Test incorrect zip codes."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!zipcode potato'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, "Couldn't parse a ZIP code from potato", 'privmsg'), ('testnick', '#test-channel', 0, '!zipcode potato', 'pubmsg')])
 
@@ -132,7 +132,7 @@ class WisdomTest(BotTest):
 
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_valid(self, mock_get):
-        """Test a valid wisdom lookup"""
+        """Test a valid wisdom lookup."""
         with open(join(dirname(__file__), 'data', 'wisdom_asimov.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
@@ -145,7 +145,7 @@ class WisdomTest(BotTest):
 
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_invalid(self, mock_get):
-        """Test wisdom with no results"""
+        """Test wisdom with no results."""
         with open(join(dirname(__file__), 'data', 'wisdom_jibberjabber.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
@@ -154,17 +154,17 @@ class WisdomTest(BotTest):
                                  ('testnick', '#test-channel', 0, '!wisdom --search jibberjabber', 'pubmsg')])
 
     def test_wisdom_author_nosearch(self):
-        """Check that we error if we specify an author search with no terms"""
+        """Check that we error if we specify an author search with no terms."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --author'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No author specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --author', 'pubmsg')])
 
     def test_wisdom_search_nosearch(self):
-        """Check that we error if we specify a search with no terms"""
+        """Check that we error if we specify a search with no terms."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'No search terms specified', 'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --search', 'pubmsg')])
 
     def test_wisdom_search_author_invalid(self):
-        """Check that we error if we specify both search and author"""
+        """Check that we error if we specify both search and author."""
         self.join_channel('testBot', '#test-channel')
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --search --author'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'argument --author: not allowed with argument --search', 'privmsg'),
@@ -175,7 +175,7 @@ class DefinitionTest(BotTest):
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_valid(self, mock_get):
-        """Test a valid definition"""
+        """Test a valid definition."""
         with open(join(dirname(__file__), 'data', 'define_potato.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
 
@@ -186,7 +186,7 @@ class DefinitionTest(BotTest):
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_invalid(self, mock_get):
-        """Test an invalid definition"""
+        """Test an invalid definition."""
         with open(join(dirname(__file__), 'data', 'define_potatwo.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define potatwo'])
@@ -194,13 +194,13 @@ class DefinitionTest(BotTest):
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_empty(self, mock_get):
-        """Test an invalid definition"""
+        """Test an invalid definition."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: word', 'privmsg'), ('testnick', '#test-channel', 0, '!define', 'pubmsg')])
 
     @mock.patch('cslbot.commands.define.get')
     def test_definition_invalid_index(self, mock_get):
-        """Test an invalid definition index"""
+        """Test an invalid definition index."""
         with open(join(dirname(__file__), 'data', 'define_potato.xml')) as test_data_file:
             mock_get.return_value = mock.Mock(content=test_data_file.read().encode())
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define potato --entry 5'])
@@ -226,13 +226,13 @@ class ErrnoTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno 75', 'pubmsg')])
 
     def test_errno_invalid_name(self):
-        """Test errno run with an invalid name"""
+        """Test errno run with an invalid name."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno ENOPANTS'])
         output = 'Please install gcc.' if os.name == 'nt' else 'ENOPANTS not found in errno.h'
         self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno ENOPANTS', 'pubmsg')])
 
     def test_errno_list(self):
-        """Test errno list command"""
+        """Test errno list command."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno list'])
         if os.name == 'nt':
             expected = [('testBot', '#test-channel', 0, 'Please install gcc.', 'privmsg')]
@@ -251,7 +251,7 @@ class ErrnoTest(BotTest):
 class SignalTest(BotTest):
 
     def test_signal_valid(self):
-        """Test signal, basic check only since errno covers most of the backend"""
+        """Test signal, basic check only since errno covers most of the backend."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!signal 9'])
         output = 'Please install gcc.' if os.name == 'nt' else '#define SIGKILL 9'
         self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!signal 9', 'pubmsg')])
@@ -261,7 +261,7 @@ class CoinTest(BotTest):
 
     @mock.patch('cslbot.commands.coin.choice')
     def test_coin_valid(self, mock_choice):
-        """Test the default coin flip"""
+        """Test the default coin flip."""
         mock_choice.return_value = 'heads'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!coin'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coin lands on... heads', 'privmsg'), ('testnick', '#test-channel', 0, '!coin', 'pubmsg')])
@@ -272,13 +272,13 @@ class CoinTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Not A Valid Positive Integer.', 'privmsg'), ('testnick', '#test-channel', 0, '!coin potato', 'pubmsg')])
 
     def test_coin_negative(self):
-        """Test a negative argument"""
+        """Test a negative argument."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!coin -1'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Negative Flipping requires the (optional) quantum coprocessor.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!coin -1', 'pubmsg')])
 
     def test_coin_zero(self):
-        """Test coin flipping with arguments"""
+        """Test coin flipping with arguments."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!coin 0'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'The coins land on heads 0 times and on tails 0 times.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!coin 0', 'pubmsg')])
@@ -287,49 +287,50 @@ class CoinTest(BotTest):
 class BotsnackTest(BotTest):
 
     def test_botsnack_valid_noargs(self):
-        """Test botsnack with no arguments"""
+        """Test botsnack with no arguments."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!botsnack'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'This tastes yummy!', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!botsnack', 'pubmsg')])
 
     def test_botsnack_valid_args(self):
-        """Test botsnack with arguments"""
+        """Test botsnack with arguments."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!botsnack potatoes'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Potatoes tastes yummy!', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!botsnack potatoes', 'pubmsg')])
 
     def test_botsnack_invalid_cannibal(self):
-        """Test botsnack with the bot's nick as argument"""
+        """Test botsnack with the bot's nick as argument."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!botsnack testBot'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'wyang says Cannibalism is generally frowned upon.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!botsnack testBot', 'pubmsg')])
 
 
 class TranslateTest(BotTest):
+
     @unittest.skip("api is broken")
     def test_translate_valid_args(self):
-        """Test translate with a valid string"""
+        """Test translate with a valid string."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translation test', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate testen übersetzen', 'pubmsg')])
 
     @unittest.skip("api is broken")
     def test_translate_valid_to_lang(self):
-        """Test translate with a valid 'to' language"""
+        """Test translate with a valid 'to' language."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to es testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'prueba de traducción', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate --to es testen übersetzen', 'pubmsg')])
 
     @mock.patch('cslbot.commands.translate.gen_translate')
     def test_translate_invalid_noargs(self, mock_gen_translate):
-        """Test translate with no arguments"""
+        """Test translate with no arguments."""
         mock_gen_translate.return_value = 'test'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: msg', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate', 'pubmsg')])
 
     def test_translate_invalid_to_lang(self):
-        """Test translate with an invalid 'to' language"""
+        """Test translate with an invalid 'to' language."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to ad translate this'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'translate this', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate --to ad translate this', 'pubmsg')])

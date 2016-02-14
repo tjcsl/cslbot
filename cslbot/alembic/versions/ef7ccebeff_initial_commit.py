@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Initial commit
+"""Initial commit.
 
 Revision ID: ef7ccebeff
 Revises:

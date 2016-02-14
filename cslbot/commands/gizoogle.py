@@ -22,7 +22,9 @@ from ..helpers.textutils import gen_gizoogle
 @Command('gizoogle')
 def cmd(send, msg, args):
     """Translates something into gangsta.
+
     Syntax: {command} <something>
+
     """
     if not msg:
         send("Gizoogle what all up in here?")

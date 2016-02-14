@@ -22,8 +22,10 @@ from ..helpers.orm import Permissions
 @Command('admins', ['db', 'nick'])
 def cmd(send, _, args):
     """Returns a list of admins.
+
     V = Verified (authed to NickServ), U = Unverified.
     Syntax: {command}
+
     """
     adminlist = []
     for admin in args['db'].query(Permissions).order_by(Permissions.nick).all():

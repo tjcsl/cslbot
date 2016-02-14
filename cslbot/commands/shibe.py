@@ -22,6 +22,8 @@ from ..helpers.textutils import gen_shibe
 @Command('shibe')
 def cmd(send, msg, _):
     """Generates a shibe reaction.
+
     Syntax: {command} [topic1]...[topicn]
+
     """
     send(gen_shibe(msg))

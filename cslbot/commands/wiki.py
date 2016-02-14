@@ -29,7 +29,9 @@ def get_rand(url):
 @Command(['wiki', 'wikipedia', 'livedoc'], ['name'])
 def cmd(send, msg, args):
     """Returns the first wikipedia result for the argument.
+
     Syntax: {command} [term]
+
     """
     if 'livedoc' in args['name']:
         url = 'http://livedoc.tjhsst.edu/w'

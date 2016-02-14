@@ -21,6 +21,8 @@ from ..helpers.command import Command
 @Command('about', ['config'])
 def cmd(send, _, args):
     """Returns info about the bot.
+
     Syntax: {command}
+
     """
     send("See https://github.com/%s Developed by the TJHSST CSL. Type %shelp for a list of commands." % (args['config']['api']['githubrepo'], args['config']['core']['cmdchar']))

@@ -185,8 +185,10 @@ def get_hourly(cmdargs, send, apikey):
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
 def cmd(send, msg, args):
     """Gets the weather.
+
     Syntax: {command} <[--date (date)] [--hour (hour)] (location)|--set (default)>
     Powered by Weather Underground, www.wunderground.com
+
     """
     apikey = args['config']['api']['weatherapikey']
     parser = arguments.ArgParser(args['config'])

@@ -23,7 +23,9 @@ from ..helpers.command import Command
 @Command('eix')
 def cmd(send, msg, args):
     """Runs eix with the given arguments.
+
     Syntax: {command} <package>
+
     """
     if not msg:
         send("eix what?")

@@ -25,7 +25,9 @@ from ..helpers.textutils import gen_slogan
 @Command('gcc', ['type', 'nick'])
 def cmd(send, msg, args):
     """Compiles stuff.
+
     Syntax: {command} <code>
+
     """
     if args['type'] == 'privmsg':
         send('GCC is a group exercise!')

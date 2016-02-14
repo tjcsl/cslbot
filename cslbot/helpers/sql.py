@@ -41,7 +41,7 @@ def get_session(config):
 class Sql():
 
     def __init__(self, config, confdir):
-        """ Set everything up"""
+        """Set everything up."""
         self.session = get_session(config)
         with self.session_scope() as session:
             setup_db(session, config, confdir)
@@ -60,7 +60,7 @@ class Sql():
             session.close()
 
     def log(self, source: str, target: str, flags: int, msg: str, mtype: str) -> None:
-        """ Logs a message to the database
+        """Logs a message to the database.
 
         | source: The source of the message.
         | target: The target of the message.
@@ -68,6 +68,7 @@ class Sql():
         | msg: The text of the message.
         | msg: The type of message.
         | time: The current time (Unix Epoch).
+
         """
         entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=datetime.now())
         with self.session_scope() as session:

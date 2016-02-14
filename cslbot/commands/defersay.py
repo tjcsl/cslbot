@@ -23,7 +23,9 @@ from ..helpers.misc import parse_time
 @Command('defersay', ['nick', 'handler', 'config'], role="admin")
 def cmd(send, msg, args):
     """Says something at a later time.
+
     Syntax: {command} <delay> <msg>
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('delay')

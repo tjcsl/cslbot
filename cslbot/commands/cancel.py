@@ -21,7 +21,9 @@ from ..helpers.command import Command
 @Command('cancel', ['nick', 'handler'], role="admin")
 def cmd(send, msg, args):
     """Cancels a deferred action with the given id.
+
     Syntax: {command} <id>
+
     """
     try:
         args['handler'].workers.cancel(int(msg))

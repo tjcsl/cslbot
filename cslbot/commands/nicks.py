@@ -24,7 +24,9 @@ from ..helpers.identity import get_chain
 @Command('nicks', ['db', 'handler', 'target', 'nick'])
 def cmd(send, msg, args):
     """Gets previous nicks.
+
     Syntax: {command} <nick>
+
     """
     if not msg:
         with args['handler'].data_lock:

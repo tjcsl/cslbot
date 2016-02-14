@@ -22,7 +22,9 @@ from ..helpers.command import Command
 @Command('slogan')
 def cmd(send, msg, _):
     """Gets a slogan.
+
     Syntax: {command} [text]
+
     """
     if not msg:
         msg = textutils.gen_word()

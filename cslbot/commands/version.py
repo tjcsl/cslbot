@@ -24,7 +24,9 @@ from ..helpers.command import Command
 @Command('version', ['config', 'handler'])
 def cmd(send, msg, args):
     """Check the git revison.
+
     Syntax: {command} [check|master]
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('action', choices=['check', 'master', 'commit'], nargs='?')

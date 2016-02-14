@@ -25,6 +25,7 @@ def set_admin(msg, handler):
     """Handle admin verification responses from NickServ.
 
     | If NickServ tells us that the nick is authed, mark it as verified.
+
     """
     if handler.config['feature']['servicestype'] == "ircservices":
         match = re.match("STATUS (.*) ([0-3])", msg)

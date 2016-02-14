@@ -39,7 +39,9 @@ def translate(msg, encode=True):
 @Command(['dvorak', 'sdamashek'], ['db', 'config', 'target'])
 def cmd(send, msg, args):
     """Converts a message to/from dvorak.
+
     Syntax: {command} <--nick <nick>|msg>
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)

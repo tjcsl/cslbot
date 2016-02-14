@@ -42,8 +42,10 @@ def random_stock():
 @Command('stock', ['config'])
 def cmd(send, msg, args):
     """Gets a stock quote.
+
     Syntax: {command} [symbol]
     Powered by markit on demand (http://dev.markitondemand.com)
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('stock', nargs='?', default=random_stock())

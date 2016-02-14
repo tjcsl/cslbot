@@ -68,11 +68,11 @@ class Registry(object):
 class HookRegistry(Registry):
 
     def scan_for_hooks(self) -> List[str]:
-        """
-        Scans for hooks
+        """Scans for hooks.
 
         :rtype: list
         :return: A list of modules that failed to reload
+
         """
         return self.scan_for_objects("hooks")
 
@@ -103,11 +103,11 @@ hook_registry = HookRegistry()
 class CommandRegistry(Registry):
 
     def scan_for_commands(self) -> List[str]:
-        """
-        Scans for commands
+        """Scans for commands.
 
         :rtype: list
         :return: A list of modules that failed to reload
+
         """
         return self.scan_for_objects("commands")
 

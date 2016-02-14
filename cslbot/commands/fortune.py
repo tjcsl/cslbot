@@ -22,7 +22,9 @@ from ..helpers.misc import get_fortune, list_fortunes
 @Command(['fortune', 'bofh', 'excuse'], ['name'])
 def cmd(send, msg, args):
     """Returns a fortune.
+
     Syntax: {command} <list|[-a|-o] [module]>
+
     """
     if msg == 'list':
         fortunes = list_fortunes() + list_fortunes(True)

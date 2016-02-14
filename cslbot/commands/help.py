@@ -22,7 +22,9 @@ from ..helpers.registry import command_registry
 @Command('help', ['nick', 'config'])
 def cmd(send, msg, args):
     """Gives help.
+
     Syntax: {command} [command]
+
     """
     cmdchar = args['config']['core']['cmdchar']
     if msg:

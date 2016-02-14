@@ -151,7 +151,7 @@ def delete_tables(cursor):
 
 
 def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False):
-    """ Builds a markov dictionary."""
+    """Builds a markov dictionary."""
     if initial_run:
         cursor.query(Babble_last).delete()
     lastrow = cursor.query(Babble_last).first()

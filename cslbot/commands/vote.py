@@ -23,7 +23,7 @@ from ..helpers.orm import Poll_responses, Polls
 
 
 def start_poll(args):
-    """ Starts a poll """
+    """Starts a poll."""
     if args.type == 'privmsg':
         return "We don't have secret ballots in this benevolent dictatorship!"
     if not args.msg:
@@ -42,7 +42,7 @@ def start_poll(args):
 
 
 def delete_poll(args):
-    """ Deletes a poll """
+    """Deletes a poll."""
     if not args.isadmin:
         return "Nope, not gonna do it."
     if not args.msg:
@@ -65,7 +65,7 @@ def get_open_poll(session, pid):
 
 
 def edit_poll(args):
-    """ Edits a poll """
+    """Edits a poll."""
     if not args.isadmin:
         return "Nope, not gonna do it."
     msg = args.msg.split(maxsplit=1)
@@ -82,7 +82,7 @@ def edit_poll(args):
 
 
 def reopen(args):
-    """ reopens a closed poll."""
+    """reopens a closed poll."""
     if not args.isadmin:
         return "Nope, not gonna do it."
     msg = args.msg.split()
@@ -99,7 +99,7 @@ def reopen(args):
 
 
 def end_poll(args):
-    """ Ends a poll """
+    """Ends a poll."""
     if not args.isadmin:
         return "Nope, not gonna do it."
     if not args.msg:
@@ -116,7 +116,7 @@ def end_poll(args):
 
 
 def tally_poll(args):
-    """Shows the results of poll """
+    """Shows the results of poll."""
     if not args.msg:
         return "Syntax: !vote tally <pollnum>"
     if not args.msg.isdigit():
@@ -154,7 +154,7 @@ def get_response(session, pid, nick):
 
 
 def vote(session, nick, pid, response):
-    """ Votes on a poll"""
+    """Votes on a poll."""
     if not response:
         return "You have to vote something!"
     if response == "n" or response == "nay":
@@ -178,7 +178,7 @@ def vote(session, nick, pid, response):
 
 
 def retract(args):
-    """ Deletes a vote for a poll """
+    """Deletes a vote for a poll."""
     if not args.msg:
         return "Syntax: !vote retract <pollnum>"
     if not args.msg.isdigit():
@@ -198,7 +198,9 @@ def list_polls(args):
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
 def cmd(send, msg, args):
     """Handles voting.
+
     Syntax: {command} <start|end|list|tally|edit|delete|retract|reopen|(num) vote>
+
     """
     command = msg.split()
     msg = " ".join(command[1:])

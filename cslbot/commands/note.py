@@ -25,7 +25,9 @@ from ..helpers.orm import Notes
 @Command('note', ['db', 'nick', 'type', 'config'], limit=5)
 def cmd(send, msg, args):
     """Leaves a note for a user or users.
+
     Syntax: {command} <nick>[,nick2,...] <note>
+
     """
     if not args['config']['feature'].getboolean('hooks'):
         send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")

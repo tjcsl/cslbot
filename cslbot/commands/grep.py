@@ -23,7 +23,9 @@ from ..helpers.orm import Log
 @Command(['grep', 'loggrep'], ['config', 'db'])
 def cmd(send, msg, args):
     """Greps the log for a string.
+
     Syntax: {command} [--nick <nick>] [--ignore-case/-i] <string>
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser)

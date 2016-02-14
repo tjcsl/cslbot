@@ -41,7 +41,9 @@ def gen_roman(num):
 @Command('roman')
 def cmd(send, msg, _):
     """Convert a number to the roman numeral equivalent.
+
     Syntax: {command} [number]
+
     """
     if not msg:
         msg = randrange(5000)

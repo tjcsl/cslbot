@@ -23,7 +23,9 @@ from ..helpers.command import Command
 @Command(['google', 'g'], ['config'])
 def cmd(send, msg, args):
     """Googles something.
+
     Syntax: {command} <term>
+
     """
     if not msg:
         send("Google what?")

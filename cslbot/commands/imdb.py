@@ -26,7 +26,9 @@ from ..helpers.urlutils import get_short
 @Command(['movie', 'imdb'], ['config'])
 def cmd(send, msg, args):
     """Gets a random movie.
+
     Syntax: {command}
+
     """
 
     req = get('http://www.imdb.com/random/title')

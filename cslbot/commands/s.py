@@ -75,7 +75,9 @@ def do_replace(log, config, char, regex, replacement):
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])
 def cmd(send, msg, args):
     """Corrects a previous message.
+
     Syntax: {command}/<msg>/<replacement>/<ig|nick>
+
     """
     if not msg:
         send("Invalid Syntax.")

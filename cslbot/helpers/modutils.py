@@ -128,9 +128,10 @@ def get_modules(mod_type):
 
 
 def safe_reload(modname):
-    """ Catch and log any errors that arise from reimporting a module, but do not die.
+    """Catch and log any errors that arise from reimporting a module, but do not die.
 
     :return: None when import was successful. String is the first line of the error message
+
     """
     try:
         importlib.reload(modname)
@@ -142,9 +143,10 @@ def safe_reload(modname):
 
 
 def safe_load(modname):
-    """ Load a module, logging errors instead of dying if it fails to load
+    """Load a module, logging errors instead of dying if it fails to load.
 
     :return: None when import was successful. String is the first line of the error message
+
     """
     try:
         importlib.import_module(modname)
@@ -156,7 +158,7 @@ def safe_load(modname):
 
 
 def scan_and_reimport(mod_type):
-    """ Scans folder for modules."""
+    """Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []
     for mod in mod_enabled + mod_disabled:

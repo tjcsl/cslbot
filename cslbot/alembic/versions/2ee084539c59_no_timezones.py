@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""no timezones
+"""no timezones.
 
 Revision ID: 2ee084539c59
 Revises: 243c9cf0eb7d

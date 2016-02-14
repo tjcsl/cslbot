@@ -23,7 +23,9 @@ from ..helpers.command import Command
 @Command(['wai', 'why'])
 def cmd(send, *_):
     """Gives a reason for something.
+
     Syntax: {command}
+
     """
     a = ["primary", "secondary", "tertiary", "hydraulic", "compressed",
          "required", "pseudo", "intangible", "flux"]

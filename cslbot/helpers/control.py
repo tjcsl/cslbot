@@ -331,7 +331,7 @@ def init_parser(send, handler, db):
 
 
 def handle_ctrlchan(handler, msg, send):
-    """ Handle the control channel."""
+    """Handle the control channel."""
     with handler.db.session_scope() as db:
         parser = init_parser(send, handler, db)
         try:

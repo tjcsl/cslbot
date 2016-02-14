@@ -22,7 +22,9 @@ from ..helpers.textutils import gen_shakespeare
 @Command(['bard', 'shakespeare'])
 def cmd(send, msg, _):
     """Translates something into Shakespearese.
+
     Syntax: {command} <something>
+
     """
     if not msg:
         send("Forsooth! What shalt I translate?")

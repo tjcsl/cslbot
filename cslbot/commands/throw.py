@@ -25,7 +25,9 @@ from ..helpers.misc import get_users
 @Command('throw', ['handler', 'target'])
 def cmd(send, msg, args):
     """Throw something.
+
     Syntax: {command} <object> [at <target>]
+
     """
     users = get_users(args)
     if " into " in msg and msg != "into":

@@ -58,7 +58,9 @@ def get_command(session, command, totals):
 @Command('stats', ['config', 'db'])
 def cmd(send, msg, args):
     """Gets stats.
+
     Syntax: {command} <--high|--low|--userhigh|--nick <nick>|command>
+
     """
     parser = arguments.ArgParser(args['config'])
     group = parser.add_mutually_exclusive_group()

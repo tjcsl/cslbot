@@ -21,7 +21,9 @@ from ..helpers.command import Command
 @Command('channels', ['handler', 'type'])
 def cmd(send, _, args):
     """Returns a listing of the current channels.
+
     Syntax: {command}
+
     """
     if args['type'] == 'privmsg':
         send('Channels should remain public knowledge!')

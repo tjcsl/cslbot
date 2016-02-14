@@ -26,7 +26,9 @@ from ..helpers.misc import do_pull
 @Command('pull', ['config', 'handler'], role="owner")
 def cmd(send, _, args):
     """Pull changes.
+
     Syntax: {command} <branch>
+
     """
     try:
         if exists(join(args['handler'].confdir, '.git')):

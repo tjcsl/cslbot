@@ -25,7 +25,9 @@ from ..helpers.command import Command
 @Command(['ping', 'ping6'], ['handler', 'target', 'config', 'nick', 'name'])
 def cmd(send, msg, args):
     """Ping something.
+
     Syntax: {command} <target>
+
     """
     if not msg:
         send("Ping what?")

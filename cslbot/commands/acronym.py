@@ -37,7 +37,9 @@ def get_list():
 @Command("acronym")
 def cmd(send, msg, _):
     """Generates a meaning for the specified acronym.
+
     Syntax: {command} <acronym>
+
     """
     if not msg:
         send("What acronym?")

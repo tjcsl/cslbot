@@ -22,7 +22,9 @@ from ..helpers.textutils import gen_praise
 @Command('praise')
 def cmd(send, msg, _):
     """Praises something.
+
     Syntax: {command} <something>
+
     """
     if not msg:
         send("Praise what?")

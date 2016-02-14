@@ -38,7 +38,9 @@ def gen_urban(send, session, key):
 @Command('botspam', ['config', 'db'])
 def cmd(send, _, args):
     """Abuses the bot.
+
     Syntax: {command}
+
     """
     def lenny_send(msg):
         send(gen_lenny(msg))

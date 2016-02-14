@@ -26,7 +26,9 @@ from ..helpers.command import Command
 @Command(['metar'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
 def cmd(send, msg, args):
     """Gets the weather.
+
     Syntax: {command} <station> [station2...]
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('stations', nargs='*')

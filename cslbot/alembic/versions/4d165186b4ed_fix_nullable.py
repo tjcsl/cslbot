@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""fix nullable
+"""fix nullable.
 
 Revision ID: 4d165186b4ed
 Revises: 7fde00129eb6

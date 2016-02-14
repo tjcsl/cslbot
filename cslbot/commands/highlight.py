@@ -23,7 +23,9 @@ from ..helpers.orm import Log
 @Command('highlight', ['db', 'nick', 'config', 'target', 'botnick'])
 def cmd(send, msg, args):
     """When a nick was last pinged.
+
     Syntax: {command} [--channel #channel] [nick]
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--channel', nargs='?', action=arguments.ChanParser)

@@ -22,7 +22,9 @@ from ..helpers.misc import parse_header
 @Command('signal')
 def cmd(send, msg, _):
     """Return either a random value or the specified one from signal.h.
+
     Syntax: {command} <signal|list>
+
     """
     try:
         send(parse_header('signal', msg))

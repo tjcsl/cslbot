@@ -21,7 +21,9 @@ from ..helpers.command import Command
 @Command('active', ['handler', 'target'])
 def cmd(send, _, args):
     """Returns stats on the active users.
+
     Syntax: {command}
+
     """
     if args['target'] == 'private':
         send("You're all alone!")

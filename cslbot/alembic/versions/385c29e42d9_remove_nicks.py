@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""remove nicks
+"""remove nicks.
 
 Revision ID: 385c29e42d9
 Revises: 3614b38ddf9

@@ -55,7 +55,9 @@ def check_article(name):
 @Command('wikipath', ['config'])
 def cmd(send, msg, args):
     """Find a path between two wikipedia articles.
+
     Syntax: {command} [article] [article]
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('first', nargs='?')

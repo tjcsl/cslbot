@@ -35,8 +35,7 @@ class Base(object):
 
 
 def setup_db(session, botconfig, confdir):
-    """ Sets up the database.
-    """
+    """Sets up the database."""
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.
     if not session.get_bind().has_table('alembic_version'):

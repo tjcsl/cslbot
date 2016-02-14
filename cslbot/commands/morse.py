@@ -22,7 +22,9 @@ from ..helpers.textutils import gen_morse, gen_word
 @Command('morse')
 def cmd(send, msg, args):
     """Converts text to morse code.
+
     Syntax: {command} [text]
+
     """
     if not msg:
         msg = gen_word()

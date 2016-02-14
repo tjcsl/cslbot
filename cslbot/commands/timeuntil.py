@@ -27,7 +27,9 @@ from ..helpers.command import Command
 @Command(['timeuntil', 'timetill'], ['config'])
 def cmd(send, msg, args):
     """Reports the difference between now and some specified time.
+
     Syntax: {command} <time>
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('date', nargs='*', action=arguments.DateParser)

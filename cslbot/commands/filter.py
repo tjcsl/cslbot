@@ -30,7 +30,9 @@ def get_filters(handler, target):
 @Command('filter', ['config', 'target', 'handler', 'is_admin', 'nick', 'type'])
 def cmd(send, msg, args):
     """Changes the output filter.
+
     Syntax: {command} [--channel channel] <filter|--show|--list|--reset|--chain filter,[filter2,...]>
+
     """
     if args['type'] == 'privmsg':
         send('Filters must be set in channels, not via private message.')

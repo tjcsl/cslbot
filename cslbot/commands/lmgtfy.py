@@ -22,7 +22,9 @@ from ..helpers.urlutils import get_short
 @Command(['lmgtfy', 'explain'], ['config'])
 def cmd(send, msg, args):
     """Explain things.
+
     Syntax: {command} <text>
+
     """
     if not msg:
         send("Explain What?")

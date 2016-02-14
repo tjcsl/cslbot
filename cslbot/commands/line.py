@@ -25,7 +25,9 @@ from ..helpers.orm import Log
 @Command(['line', 'rline'], ['db', 'config', 'botnick'])
 def cmd(send, msg, args):
     """Returns a random line from $nick.
+
     Syntax: {command} (--channel <channel>) (nick)
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--channel', action=arguments.ChanParser)

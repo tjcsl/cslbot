@@ -98,7 +98,7 @@ class Workers(object):
             del self.events[eventid]
 
     def stop_workers(self, clean):
-        """ Stop workers and deferred events """
+        """Stop workers and deferred events."""
         with executor_lock:
             self.executor.shutdown(clean)
             del self.executor

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""merge pending
+"""merge pending.
 
 Revision ID: 55efdbb748c
 Revises: 385c29e42d9

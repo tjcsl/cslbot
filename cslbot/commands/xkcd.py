@@ -40,7 +40,9 @@ def do_search(msg, key, searchid):
 @Command('xkcd', ['config'])
 def cmd(send, msg, args):
     """Gets a xkcd comic.
+
     Syntax: {command} [num|latest|term]
+
     """
     latest = get_latest()
     if not msg:

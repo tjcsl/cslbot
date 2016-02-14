@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""use datetime, not float
+"""use datetime, not float.
 
 Revision ID: 243c9cf0eb7d
 Revises: 4d165186b4ed

@@ -29,7 +29,9 @@ def get_scores(cursor):
 @Command(['bc', 'math'], ['db'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
+
     Syntax: {command} <expression>
+
     """
     if not msg:
         send("Calculate what?")

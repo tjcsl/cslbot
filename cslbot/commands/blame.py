@@ -24,7 +24,9 @@ from ..helpers.misc import get_users
 @Command('blame', ['handler', 'target', 'nick', 'config'])
 def cmd(send, msg, args):
     """Blames a random user for something.
+
     Syntax: {command} [reason]
+
     """
     user = choice(get_users(args))
     if msg:

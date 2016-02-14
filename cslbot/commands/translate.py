@@ -23,8 +23,10 @@ from ..helpers.textutils import gen_translate
 @Command(['translate', 'trans'], ['config'])
 def cmd(send, msg, args):
     """Translate something.
+
     Syntax: {command} [--from <language code>] [--to <language code>] <text>
     See https://cloud.google.com/translate/v2/using_rest#language-params for a list of valid language codes
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--lang', '--from', default=None)

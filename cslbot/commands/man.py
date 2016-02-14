@@ -26,7 +26,9 @@ from ..helpers.command import Command
 @Command('man', ['config'])
 def cmd(send, msg, args):
     """Gets a man page.
+
     Syntax: {command} [section] <command>
+
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('section', nargs='?')
