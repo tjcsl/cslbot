@@ -73,6 +73,8 @@ def get_title(url):
                     title = 'Image'
                 if ctype.startswith('video/'):
                     title = 'Video'
+                if ctype.startswith('application/'):
+                    title = ctype
             if title is None:
                 # If we're going to parse the html, we need a get request.
                 if req.request.method == 'HEAD':
