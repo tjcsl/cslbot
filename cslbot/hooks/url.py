@@ -34,10 +34,10 @@ def get_urls(msg):
 
 @Hook('url', ['pubmsg', 'action'], ['config', 'db', 'nick', 'handler'])
 def handle(send, msg, args):
-    """ Get titles for urls.
+    """Get titles for urls.
 
-    | Generate a short url.
-    | Get the page title.
+    Generate a short url. Get the page title.
+
     """
     worker = args['handler'].workers
     result = worker.run_pool(get_urls, [msg])

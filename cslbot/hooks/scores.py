@@ -23,11 +23,11 @@ from ..helpers.orm import Scores
 
 @Hook('scores', ['pubmsg', 'privmsg', 'action'], ['nick', 'config', 'type', 'db', 'abuse'])
 def handle(send, msg, args):
-    """ Handles scores
+    """Handles scores.
 
-    | If it's a ++ add one point unless the user is trying to promote
-    | themselves.
-    | Otherwise substract one point.
+    If it's a ++ add one point unless the user is trying to promote
+    themselves. Otherwise substract one point.
+
     """
     session = args['db']
     matches = re.findall(r"\b(?<!-)(%s{2,16})(\+\+|--)" % args['config']['core']['nickregex'], msg)

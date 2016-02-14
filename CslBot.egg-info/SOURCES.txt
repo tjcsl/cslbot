@@ -203,6 +203,7 @@ scripts/build_docs.sh
 scripts/client.py
 scripts/deploy_docs.sh
 scripts/entropy.py
+scripts/format.sh
 scripts/fuzz.py
 scripts/fuzz.sh
 scripts/gen_babble.py

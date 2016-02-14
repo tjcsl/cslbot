@@ -21,7 +21,7 @@ from ..helpers.hook import Hook
 
 @Hook('xkcd', ['pubmsg', 'action'], ['nick', 'type'])
 def handle(send, msg, args):
-    """ Implements several XKCD comics """
+    """Implements several XKCD comics."""
     output = textutils.gen_xkcd_sub(msg, True)
     if output is None:
         return

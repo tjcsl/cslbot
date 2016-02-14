@@ -125,9 +125,10 @@ class IrcBot(bot.SingleServerIRCBot):
         sys.exit(0)
 
     def shutdown_mp(self, clean=True):
-        """ Shutdown all the multiprocessing.
+        """Shutdown all the multiprocessing.
 
         :param bool clean: Whether to shutdown things cleanly, or force a quick and dirty shutdown.
+
         """
         # The server runs on a worker thread, so we need to shut it down first.
         if hasattr(self, 'server'):
@@ -156,8 +157,9 @@ class IrcBot(bot.SingleServerIRCBot):
     def handle_msg(self, c, e):
         """Handles all messages.
 
-        | If a exception is thrown, catch it and display a nice traceback instead of crashing.
-        | Do the appropriate processing for each event type.
+        - If a exception is thrown, catch it and display a nice traceback instead of crashing.
+        - Do the appropriate processing for each event type.
+
         """
         try:
             self.handler.handle_msg(c, e)
@@ -209,6 +211,7 @@ def init(confdir="/etc/cslbot"):
     """The bot's main entry point.
 
     | Initialize the bot and start processing messages.
+
     """
     multiprocessing.set_start_method('spawn')
 

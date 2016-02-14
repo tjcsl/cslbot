@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 class BotHandler(object):
 
     def __init__(self, config: configparser.ConfigParser, connection: client.ServerConnection, channels: Dict[str, str], confdir: str) -> None:
-        """ Set everything up.
+        """Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
         | abuselist is a dict keeping track of how many times nicks have used
@@ -47,6 +47,7 @@ class BotHandler(object):
         | modules is a dict containing the commands the bot supports.
         | confdir is the path to the directory where the bot's config is stored.
         | db - Is a db wrapper for data storage.
+
         """
         self.connection = connection  # type: client.ServerConnection
         self.channels = channels
@@ -107,8 +108,9 @@ class BotHandler(object):
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
 
-        | If NickServ hasn't responded yet, then the admin is unverified,
-        | so assume they aren't a admin.
+        If NickServ hasn't responded yet, then the admin is unverified,
+        so assume they aren't a admin.
+
         """
         # Current roles are admin and owner, which is a superset of admin.
         with self.db.session_scope() as session:
@@ -179,9 +181,10 @@ class BotHandler(object):
         return max_len - len(overhead.encode())
 
     def send(self, target, nick, msg: str, msgtype, ignore_length=False, filters=None):
-        """ Send a message.
+        """Send a message.
 
         Records the message in the log.
+
         """
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
@@ -223,9 +226,10 @@ class BotHandler(object):
             self.last_msg_time = datetime.now()
 
     def do_log(self, target, nick, msg, msgtype):
-        """ Handles logging.
+        """Handles logging.
 
         | Logs to a sql db.
+
         """
         if not isinstance(msg, str):
             raise Exception("IRC doesn't like it when you send it a %s" % type(msg).__name__)
@@ -255,9 +259,10 @@ class BotHandler(object):
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
 
     def do_part(self, cmdargs, nick, target, msgtype, send, c):
-        """ Leaves a channel.
+        """Leaves a channel.
 
         Prevent user from leaving the primary channel.
+
         """
         channel = self.config['core']['channel']
         botnick = self.config['core']['nick']
@@ -282,9 +287,10 @@ class BotHandler(object):
         c.part(cmdargs)
 
     def do_join(self, cmdargs, nick, msgtype, send, c):
-        """ Join a channel.
+        """Join a channel.
 
         | Checks if bot is already joined to channel.
+
         """
         if not cmdargs:
             send("Join what?")
@@ -313,7 +319,7 @@ class BotHandler(object):
         return False
 
     def do_mode(self, target, msg, nick, send):
-        """ reop and handle guard violations """
+        """reop and handle guard violations."""
         mode_changes = modes.parse_channel_modes(msg)
         with self.data_lock:
             for change in mode_changes:
@@ -340,11 +346,12 @@ class BotHandler(object):
                 send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
 
     def do_kick(self, send, target, nick, msg, slogan=True):
-        """ Kick users.
+        """Kick users.
 
-        | If kick is disabled, don't do anything.
-        | If the bot is not a op, rage at a op.
-        | Kick the user.
+        - If kick is disabled, don't do anything.
+        - If the bot is not a op, rage at a op.
+        - Kick the user.
+
         """
         if not self.kick_enabled:
             return
@@ -370,7 +377,7 @@ class BotHandler(object):
                 self.connection.kick(target, nick, msg)
 
     def do_args(self, modargs, send, nick, target, source, name, msgtype):
-        """ Handle the various args that modules need."""
+        """Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
                 'handler': self,
@@ -394,8 +401,9 @@ class BotHandler(object):
     def do_welcome(self):
         """Do setup when connected to server.
 
-        | Join the primary channel.
-        | Join the control channel.
+        - Join the primary channel.
+        - Join the control channel.
+
         """
         self.rate_limited_send('join', self.config['core']['channel'])
         self.rate_limited_send('join', self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])

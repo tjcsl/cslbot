@@ -26,10 +26,11 @@ _caps_lock = Lock()
 
 @Hook('caps', 'pubmsg', ['nick', 'do_kick', 'target', 'config'])
 def handle(_, msg, args):
-    """ Check for capslock abuse.
+    """Check for capslock abuse.
 
-    | Check if a line is more than THRESHOLD percent uppercase.
-    | If this is the second line in a row, kick the user.
+    Check if a line is more than THRESHOLD percent uppercase. If this is
+    the second line in a row, kick the user.
+
     """
     # SHUT CAPS LOCK OFF, MORON
 

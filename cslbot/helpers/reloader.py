@@ -47,9 +47,10 @@ def load_modules(cfg, confdir, send=logging.error):
 def do_reload(bot, target, cmdargs, owner: bool, server_send=None):
     """The reloading magic.
 
-    | First, reload handler.py.
-    | Then make copies of all the handler data we want to keep.
-    | Create a new handler and restore all the data.
+    - First, reload handler.py.
+    - Then make copies of all the handler data we want to keep.
+    - Create a new handler and restore all the data.
+
     """
     def send(msg):
         if server_send is not None:

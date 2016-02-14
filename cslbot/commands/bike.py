@@ -20,9 +20,12 @@ from ..helpers.command import Command
 
 @Command('bike')
 def cmd(send, *_):
-    """I've got a bike, you can ride it if you like. It's got a basket, a bell that rings and things to make it look good.
+    """I've got a bike, you can ride it if you like.
+
+    It's got a basket, a bell that rings and things to make it look good.
     I'd give it to you if I could but I borrowed it.
     Syntax: {command}
+
     """
     send(' _f_,_')
     send('(_)`(_)')
