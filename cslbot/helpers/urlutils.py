@@ -39,45 +39,45 @@ def get_short(msg, key):
     else:
         return data['id']
 
+def parse_title(req, session):
+    if req.status_code != 200:
+        return 'HTTP Error %d: %s' % (req.status_code, req.reason)
+    ctype = req.headers.get('Content-Type')
+    if ctype is not None:
+        if ctype.startswith('image/'):
+            return 'Image'
+        if ctype.startswith('video/'):
+            return 'Video'
+    # If we're going to parse the html, we need a get request.
+    if req.request.method == 'HEAD':
+        req = session.get(url, timeout=10)
+    html = document_fromstring(req.content)
+    t = html.find('.//title')
+    # FIXME: is there a cleaner way to do this?
+    if t is not None and t.text is not None:
+        # Try to handle multiple types of unicode.
+        try:
+            title = bytes(map(ord, t.text)).decode('utf-8')
+        except (UnicodeDecodeError, ValueError):
+            title = t.text
+        return ' '.join(title.splitlines()).strip()
+    # If we have no <title> element, but we have a Content-Type, fall back to that
+    return 'Title Not Found' if ctype is None else ctype
 
 def get_title(url):
-    title = 'No Title Found'
     try:
-        s = Session(timeout=10)
-        # User-Agent is really hard to get right :(
-        s.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
-        req = s.head(url, allow_redirects=True)
-        if req.status_code == 405:
-            # Site doesn't support HEAD
-            req = s.get(url)
-        ctype = req.headers.get('Content-Type')
-        if req.status_code != 200:
-            title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
-        elif ctype is not None and ctype.startswith('image/'):
-            title = 'Image'
-        elif ctype is not None and ctype.startswith('video/'):
-            title = 'Video'
-        else:
-            if req.request.method == 'HEAD':
-                req = s.get(url)
-            html = document_fromstring(req.content)
-            t = html.find('.//title')
-            # FIXME: is there a cleaner way to do this?
-            if t is not None and t.text is not None:
-                # Try to handle multiple types of unicode.
-                try:
-                    title = bytes(map(ord, t.text)).decode('utf-8')
-                except (UnicodeDecodeError, ValueError):
-                    title = t.text
-                title = ' '.join(title.splitlines()).strip()
-            # If we have no <title> element, but we have a Content-Type, fall back to that
-            elif ctype is not None:
-                title = ctype
-            else:
-                title = "Title Not Found"
+        with Session() as session:
+            # User-Agent is really hard to get right :(
+            session.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
+            req = session.head(url, allow_redirects=True, timeout=10)
+            if req.status_code == 405:
+                # Site doesn't support HEAD
+                req = session.get(url, timeout=10)
+            title = parse_title(req, session)
+            # We not want overly-long titles.
+            title = misc.truncate_msg(title, 256)
     except exceptions.InvalidSchema:
         raise CommandFailedException('%s is not a supported url.' % url)
     except exceptions.MissingSchema:
         return get_title('http://%s' % url)
-    title = misc.truncate_msg(title, 256)
     return title
