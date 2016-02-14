@@ -19,7 +19,7 @@ import re
 
 from lxml.html import document_fromstring
 
-from requests import exceptions, get, head, post
+from requests import Session, exceptions, post
 
 from . import misc
 from .exception import CommandFailedException
@@ -43,12 +43,13 @@ def get_short(msg, key):
 def get_title(url):
     title = 'No Title Found'
     try:
+        s = Session(timeout=10)
         # User-Agent is really hard to get right :(
-        headers = {'User-Agent': 'Mozilla/5.0 CslBot'}
-        req = head(url, headers=headers, allow_redirects=True, timeout=10)
+        s.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
+        req = s.head(url, allow_redirects=True)
         if req.status_code == 405:
             # Site doesn't support HEAD
-            req = get(url, headers=headers, timeout=10)
+            req = s.get(url)
         ctype = req.headers.get('Content-Type')
         if req.status_code != 200:
             title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
@@ -58,7 +59,7 @@ def get_title(url):
             title = 'Video'
         else:
             if req.request.method == 'HEAD':
-                req = get(url, headers=headers, timeout=10)
+                req = s.get(url)
             html = document_fromstring(req.content)
             t = html.find('.//title')
             # FIXME: is there a cleaner way to do this?
