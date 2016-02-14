@@ -39,18 +39,8 @@ def get_short(msg, key):
     else:
         return data['id']
 
-def parse_title(req, session):
-    if req.status_code != 200:
-        return 'HTTP Error %d: %s' % (req.status_code, req.reason)
-    ctype = req.headers.get('Content-Type')
-    if ctype is not None:
-        if ctype.startswith('image/'):
-            return 'Image'
-        if ctype.startswith('video/'):
-            return 'Video'
-    # If we're going to parse the html, we need a get request.
-    if req.request.method == 'HEAD':
-        req = session.get(url, timeout=10)
+
+def parse_title(req):
     html = document_fromstring(req.content)
     t = html.find('.//title')
     # FIXME: is there a cleaner way to do this?
@@ -62,9 +52,11 @@ def parse_title(req, session):
             title = t.text
         return ' '.join(title.splitlines()).strip()
     # If we have no <title> element, but we have a Content-Type, fall back to that
-    return 'Title Not Found' if ctype is None else ctype
+    return req.headers.get('Content-Type')
+
 
 def get_title(url):
+    title = None
     try:
         with Session() as session:
             # User-Agent is really hard to get right :(
@@ -73,11 +65,24 @@ def get_title(url):
             if req.status_code == 405:
                 # Site doesn't support HEAD
                 req = session.get(url, timeout=10)
-            title = parse_title(req, session)
-            # We not want overly-long titles.
-            title = misc.truncate_msg(title, 256)
+            if req.status_code != 200:
+                title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
+            ctype = req.headers.get('Content-Type')
+            if ctype is not None:
+                if ctype.startswith('image/'):
+                    title = 'Image'
+                if ctype.startswith('video/'):
+                    title = 'Video'
+            if title is None:
+                # If we're going to parse the html, we need a get request.
+                if req.request.method == 'HEAD':
+                    req = session.get(url, timeout=10)
+                title = parse_title(req)
     except exceptions.InvalidSchema:
         raise CommandFailedException('%s is not a supported url.' % url)
     except exceptions.MissingSchema:
         return get_title('http://%s' % url)
-    return title
+    if title is None:
+        title = 'Title Not Found'
+    # We don't want overly-long titles.
+    return misc.truncate_msg(title, 256)
