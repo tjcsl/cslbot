@@ -41,7 +41,13 @@ def get_short(msg, key):
 
 
 def parse_title(req):
-    html = document_fromstring(req.content)
+    max_size = 1024 * 1024  # 1MB
+    req.raw.decode_content = True
+    content = req.raw.read(max_size + 1)
+    ctype = req.headers.get('Content-Type')
+    if len(content) > max_size:
+        return 'Response Too Large: %s' % ctype
+    html = document_fromstring(content)
     t = html.find('.//title')
     # FIXME: is there a cleaner way to do this?
     if t is not None and t.text is not None:
@@ -52,7 +58,7 @@ def parse_title(req):
             title = t.text
         return ' '.join(title.splitlines()).strip()
     # If we have no <title> element, but we have a Content-Type, fall back to that
-    return req.headers.get('Content-Type')
+    return ctype
 
 
 def parse_mime(req):
@@ -81,14 +87,14 @@ def get_title(url):
             req = session.head(url, allow_redirects=True, timeout=10)
             if req.status_code == 405:
                 # Site doesn't support HEAD
-                req = session.get(url, timeout=10)
+                req = session.get(url, timeout=10, stream=True)
             if req.status_code != 200:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
             title = parse_mime(req)
             if title is None:
                 # If we're going to parse the html, we need a get request.
                 if req.request.method == 'HEAD':
-                    req = session.get(url, timeout=10)
+                    req = session.get(url, timeout=10, stream=True)
                 title = parse_title(req)
     except exceptions.InvalidSchema:
         raise CommandFailedException('%s is not a supported url.' % url)
