@@ -59,12 +59,16 @@ def parse_mime(req):
     ctype = req.headers.get('Content-Type')
     if ctype is None:
         return ctype
-    if ctype.startswith('image/'):
+    ctype = ctype.split('/')
+    if ctype[0] == 'image':
         return 'Image'
-    if ctype.startswith('video/'):
+    if ctype[0] == 'video':
         return 'Video'
-    if ctype == 'application/zip':
-        return 'Zip'
+    if ctype[0] == 'application':
+        if ctype[1] == 'zip':
+            return 'Zip'
+        if ctype[1] == 'octet-stream':
+            return 'Octet Stream'
     return None
 
 
