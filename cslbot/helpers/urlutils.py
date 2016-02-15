@@ -55,6 +55,19 @@ def parse_title(req):
     return req.headers.get('Content-Type')
 
 
+def parse_mime(req):
+    ctype = req.headers.get('Content-Type')
+    if ctype is None:
+        return ctype
+    if ctype.startswith('image/'):
+        return 'Image'
+    if ctype.startswith('video/'):
+        return 'Video'
+    if ctype == 'application/zip':
+        return 'Zip'
+    return None
+
+
 def get_title(url):
     title = None
     try:
@@ -67,14 +80,7 @@ def get_title(url):
                 req = session.get(url, timeout=10)
             if req.status_code != 200:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
-            ctype = req.headers.get('Content-Type')
-            if ctype is not None:
-                if ctype.startswith('image/'):
-                    title = 'Image'
-                if ctype.startswith('video/'):
-                    title = 'Video'
-                if ctype.startswith('application/'):
-                    title = ctype
+            title = parse_mime(req)
             if title is None:
                 # If we're going to parse the html, we need a get request.
                 if req.request.method == 'HEAD':
