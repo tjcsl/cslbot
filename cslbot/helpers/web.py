@@ -17,6 +17,7 @@
 # USA.
 
 import json
+from urllib import parse
 
 from requests import get, post
 from requests.exceptions import ReadTimeout
@@ -33,7 +34,7 @@ def get_rand_word(session):
     term = None
     while term is None or session.query(UrbanBlacklist).filter(UrbanBlacklist.word == term).count():
         url = get('http://www.urbandictionary.com/random.php').url
-        term = url.split('=')[1].replace('+', ' ')
+        term = parse.unquote_plus(url.split('=')[1])
     return term
 
 
