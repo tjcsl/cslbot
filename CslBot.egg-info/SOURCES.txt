@@ -60,6 +60,7 @@ cslbot/commands/errno.py
 cslbot/commands/filter.py
 cslbot/commands/fml.py
 cslbot/commands/fortune.py
+cslbot/commands/fullwidth.py
 cslbot/commands/fweather.py
 cslbot/commands/gcc.py
 cslbot/commands/gizoogle.py

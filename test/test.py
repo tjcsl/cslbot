@@ -336,6 +336,28 @@ class TranslateTest(BotTest):
                                  ('testnick', '#test-channel', 0, '!translate --to ad translate this', 'pubmsg')])
 
 
+class FullwidthTest(BotTest):
+
+    def test_fullwidth_ascii(self):
+        """Test fullwidth with ASCII characters."""
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth ayy lmao'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ａｙｙ\u3000ｌｍａｏ', 'privmsg'), ('testnick', '#test-channel', 0, '!fullwidth ayy lmao', 'pubmsg')])
+
+    def test_fullwidth_nonascii(self):
+        """Test fullwidth with non-ASCII characters."""
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth ▲▢◎'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, '▲▢◎', 'privmsg'), ('testnick', '#test-channel', 0, '!fullwidth ▲▢◎', 'pubmsg')])
+
+    @mock.patch('cslbot.commands.fullwidth.gen_word')
+    def test_fullwidth_noarg(self, mock_gen_word):
+        """Test fullwidth with no arguments."""
+        mock_gen_word.return_value = 'test'
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth'])
+        self.assertEqual(calls,
+                         [('testBot', '#test-channel', 0, 'ｔｅｓｔ', 'privmsg'),
+                          ('testnick', '#test-channel', 0, '!fullwidth', 'pubmsg')])
+
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
