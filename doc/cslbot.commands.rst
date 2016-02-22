@@ -268,6 +268,14 @@ cslbot.commands.fortune module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.fullwidth module
+--------------------------------
+
+.. automodule:: cslbot.commands.fullwidth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.fweather module
 -------------------------------
 

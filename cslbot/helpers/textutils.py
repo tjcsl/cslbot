@@ -291,6 +291,14 @@ def gen_spacing(msg):
     return result
 
 
+def gen_fullwidth(msg):
+    # All printable ASCII characters have a fullwidth equivalent in U+FF01 through U+FF5E (an offset of 0xFEE0)
+    # with the exception of U+0020 (SPACE), which translates to U+3000 (IDEOGRAPHIC SPACE)
+    normal = ''.join(chr(i) for i in range(0x20, 0x7F))
+    full = '\u3000' + ''.join(chr(i+0xFEE0) for i in range(0x21, 0x7F))
+    return msg.translate(str.maketrans(normal, full))
+
+
 def append_filters(filters):
     filter_list = []
     for next_filter in filter(None, filters.split(',')):
@@ -329,5 +337,6 @@ output_filters = {
     "randtrans": gen_random_translate,
     "multitrans": gen_multi_translate,
     "spacing": gen_spacing,
+    "fullwidth": gen_fullwidth,
     "randfilter": gen_randfilter
 }
