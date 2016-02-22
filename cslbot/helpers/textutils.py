@@ -283,6 +283,14 @@ def gen_multi_translate(msg):
     return msg
 
 
+def gen_spacing(msg):
+    result = ""
+    for char in msg:
+        result += char
+        result += " "
+    return result
+
+
 def append_filters(filters):
     filter_list = []
     for next_filter in filter(None, filters.split(',')):
@@ -320,5 +328,6 @@ output_filters = {
     "translate": gen_translate,
     "randtrans": gen_random_translate,
     "multitrans": gen_multi_translate,
+    "spacing": gen_spacing,
     "randfilter": gen_randfilter
 }
