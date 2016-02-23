@@ -40,16 +40,19 @@ def cmd(send, msg, args):
         return
     if cmdargs.section:
         html = get('http://linux.die.net/man/%s/%s' % (cmdargs.section, cmdargs.command))
-        try:
-            short = fromstring(html.text).find('.//meta[@name="description"]').get('content')
+        short = fromstring(html.text).find('.//meta[@name="description"]')
+        if short is not None:
+            short = short.get('content')
             send("%s -- http://linux.die.net/man/%s/%s" % (short, cmdargs.section, cmdargs.command))
-        except AttributeError:
+        else:
             send("No manual entry for %s in section %s" % (cmdargs.command, cmdargs.section))
     else:
         for section in range(0, 8):
             html = get('http://linux.die.net/man/%d/%s' % (section, cmdargs.command))
             if html.status_code == 200:
-                short = fromstring(html.text).find('.//meta[@name="description"]').get('content')
-                send("%s -- http://linux.die.net/man/%d/%s" % (short, section, cmdargs.command))
-                return
+                short = fromstring(html.text).find('.//meta[@name="description"]')
+                if short is not None:
+                    short = short.get('content')
+                    send("%s -- http://linux.die.net/man/%d/%s" % (short, section, cmdargs.command))
+                    return
         send("No manual entry for %s" % cmdargs.command)
