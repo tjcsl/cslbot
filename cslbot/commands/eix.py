@@ -20,7 +20,7 @@ import subprocess
 from ..helpers.command import Command
 
 
-@Command('eix')
+@Command('eix', limit=10)
 def cmd(send, msg, args):
     """Runs eix with the given arguments.
 
