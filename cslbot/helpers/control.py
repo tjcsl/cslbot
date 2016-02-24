@@ -17,7 +17,6 @@
 
 import logging
 import re
-import sys
 
 from . import arguments, orm, registry, web
 
@@ -37,8 +36,8 @@ def toggle_logging(level):
 def toggle_module(type, name, enable=True):
     if not name:
         return "Missing argument."
-    toggle = "enable_%s" % type if enable else "disable_%s" % type
-    return getattr(sys.modules["cslbot.helpers.%s" % type].registry, toggle)(name[0])
+    reg = getattr(registry, "%s_registry" % type)
+    return reg.enable_object(type, name[0]) if enable else reg.disable_object(type, name[0])
 
 
 def handle_disable(args):
