@@ -19,7 +19,7 @@ import logging
 import re
 import sys
 
-from . import arguments, command, hook, orm, web
+from . import arguments, orm, registry, web
 
 
 def handle_chanserv(args):
@@ -76,9 +76,9 @@ def handle_enable(args):
         if not args.args:
             args.send("Missing argument.")
         elif args.args[0] == "commands":
-            args.send(command.registry.enable_command(args.cmd))
+            args.send(registry.command_registry.enable_command(args.cmd))
         elif args.args[0] == "hooks":
-            args.send(hook.registry.enable_hook(args.cmd))
+            args.send(registry.hook_registry.enable_hook(args.cmd))
         else:
             args.send("Invalid argument.")
     elif args.cmd == "logging":
@@ -136,10 +136,10 @@ def handle_show(args):
         if not args.args:
             args.send("Missing argument.")
         elif args.args[0] == "commands":
-            mods = ", ".join(sorted(command.registry.get_enabled_commands()))
+            mods = ", ".join(sorted(registry.command_registry.get_enabled_commands()))
             args.send(mods, ignore_length=True)
         elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(hook.registry.get_enabled_hooks()))
+            mods = ", ".join(sorted(registry.hook_registry.get_enabled_hooks()))
             args.send(mods)
         else:
             args.send("Invalid argument.")
@@ -147,10 +147,10 @@ def handle_show(args):
         if not args.args:
             args.send("Missing argument.")
         elif args.args[0] == "commands":
-            mods = ", ".join(sorted(command.registry.get_disabled_commands()))
+            mods = ", ".join(sorted(registry.command_registry.get_disabled_commands()))
             args.send(mods if mods else "No disabled commands.")
         elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(hook.registry.get_disabled_hooks()))
+            mods = ", ".join(sorted(registry.hook_registry.get_disabled_hooks()))
             args.send(mods if mods else "No disabled hooks.")
         else:
             args.send("Invalid argument.")
