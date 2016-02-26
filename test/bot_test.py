@@ -46,7 +46,6 @@ def rate_limited_send(self, mtype, target, msg=None):
 
 
 class BotTest(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.cap_done = False
@@ -170,17 +169,17 @@ class BotTest(unittest.TestCase):
         # We support WHOX!
         self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
         self.assertTrue(self.bot.handler.features['whox'])
-        expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'),
-                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
+        expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'), (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
                           (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
         self.assertEqual(calls, expected_calls)
-        self.assertEqual(sorted([x[0] for x in self.raw_mock.call_args_list]),
-                         [('AUTHENTICATE PLAIN',),
-                          ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
-                          ('NICK %s' % self.nick,),
-                          ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
-                          ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
-                          ('USER %s 0 * :%s' % (self.nick, self.nick),)])
+        self.assertEqual(
+            sorted([x[0] for x in self.raw_mock.call_args_list]),
+            [('AUTHENTICATE PLAIN', ),
+             ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==', ),  # nick=testBot, password=dankmemes
+             ('NICK %s' % self.nick, ),
+             ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel), ),
+             ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan), ),
+             ('USER %s 0 * :%s' % (self.nick, self.nick), )])
         self.log_mock.reset_mock()
 
     def send_msg(self, mtype, source, target, arguments=[]):

@@ -16,7 +16,6 @@
 import os
 import sys
 
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -31,16 +30,9 @@ import pkg_resources  # noqa
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.intersphinx',
-]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', ]
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
-                       'irc': ('https://pythonhosted.org/irc', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'irc': ('https://pythonhosted.org/irc', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -111,7 +103,6 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
-
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -230,10 +221,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'CslBot.tex', 'CslBot Documentation',
-     'Peter Foley', 'manual'),
-]
+latex_documents = [(master_doc, 'CslBot.tex', 'CslBot Documentation', 'Peter Foley', 'manual'), ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -255,30 +243,21 @@ latex_documents = [
 # If false, no module index is generated.
 # latex_domain_indices = True
 
-
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'cslbot', 'CslBot Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, 'cslbot', 'CslBot Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
-
 
 # -- Options for Texinfo output -------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-    (master_doc, 'CslBot', 'CslBot Documentation',
-     author, 'CslBot', 'An easily extensible, modular irc bot.',
-     'Miscellaneous'),
-]
+texinfo_documents = [(master_doc, 'CslBot', 'CslBot Documentation', author, 'CslBot', 'An easily extensible, modular irc bot.', 'Miscellaneous'), ]
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []

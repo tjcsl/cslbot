@@ -15,7 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
 import multiprocessing
 import re
 import signal
@@ -41,7 +40,6 @@ def pool_init():
 
 
 class Workers(object):
-
     def __init__(self, handler) -> None:
         self.worker_lock = threading.Lock()
         with self.worker_lock:
@@ -53,6 +51,7 @@ class Workers(object):
 
         def send(msg, target=handler.config['core']['ctrlchan']):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)

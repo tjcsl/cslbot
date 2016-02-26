@@ -66,6 +66,7 @@ def setup_bot():
         bot.start()
     return bot
 
+
 setup_mocks()
 bot = setup_bot()
 e = irc.client.Event('privmsg', irc.client.NickMask('dankmemes'), '#test-channel')

@@ -39,7 +39,6 @@ def get_session(config):
 
 
 class Sql():
-
     def __init__(self, config, confdir):
         """Set everything up."""
         self.session = get_session(config)

@@ -30,9 +30,25 @@ def cmd(send, msg, args):
         # let people !8ball again if they screw up and forget the part where you ask a question.
         args['handler'].abuselist[args['nick']]['8ball'].pop()
         return
-    answers = {"It is certain": "yes", "It is decidedly so": "yes", "Without a doubt": "yes", "Yes, definitely": "yes", "You may rely on it": "yes", "As I see it, yes": "yes",
-               "Most likely": "yes", "Outlook good": "yes", "Yes": "yes", "Signs point to yes": "yes",
-               "Reply hazy, try again": "maybe", "Ask again later": "maybe", "Better not tell you now": "maybe", "Cannot predict now": "maybe", "Concentrate and ask again": "maybe",
-               "Don't count on it": "no", "My reply is no": "no", "My sources say no": "no", "Outlook not so good": "no", "Very doubtful": "no"}
+    answers = {"It is certain": "yes",
+               "It is decidedly so": "yes",
+               "Without a doubt": "yes",
+               "Yes, definitely": "yes",
+               "You may rely on it": "yes",
+               "As I see it, yes": "yes",
+               "Most likely": "yes",
+               "Outlook good": "yes",
+               "Yes": "yes",
+               "Signs point to yes": "yes",
+               "Reply hazy, try again": "maybe",
+               "Ask again later": "maybe",
+               "Better not tell you now": "maybe",
+               "Cannot predict now": "maybe",
+               "Concentrate and ask again": "maybe",
+               "Don't count on it": "no",
+               "My reply is no": "no",
+               "My sources say no": "no",
+               "Outlook not so good": "no",
+               "Very doubtful": "no"}
     answer = choice(list(answers.keys()))
     send('says... %s' % answer, 'action')

@@ -3,6 +3,7 @@
 .gitignore
 .pep8
 .pylintrc
+.style.yapf
 .travis.yml
 COPYING
 README.rst

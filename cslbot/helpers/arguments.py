@@ -28,7 +28,6 @@ class ArgumentException(Exception):
 
 
 class NickParser(argparse.Action):
-
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -39,7 +38,6 @@ class NickParser(argparse.Action):
 
 
 class ChanParser(argparse.Action):
-
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -54,7 +52,6 @@ class ChanParser(argparse.Action):
 
 
 class DateParser(argparse.Action):
-
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -67,7 +64,6 @@ class DateParser(argparse.Action):
 
 
 class TumblrParser(argparse.Action):
-
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -80,7 +76,6 @@ class TumblrParser(argparse.Action):
 
 
 class ZipParser(argparse.Action):
-
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
@@ -91,7 +86,6 @@ class ZipParser(argparse.Action):
 
 
 class ArgParser(argparse.ArgumentParser):
-
     def __init__(self, config=None, **kwargs):
         super().__init__(add_help=False, **kwargs)
         self.namespace = argparse.Namespace()

@@ -22,7 +22,6 @@ from . import modutils
 
 
 class Registry(object):
-
     def __init__(self) -> None:
         self.known_objects = {}  # type: Dict[str,Any]
         self.disabled_objects = set()  # type: Set[Any]
@@ -30,7 +29,7 @@ class Registry(object):
     def is_disabled(self, obj: str) -> bool:
         return obj in self.disabled_objects
 
-    def register(self, obj: Any, name: str = None) -> None:
+    def register(self, obj: Any, name: str=None) -> None:
         if name is None:
             name = obj.name
         if name in self.known_objects:
@@ -66,7 +65,6 @@ class Registry(object):
 
 
 class HookRegistry(Registry):
-
     def scan_for_hooks(self) -> List[str]:
         """Scans for hooks.
 
@@ -97,11 +95,11 @@ class HookRegistry(Registry):
         """Removes a command from the disabled hooks list."""
         return self.enable_object("hook", hook)
 
+
 hook_registry = HookRegistry()
 
 
 class CommandRegistry(Registry):
-
     def scan_for_commands(self) -> List[str]:
         """Scans for commands.
 
@@ -117,7 +115,7 @@ class CommandRegistry(Registry):
     def get_enabled_commands(self) -> List[str]:
         return [x for x in self.known_objects if x not in self.disabled_objects]
 
-    def get_disabled_commands(self) ->List[str]:
+    def get_disabled_commands(self) -> List[str]:
         return [x for x in self.known_objects if x in self.disabled_objects]
 
     def is_registered(self, command_name: str) -> bool:
@@ -133,5 +131,6 @@ class CommandRegistry(Registry):
     def enable_command(self, command: str) -> str:
         """Removes a command from the disabled commands list."""
         return self.enable_object("command", command)
+
 
 command_registry = CommandRegistry()

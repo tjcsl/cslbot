@@ -30,7 +30,6 @@ from os import path
 
 from irc import bot, client, connection
 
-
 if sys.version_info < (3, 5):
     # Dependency on typing
     raise Exception("Need Python 3.5 or higher.")
@@ -40,7 +39,6 @@ from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
 
 class IrcBot(bot.SingleServerIRCBot):
-
     def __init__(self, confdir):
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)
@@ -80,8 +78,8 @@ class IrcBot(bot.SingleServerIRCBot):
             self.server = server.init_server(self)
 
     def handle_event(self, c, e):
-        handled_types = ['account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick',
-                         'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome', 'whospcrpl']
+        handled_types = ['account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick', 'mode', 'nicknameinuse', 'nosuchnick', 'nick', 'part',
+                         'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome', 'whospcrpl']
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
             return

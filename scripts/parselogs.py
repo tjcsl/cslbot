@@ -32,7 +32,6 @@ from cslbot.helpers.sql import get_session  # noqa
 
 
 class LogProcesser(object):
-
     def __init__(self, outdir):
         self.day = {}
         self.logs = {}

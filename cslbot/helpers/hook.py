@@ -26,8 +26,7 @@ from . import backtrace, registry
 
 
 class Hook(object):
-
-    def __init__(self, name: str, types: Union[str, List[str]], args: List[str] =[]) -> None:
+    def __init__(self, name: str, types: Union[str, List[str]], args: List[str]=[]) -> None:
         self.name = name  # type: str
         self.types = [types] if isinstance(types, str) else types
         self.args = args
@@ -48,6 +47,7 @@ class Hook(object):
                     backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
                 finally:
                     thread.name = "%s idle, last ran %s" % (thread_id, func.__module__)
+
         self.exe = wrapper
         return wrapper
 

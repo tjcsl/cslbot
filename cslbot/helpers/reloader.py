@@ -52,11 +52,13 @@ def do_reload(bot, target, cmdargs, owner: bool, server_send=None):
     - Create a new handler and restore all the data.
 
     """
+
     def send(msg):
         if server_send is not None:
             server_send("%s\n" % msg)
         else:
             do_log(bot.connection, target, msg)
+
     confdir = bot.handler.confdir
 
     if cmdargs == 'pull':

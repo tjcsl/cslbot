@@ -47,8 +47,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 
 class Command(object):
-
-    def __init__(self, names: Union[str, list], args: List[str] =[], limit: int =0, role: str =None) -> None:
+    def __init__(self, names: Union[str, list], args: List[str]=[], limit: int=0, role: str=None) -> None:
         self.names = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -70,6 +69,7 @@ class Command(object):
                 backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
             finally:
                 thread.name = "%s idle, last ran command.%s" % (thread_id, self.names[0])
+
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
             print("Warning:", self.names[0], "has no or very little documentation")

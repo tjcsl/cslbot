@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class BotHandler(object):
-
     def __init__(self, config: configparser.ConfigParser, connection: client.ServerConnection, channels: Dict[str, str], confdir: str) -> None:
         """Set everything up.
 
@@ -303,8 +302,7 @@ class BotHandler(object):
         cmd = cmdargs.split()
         # FIXME: use argparse
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
-            send("%s is already a member of %s" % (self.config['core']['nick'],
-                                                   cmd[0]))
+            send("%s is already a member of %s" % (self.config['core']['nick'], cmd[0]))
             return
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
@@ -436,6 +434,7 @@ class BotHandler(object):
         # define a new send to handle filter chaining
         def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
+
         return cmdargs, filtersend
 
     def do_rejoin(self, c, e):

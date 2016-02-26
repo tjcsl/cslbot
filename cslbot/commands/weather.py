@@ -89,10 +89,13 @@ def get_weather(cmdargs, send, apikey):
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string[1:])).json()
         if 'current_observation' in data:
             data = {'display_location': {'full': cmdargs.string[1:]},
-                    'weather': 'Sunny', 'temp_f': '94.8', 'feelslike_f': '92.6', 'relative_humidity': '60%', 'pressure_in': '29.98',
+                    'weather': 'Sunny',
+                    'temp_f': '94.8',
+                    'feelslike_f': '92.6',
+                    'relative_humidity': '60%',
+                    'pressure_in': '29.98',
                     'wind_string': 'Calm'}
-            forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
-                            'high': {'fahrenheit': '3841'}, 'low': {'fahrenheit': '-6666'}}
+            forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ', 'high': {'fahrenheit': '3841'}, 'low': {'fahrenheit': '-6666'}}
             alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
         elif 'results' in data['response']:
             send("%d results found, please be more specific" % len(data['response']['results']))
@@ -114,25 +117,15 @@ def get_weather(cmdargs, send, apikey):
             return False
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
     send("Current weather for %s:" % data['display_location']['full'])
-    current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
-        data['weather'],
-        data['temp_f'],
-        data['feelslike_f'],
-        data['relative_humidity'],
-        data['pressure_in'],
-        data['wind_string'])
-    forecast = '%s, High: %s, Low: %s' % (
-        forecastdata['conditions'],
-        forecastdata['high']['fahrenheit'],
-        forecastdata['low']['fahrenheit'])
+    current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (data['weather'], data['temp_f'], data['feelslike_f'], data['relative_humidity'], data['pressure_in'],
+                                                                                       data['wind_string'])
+    forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
     send(current)
     send("Forecast: %s" % forecast)
     if alertdata['alerts']:
         alertlist = []
         for alert in alertdata['alerts']:
-            alertlist.append("%s, expires %s" % (
-                alert['description'],
-                alert['expires']))
+            alertlist.append("%s, expires %s" % (alert['description'], alert['expires']))
         send("Weather Alerts: %s" % ', '.join(alertlist))
     return True
 
@@ -149,10 +142,7 @@ def get_forecast(cmdargs, send, apikey):
         return False
     for day in forecastdata:
         if (day['date']['day'], day['date']['month'], day['date']['year']) == (cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
-            forecast = '%s, High: %s, Low: %s' % (
-                day['conditions'],
-                day['high']['fahrenheit'],
-                day['low']['fahrenheit'])
+            forecast = '%s, High: %s, Low: %s' % (day['conditions'], day['high']['fahrenheit'], day['low']['fahrenheit'])
             send("Forecast for %s on %s: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), forecast))
             return
     send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime("%x")))
@@ -174,9 +164,7 @@ def get_hourly(cmdargs, send, apikey):
         # wunderground's API returns strings rather than ints for the date for some reason, so casting is needed here
         date = (int(hour['FCTIME'][x]) for x in ['hour', 'mday', 'mon', 'year'])
         if date == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
-            forecast = '%s, Temperature: %s' % (
-                hour['condition'],
-                hour['temp']['english'])
+            forecast = '%s, Temperature: %s' % (hour['condition'], hour['temp']['english'])
             send("Forecast for %s on %s at %s00: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), cmdargs.hour, forecast))
             return
     send("Couldn't find data for %s hour %s in the 10-day hourly forecast" % (cmdargs.date.strftime("%x"), cmdargs.hour))

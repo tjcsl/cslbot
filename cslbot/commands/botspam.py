@@ -42,9 +42,10 @@ def cmd(send, _, args):
     Syntax: {command}
 
     """
+
     def lenny_send(msg):
         send(gen_lenny(msg))
+
     key = args['config']['api']['googleapikey']
-    cmds = [lambda: gen_fortune(lenny_send),
-            lambda: gen_urban(lenny_send, args['db'], key)]
+    cmds = [lambda: gen_fortune(lenny_send), lambda: gen_urban(lenny_send, args['db'], key)]
     choice(cmds)()

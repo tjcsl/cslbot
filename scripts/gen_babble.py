@@ -21,7 +21,6 @@ import time
 from os.path import dirname, exists, join
 from sys import path
 
-
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))

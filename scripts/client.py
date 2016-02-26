@@ -25,7 +25,6 @@ from irc import client, connection
 
 
 class IrcClient(client.SimpleIRCClient):
-
     def __init__(self, nick, config):
         self.nick = nick
         self.config = config
@@ -82,6 +81,7 @@ def main():
         factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
     ircclient.connect(config['core']['host'], config.getint('core', 'ircport'), ctrl_nick, config['auth']['serverpass'], connect_factory=factory)
     ircclient.start()
+
 
 if __name__ == '__main__':
     main()

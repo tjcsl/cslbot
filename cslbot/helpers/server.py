@@ -19,7 +19,6 @@ import socketserver
 
 from . import backtrace, reloader
 
-
 WELCOME = """
 Welcome to the IRCbot console.
 Copyright (C) 2013-2015 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
@@ -27,6 +26,7 @@ Licensed under the GNU GPL version 2.
 
 Type "help" for a list of commands.
 """
+
 HELP = """
 help\t\t\tshow this help
 reload\t\t\treload the bot
@@ -56,7 +56,6 @@ class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class BotNetHandler(socketserver.BaseRequestHandler):
-
     def get_data(self):
         size = 4096
         msg = "".encode()
@@ -99,8 +98,10 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         try:
+
             def send(msg):
                 self.request.send(msg.encode())
+
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
