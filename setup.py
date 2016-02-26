@@ -72,6 +72,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Topic :: Communications :: Chat :: Internet Relay Chat',
     ],
+    keywords=['csl', 'tjhsst', 'tj', 'irc', 'bot'],
     entry_points={
         'console_scripts': [
             'cslbot = cslbot.helpers.core:init',
