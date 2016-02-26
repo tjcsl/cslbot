@@ -41,7 +41,8 @@ def weighted_next(data):
 def build_msg(cursor, speaker, length, start):
     table = Babble if length == 1 else Babble2
     location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
-    count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.length == length, Babble_count.key == speaker).scalar()
+    count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.length == length,
+                                                    Babble_count.key == speaker).scalar()
     if count is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:

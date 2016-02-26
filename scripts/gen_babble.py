@@ -34,7 +34,9 @@ def main(confdir="/etc/cslbot"):
         config.read_file(f)
     parser = argparse.ArgumentParser()
     parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
-    parser.add_argument('--incremental', action='store_false', help='Whether to build the cache from scratch or incrementally update an existing one.')
+    parser.add_argument('--incremental',
+                        action='store_false',
+                        help='Whether to build the cache from scratch or incrementally update an existing one.')
     args = parser.parse_args()
     session = sql.get_session(config)()
     cmdchar = config['core']['cmdchar']

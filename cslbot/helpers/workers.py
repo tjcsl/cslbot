@@ -130,7 +130,8 @@ class Workers(object):
             with handler.data_lock:
                 for name in handler.channels.keys():
                     for nick, voiced in handler.voiced[name].items():
-                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
+                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time,
+                                                                or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
                             handler.rate_limited_send('mode', name, '-v %s' % nick)
 
     def check_babble(self, handler, send):
@@ -143,7 +144,9 @@ class Workers(object):
             if not babble.update_markov(session, handler.config):
                 return
             last = session.query(Babble_last).first()
-            row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
+            row = session.query(Log).filter(
+                or_(Log.type == 'pubmsg',
+                    Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:
                 return
             if abs(last.last - row.id) > 1:

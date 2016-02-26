@@ -29,7 +29,10 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     try:
-        data = post('https://www.googleapis.com/urlshortener/v1/url', params={'key': key}, json=({'longUrl': msg}), headers={'Content-Type': 'application/json'}).json()
+        data = post('https://www.googleapis.com/urlshortener/v1/url',
+                    params={'key': key},
+                    json=({'longUrl': msg}),
+                    headers={'Content-Type': 'application/json'}).json()
     except exceptions.ConnectTimeout as e:
         # Sanitize the error before throwing it
         raise exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))

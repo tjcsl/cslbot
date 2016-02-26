@@ -42,7 +42,12 @@ def parse_time(time):
         time = int(time)
     else:
         return None
-    conv = {'s': 1, 'm': 60, 'h': timedelta(hours=1).total_seconds(), 'd': timedelta(days=1).total_seconds(), 'w': timedelta(weeks=1).total_seconds(), 'y': timedelta(weeks=52).total_seconds()}
+    conv = {'s': 1,
+            'm': 60,
+            'h': timedelta(hours=1).total_seconds(),
+            'd': timedelta(days=1).total_seconds(),
+            'w': timedelta(weeks=1).total_seconds(),
+            'y': timedelta(weeks=52).total_seconds()}
     if unit in conv.keys():
         return time * conv[unit]
     else:
@@ -136,7 +141,10 @@ def get_cmdchar(config, connection, msg, msgtype):
 
 
 def parse_header(header, msg):
-    proc = subprocess.run(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'], stdout=subprocess.PIPE, universal_newlines=True, check=True)
+    proc = subprocess.run(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'],
+                          stdout=subprocess.PIPE,
+                          universal_newlines=True,
+                          check=True)
     if header == 'errno':
         defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     else:

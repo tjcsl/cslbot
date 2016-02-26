@@ -84,7 +84,8 @@ def cmd(send, msg, args):
         row = Issues(title=cmdargs.title, description=cmdargs.description, source=str(args['source']))  # str needed to make mysqlconnector happy
         args['db'].add(row)
         args['db'].flush()
-        send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.description, args['nick']), target=args['config']['core']['ctrlchan'])
+        send("New Issue: #%d -- %s -- %s, Submitted by %s" % (row.id, cmdargs.title, cmdargs.description, args['nick']),
+             target=args['config']['core']['ctrlchan'])
         send("Issue submitted for approval.", target=args['nick'])
     else:
         send("Invalid arguments.")

@@ -34,8 +34,8 @@ setup(name="CslBot",
       test_suite='test.test',
       package_data={
           '': [
-              'alembic/env.py', 'alembic/script.py.mako', 'alembic/versions/*.py', 'static/*.example', 'static/slogans', 'static/shakespeare-dictionary.json', 'static/wordlist',
-              'templates/sorttable.js', 'templates/*.html'
+              'alembic/env.py', 'alembic/script.py.mako', 'alembic/versions/*.py', 'static/*.example', 'static/slogans',
+              'static/shakespeare-dictionary.json', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
           ],
       },
       exclude_package_data={
@@ -57,7 +57,8 @@ setup(name="CslBot",
       ],
       extras_require={
           'doc': ['sphinx'],
-          'analysis': ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8', 'docformatter'],
+          'analysis': ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8',
+                       'docformatter'],
           'test': ['pytest-xdist'],
       },
       classifiers=[

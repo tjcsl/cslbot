@@ -31,7 +31,8 @@ def gen_stock(msg):
         changepercent = "%.3f%%" % quote['ChangePercent']
         if quote['ChangePercent'] >= 0:
             changepercent = '+' + changepercent
-        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent, quote['High'], quote['Low'])
+        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent, quote['High'],
+                                                             quote['Low'])
 
 
 def random_stock():
