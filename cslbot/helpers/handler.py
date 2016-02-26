@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 
 
 class BotHandler(object):
+
     def __init__(self, config: configparser.ConfigParser, connection: client.ServerConnection, channels: Dict[str, str], confdir: str) -> None:
         """Set everything up.
 

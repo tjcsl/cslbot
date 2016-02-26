@@ -22,6 +22,7 @@ from . import modutils
 
 
 class Registry(object):
+
     def __init__(self) -> None:
         self.known_objects = {}  # type: Dict[str,Any]
         self.disabled_objects = set()  # type: Set[Any]
@@ -65,6 +66,7 @@ class Registry(object):
 
 
 class HookRegistry(Registry):
+
     def scan_for_hooks(self) -> List[str]:
         """Scans for hooks.
 
@@ -100,6 +102,7 @@ hook_registry = HookRegistry()
 
 
 class CommandRegistry(Registry):
+
     def scan_for_commands(self) -> List[str]:
         """Scans for commands.
 

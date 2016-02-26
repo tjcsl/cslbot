@@ -38,6 +38,7 @@ from test.bot_test import BotTest  # noqa
 
 
 class CoreTest(BotTest):
+
     def test_handle_nick(self):
         """Test the bot's ability to handle nick change events."""
         # We must be in a channel to track other people's joins
@@ -81,6 +82,7 @@ class CoreTest(BotTest):
 
 
 class MorseTest(BotTest):
+
     def test_morse_encode(self):
         """Make sure the bot properly encodes morse."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!morse bob'])
@@ -101,6 +103,7 @@ class MorseTest(BotTest):
 
 
 class ZipcodeTest(BotTest):
+
     @mock.patch('cslbot.commands.zipcode.get')
     def test_zipcode_valid(self, mock_get):
         """Test a correct zip code."""
@@ -122,6 +125,7 @@ class ZipcodeTest(BotTest):
 
 
 class WisdomTest(BotTest):
+
     @mock.patch('cslbot.commands.wisdom.get')
     def test_wisdom_valid(self, mock_get):
         """Test a valid wisdom lookup."""
@@ -162,6 +166,7 @@ class WisdomTest(BotTest):
 
 
 class DefinitionTest(BotTest):
+
     @mock.patch('cslbot.commands.define.get')
     def test_definition_valid(self, mock_get):
         """Test a valid definition."""
@@ -197,6 +202,7 @@ class DefinitionTest(BotTest):
 
 
 class ErrnoTest(BotTest):
+
     @mock.patch('cslbot.helpers.misc.choice')
     def test_errno_valid_no_input(self, mock_choice):
         """Test errno run with no input, this also tests name -> number mapping"""
@@ -233,6 +239,7 @@ class ErrnoTest(BotTest):
 
 
 class SignalTest(BotTest):
+
     def test_signal_valid(self):
         """Test signal, basic check only since errno covers most of the backend."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!signal 9'])
@@ -241,6 +248,7 @@ class SignalTest(BotTest):
 
 
 class CoinTest(BotTest):
+
     @mock.patch('cslbot.commands.coin.choice')
     def test_coin_valid(self, mock_choice):
         """Test the default coin flip."""
@@ -265,6 +273,7 @@ class CoinTest(BotTest):
 
 
 class BotsnackTest(BotTest):
+
     def test_botsnack_valid_noargs(self):
         """Test botsnack with no arguments."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!botsnack'])
@@ -282,6 +291,7 @@ class BotsnackTest(BotTest):
 
 
 class TranslateTest(BotTest):
+
     @unittest.skip("api is broken")
     def test_translate_valid_args(self):
         """Test translate with a valid string."""
@@ -308,6 +318,7 @@ class TranslateTest(BotTest):
 
 
 class FullwidthTest(BotTest):
+
     def test_fullwidth_ascii(self):
         """Test fullwidth with ASCII characters."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth ayy lmao'])

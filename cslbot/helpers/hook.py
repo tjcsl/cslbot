@@ -26,6 +26,7 @@ from . import backtrace, registry
 
 
 class Hook(object):
+
     def __init__(self, name: str, types: Union[str, List[str]], args: List[str]=[]) -> None:
         self.name = name  # type: str
         self.types = [types] if isinstance(types, str) else types
@@ -33,6 +34,7 @@ class Hook(object):
         registry.hook_registry.register(self)
 
     def __call__(self, func: Callable[[Callable[[str], None], str, List[str]], None]) -> Callable[[str], None]:
+
         @functools.wraps(func)
         def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:

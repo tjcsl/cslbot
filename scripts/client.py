@@ -25,6 +25,7 @@ from irc import client, connection
 
 
 class IrcClient(client.SimpleIRCClient):
+
     def __init__(self, nick, config):
         self.nick = nick
         self.config = config

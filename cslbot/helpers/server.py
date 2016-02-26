@@ -56,6 +56,7 @@ class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class BotNetHandler(socketserver.BaseRequestHandler):
+
     def get_data(self):
         size = 4096
         msg = "".encode()

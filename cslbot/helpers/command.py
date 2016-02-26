@@ -47,6 +47,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 
 class Command(object):
+
     def __init__(self, names: Union[str, list], args: List[str]=[], limit: int=0, role: str=None) -> None:
         self.names = [names] if isinstance(names, str) else names
         self.args = args
@@ -56,6 +57,7 @@ class Command(object):
             registry.command_registry.register(self, name)
 
     def __call__(self, func: Callable[[Callable[[str], None], str, Dict[str, str]], None]) -> Callable[[str], None]:
+
         @functools.wraps(func)
         def wrapper(send, msg: str, args: Dict[str, str]) -> None:
             try:

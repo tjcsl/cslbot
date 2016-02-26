@@ -40,6 +40,7 @@ def pool_init():
 
 
 class Workers(object):
+
     def __init__(self, handler) -> None:
         self.worker_lock = threading.Lock()
         with self.worker_lock:
