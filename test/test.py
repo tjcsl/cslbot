@@ -187,8 +187,8 @@ class DefinitionTest(BotTest):
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!define potato'])
         self.assertEqual(calls, [
             ('testBot', '#test-channel', 0,
-             'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland', 'privmsg'),
-            ('testnick', '#test-channel', 0, '!define potato', 'pubmsg')
+             'potato, white potato, Irish potato, murphy, spud, tater: an edible tuber native to South America; a staple food of Ireland',
+             'privmsg'), ('testnick', '#test-channel', 0, '!define potato', 'pubmsg')
         ])
 
     @mock.patch('cslbot.commands.define.get')

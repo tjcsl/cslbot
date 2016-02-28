@@ -130,8 +130,8 @@ class Workers(object):
             with handler.data_lock:
                 for name in handler.channels.keys():
                     for nick, voiced in handler.voiced[name].items():
-                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time,
-                                                                or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
+                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time, or_(Log.type == 'pubmsg', Log.type ==
+                                                                                                                 'action')).count() == 0:
                             handler.rate_limited_send('mode', name, '-v %s' % nick)
 
     def check_babble(self, handler, send):

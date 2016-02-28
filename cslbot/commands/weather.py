@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import datetime
+import json
 import re
 import socket
 from os.path import join
@@ -26,7 +27,7 @@ from pkg_resources import Requirement, resource_filename
 
 from requests import get
 
-from ..helpers import arguments
+from ..helpers import arguments, exception
 from ..helpers.command import Command
 from ..helpers.geoip import get_zipcode
 from ..helpers.orm import Weather_prefs
@@ -106,9 +107,12 @@ def get_weather(cmdargs, send, apikey):
             send("Invalid or Ambiguous Location")
             return False
     else:
-        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
-        forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
-        alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, cmdargs.string)).json()
+        try:
+            data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
+            forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
+            alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, cmdargs.string)).json()
+        except json.JSONDecodeError as e:
+            raise exception.CommandFailedException(e)
         if 'current_observation' in data:
             data = data['current_observation']
         elif 'results' in data['response']:
