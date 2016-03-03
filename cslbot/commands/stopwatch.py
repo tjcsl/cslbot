@@ -78,9 +78,9 @@ def list_stopwatch(args):
     active = args.session.query(Stopwatches).filter(Stopwatches.active == 1).order_by(Stopwatches.id).all()
     paused = args.session.query(Stopwatches).filter(Stopwatches.active == 0).order_by(Stopwatches.id).all()
     for x in active:
-        args.send('Active stopwatch #%d started at %d' % (x.id, x.time), target=args.nick)
+        args.send('Active stopwatch #%d started at %s' % (x.id, x.time), target=args.nick)
     for x in paused:
-        args.send('Paused stopwatch #%d started at %d time elapsed %d' % (x.id, x.time, x.elapsed), target=args.nick)
+        args.send('Paused stopwatch #%d started at %s time elapsed %d' % (x.id, x.time, x.elapsed), target=args.nick)
     return "%d active and %d paused stopwatches." % (len(active), len(paused))
 
 

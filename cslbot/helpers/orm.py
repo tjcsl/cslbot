@@ -21,7 +21,7 @@ from alembic import command, config
 
 from pkg_resources import Requirement, resource_filename
 
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, Unicode, UnicodeText
+from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -100,7 +100,7 @@ class Commands(Base):
 class Stopwatches(Base):
     active = Column(Integer, default=1)
     time = Column(DateTime)
-    elapsed = Column(DateTime)
+    elapsed = Column(Float)
 
 
 class Urls(Base):

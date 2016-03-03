@@ -26,6 +26,7 @@ cslbot/alembic/versions/385c29e42d9_remove_nicks.py
 cslbot/alembic/versions/4d165186b4ed_fix_nullable.py
 cslbot/alembic/versions/55efdbb748c_merge_pending.py
 cslbot/alembic/versions/7fde00129eb6_multi_babble.py
+cslbot/alembic/versions/e7106eedcf8c_fix_stopwatch.py
 cslbot/alembic/versions/ef7ccebeff_initial_commit.py
 cslbot/commands/8ball.py
 cslbot/commands/__init__.py
