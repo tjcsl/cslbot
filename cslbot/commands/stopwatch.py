@@ -46,7 +46,7 @@ def stop_stopwatch(args):
     if stopwatch.active == 0:
         return "That stopwatch is already stopped!"
     etime = datetime.now() - stopwatch.time
-    stopwatch.elapsed = etime
+    stopwatch.elapsed = etime.total_seconds()
     stopwatch.active = 0
     return "Stopwatch stopped at %s" % get_elapsed(args.session, args.id)
 
