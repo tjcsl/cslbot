@@ -58,7 +58,7 @@ class IrcBot(bot.SingleServerIRCBot):
         serverinfo = bot.ServerSpec(self.config['core']['host'], self.config.getint('core', 'ircport'), passwd)
         nick = self.config['core']['nick']
         self.reactor_class = functools.partial(client.Reactor, on_connect=self.do_cap)
-        super().__init__([serverinfo], nick, nick, connect_factory=factory, reconnection_interval=5)
+        super().__init__([serverinfo], nick, nick, connect_factory=factory)
         # These allow reload events to be processed when a reload has failed.
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
         self.connection.add_global_handler("privmsg", self.reload_handler, -30)
