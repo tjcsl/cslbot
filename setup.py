@@ -38,9 +38,6 @@ setup(name="CslBot",
               'static/shakespeare-dictionary.json', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
           ],
       },
-      exclude_package_data={
-          '': ['templates/analytics.html']
-      },
       setup_requires=['setuptools_git'],
       install_requires=[
           'SQLAlchemy>=1.0.0',  # bulk_insert_mappings
