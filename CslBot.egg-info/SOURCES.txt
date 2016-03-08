@@ -204,7 +204,6 @@ doc/modules.rst
 scripts/__init__.py
 scripts/build_docs.sh
 scripts/client.py
-scripts/deploy_docs.sh
 scripts/entropy.py
 scripts/format.sh
 scripts/fuzz.py

@@ -30,7 +30,7 @@ That said, the bot devs hangout in #tjcsl-cslbot on freenode and are usually hap
 
 Documentation
 -------------
-See http://tjcsl.github.io/cslbot for api docs.
+See https://cslbot.readthedocs.org for api docs.
 
 Changelog
 ---------

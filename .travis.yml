@@ -48,7 +48,6 @@ script:
 
 after_success:
     - coveralls
-    - ./scripts/deploy_docs.sh
 
 notifications:
   irc:
