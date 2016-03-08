@@ -12,7 +12,6 @@ dist
 .eggs
 fuzz_input
 fuzz_output
-gh-pages
 __pycache__
 *.py[co]
 *.sw?
