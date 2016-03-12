@@ -88,7 +88,7 @@ def get_title(url):
         # User-Agent is really hard to get right :(
         session.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
         try:
-            req = session.head(url, allow_redirects=True, timeout=10)
+            req = session.head(url, allow_redirects=True, verify=False, timeout=10)
             if req.status_code == codes.ok:
                 title = parse_mime(req)
             # 405 means this site doesn't support HEAD
