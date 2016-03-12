@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""fix stopwatch
+"""fix stopwatch.
 
 Revision ID: e7106eedcf8c
 Revises: 2ee084539c59

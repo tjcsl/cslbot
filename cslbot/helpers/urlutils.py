@@ -16,10 +16,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import re
+from contextlib import closing
 
 from lxml.html import document_fromstring
 
-from requests import Session, exceptions, post
+from requests import Session, codes, exceptions, post
 
 from . import misc
 from .exception import CommandFailedException
@@ -29,25 +30,24 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     try:
-        data = post('https://www.googleapis.com/urlshortener/v1/url',
-                    params={'key': key},
-                    json=({'longUrl': msg}),
-                    headers={'Content-Type': 'application/json'}).json()
+        with closing(post('https://www.googleapis.com/urlshortener/v1/url',
+                          params={'key': key},
+                          json=({'longUrl': msg}),
+                          headers={'Content-Type': 'application/json'})) as req:
+            data = req.json()
+            return msg if 'error' in data else data['id']
     except exceptions.ConnectTimeout as e:
         # Sanitize the error before throwing it
         raise exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
-    if 'error' in data:
-        return msg
-    else:
-        return data['id']
 
 
 def parse_title(req):
     max_size = 1024 * 32  # 32KB
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
+    # FIXME: https://github.com/kennethreitz/requests/issues/2963
+    req.raw._connection.close()
     ctype = req.headers.get('Content-Type')
-    req.close()
     html = document_fromstring(content)
     t = html.find('.//title')
     # FIXME: is there a cleaner way to do this?
@@ -83,28 +83,27 @@ def parse_mime(req):
 
 def get_title(url):
     title = None
-    session = Session()
-    try:
+    with closing(Session()) as session:
         # User-Agent is really hard to get right :(
         session.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
-        req = session.head(url, allow_redirects=True, timeout=10)
-        if req.status_code == 405:
-            # Site doesn't support HEAD
-            req = session.get(url, timeout=10, stream=True)
-        if req.status_code != 200:
-            title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
-        title = parse_mime(req)
+        try:
+            req = session.head(url, allow_redirects=True, timeout=10)
+            if req.status_code == codes.ok:
+                title = parse_mime(req)
+            # 405 means this site doesn't support HEAD
+            elif req.status_code != codes.not_allowed:
+                title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
+        except exceptions.InvalidSchema:
+            raise CommandFailedException('%s is not a supported url.' % url)
+        except exceptions.MissingSchema:
+            return get_title('http://%s' % url)
+        # HEAD didn't work, so try GET
         if title is None:
-            # If we're going to parse the html, we need a get request.
-            if req.request.method == 'HEAD':
-                req = session.get(url, timeout=10, stream=True)
-            title = parse_title(req)
-    except exceptions.InvalidSchema:
-        raise CommandFailedException('%s is not a supported url.' % url)
-    except exceptions.MissingSchema:
-        return get_title('http://%s' % url)
-    finally:
-        session.close()
+            req = session.get(url, timeout=10, stream=True)
+            if req.status_code == codes.ok:
+                title = parse_mime(req) or parse_title(req)
+            else:
+                title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
     if title is None:
         return 'Title Not Found'
     # We don't want overly-long titles.

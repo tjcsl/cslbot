@@ -351,6 +351,7 @@ def gen_sanitize(msg):
     to_sanitize = choice(string.ascii_lowercase)
     return msg.replace(to_sanitize, "").replace(to_sanitize.upper(), "")
 
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
