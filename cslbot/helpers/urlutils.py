@@ -43,7 +43,7 @@ def get_short(msg, key):
 
 
 def parse_title(req):
-    max_size = 1024 * 16  # 16KB
+    max_size = 1024 * 32  # 32KB
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
     ctype = req.headers.get('Content-Type')
