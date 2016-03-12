@@ -46,7 +46,8 @@ def parse_title(req):
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
     # FIXME: https://github.com/kennethreitz/requests/issues/2963
-    req.raw._connection.close()
+    if req.raw._connection is not None:
+        req.raw._connection.close()
     ctype = req.headers.get('Content-Type')
     html = document_fromstring(content)
     t = html.find('.//title')
