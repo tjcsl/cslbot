@@ -317,19 +317,17 @@ class BotsnackTest(BotTest):
 
 class TranslateTest(BotTest):
 
-    @unittest.skip("api is broken")
     def test_translate_valid_args(self):
         """Test translate with a valid string."""
-        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate testen übersetzen'])
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --from de testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translation test', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!translate testen übersetzen', 'pubmsg')])
+                                 ('testnick', '#test-channel', 0, '!translate --from de testen übersetzen', 'pubmsg')])
 
-    @unittest.skip("api is broken")
     def test_translate_valid_to_lang(self):
         """Test translate with a valid 'to' language."""
-        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to es testen übersetzen'])
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --from de --to es testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'prueba de traducción', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!translate --to es testen übersetzen', 'pubmsg')])
+                                 ('testnick', '#test-channel', 0, '!translate --from de --to es testen übersetzen', 'pubmsg')])
 
     @mock.patch('cslbot.commands.translate.gen_translate')
     def test_translate_invalid_noargs(self, mock_gen_translate):

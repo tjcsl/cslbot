@@ -29,7 +29,7 @@ def cmd(send, msg, args):
 
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--lang', '--from', default=None)
+    parser.add_argument('--lang', '--from', default='en')
     parser.add_argument('--to', default='en')
     parser.add_argument('msg', nargs='+')
     try:

@@ -283,9 +283,10 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, fromlang=None, outputlang='en'):
+def gen_translate(msg, fromlang, outputlang):
     try:
         blob = TextBlob(msg)
+        # FIXME: language detection is broken.
         blob = blob.translate(from_lang=fromlang, to=outputlang)
         return str(blob)
     except NotTranslated:
@@ -302,7 +303,8 @@ def gen_random_translate(msg):
     language = choice(languages)
     blob = TextBlob(msg)
     try:
-        blob = blob.translate(from_lang=None, to=language)
+        # FIXME: language detection is broken.
+        blob = blob.translate(from_lang='en', to=language)
         return "%s (%s)" % (blob, language)
     except NotTranslated:
         return msg
