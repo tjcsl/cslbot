@@ -128,10 +128,10 @@ def get_weather(cmdargs, send, apikey):
     forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
     send(current)
     send("Forecast: %s" % forecast)
-    if 'alerts' in alertdata:
-        alertlist = []
-        for alert in alertdata['alerts']:
-            alertlist.append("%s, expires %s" % (alert['description'], alert['expires']))
+    alertlist = []
+    for alert in alertdata.get('alerts', []):
+        alertlist.append("%s, expires %s" % (alert['description'], alert['expires']))
+    if alertlist:
         send("Weather Alerts: %s" % ', '.join(alertlist))
     return True
 
