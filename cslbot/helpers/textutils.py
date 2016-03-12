@@ -345,6 +345,10 @@ def gen_randfilter(msg):
     return randfilter(msg)
 
 
+def gen_sanitize(msg):
+    to_sanitize = choice(string.ascii_lowercase)
+    return msg.replace(to_sanitize, "").replace(to_sanitize.upper(), "")
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
@@ -370,5 +374,6 @@ output_filters = {
     "multitrans": gen_multi_translate,
     "spacing": gen_spacing,
     "fullwidth": gen_fullwidth,
+    "sanitize": gen_sanitize,
     "randfilter": gen_randfilter
 }
