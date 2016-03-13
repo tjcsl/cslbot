@@ -13,6 +13,10 @@ CslBot
 .. image:: https://coveralls.io/repos/tjcsl/cslbot/badge.svg?branch=master&service=github
     :target: https://coveralls.io/github/tjcsl/cslbot?branch=master
     :alt: Coverage
+
+.. image:: https://api.codacy.com/project/badge/grade/d3019bafce874b7192978038ae2f66ae
+    :target: https://www.codacy.com/app/pefoley2/cslbot
+    :alt: Codacy
     
 .. image:: https://readthedocs.org/projects/cslbot/badge/?version=latest
     :target: http://cslbot.readthedocs.org/en/latest
