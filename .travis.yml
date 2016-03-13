@@ -49,6 +49,7 @@ script:
 
 after_success:
     - coverage xml
+    - git reset --hard HEAD^
     - python-codacy-coverage -r coverage.xml
     - coveralls
 
