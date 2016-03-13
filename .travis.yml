@@ -12,6 +12,7 @@ env:
     global:
         secure: ksEkBn8IqgTkE5CDSlvV6PxQ5Cvvls9MjU4fYwBtZw32uSarIK9qkR6dtgbSxN37vS/lRgDM2yIDedhMTUUnYtL+qfC3866DnwHgN9tHdvFqB7+bZGFTg1lnuJN9IW/CdCaDgNSkZjNqNY6t4lzdrAsEYR4KDsqYwjsbJEqZRkw=
         secure: ip77J4FX2xc984JaYfA7g7topgCKndI+bGiAdAQD361YEufJEumNJyMaM+K+u8XMfb7AvQe7gsBUaKVZummlEGhAK3lWkPEJTXqktd9lTLoRF86mEOXaf5gL9R7W2T98FWt549n3kOtyOD6LlmBDL9u2YNckjzi76a7+mts3O2M=
+        secure: J/5zAHU5G5Vb9bxVNnWUXicrQfJNj6c78ZCg7z1kN/XDIH5dB0GnTiodNDAxVvEVGGPMZoqpPxeOYVysQuvN3Vpp5pzriljDsiEFzqaHJlQu7qarhS4rTUn073fYb19DxFt8Z3q/QGfNcTTp/hSpQRDvyuRrxdSxn77l0mpLjJ4=
 
 cache:
     directories:
@@ -24,7 +25,7 @@ before_install:
     - git commit -m 'update path' cslbot/helpers/*.py scripts/*.py
 
 install:
-    - pip install flake8 sphinx psycopg2 coveralls .
+    - pip install flake8 sphinx psycopg2 coveralls codacy-coverage .
       # We need to install this separately since it will pull in CslBot from pypi otherwise
     - pip install git+git://github.com/tjcsl/cslbot-tjhsst
     - pip install git+git://github.com/JukkaL/mypy.git
@@ -47,6 +48,8 @@ script:
     - ./scripts/build_docs.sh
 
 after_success:
+    - coverage xml
+    - python-codacy-coverage -r coverage.xml
     - coveralls
 
 notifications:
