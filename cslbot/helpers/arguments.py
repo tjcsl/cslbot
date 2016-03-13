@@ -108,7 +108,7 @@ class ArgParser(argparse.ArgumentParser):
     def parse_args(self, msg):
         return super().parse_args(msg.split(), namespace=self.namespace)
 
-    def parse_known_args(self, msg, namespace=None):
+    def parse_known_args(self, msg=None, namespace=None):
         args = msg.split() if isinstance(msg, str) else msg
         namespace = self.namespace if namespace is None else namespace
         return super().parse_known_args(args, namespace)

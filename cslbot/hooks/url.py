@@ -15,13 +15,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import logging
 import multiprocessing
 import re
 from datetime import datetime, timedelta
 
 from ..helpers import urlutils
-from ..helpers.exception import CommandFailedException
 from ..helpers.hook import Hook
 from ..helpers.orm import Urls
 
@@ -53,17 +51,7 @@ def handle(send, msg, args):
         # Prevent botloops
         if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1:
             return
-        title = None
-        ex = None
-        for _ in range(3):
-            try:
-                title = urlutils.get_title(url)
-            except CommandFailedException as e:
-                # FIXME: there has to be a better way to do this
-                ex = e
-                logging.error(ex)
-        if title is None:
-            raise ex
+        title = urlutils.get_title(url)
         key = args['config']['api']['googleapikey']
         short = urlutils.get_short(url, key)
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()

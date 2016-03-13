@@ -184,8 +184,8 @@ class BotTest(unittest.TestCase):
              ('USER %s 0 * :%s' % (self.nick, self.nick),)])
         self.log_mock.reset_mock()
 
-    def send_msg(self, mtype, source, target, arguments=[]):
-        e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments)
+    def send_msg(self, mtype, source, target, arguments=None):
+        e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments or [])
         logging.debug("type: %s, source: %s, target: %s, arguments: %s, tags: %s", e.type, e.source, e.target, e.arguments, e.tags)
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
