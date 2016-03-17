@@ -47,4 +47,4 @@ def cmd(send, msg, args):
         send("%s has never been pinged." % cmdargs.nick)
     else:
         time = row.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("<%s> %s: %s" % (time, row.source, row.msg))
+        send("%s <%s> %s" % (time, row.source, row.msg))
