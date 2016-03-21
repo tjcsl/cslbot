@@ -84,11 +84,12 @@ def parse_mime(req):
 
 def get_title(url):
     title = None
+    timeout = (5, 20)
     with closing(Session()) as session:
         # User-Agent is really hard to get right :(
         session.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
         try:
-            req = session.head(url, allow_redirects=True, verify=False, timeout=10)
+            req = session.head(url, allow_redirects=True, verify=False, timeout=timeout)
             if req.status_code == codes.ok:
                 title = parse_mime(req)
             # 405 means this site doesn't support HEAD
@@ -100,7 +101,7 @@ def get_title(url):
             return get_title('http://%s' % url)
         # HEAD didn't work, so try GET
         if title is None:
-            req = session.get(url, timeout=10, stream=True)
+            req = session.get(url, timeout=timeout, stream=True)
             if req.status_code == codes.ok:
                 title = parse_mime(req) or parse_title(req)
             else:
