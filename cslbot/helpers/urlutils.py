@@ -79,6 +79,8 @@ def parse_mime(req):
             return 'Zip'
         if ctype[1] == 'octet-stream':
             return 'Octet Stream'
+        if ctype[1] == 'pdf':
+            return 'Pdf'
     return None
 
 
