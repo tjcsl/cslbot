@@ -380,6 +380,14 @@ cslbot.commands.insult module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.intensify module
+--------------------------------
+
+.. automodule:: cslbot.commands.intensify
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.ipa module
 --------------------------
 

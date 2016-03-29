@@ -352,6 +352,10 @@ def gen_sanitize(msg):
     return msg.replace(to_sanitize, "").replace(to_sanitize.upper(), "")
 
 
+def gen_intensify(msg):
+    return "[%s INTENSIFIES]" % msg.upper()
+
+
 output_filters = {
     "passthrough": lambda x: x,
     "hashtag": gen_hashtag,
