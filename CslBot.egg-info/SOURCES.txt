@@ -8,6 +8,7 @@
 COPYING
 README.rst
 bot.py
+deploy
 setup.py
 CslBot.egg-info/PKG-INFO
 CslBot.egg-info/SOURCES.txt

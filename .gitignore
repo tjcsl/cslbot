@@ -7,7 +7,6 @@ build
 cslbot/static/geoip.db
 cslbot/templates/analytics.html
 db.sqlite
-deploy
 dist
 .eggs
 fuzz_input

@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+# update master
+(cd ../cslbot-tjhsst; git pull --ff-only)
+git pull --ff-only
+
+# run tests
+./setup.py test
+./scripts/build_docs.sh
+./scripts/mypy.sh
+./scripts/migrate.py
+./scripts/reload.py
+
+if ! [ -z "`git status --porcelain -uno`" ]; then
+    echo "Modified files found, did you forget to commit something?"
+    git status --porcelain
+    exit 1
+fi
+
+# push to github
+git push
+(cd ../cslbot-tjhsst; git push)
+
+sudo /etc/cslbot/fixperms.sh
+rm -rf build/lib build/bdist.* dist
+pip install -U --no-deps . ../cslbot-tjhsst
+sudo /etc/cslbot/fixperms.sh
+cslbot-migrate
+if [ "$1" == "restart" ]; then
+	sudo /etc/init.d/ircbot restart
+else
+	#sudo ip netns exec pia /usr/local/virtualenvs/cslbot/bin/cslbot-reload
+        cslbot-reload
+fi
+
