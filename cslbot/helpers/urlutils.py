@@ -75,7 +75,7 @@ def parse_mime(req):
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
-        if ctype[1] == 'zip':
+        if ctype[1] in ['zip', 'x-zip-compressed']:
             return 'Zip'
         if ctype[1] == 'octet-stream':
             return 'Octet Stream'
