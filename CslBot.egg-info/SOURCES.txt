@@ -93,6 +93,7 @@ cslbot/commands/mission.py
 cslbot/commands/mode.py
 cslbot/commands/morse.py
 cslbot/commands/msg.py
+cslbot/commands/next.py
 cslbot/commands/nicks.py
 cslbot/commands/note.py
 cslbot/commands/nuke.py

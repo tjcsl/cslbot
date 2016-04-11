@@ -508,6 +508,14 @@ cslbot.commands.msg module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.next module
+---------------------------
+
+.. automodule:: cslbot.commands.next
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.nicks module
 ----------------------------
 
