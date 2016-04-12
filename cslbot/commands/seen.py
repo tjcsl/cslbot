@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -43,6 +43,8 @@ def cmd(send, msg, args):
         send("%s has never shown his face." % msg)
         return
     delta = datetime.now() - last.time
+    # We only need second-level precision.
+    delta -= delta % timedelta(seconds=1)
     output = "%s was last seen %s ago " % (msg, delta)
     if last.type == 'pubmsg' or last.type == 'privmsg':
         output += 'saying "%s"' % last.msg
