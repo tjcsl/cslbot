@@ -17,6 +17,8 @@
 
 import socketserver
 
+from irc import client
+
 from . import backtrace, reloader
 
 WELCOME = """
@@ -137,4 +139,6 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             msg, _ = backtrace.output_traceback(ex)
             ctrlchan = bot.config['core']['ctrlchan']
             send('%s\n' % msg)
-            bot.connection.privmsg(ctrlchan, msg)
+            # If we've disconnected, there isn't much point sending errors to the network.
+            if not isinstance(ex, client.ServerNotConnectedError):
+                bot.connection.privmsg(ctrlchan, msg)
