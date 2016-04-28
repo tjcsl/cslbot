@@ -19,7 +19,7 @@ CslBot
     :alt: Codacy
     
 .. image:: https://readthedocs.org/projects/cslbot/badge/?version=latest
-    :target: http://cslbot.readthedocs.org/en/latest
+    :target: https://cslbot.readthedocs.io
     :alt: Docs
 
 A bot written by the TJHSST CSL for IRC. 
@@ -34,7 +34,7 @@ That said, the bot devs hangout in #tjcsl-cslbot on freenode and are usually hap
 
 Documentation
 -------------
-See https://cslbot.readthedocs.org for api docs.
+See https://cslbot.readthedocs.io for api docs.
 
 Changelog
 ---------
