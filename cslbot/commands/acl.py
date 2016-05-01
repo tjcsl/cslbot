@@ -23,11 +23,14 @@ from ..helpers.orm import Permissions
 @Command('acl', ['config', 'db'], role="owner")
 def cmd(send, msg, args):
     """Handles permissions
-    Syntax: {command} --nick (nick) --role (admin)
+    Syntax: {command} (--add|--remove) --nick (nick) --role (admin)
     """
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--nick', action=arguments.NickParser, required=True)
     parser.add_argument('--role', choices=['admin'], required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--add', action='store_true')
+    group.add_argument('--remove', action='store_true')
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -35,8 +38,15 @@ def cmd(send, msg, args):
         return
     session = args['db']
     admin = session.query(Permissions).filter(Permissions.nick == cmdargs.nick).first()
-    if admin is None:
-        session.add(Permissions(nick=cmdargs.nick, role=cmdargs.role))
-        send("%s is now an %s." % (cmdargs.nick, cmdargs.role))
+    if cmdargs.add:
+        if admin is None:
+            session.add(Permissions(nick=cmdargs.nick, role=cmdargs.role))
+            send("%s is now an %s." % (cmdargs.nick, cmdargs.role))
+        else:
+            send("%s is already an %s." % (admin.nick, admin.role))
     else:
-        send("%s is already an %s." % (admin.nick, admin.role))
+        if admin is None:
+            send("%s was not an %s." % (cmdargs.nick, cmdargs.role))
+        else:
+            session.delete(admin)
+            send("%s is no longer an %s." % (admin.nick, admin.role))
