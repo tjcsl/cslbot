@@ -51,9 +51,10 @@ setup(name="CslBot",
           'simplejson',
           'requests_oauthlib',
           'textblob',
+          'sphinx',
+          'mypy-lang'
       ],
       extras_require={
-          'doc': ['sphinx'],
           'analysis': ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8',
                        'docformatter'],
           'test': ['pytest-xdist'],

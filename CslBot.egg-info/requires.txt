@@ -9,6 +9,8 @@ python-dateutil
 simplejson
 requests_oauthlib
 textblob
+sphinx
+mypy-lang
 
 [analysis]
 flake8-debugger
@@ -19,9 +21,6 @@ pep8-naming
 radon
 autopep8
 docformatter
-
-[doc]
-sphinx
 
 [test]
 pytest-xdist
