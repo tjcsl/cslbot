@@ -15,7 +15,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import os
 import subprocess
+from random import choice
 
 from ..helpers.command import Command
 
@@ -28,11 +30,15 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("eix what?")
+        result = subprocess.run(['eix', '-c'], env={'EIX_LIMIT': '0', 'HOME': os.environ['HOME']}, stdout=subprocess.PIPE, universal_newlines=True)
+        if result.returncode:
+            send("eix what?")
+            return
+        send(choice(result.stdout.splitlines()))
         return
-    try:
-        args = ['eix', '-c'] + msg.split()
-        answer = subprocess.check_output(args)
-        send(answer.decode().split('\n')[0].rstrip())
-    except subprocess.CalledProcessError:
+    args = ['eix', '-c'] + msg.split()
+    result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    if result.returncode:
         send("%s isn't important enough for Gentoo." % msg)
+    else:
+        send(result.stdout.splitlines()[0].strip())
