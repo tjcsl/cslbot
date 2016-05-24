@@ -18,6 +18,7 @@
 from lxml.etree import fromstring
 
 from requests import get
+from urllib.parse import quote
 
 from ..helpers.command import Command
 from ..helpers.urlutils import get_short
@@ -41,7 +42,7 @@ def cmd(send, msg, args):
     xml = fromstring(req.content)
     output = xml.findall('./pod')
     key = args['config']['api']['googleapikey']
-    url = get_short("http://www.wolframalpha.com/input/?i=%s" % msg, key)
+    url = get_short("http://www.wolframalpha.com/input/?i=%s" % quote(msg), key)
     text = "No output found."
     for x in output:
         if 'primary' in x.keys():
