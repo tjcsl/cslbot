@@ -40,7 +40,7 @@ def cmd(send, msg, args):
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
-                    send(line.format(command=cmdchar + msg))
+                    send(line.format(command=cmdchar + msg), target=args['nick'])
     else:
         modules = sorted(command_registry.get_enabled_commands())
         cmdlist = (' %s' % cmdchar).join(modules)
