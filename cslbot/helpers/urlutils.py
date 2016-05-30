@@ -70,6 +70,8 @@ def parse_mime(req):
     if ctype is None:
         return ctype
     ctype = ctype.split('/')
+    if ctype[0] == 'audio':
+        return 'Audio'
     if ctype[0] == 'image':
         return 'Image'
     if ctype[0] == 'video':
