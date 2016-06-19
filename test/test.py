@@ -319,15 +319,15 @@ class TranslateTest(BotTest):
 
     def test_translate_valid_args(self):
         """Test translate with a valid string."""
-        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate testen übersetzen'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translation test', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!translate testen übersetzen', 'pubmsg')])
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate testen ubersetzen'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translate test', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!translate testen ubersetzen', 'pubmsg')])
 
     def test_translate_valid_to_lang(self):
         """Test translate with a valid 'to' language."""
-        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to es testen übersetzen'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'prueba de traducción', 'privmsg'),
-                                 ('testnick', '#test-channel', 0, '!translate --to es testen übersetzen', 'pubmsg')])
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to es testen ubersetzen'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'traducir prueba', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!translate --to es testen ubersetzen', 'pubmsg')])
 
     @mock.patch('cslbot.commands.translate.gen_translate')
     def test_translate_invalid_noargs(self, mock_gen_translate):
