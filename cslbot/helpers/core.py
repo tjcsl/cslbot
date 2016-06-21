@@ -197,8 +197,7 @@ class IrcBot(bot.SingleServerIRCBot):
             self.reload_event.set()
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
             try:
-                is_owner = e.source.nick == self.config['auth']['owner']
-                if reloader.do_reload(self, self.get_target(e), cmdargs, is_owner):
+                if reloader.do_reload(self, self.get_target(e), cmdargs):
                     if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
