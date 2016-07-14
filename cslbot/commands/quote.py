@@ -135,8 +135,9 @@ def cmd(send, msg, args):
             elif not cmdargs.quote:
                 send('You must specify a quote.')
             else:
-                isadmin = args['is_admin'](args['nick'])
-                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, cmdargs.approve, send, args)
+                isadmin = args['is_admin'](args['nick']) or not args['config']['feature']['quoteapprove']
+                approved = cmdargs.approve or not args['config']['feature']['quoteapprove']
+                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, approved, send, args)
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:

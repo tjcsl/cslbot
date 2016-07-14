@@ -38,6 +38,7 @@ capskick: True
 nickkick: True
 linkread: True
 voiceactive: True
+quoteapprove: True
 networktype: atheme
 servicestype: atheme
 [api]
