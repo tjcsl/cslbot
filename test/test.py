@@ -349,7 +349,7 @@ class FullwidthTest(BotTest):
     def test_fullwidth_ascii(self):
         """Test fullwidth with ASCII characters."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth ayy lmao'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ａｙｙ\u3000ｌｍａｏ', 'privmsg'),
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ＡＹＹ\u3000ＬＭＡＯ', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!fullwidth ayy lmao', 'pubmsg')])
 
     def test_fullwidth_nonascii(self):
@@ -362,7 +362,7 @@ class FullwidthTest(BotTest):
         """Test fullwidth with no arguments."""
         mock_gen_word.return_value = 'test'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!fullwidth'])
-        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ｔｅｓｔ', 'privmsg'), ('testnick', '#test-channel', 0, '!fullwidth', 'pubmsg')])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ＴＥＳＴ', 'privmsg'), ('testnick', '#test-channel', 0, '!fullwidth', 'pubmsg')])
 
 
 if __name__ == '__main__':

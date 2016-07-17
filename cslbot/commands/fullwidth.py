@@ -28,4 +28,4 @@ def cmd(send, msg, args):
     """
     if not msg:
         msg = gen_word()
-    send(gen_fullwidth(msg))
+    send(gen_fullwidth(msg.upper()))
