@@ -468,6 +468,14 @@ cslbot.commands.metar module
     :undoc-members:
     :show-inheritance:
 
+cslbot.commands.metro module
+----------------------------
+
+.. automodule:: cslbot.commands.metro
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.commands.microwave module
 --------------------------------
 

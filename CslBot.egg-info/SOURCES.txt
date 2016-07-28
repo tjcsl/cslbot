@@ -88,6 +88,7 @@ cslbot/commands/line.py
 cslbot/commands/lmgtfy.py
 cslbot/commands/man.py
 cslbot/commands/metar.py
+cslbot/commands/metro.py
 cslbot/commands/microwave.py
 cslbot/commands/mission.py
 cslbot/commands/mode.py
