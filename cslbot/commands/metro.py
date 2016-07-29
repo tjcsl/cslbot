@@ -29,6 +29,7 @@ def get_incidents(key):
         incidents[i['IncidentType']].append(i['Description'])
     return incidents
 
+
 def get_type(t):
     t = t.capitalize()
     if t == 'Alert':
