@@ -29,12 +29,20 @@ def get_incidents(key):
         incidents[i['IncidentType']].append(i['Description'])
     return incidents
 
+def get_type(t):
+    t = t.capitalize()
+    if t == 'Alert':
+        return 'Alerts'
+    if t == 'Delay':
+        return 'Delays'
+    return t
+
 
 @Command(['metro', 'wmata'], ['config'])
 def cmd(send, msg, args):
     """Provides Metro Info.
 
-    Syntax: {command} [reason]
+    Syntax: {command}
 
     """
     incidents = get_incidents(args['config']['api']['wmatakey'])
@@ -42,6 +50,6 @@ def cmd(send, msg, args):
         send("No incidents found. Sure you picked the right metro system?")
         return
     for t, i in incidents.items():
-        send("%s:" % t.capitalize())
+        send("%s:" % get_type(t))
         for desc in i:
             send(desc)
