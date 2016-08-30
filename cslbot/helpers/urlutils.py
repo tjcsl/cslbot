@@ -42,7 +42,7 @@ def get_short(msg, key):
 
 
 def parse_title(req):
-    max_size = 1024 * 128  # 128KB
+    max_size = 1024 * 256  # 256KB
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
     # FIXME: https://github.com/kennethreitz/requests/issues/2963
