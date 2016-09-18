@@ -105,6 +105,8 @@ def gen_slogan(msg):
     # Originally from sloganizer.com
     if not slogan_cache:
         slogan_cache.extend(resource_string(Requirement.parse('CslBot'), 'cslbot/static/slogans').decode().splitlines())
+    # handle arguments that end in '\', which is valid in irc, but causes issues with re.
+    msg = msg.replace('\\', '\\\\')
     return re.sub('%s', msg, choice(slogan_cache))
 
 

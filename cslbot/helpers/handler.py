@@ -572,8 +572,6 @@ class BotHandler(object):
                 cmdlen = len(cmd)
 
         cmdargs = msg[cmdlen:]
-        # handle arguments that end in '\', which is valid in irc, but causes a lot of issues in python.
-        cmdargs = cmdargs.replace('\\', '\\\\')
         cmd_name = cmd[len(cmdchar):].lower() if cmd.startswith(cmdchar) else None
         return cmd_name, cmdargs
 
