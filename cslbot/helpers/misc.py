@@ -235,3 +235,8 @@ def truncate_msg(msg, max_len):
         msg, _ = split_msg(msg, max_len - 3)
         return msg + "..."
     return msg
+
+
+def escape(data):
+    # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
+    return data.replace('\\', '\\\\')

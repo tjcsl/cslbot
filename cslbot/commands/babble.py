@@ -22,6 +22,7 @@ from sqlalchemy.sql.expression import func
 
 from ..helpers import arguments
 from ..helpers.command import Command
+from ..helpers.misc import escape
 from ..helpers.orm import Babble, Babble2, Babble_count
 
 
@@ -42,7 +43,7 @@ def build_msg(cursor, speaker, length, start):
     table = Babble if length == 1 else Babble2
     location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
     # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
-    escaped_speaker = speaker.replace('\\', '\\\\')
+    escaped_speaker = escape(speaker)
     count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.length == length,
                                                     Babble_count.key == escaped_speaker).scalar()
     if count is None:
@@ -54,13 +55,13 @@ def build_msg(cursor, speaker, length, start):
         markov = cursor.query(table.key)
         if length == 2:
             if len(start) == 1:
-                markov = markov.filter(table.key.like('%s %%' % start[0]))
+                markov = markov.filter(table.key.like('%s %%' % escape(start[0])))
             elif len(start) == 2:
-                markov = markov.filter(table.key == " ".join(start))
+                markov = markov.filter(table.key == escape(" ".join(start)))
             else:
                 return "Please specify either one or two words for --start"
         elif len(start) == 1:
-            markov = markov.filter(table.key == start[0])
+            markov = markov.filter(table.key == escape(start[0]))
         else:
             return "Please specify one word for --start"
         prev = markov.filter(getattr(table, location) == escaped_speaker).order_by(func.random()).limit(1).scalar()

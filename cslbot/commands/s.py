@@ -23,6 +23,7 @@ import sre_constants
 from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException
 from ..helpers.orm import Log
+from ..helpers.misc import escape
 
 
 def get_log(conn, target, user):
@@ -47,8 +48,8 @@ def get_modifiers(msg, nick, nickregex):
         mods['allnicks'] = True
         mods['ignorecase'] = True
         mods['nick'] = None
-    elif re.match(nickregex, msg):
-        mods['nick'] = msg.replace('\\', '\\\\')
+    elif re.match(nickregex, escape(msg)):
+        mods['nick'] = escape(msg)
     else:
         return None
     return mods
