@@ -317,12 +317,14 @@ class BotsnackTest(BotTest):
 
 class TranslateTest(BotTest):
 
+    @unittest.skip('API endpoint returns 503')
     def test_translate_valid_args(self):
         """Test translate with a valid string."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --from de testen übersetzen'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Translation test', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate --from de testen übersetzen', 'pubmsg')])
 
+    @unittest.skip('API endpoint returns 503')
     def test_translate_valid_to_lang(self):
         """Test translate with a valid 'to' language."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --from de --to es testen übersetzen'])
@@ -337,6 +339,7 @@ class TranslateTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'the following arguments are required: msg', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!translate', 'pubmsg')])
 
+    @unittest.skip('API endpoint returns 503')
     def test_translate_invalid_to_lang(self):
         """Test translate with an invalid 'to' language."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!translate --to ad translate this'])
