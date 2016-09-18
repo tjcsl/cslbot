@@ -283,7 +283,7 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, fromlang, tolang):
+def gen_translate(msg, fromlang=None, tolang='en'):
     key = config.get_config()['api']['googleapikey']
     if not key:
         raise Exception('Invalid translate api key')
