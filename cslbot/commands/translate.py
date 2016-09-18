@@ -37,4 +37,4 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    send(gen_translate(' '.join(cmdargs.msg), args['config']['api']['googleapikey'], cmdargs.lang, cmdargs.to))
+    send(gen_translate(' '.join(cmdargs.msg), cmdargs.lang, cmdargs.to))

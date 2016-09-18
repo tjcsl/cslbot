@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2016 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -57,11 +56,21 @@ def migrate_config(config_file, config_obj, send):
             config_obj.write(f)
 
 
-def load_config(config_file: str, send: Callable[[str], None]) -> configparser.ConfigParser:
+def get_config():
+    if _config_file is None:
+        raise Exception("Invalid config")
     config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(config_file) as f:
+    with open(_config_file) as f:
         config_obj.read_file(f)
-    migrate_config(config_file, config_obj, send)
+    return config_obj
+
+
+def load_config(config_file: str, send: Callable[[str], None]) -> configparser.ConfigParser:
+    # We want to make get_config() usable from outside.
+    global _config_file
+    _config_file = config_file
+    config_obj = get_config()
+    migrate_config(_config_file, config_obj, send)
     return config_obj
 
 

@@ -28,6 +28,8 @@ from pkg_resources import Requirement, resource_string
 
 from requests import get, post
 
+from . import config
+
 slogan_cache = []  # type: List[str]
 
 
@@ -281,7 +283,8 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, key, fromlang, tolang):
+def gen_translate(msg, fromlang, tolang):
+    key = config.get_config()['api']['googleapikey']
     if not key:
         raise Exception('Invalid translate api key')
     if tolang not in get_languages(key):
@@ -296,21 +299,22 @@ def gen_translate(msg, key, fromlang, tolang):
 
 
 def get_languages(key):
-    if not key:
-        raise Exception('Invalid translate api key')
     data = get('https://www.googleapis.com/language/translate/v2/languages', params={'key': key}).json()
     return [x['language'] for x in data['data']['languages']]
 
 
-def gen_random_translate(msg, key):
+def gen_random_translate(msg):
+    key = config.get_config()['api']['googleapikey']
+    if not key:
+        raise Exception('Invalid translate api key')
     language = choice(get_languages(key))
-    msg = gen_translate(msg, key, fromlang=None, tolang=language)
+    msg = gen_translate(msg, fromlang=None, tolang=language)
     return "%s (%s)" % (msg, language)
 
 
-def gen_multi_translate(msg, key):
+def gen_multi_translate(msg):
     for _ in range(randint(3, 10)):
-        msg = gen_random_translate(msg, key)
+        msg = gen_random_translate(msg)
     return msg
 
 
