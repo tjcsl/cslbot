@@ -25,6 +25,11 @@ from pkg_resources import Requirement, resource_string
 
 from typing import Callable
 
+try:
+    _config_file
+except NameError:
+    _config_file = None  # type: str
+
 
 def migrate_config(config_file, config_obj, send):
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
