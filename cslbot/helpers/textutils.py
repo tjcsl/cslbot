@@ -285,10 +285,9 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, fromlang, outputlang):
+def gen_translate(msg, fromlang=None, outputlang="en"):
     try:
         blob = TextBlob(msg)
-        # FIXME: language detection is broken.
         blob = blob.translate(from_lang=fromlang, to=outputlang)
         return str(blob)
     except NotTranslated:
