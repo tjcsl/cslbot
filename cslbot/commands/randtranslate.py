@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_random_translate
 
 
-@Command(['randtrans', 'randtranslate', 'randomtranslate'])
+@Command(['randtrans', 'randtranslate', 'randomtranslate'], ['config'])
 def cmd(send, msg, args):
     """Translate something into a random language
     Syntax: {command} <text>
@@ -27,4 +27,4 @@ def cmd(send, msg, args):
     if not msg:
         send("Translate what?")
         return
-    send(gen_random_translate(msg))
+    send(gen_random_translate(msg, args['config']['api']['googleapikey']))

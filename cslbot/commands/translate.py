@@ -25,11 +25,11 @@ def cmd(send, msg, args):
     """Translate something.
 
     Syntax: {command} [--from <language code>] [--to <language code>] <text>
-    See https://cloud.google.com/translate/v2/using_rest#language-params for a list of valid language codes
+    See https://cloud.google.com/translate/v2/translate-reference#supported_languages for a list of valid language codes
 
     """
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--lang', '--from', default='en')
+    parser.add_argument('--lang', '--from', default=None)
     parser.add_argument('--to', default='en')
     parser.add_argument('msg', nargs='+')
     try:
@@ -37,4 +37,4 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    send(gen_translate(' '.join(cmdargs.msg), fromlang=cmdargs.lang, outputlang=cmdargs.to))
+    send(gen_translate(' '.join(cmdargs.msg), args['config']['api']['googleapikey'], cmdargs.lang, cmdargs.to))

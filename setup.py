@@ -50,7 +50,6 @@ setup(name="CslBot",
           'python-dateutil',
           'simplejson',
           'requests_oauthlib',
-          'textblob',
           'sphinx',
           'mypy-lang'
       ],

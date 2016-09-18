@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2016 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -28,9 +27,6 @@ from lxml import html
 from pkg_resources import Requirement, resource_string
 
 from requests import get, post
-
-from textblob import TextBlob
-from textblob.exceptions import NotTranslated
 
 slogan_cache = []  # type: List[str]
 
@@ -285,36 +281,25 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, fromlang, outputlang):
-    try:
-        blob = TextBlob(msg)
-        # FIXME: language detection is broken.
-        blob = blob.translate(from_lang=fromlang, to=outputlang)
-        return str(blob)
-    except NotTranslated:
-        return msg
+def gen_translate(msg, key, fromlang, tolang):
+    params = {'key': key, 'q': msg, 'target': tolang}
+    if fromlang is not None:
+        params.update({'source': fromlang})
+    data = get('https://www.googleapis.com/language/translate/v2', params=params).json()
+    return data['data']['translations'][0]['translatedText']
 
 
-def gen_random_translate(msg):
-    languages = [
-        'ko', 'eo', 'la', 'so', 'tg', 'zh', 'st', 'km', 'ja', 'su', 'ny', 'pl', 'gu', 'sk', 'bs', 'ur', 'jw', 'si', 'es', 'lt', 'yo', 'sw', 'hu',
-        'ka', 'be', 'hi', 'sv', 'el', 'de', 'ro', 'bn', 'ceb', 'eu', 'nl', 'ig', 'mg', 'te', 'no', 'yi', 'ar', 'ca', 'pt', 'uk', 'hr', 'iw', 'th',
-        'sl', 'et', 'id', 'mn', 'zh-TW', 'ga', 'mt', 'sr', 'sq', 'ml', 'zh-CN', 'mi', 'mr', 'cs', 'hy', 'gl', 'cy', 'vi', 'uz', 'pa', 'ht', 'is',
-        'ms', 'af', 'lo', 'ne', 'lv', 'bg', 'fr', 'tr', 'ha', 'mk', 'fa', 'it', 'kn', 'az', 'hmn', 'kk', 'my', 'fi', 'zu', 'ru', 'ta', 'da', 'tl'
-    ]
-    language = choice(languages)
-    blob = TextBlob(msg)
-    try:
-        # FIXME: language detection is broken.
-        blob = blob.translate(from_lang='en', to=language)
-        return "%s (%s)" % (blob, language)
-    except NotTranslated:
-        return msg
+def gen_random_translate(msg, key):
+    data = get('https://www.googleapis.com/language/translate/v2/languages', params={'key': key}).json()
+    languages = data['data']['languages']
+    language = choice(languages)['language']
+    msg = gen_translate(msg, key, fromlang=None, tolang=language)
+    return "%s (%s)" % (msg, language)
 
 
-def gen_multi_translate(msg):
+def gen_multi_translate(msg, key):
     for _ in range(randint(3, 10)):
-        msg = gen_random_translate(msg)
+        msg = gen_random_translate(msg, key)
     return msg
 
 
