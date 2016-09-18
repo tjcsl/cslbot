@@ -282,17 +282,28 @@ def gen_underscore(msg):
 
 
 def gen_translate(msg, key, fromlang, tolang):
+    if not key:
+        raise Exception('Invalid translate api key')
+    if tolang not in get_languages(key):
+        return "Invalid target language."
     params = {'key': key, 'q': msg, 'target': tolang}
     if fromlang is not None:
+        if fromlang not in get_languages(key):
+            return "Invalid source language."
         params.update({'source': fromlang})
     data = get('https://www.googleapis.com/language/translate/v2', params=params).json()
     return data['data']['translations'][0]['translatedText']
 
 
-def gen_random_translate(msg, key):
+def get_languages(key):
+    if not key:
+        raise Exception('Invalid translate api key')
     data = get('https://www.googleapis.com/language/translate/v2/languages', params={'key': key}).json()
-    languages = data['data']['languages']
-    language = choice(languages)['language']
+    return [x['language'] for x in data['data']['languages']]
+
+
+def gen_random_translate(msg, key):
+    language = choice(get_languages(key))
     msg = gen_translate(msg, key, fromlang=None, tolang=language)
     return "%s (%s)" % (msg, language)
 

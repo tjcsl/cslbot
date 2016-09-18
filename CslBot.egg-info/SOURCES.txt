@@ -267,7 +267,5 @@ test/stubs/sqlalchemy/orm.pyi
 test/stubs/sqlalchemy/pool.pyi
 test/stubs/sqlalchemy/sql/__init__.pyi
 test/stubs/sqlalchemy/sql/expression.pyi
-test/stubs/textblob/__init__.pyi
-test/stubs/textblob/exceptions.pyi
 test/stubs/unittest/__init__.pyi
 test/stubs/unittest/mock.pyi
