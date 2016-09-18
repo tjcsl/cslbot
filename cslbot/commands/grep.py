@@ -18,6 +18,7 @@
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
+from ..helpers.misc import escape
 
 
 @Command(['grep', 'loggrep'], ['config', 'db'])
@@ -46,9 +47,9 @@ def cmd(send, msg, args):
     else:
         query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
     if cmdargs.ignore_case:
-        query = query.filter(Log.msg.ilike('%%%s%%' % term))
+        query = query.filter(Log.msg.ilike('%%%s%%' % escape(term)))
     else:
-        query = query.filter(Log.msg.like('%%%s%%' % term))
+        query = query.filter(Log.msg.like('%%%s%%' % escape(term)))
     rows = query.order_by(Log.time.desc()).all()
     if rows:
         row = rows[0]
