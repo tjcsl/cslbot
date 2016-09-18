@@ -78,7 +78,9 @@ def generate_markov(cursor, length, messages, initial_run):
                 prev = msg[i - 1]
             else:
                 prev = "%s %s" % (msg[i - 2], msg[i - 1])
-            node = (prev, row.source, row.target)
+            # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
+            source = row.source.replace('\\', '\\\\')
+            node = (prev, source, row.target)
             if node not in markov:
                 markov[node] = get_markov(cursor, length, node, initial_run)
             markov[node][msg[i]] += 1
