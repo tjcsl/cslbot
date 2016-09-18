@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2016 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -26,6 +25,7 @@ from sqlalchemy import Index, or_
 from sqlalchemy.exc import OperationalError
 
 from .orm import Babble, Babble2, Babble_count, Babble_last, Log
+from .misc import escape
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
@@ -56,7 +56,8 @@ def get_markov(cursor, length, node, initial_run):
     return ret
 
 
-def update_count(cursor, rows, length, source, target):
+def update_count(cursor, length, source, target):
+    rows = cursor.query(Babble_count).filter(Babble_count.length == length).all()
     try:
         count_source = next(r for r in rows if r.type == 'source' and r.key == source)
         count_source.count = count_source.count + 1
@@ -78,9 +79,7 @@ def generate_markov(cursor, length, messages, initial_run):
                 prev = msg[i - 1]
             else:
                 prev = "%s %s" % (msg[i - 2], msg[i - 1])
-            # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
-            source = row.source.replace('\\', '\\\\')
-            node = (prev, source, row.target)
+            node = (prev, escape(row.source), row.target)
             if node not in markov:
                 markov[node] = get_markov(cursor, length, node, initial_run)
             markov[node][msg[i]] += 1
@@ -92,7 +91,6 @@ def build_rows(cursor, length, markov, initial_run):
     data = []
     count_source = collections.defaultdict(int)
     count_target = collections.defaultdict(int)
-    count_rows = cursor.query(Babble_count).filter(Babble_count.length == length).all()
     for node, word_freqs in markov.items():
         key, source, target = node
         if not initial_run:
@@ -111,7 +109,7 @@ def build_rows(cursor, length, markov, initial_run):
                     count_source[source] += 1
                     count_target[target] += 1
                 else:
-                    update_count(cursor, count_rows, length, source, target)
+                    update_count(cursor, length, source, target)
                 data.append((source, target, key, word, freq))
     count_data = []
     for source, count in count_source.items():
