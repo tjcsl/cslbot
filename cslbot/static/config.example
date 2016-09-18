@@ -12,7 +12,7 @@ extrachans:
 cmdchar: !
 altcmdchars: fwil, @, ~
 url: http://example.com/irc/
-nickregex: [a-zA-Z0-9_\|`\^-]
+nickregex: [a-zA-Z0-9\\_\|`\^-]
 chanregex: [&#+!][^, \x07]+
 extramodules:
 [groups]

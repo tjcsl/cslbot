@@ -48,7 +48,7 @@ def get_modifiers(msg, nick, nickregex):
         mods['allnicks'] = True
         mods['ignorecase'] = True
         mods['nick'] = None
-    elif re.match(nickregex, escape(msg)):
+    elif re.match(nickregex, msg):
         mods['nick'] = escape(msg)
     else:
         return None
