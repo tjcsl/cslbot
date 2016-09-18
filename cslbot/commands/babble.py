@@ -42,9 +42,9 @@ def build_msg(cursor, speaker, length, start):
     table = Babble if length == 1 else Babble2
     location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
     # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
-    speaker = speaker.replace('\\', '\\\\')
+    escaped_speaker = speaker.replace('\\', '\\\\')
     count = cursor.query(Babble_count.count).filter(Babble_count.type == location, Babble_count.length == length,
-                                                    Babble_count.key == speaker).scalar()
+                                                    Babble_count.key == escaped_speaker).scalar()
     if count is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
