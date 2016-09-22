@@ -32,7 +32,7 @@ from cslbot.helpers.orm import Log  # noqa
 from cslbot.helpers.sql import get_session  # noqa
 
 
-def main(confdir:str="/etc/cslbot")->None:
+def main(confdir: str="/etc/cslbot")->None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)

@@ -28,7 +28,7 @@ if exists(join(dirname(__file__), '../.git')):
 from cslbot.helpers import babble, sql  # noqa
 
 
-def main(confdir:str="/etc/cslbot")->None:
+def main(confdir: str="/etc/cslbot")->None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)
