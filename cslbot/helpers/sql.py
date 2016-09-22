@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
+import configparser
 from contextlib import contextmanager
 from datetime import datetime
 
@@ -27,7 +28,7 @@ from sqlalchemy.pool import StaticPool
 from .orm import Log, setup_db
 
 
-def get_session(config):
+def get_session(config: configparser.ConfigParser) -> sessionmaker:
     if not config['db']['engine']:
         raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
     # In-memory sqlite db, only really useful for testing.
@@ -40,7 +41,7 @@ def get_session(config):
 
 class Sql():
 
-    def __init__(self, config, confdir):
+    def __init__(self, config: configparser.ConfigParser, confdir: str) -> None:
         """Set everything up."""
         self.session = get_session(config)
         with self.session_scope() as session:
