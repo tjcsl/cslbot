@@ -21,7 +21,7 @@ import sys
 from os.path import dirname, join
 
 
-def main(confdir="/etc/cslbot"):
+def main(confdir: str ="/etc/cslbot") -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)

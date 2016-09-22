@@ -119,7 +119,7 @@ def gen_log(row):
     return log
 
 
-def main(confdir="/etc/cslbot"):
+def main(confdir:str="/etc/cslbot") -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)

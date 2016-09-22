@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar
 
 class sessionmaker:
-  def __init__(self, bind): ...
+  def __init__(self, bind) -> None: ...
 
 T = TypeVar('T')
 
