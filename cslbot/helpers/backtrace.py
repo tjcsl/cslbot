@@ -24,7 +24,7 @@ from os.path import basename
 from irc import client
 
 
-def output_traceback(ex: Exception) -> Tuple[str,str]:
+def output_traceback(ex: Exception) -> Tuple[str, str]:
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
     output = "".join(traceback.format_exc()).strip()

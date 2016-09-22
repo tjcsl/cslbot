@@ -221,14 +221,14 @@ class ErrnoTest(BotTest):
 
     @mock.patch('cslbot.helpers.misc.choice')
     def test_errno_valid_no_input(self, mock_choice):
-        """Test errno run with no input, this also tests name -> number mapping"""
+        """Test errno run with no input, this also tests name -> number mapping."""
         mock_choice.return_value = 'EOVERFLOW'
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno'])
         output = 'Please install gcc.' if os.name == 'nt' else '#define EOVERFLOW 75'
         self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno', 'pubmsg')])
 
     def test_errno_valid_number(self):
-        """Test errno number -> name mapping"""
+        """Test errno number -> name mapping."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!errno 75'])
         output = 'Please install gcc.' if os.name == 'nt' else '#define EOVERFLOW 75'
         self.assertEqual(calls, [('testBot', '#test-channel', 0, output, 'privmsg'), ('testnick', '#test-channel', 0, '!errno 75', 'pubmsg')])
@@ -276,7 +276,7 @@ class CoinTest(BotTest):
                                  ('testnick', '#test-channel', 0, '!coin', 'pubmsg')])
 
     def test_coin_noninteger(self):
-        """Test a non-digit argument"""
+        """Test a non-digit argument."""
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!coin potato'])
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'Not A Valid Positive Integer.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!coin potato', 'pubmsg')])

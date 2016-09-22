@@ -23,7 +23,7 @@ import subprocess
 from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
-from typing import Tuple
+from typing import List, Tuple
 
 import pkg_resources
 
@@ -215,7 +215,7 @@ def get_version(srcdir):
         return None, None
 
 
-def split_msg(msgs: List[bytes], max_len: int) -> Tuple[str,List[bytes]]:
+def split_msg(msgs: List[bytes], max_len: int) -> Tuple[str, List[bytes]]:
     """Splits as close to the end as possible."""
     msg = ""
     while len(msg.encode()) < max_len:

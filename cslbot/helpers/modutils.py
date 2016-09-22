@@ -22,7 +22,7 @@ import logging
 import sys
 from glob import glob
 from os.path import basename, join
-from typing import Tuple
+from typing import List, Set, Tuple
 
 from pkg_resources import Requirement, resource_filename, resource_string
 
@@ -103,7 +103,7 @@ def get_disabled(mod_type: str) -> Set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package : str = 'CslBot') -> Tuple[List[str],List[str]]:
+def get_enabled(mod_type: str, package: str = 'CslBot') -> Tuple[List[str], List[str]]:
     enabled, disabled = [], []
     full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
     for f in glob(join(full_dir, '*.py')):
@@ -118,7 +118,7 @@ def get_enabled(mod_type: str, package : str = 'CslBot') -> Tuple[List[str],List
     return enabled, disabled
 
 
-def get_modules(mod_type: str) -> Tuple[List[str],List[str]]:
+def get_modules(mod_type: str) -> Tuple[List[str], List[str]]:
     core_enabled, core_disabled = get_enabled(mod_type)
     for package in filter(None, registry.aux):
         aux_enabled, aux_disabled = get_enabled(mod_type, package)
@@ -157,7 +157,7 @@ def safe_load(modname: str) -> str:
         return msg
 
 
-def scan_and_reimport(mod_type: str) -> List[Tuple[str,str]]:
+def scan_and_reimport(mod_type: str) -> List[Tuple[str, str]]:
     """Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []
