@@ -14,3 +14,4 @@ fuzz_output
 __pycache__
 *.py[co]
 *.sw?
+.mypy_cache

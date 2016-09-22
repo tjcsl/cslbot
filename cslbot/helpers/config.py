@@ -31,7 +31,7 @@ except NameError:
     _config_file = None  # type: str
 
 
-def migrate_config(config_file, config_obj, send):
+def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
     modified = False
@@ -61,7 +61,7 @@ def migrate_config(config_file, config_obj, send):
             config_obj.write(f)
 
 
-def get_config():
+def get_config() -> configparser.ConfigParser:
     if _config_file is None:
         raise Exception("Invalid config")
     config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())

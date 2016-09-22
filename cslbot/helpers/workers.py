@@ -21,6 +21,7 @@ import signal
 import threading
 from collections import namedtuple
 from datetime import datetime, timedelta
+from typing import Any, Callable
 
 import concurrent.futures
 
@@ -82,7 +83,7 @@ class Workers(object):
             ctrlchan = self.handler.config['core']['ctrlchan']
             backtrace.handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
 
-    def defer(self, t, run_on_cancel, func, *args):
+    def defer(self, t: int, run_on_cancel: bool, func: Callable[[Any,Any],None], *args: Any) -> int:
         event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()

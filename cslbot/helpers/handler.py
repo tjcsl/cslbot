@@ -170,7 +170,7 @@ class BotHandler(object):
             return True
 
     @staticmethod
-    def get_max_length(target, msgtype):
+    def get_max_length(target: str, msgtype: str) -> int:
         overhead = r"PRIVMSG %s: \r\n" % target
         # FIXME: what the hell is up w/ message length limits?
         if msgtype == 'action':
@@ -214,7 +214,7 @@ class BotHandler(object):
             else:
                 self.rate_limited_send('privmsg', target, i)
 
-    def rate_limited_send(self, mtype, target, msg=None):
+    def rate_limited_send(self, mtype: str, target: str, msg: str = None) -> None:
         with self.flood_lock:
             elapsed = datetime.now() - self.last_msg_time
             # Don't send messages more then once every 0.5 sec.
@@ -225,7 +225,7 @@ class BotHandler(object):
                 getattr(self.connection, mtype)(target, msg)
             self.last_msg_time = datetime.now()
 
-    def do_log(self, target, nick, msg, msgtype):
+    def do_log(self, target: str, nick: str, msg: str, msgtype: str) -> None:
         """Handles logging.
 
         | Logs to a sql db.

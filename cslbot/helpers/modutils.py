@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2016 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Fox Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -23,6 +22,7 @@ import logging
 import sys
 from glob import glob
 from os.path import basename, join
+from typing import Tuple
 
 from pkg_resources import Requirement, resource_filename, resource_string
 
@@ -31,13 +31,13 @@ from . import backtrace
 
 class ModuleData(object):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
-        self.groups = {'commands': set(), 'hooks': set()}
-        self.disabled = {'commands': set(), 'hooks': set()}
-        self.aux = []
+    def reset(self) -> None:
+        self.groups = {'commands': set(), 'hooks': set()}  # type: Dict[str,Set[str]]
+        self.disabled = {'commands': set(), 'hooks': set()}  # type: Dict[str,Set[str]]
+        self.aux = []  # type: List[str]
 
 
 registry = ModuleData()
@@ -89,21 +89,21 @@ def parse_group(cfg):
     return groups
 
 
-def group_enabled(mod_type, name):
+def group_enabled(mod_type: str, name: str) -> bool:
     if mod_type == 'helpers':
         return True
     return name in registry.groups[mod_type]
 
 
-def group_disabled(mod_type, name):
+def group_disabled(mod_type: str, name: str) -> bool:
     return name in registry.disabled[mod_type]
 
 
-def get_disabled(mod_type):
+def get_disabled(mod_type: str) -> Set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type, package='CslBot'):
+def get_enabled(mod_type: str, package : str = 'CslBot') -> Tuple[List[str],List[str]]:
     enabled, disabled = [], []
     full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
     for f in glob(join(full_dir, '*.py')):
@@ -118,7 +118,7 @@ def get_enabled(mod_type, package='CslBot'):
     return enabled, disabled
 
 
-def get_modules(mod_type):
+def get_modules(mod_type: str) -> Tuple[List[str],List[str]]:
     core_enabled, core_disabled = get_enabled(mod_type)
     for package in filter(None, registry.aux):
         aux_enabled, aux_disabled = get_enabled(mod_type, package)
@@ -127,7 +127,7 @@ def get_modules(mod_type):
     return core_enabled, core_disabled
 
 
-def safe_reload(modname):
+def safe_reload(modname: str) -> str:
     """Catch and log any errors that arise from reimporting a module, but do not die.
 
     :return: None when import was successful. String is the first line of the error message
@@ -142,7 +142,7 @@ def safe_reload(modname):
         return msg
 
 
-def safe_load(modname):
+def safe_load(modname: str) -> str:
     """Load a module, logging errors instead of dying if it fails to load.
 
     :return: None when import was successful. String is the first line of the error message
@@ -157,7 +157,7 @@ def safe_load(modname):
         return msg
 
 
-def scan_and_reimport(mod_type):
+def scan_and_reimport(mod_type: str) -> List[Tuple[str,str]]:
     """Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []

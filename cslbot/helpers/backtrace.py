@@ -18,19 +18,20 @@
 
 import logging
 import traceback
+from typing import Tuple
 from os.path import basename
 
 from irc import client
 
 
-def output_traceback(ex):
+def output_traceback(ex: Exception) -> Tuple[str,str]:
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
     output = "".join(traceback.format_exc()).strip()
     for line in output.split('\n'):
         logging.error(line)
-    trace = traceback.extract_tb(ex.__traceback__)[-1]
-    trace = [basename(trace[0]), trace[1]]
+    trace_obj = traceback.extract_tb(ex.__traceback__)[-1]
+    trace = [basename(trace_obj[0]), trace_obj[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
     msg = "%s in %s on line %s: %s" % (name, trace[0], trace[1], output)

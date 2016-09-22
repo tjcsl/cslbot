@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from typing import Any, Callable, Dict, List, Set, Union  # noqa
+from typing import Any, Callable, Dict, List, Set, Tuple, Union  # noqa
 
 from . import modutils
 
@@ -37,7 +37,7 @@ class Registry(object):
             raise ValueError("There is already a object registered with the name %s" % obj)
         self.known_objects[name] = obj
 
-    def scan_for_objects(self, obj_type: str) -> List[str]:
+    def scan_for_objects(self, obj_type: str) -> List[Tuple[str,str]]:
         self.known_objects.clear()
         self.disabled_objects = modutils.get_disabled(obj_type)
         errors = modutils.scan_and_reimport(obj_type)
@@ -67,7 +67,7 @@ class Registry(object):
 
 class HookRegistry(Registry):
 
-    def scan_for_hooks(self) -> List[str]:
+    def scan_for_hooks(self) -> List[Tuple[str,str]]:
         """Scans for hooks.
 
         :rtype: list
@@ -103,7 +103,7 @@ hook_registry = HookRegistry()
 
 class CommandRegistry(Registry):
 
-    def scan_for_commands(self) -> List[str]:
+    def scan_for_commands(self) -> List[Tuple[str,str]]:
         """Scans for commands.
 
         :rtype: list
