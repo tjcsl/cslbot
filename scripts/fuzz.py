@@ -42,7 +42,7 @@ class ThreadMock():
     name = 'Thread-7'
 
 
-def setup_mocks():
+def setup_mocks() -> None:
     mock.patch.object(irc.client.ServerConnection, 'connect', connect_mock).start()
     mock.patch.object(socketserver.TCPServer, 'server_bind').start()
     mock.patch.object(socketserver.TCPServer, 'serve_forever').start()
@@ -55,12 +55,12 @@ def setup_mocks():
     mock.patch.object(workers.Workers, 'defer').start()
 
 
-def setup_bot():
+def setup_bot() -> core.IrcBot:
     confdir = join(dirname(__file__), '..')
     bot = core.IrcBot(confdir)
-    bot.handler.channels = {'#test-channel': mock.MagicMock()}
-    bot.handler.is_ignored = mock.MagicMock(return_value=False)
-    bot.handler.db = mock.MagicMock()
+    mock.patch.dict(bot.handler, 'channels', {'#test-channel': mock.MagicMock()}).start()
+    mock.patch.object(bot.handler, 'is_ignored', return_value=False).start()
+    mock.patch.object(bot.handler,'db').start()
     # We don't actually connect to an irc server, so fake the event loop
     with mock.patch.object(irc.client.Reactor, 'process_forever'):
         bot.start()

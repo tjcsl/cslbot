@@ -33,9 +33,9 @@ from cslbot.helpers.sql import get_session  # noqa
 
 class LogProcesser(object):
 
-    def __init__(self, outdir):
-        self.day = {}
-        self.logs = {}
+    def __init__(self, outdir: str) -> None:
+        self.day = {}  # Dict[str,str]
+        self.logs = {} # Dict[str,file]
         self.outdir = outdir
 
     def __del__(self):
@@ -65,12 +65,12 @@ class LogProcesser(object):
             self.logs[channel] = open(outfile, 'a', encoding='utf-8')
         self.logs[channel].write(msg + '\n')
 
-    def process_line(self, row):
+    def process_line(self, row) -> None:
         self.check_day(row)
         self.write_log(row.target, gen_log(row))
 
 
-def get_id(outdir):
+def get_id(outdir: str) -> int:
     outfile = path.join(outdir, ".dbid")
     if not path.exists(outfile):
         return 0
@@ -78,7 +78,7 @@ def get_id(outdir):
         return int(f.read())
 
 
-def save_id(outdir, new_id):
+def save_id(outdir: str, new_id: int) -> None:
     with open(path.join(outdir, '.dbid'), 'w') as f:
         f.write(str(new_id) + '\n')
 
