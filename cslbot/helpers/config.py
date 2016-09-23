@@ -105,7 +105,7 @@ def do_config(config):
     config['auth']['owner'] = owner
 
 
-def do_setup(configfile):
+def do_setup(configfile: str) -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     config.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
     do_config(config)

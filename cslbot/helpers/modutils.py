@@ -43,7 +43,7 @@ class ModuleData(object):
 registry = ModuleData()
 
 
-def init_aux(config):
+def init_aux(config: configparser.ConfigParser) -> None:
     registry.reset()
     registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
 
@@ -59,7 +59,7 @@ def load_groups(confdir):
     return config_obj
 
 
-def init_groups(groups, confdir):
+def init_groups(groups: configparser.SectionProxy, confdir: str) -> None:
     config = load_groups(confdir)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')

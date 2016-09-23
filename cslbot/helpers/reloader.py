@@ -14,9 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+import configparser
 import importlib
 import logging
 from os.path import exists, join
+from typing import Callable
 
 from . import config, handler, misc, modutils, registry
 
@@ -26,7 +28,7 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(cfg, confdir, send=logging.error):
+def load_modules(cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None] = logging.error) -> bool:
     modutils.init_aux(cfg['core'])
     modutils.init_groups(cfg['groups'], confdir)
     errored_commands = registry.command_registry.scan_for_commands()
