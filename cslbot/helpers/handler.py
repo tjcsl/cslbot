@@ -603,7 +603,7 @@ class BotHandler(object):
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
                 h.run(send, msg, e.type, self, target, realargs)
 
-    def handle_msg(self, c: irc.client.ServerConnection, e: irc.client.Event) -> None:
+    def handle_msg(self, c: client.ServerConnection, e: client.Event) -> None:
         """The Heart and Soul of IrcBot."""
 
         if e.type not in ['authenticate', 'error', 'join', 'part', 'quit']:

@@ -35,7 +35,7 @@ class LogProcesser(object):
 
     def __init__(self, outdir: str) -> None:
         self.day = {}  # Dict[str,str]
-        self.logs = {} # Dict[str,file]
+        self.logs = {}  # Dict[str,file]
         self.outdir = outdir
 
     def __del__(self):
