@@ -29,11 +29,13 @@ from datetime import datetime, timedelta
 
 from irc import client, modes
 
-from typing import Callable, Dict  # noqa
+from typing import Any, Callable, Dict, Tuple  # noqa
 
 from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
 logger = logging.getLogger(__name__)
+
+send_type = Callable[..., None]
 
 
 class BotHandler(object):
@@ -100,12 +102,12 @@ class BotHandler(object):
         elif self.config['feature']['servicestype'] == "atheme":
             self.rate_limited_send('privmsg', 'NickServ', 'ACC %s' % nick)
 
-    def send_who(self, target, tag):
+    def send_who(self, target: str, tag: int) -> None:
         # http://faerion.sourceforge.net/doc/irc/whox.var
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
         self.rate_limited_send('who', '%s %%naft,%d' % (target, tag))
 
-    def is_admin(self, send, nick):
+    def is_admin(self, send: send_type, nick: str) -> bool:
         """Checks if a nick is a admin.
 
         If NickServ hasn't responded yet, then the admin is unverified,
@@ -143,7 +145,7 @@ class BotHandler(object):
                 if not a.registered:
                     self.update_authstatus(a.nick)
 
-    def abusecheck(self, send, nick, target, limit, cmd):
+    def abusecheck(self, send: send_type, nick: str, target: str, limit: int, cmd: str) -> bool:
         """ Rate-limits commands.
 
         | If a nick uses commands with the limit attr set, record the time
@@ -317,7 +319,7 @@ class BotHandler(object):
             return True
         return False
 
-    def do_mode(self, target, msg, nick, send):
+    def do_mode(self, target: str, msg: str, nick: str, send: send_type) -> None:
         """reop and handle guard violations."""
         mode_changes = modes.parse_channel_modes(msg)
         with self.data_lock:
@@ -375,7 +377,7 @@ class BotHandler(object):
             else:
                 self.connection.kick(target, nick, msg)
 
-    def do_args(self, modargs, send, nick, target, source, name, msgtype):
+    def do_args(self, modargs: List[str], send: send_type, nick: str, target: str, source: str, name: str, msgtype: str) -> Dict[str,Any]:
         """Handle the various args that modules need."""
         realargs = {}
         args = {'nick': nick,
@@ -413,11 +415,11 @@ class BotHandler(object):
             for chan in [x.strip() for x in extrachans.split(',')]:
                 self.rate_limited_send('join', chan)
 
-    def is_ignored(self, nick):
+    def is_ignored(self, nick: str) -> bool:
         with self.db.session_scope() as session:
             return session.query(orm.Ignore).filter(orm.Ignore.nick == nick).count()
 
-    def get_filtered_send(self, cmdargs, send, target):
+    def get_filtered_send(self, cmdargs: str, send: send_type, target: str) -> Tuple[str, send_type]:
         """Parse out any filters."""
         parser = arguments.ArgParser(self.config)
         parser.add_argument('--filter')
@@ -443,7 +445,7 @@ class BotHandler(object):
         if e.arguments[0] not in self.channels:
             c.join(e.arguments[0])
 
-    def handle_event(self, msg, send, c, e):
+    def handle_event(self, msg: str, send: send_type, c: client.ServerConnection, e: client.Event) -> None:
         if e.type == 'whospcrpl':
             self.handle_who(e)
         elif e.type == 'account':
@@ -536,7 +538,7 @@ class BotHandler(object):
             for x in misc.get_channels(self.channels, e.target):
                 self.do_kick(send, x, e.target, "identity crisis")
 
-    def handle_join(self, c, e, target, send):
+    def handle_join(self, c: client.ServerConnection, e: client.Event, target: str, send: send_type) -> None:
         # Get status for all nicks in-channel when we join, or the new nick when somebody else joins.
         if self.features['whox']:
             tag = random.randint(0, 999)
@@ -557,7 +559,7 @@ class BotHandler(object):
                         admin.registered = True
                         admin.time = datetime.now()
 
-    def get_cmd(self, msg):
+    def get_cmd(self, msg: str) -> Tuple[str, str]:
         cmd = msg.split()[0]
         cmdchar = self.config['core']['cmdchar']
 
@@ -575,7 +577,7 @@ class BotHandler(object):
         cmd_name = cmd[len(cmdchar):].lower() if cmd.startswith(cmdchar) else None
         return cmd_name, cmdargs
 
-    def run_cmd(self, send, nick, target, cmd_name, cmdargs, e):
+    def run_cmd(self, send: send_type, nick: str, target: str, cmd_name: str, cmdargs: str, e: client.Event) -> None:
         cmdargs, filtersend = self.get_filtered_send(cmdargs, send, target)
         if filtersend is None:
             send(cmdargs)
@@ -591,13 +593,13 @@ class BotHandler(object):
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
         cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
 
-    def handle_kick(self, c, e, target, send):
+    def handle_kick(self, c: client.ServerConnection, e: client.Event, target: str, send: send_type) -> None:
         if e.arguments[0] == c.real_nickname:
             send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
             # Auto-rejoin after 5 seconds.
             self.workers.defer(5, False, self.connection.join, target)
 
-    def handle_hooks(self, send, nick, target, e, msg):
+    def handle_hooks(self, send: send_type, nick: str, target: str, e: client.Event, msg: str) -> None:
         if self.config['feature'].getboolean('hooks'):
             for h in registry.hook_registry.get_hook_objects():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
@@ -619,7 +621,7 @@ class BotHandler(object):
         # Send the response to private messages to the sending nick.
         target = nick if e.type == 'privmsg' else e.target
 
-        def send(msg, mtype='privmsg', target=target, ignore_length=False):
+        def send(msg: str, mtype: str = 'privmsg', target: str = target, ignore_length=False) -> None:
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
         if e.type in ['account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse',

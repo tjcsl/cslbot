@@ -123,7 +123,7 @@ def get_channels(chanlist, nick):
     return channels
 
 
-def get_cmdchar(config, connection, msg, msgtype):
+def get_cmdchar(config: configparser.ConfigParser, connection: irc.client.ServerConnection, msg: str, msgtype: str) -> str:
     cmdchar = config['core']['cmdchar']
     botnick = '%s: ' % connection.real_nickname
     if msg.startswith(botnick):
