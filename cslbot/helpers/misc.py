@@ -18,7 +18,6 @@
 
 import configparser
 import logging
-import irc
 import os
 import re
 import subprocess
@@ -26,6 +25,7 @@ from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
 from typing import List, Tuple
+from irc import client
 
 import pkg_resources
 
@@ -125,7 +125,7 @@ def get_channels(chanlist, nick):
     return channels
 
 
-def get_cmdchar(config: configparser.ConfigParser, connection: irc.client.ServerConnection, msg: str, msgtype: str) -> str:
+def get_cmdchar(config: configparser.ConfigParser, connection: client.ServerConnection, msg: str, msgtype: str) -> str:
     cmdchar = config['core']['cmdchar']
     botnick = '%s: ' % connection.real_nickname
     if msg.startswith(botnick):
