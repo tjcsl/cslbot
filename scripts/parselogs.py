@@ -22,6 +22,7 @@ import fcntl
 import re
 import sys
 from os import makedirs, path
+from typing import IO
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
@@ -34,20 +35,20 @@ from cslbot.helpers.sql import get_session  # noqa
 class LogProcesser(object):
 
     def __init__(self, outdir: str) -> None:
-        self.day = {}  # Dict[str,str]
-        self.logs = {}  # Dict[str,file]
+        self.day = {}  # type: Dict[str,str]
+        self.logs = {}  # type: Dict[str,IO]
         self.outdir = outdir
 
     def __del__(self):
         for log in self.logs.values():
             log.close()
 
-    def get_path(self, channel):
+    def get_path(self, channel: str) -> str:
         if not path.abspath(path.join(self.outdir, channel)).startswith(self.outdir):
             raise Exception("Bailing out due to possible path traversal attack.")
         return path.join(self.outdir, "%s.log" % re.sub(r'[^\w#\-_\. ]', '_', channel))
 
-    def check_day(self, row):
+    def check_day(self, row: Log) -> None:
         # FIXME: print out new day messages for each day, not just the most recent one.
         channel = row.target
         rowday = row.time.strftime('%d')
@@ -59,13 +60,13 @@ class LogProcesser(object):
             log = row.time.strftime('New Day: %a, %b %d, %Y')
             self.write_log(channel, log)
 
-    def write_log(self, channel, msg):
+    def write_log(self, channel: str, msg: str) -> None:
         if channel not in self.logs:
             outfile = self.get_path(channel)
             self.logs[channel] = open(outfile, 'a', encoding='utf-8')
         self.logs[channel].write(msg + '\n')
 
-    def process_line(self, row) -> None:
+    def process_line(self, row: Log) -> None:
         self.check_day(row)
         self.write_log(row.target, gen_log(row))
 
@@ -83,7 +84,7 @@ def save_id(outdir: str, new_id: int) -> None:
         f.write(str(new_id) + '\n')
 
 
-def gen_log(row):
+def gen_log(row: Log) -> str:
     logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
     nick = row.source.split('!')[0]
     if row.type == 'join':

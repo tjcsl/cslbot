@@ -26,7 +26,7 @@ from irc import client, connection
 
 class IrcClient(client.SimpleIRCClient):
 
-    def __init__(self, nick, config):
+    def __init__(self, nick: str, config: configparser.ConfigParser) -> None:
         self.nick = nick
         self.config = config
         self.loading = False
@@ -69,7 +69,7 @@ class IrcClient(client.SimpleIRCClient):
                 sys.exit(1)
 
 
-def main():
+def main() -> None:
     logging.basicConfig(level=logging.INFO)
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open('config.cfg') as f:
