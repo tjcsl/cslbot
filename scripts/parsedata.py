@@ -25,7 +25,7 @@ import sys
 from datetime import datetime, timedelta
 from os import makedirs, path
 from time import strftime
-from typing import Any
+from typing import Any, Dict, List
 
 from jinja2 import Environment, FileSystemLoader
 
