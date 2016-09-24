@@ -22,7 +22,7 @@ import logging
 import sys
 from glob import glob
 from os.path import basename, join
-from typing import List, Set, Tuple
+from typing import Dict, List, Set, Tuple
 
 from pkg_resources import Requirement, resource_filename, resource_string
 

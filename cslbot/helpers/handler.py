@@ -18,21 +18,18 @@
 
 import base64
 import collections
-import configparser
 import copy
 import logging
 import random
 import re
 import threading
 import time
+import irc
 from datetime import datetime, timedelta
-
-from irc import client, modes
 
 from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
 logger = logging.getLogger(__name__)
-
 
 
 class BotHandler(object):
@@ -318,7 +315,7 @@ class BotHandler(object):
 
     def do_mode(self, target, msg, nick, send):
         """reop and handle guard violations."""
-        mode_changes = modes.parse_channel_modes(msg)
+        mode_changes = irc.modes.parse_channel_modes(msg)
         with self.data_lock:
             for change in mode_changes:
                 if change[1] == 'v':
