@@ -21,6 +21,8 @@ from setuptools import find_packages, setup
 with open('README.rst', 'r') as f:
     long_description = f.read()
 
+setup_requires = ['setuptools', 'setuptools_git']
+
 setup(name="CslBot",
       description="An easily extensible, modular irc bot.",
       long_description=long_description,
@@ -38,8 +40,8 @@ setup(name="CslBot",
               'static/shakespeare-dictionary.json', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
           ],
       },
-      setup_requires=['setuptools_git'],
-      install_requires=[
+      setup_requires=setup_requires,
+      install_requires=setup_requires + [
           'SQLAlchemy>=1.0.0',  # bulk_insert_mappings
           'requests>=2.4.0',  # ConnectTimeout
           'alembic',
