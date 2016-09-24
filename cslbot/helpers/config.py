@@ -79,7 +79,7 @@ def load_config(config_file: str, send: Callable[[str], None]) -> configparser.C
     return config_obj
 
 
-def do_config(config):
+def do_config(config: configparser.ConfigParser) -> None:
     nickregex = config['core']['nickregex']
     channelregex = "#[^ ,]{1,49}"
     prompttext = "Please enter a valid %s for the bot: "

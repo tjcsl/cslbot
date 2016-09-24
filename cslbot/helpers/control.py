@@ -329,7 +329,7 @@ def init_parser(send, handler, db):
     return parser
 
 
-def handle_ctrlchan(handler: handler.BotHandler, msg: str, send: Callable[[str], None]) -> None:
+def handle_ctrlchan(handler, msg, send):
     """Handle the control channel."""
     with handler.db.session_scope() as db:
         parser = init_parser(send, handler, db)

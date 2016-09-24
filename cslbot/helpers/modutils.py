@@ -48,7 +48,7 @@ def init_aux(config: configparser.ConfigParser) -> None:
     registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
 
 
-def load_groups(confdir):
+def load_groups(confdir: str) -> configparser.ConfigParser:
     example_obj = configparser.ConfigParser()
     example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example').decode())
     config_obj = configparser.ConfigParser()
@@ -65,7 +65,7 @@ def init_groups(groups: configparser.SectionProxy, confdir: str) -> None:
     add_to_groups(config, groups, 'hooks')
 
 
-def add_to_groups(config, groups, mod_type):
+def add_to_groups(config: configparser.ConfigParser, groups: configparser.SectionProxy, mod_type: str) -> None:
     enabled_groups = [x.strip() for x in groups[mod_type].split(',')]
     mod_group = parse_group(config[mod_type])
     for name, values in mod_group.items():
@@ -78,11 +78,11 @@ def add_to_groups(config, groups, mod_type):
                 registry.disabled[mod_type].add(x)
 
 
-def loaded(mod_type, name):
+def loaded(mod_type: str, name: str) -> bool:
     return name in registry.groups[mod_type] or name in registry.disabled[mod_type]
 
 
-def parse_group(cfg):
+def parse_group(cfg: configparser.SectionProxy) -> Dict[str, List[str]]:
     groups = {}
     for group in cfg.keys():
         groups[group] = [x.strip() for x in cfg[group].split(',')]
