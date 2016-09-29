@@ -231,7 +231,7 @@ def split_msg(msgs: List[bytes], max_len: int) -> Tuple[str, List[bytes]]:
     return msg, msgs
 
 
-def truncate_msg(msg, max_len):
+def truncate_msg(msg: str, max_len: int) -> str:
     if len(msg.encode()) > max_len:
         msg = [x.encode() for x in msg]
         msg, _ = split_msg(msg, max_len - 3)
@@ -244,7 +244,7 @@ def escape(data):
     return data.replace('\\', '\\\\')
 
 
-def get_max_length(target, msgtype):
+def get_max_length(target: str, msgtype: str) -> int:
     overhead = r"PRIVMSG %s: \r\n" % target
     # FIXME: what the hell is up w/ message length limits?
     if msgtype == 'action':
