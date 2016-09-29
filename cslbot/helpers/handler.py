@@ -166,15 +166,14 @@ class BotHandler(object):
             return True
 
     @staticmethod
-    def get_max_length(target, msgtype):
-        overhead = r"PRIVMSG %s: \r\n" % target
-        # FIXME: what the hell is up w/ message length limits?
-        if msgtype == 'action':
-            overhead += "\001ACTION \001"
-            max_len = 454  # 512
-        else:
-            max_len = 453  # 512
-        return max_len - len(overhead.encode())
+    def build_split_msg(msg, max_len):
+        msgs = []
+        msg_enc = [x.encode() for x in msg]
+        while sum(map(len, msg_enc)) > max_len:
+            split, msg_enc = misc.split_msg(msg_enc, max_len)
+            msgs.append(split)
+        msgs.append(''.join([x.decode() for x in msg_enc]).strip())
+        return msgs
 
     def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
         """Send a message.
@@ -184,25 +183,20 @@ class BotHandler(object):
         """
         if not isinstance(msg, str):
             raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
-        msgs = []
         if filters is None:
             filters = self.outputfilter[target]
         for i in filters:
             if target != self.config['core']['ctrlchan']:
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
-        max_len = 650
-        msg_enc = [x.encode() for x in msg]
-        if sum(map(len, msg_enc)) > max_len and not ignore_length:
-            msg, _ = misc.split_msg(msg_enc, max_len)
-            msg += "..."
-            msg_enc = [x.encode() for x in msg]
-        max_len = self.get_max_length(target, msgtype)
+        if not ignore_length:
+            # Ignore everything after the first 650 chars.
+            msg = misc.truncate_msg(msg, 650)
+
         # We can't send messages > 512 bytes to irc.
-        while sum(map(len, msg_enc)) > max_len:
-            split, msg_enc = misc.split_msg(msg_enc, max_len)
-            msgs.append(split)
-        msgs.append(''.join([x.decode() for x in msg_enc]).strip())
+        max_len = misc.get_max_length(target, msgtype)
+        msgs = self.build_split_msg(msg, max_len)
+
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
             if msgtype == 'action':

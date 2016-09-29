@@ -24,6 +24,8 @@ from os.path import basename
 
 from irc import client
 
+from . import misc
+
 
 def output_traceback(ex: Exception) -> Tuple[str, str]:
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
@@ -59,6 +61,6 @@ def handle_traceback(ex: Exception, c: client.ServerConnection, target: str, con
             send(target, "%s occured in %s. See the control channel for details." % (name, source))
     msg = 'Error in channel %s -- %s -- %s' % (target, source, msg)
     # Handle over-long exceptions.
-    if len(msg) > 480:
-        msg = msg[:480] + '...'
+    max_len = misc.get_max_length(errtarget, 'privmsg')
+    msg = misc.truncate_msg(msg, max_len)
     send(errtarget, msg)

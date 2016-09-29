@@ -242,3 +242,14 @@ def truncate_msg(msg, max_len):
 def escape(data):
     # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
     return data.replace('\\', '\\\\')
+
+
+def get_max_length(target, msgtype):
+    overhead = r"PRIVMSG %s: \r\n" % target
+    # FIXME: what the hell is up w/ message length limits?
+    if msgtype == 'action':
+        overhead += "\001ACTION \001"
+        max_len = 454  # 512
+    else:
+        max_len = 453  # 512
+    return max_len - len(overhead.encode())
