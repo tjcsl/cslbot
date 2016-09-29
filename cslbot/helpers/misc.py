@@ -233,8 +233,8 @@ def split_msg(msgs: List[bytes], max_len: int) -> Tuple[str, List[bytes]]:
 
 def truncate_msg(msg: str, max_len: int) -> str:
     if len(msg.encode()) > max_len:
-        msg = [x.encode() for x in msg]
-        msg, _ = split_msg(msg, max_len - 3)
+        msg_enc = [x.encode() for x in msg]
+        msg, _ = split_msg(msg_enc, max_len - 3)
         return msg + "..."
     return msg
 
