@@ -150,6 +150,7 @@ cslbot/helpers/arguments.py
 cslbot/helpers/babble.py
 cslbot/helpers/babble.pyi
 cslbot/helpers/backtrace.py
+cslbot/helpers/backtrace.pyi
 cslbot/helpers/command.py
 cslbot/helpers/config.py
 cslbot/helpers/control.py
