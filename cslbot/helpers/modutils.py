@@ -103,7 +103,7 @@ def get_disabled(mod_type: str) -> Set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package: str = 'CslBot') -> Tuple[List[str], List[str]]:
+def get_enabled(mod_type: str, package='CslBot') -> Tuple[List[str], List[str]]:
     enabled, disabled = [], []
     full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
     for f in glob(join(full_dir, '*.py')):

@@ -44,9 +44,8 @@ def cmd(send, msg, args):
     else:
         quote = quote.filter(Log.source != args['botnick'])
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
-    quote = quote.filter(
-        or_(Log.type == 'pubmsg', Log.type == 'privmsg',
-            Log.type == 'action'), Log.target == target, func.length(Log.msg) > 5).order_by(func.random()).first()
+    quote = quote.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target,
+                         func.length(Log.msg) > 5).order_by(func.random()).first()
     if quote:
         send("%s -- %s" % quote)
     elif nick:

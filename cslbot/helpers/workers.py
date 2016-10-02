@@ -145,9 +145,8 @@ class Workers(object):
             if not babble.update_markov(session, handler.config):
                 return
             last = session.query(Babble_last).first()
-            row = session.query(Log).filter(
-                or_(Log.type == 'pubmsg',
-                    Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan).order_by(Log.id.desc()).first()
+            row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar),
+                                            Log.target != ctrlchan).order_by(Log.id.desc()).first()
             if last is None or row is None:
                 return
             if abs(last.last - row.id) > 1:

@@ -89,16 +89,26 @@ def get_weather(cmdargs, send, apikey):
     if cmdargs.string.startswith("-"):
         data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string[1:])).json()
         if 'current_observation' in data:
-            data = {'display_location': {'full': cmdargs.string[1:]},
-                    'weather': 'Sunny',
-                    'temp_f': '94.8',
-                    'feelslike_f': '92.6',
-                    'relative_humidity': '60%',
-                    'pressure_in': '29.98',
-                    'wind_string': 'Calm'}
-            forecastdata = {'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
-                            'high': {'fahrenheit': '3841'},
-                            'low': {'fahrenheit': '-6666'}}
+            data = {
+                'display_location': {
+                    'full': cmdargs.string[1:]
+                },
+                'weather': 'Sunny',
+                'temp_f': '94.8',
+                'feelslike_f': '92.6',
+                'relative_humidity': '60%',
+                'pressure_in': '29.98',
+                'wind_string': 'Calm'
+            }
+            forecastdata = {
+                'conditions': 'Thunderstorms... Extreme Thunderstorms... Plague of Insects... The Rapture... Anti-Christ',
+                'high': {
+                    'fahrenheit': '3841'
+                },
+                'low': {
+                    'fahrenheit': '-6666'
+                }
+            }
             alertdata = {'alerts': [{'description': 'Apocalypse', 'expires': 'at the end of days'}]}
         elif 'results' in data['response']:
             send("%d results found, please be more specific" % len(data['response']['results']))

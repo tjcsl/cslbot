@@ -368,18 +368,20 @@ class BotHandler(object):
     def do_args(self, modargs, send, nick, target, source, name, msgtype):
         """Handle the various args that modules need."""
         realargs = {}
-        args = {'nick': nick,
-                'handler': self,
-                'db': None,
-                'config': self.config,
-                'source': source,
-                'name': name,
-                'type': msgtype,
-                'botnick': self.connection.real_nickname,
-                'target': target if target[0] == "#" else "private",
-                'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
-                'is_admin': lambda nick: self.is_admin(send, nick),
-                'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)}
+        args = {
+            'nick': nick,
+            'handler': self,
+            'db': None,
+            'config': self.config,
+            'source': source,
+            'name': name,
+            'type': msgtype,
+            'botnick': self.connection.real_nickname,
+            'target': target if target[0] == "#" else "private",
+            'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
+            'is_admin': lambda nick: self.is_admin(send, nick),
+            'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)
+        }
         for arg in modargs:
             if arg in args:
                 realargs[arg] = args[arg]

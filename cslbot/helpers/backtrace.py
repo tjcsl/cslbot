@@ -16,10 +16,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-import configparser
 import logging
 import traceback
-from typing import Tuple
 from os.path import basename
 
 from irc import client
@@ -27,7 +25,7 @@ from irc import client
 from . import misc
 
 
-def output_traceback(ex: Exception) -> Tuple[str, str]:
+def output_traceback(ex):
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
     output = "".join(traceback.format_exc()).strip()
@@ -41,15 +39,14 @@ def output_traceback(ex: Exception) -> Tuple[str, str]:
     return (msg, output)
 
 
-def handle_traceback(ex: Exception, c: client.ServerConnection, target: str, config: configparser.ConfigParser, source: str ="the bot") -> None:
+def handle_traceback(ex, c, target, config, source="the bot"):
     msg, output = output_traceback(ex)
     name = type(ex).__name__
     ctrlchan = config['core']['ctrlchan']
     prettyerrors = config['feature'].getboolean('prettyerrors')
     # If we've disconnected, there isn't much point sending errors to the network.
     if isinstance(ex, client.ServerNotConnectedError):
-
-        def send(_, msg: str) -> None:
+        def send(_, msg):
             logging.error(msg)
     else:
         send = c.privmsg

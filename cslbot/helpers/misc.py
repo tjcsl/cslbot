@@ -44,12 +44,14 @@ def parse_time(time):
         time = int(time)
     else:
         return None
-    conv = {'s': 1,
-            'm': 60,
-            'h': timedelta(hours=1).total_seconds(),
-            'd': timedelta(days=1).total_seconds(),
-            'w': timedelta(weeks=1).total_seconds(),
-            'y': timedelta(weeks=52).total_seconds()}
+    conv = {
+        's': 1,
+        'm': 60,
+        'h': timedelta(hours=1).total_seconds(),
+        'd': timedelta(days=1).total_seconds(),
+        'w': timedelta(weeks=1).total_seconds(),
+        'y': timedelta(weeks=52).total_seconds()
+    }
     if unit in conv.keys():
         return time * conv[unit]
     else:

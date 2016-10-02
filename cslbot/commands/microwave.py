@@ -30,16 +30,18 @@ def cmd(send, msg, args):
     """
     nick = args['nick']
     channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
-    levels = {1: 'Whirr...',
-              2: 'Vrrm...',
-              3: 'Zzzzhhhh...',
-              4: 'SHFRRRRM...',
-              5: 'GEEEEZZSH...',
-              6: 'PLAAAAIIID...',
-              7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
-              8: 'Nuke',
-              9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
-              10: 'ssh root@remote.tjhsst.edu rm -rf ~%s'}
+    levels = {
+        1: 'Whirr...',
+        2: 'Vrrm...',
+        3: 'Zzzzhhhh...',
+        4: 'SHFRRRRM...',
+        5: 'GEEEEZZSH...',
+        6: 'PLAAAAIIID...',
+        7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
+        8: 'Nuke',
+        9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
+        10: 'ssh root@remote.tjhsst.edu rm -rf ~%s'
+    }
     if not msg:
         send('What to microwave?')
         return
