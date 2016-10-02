@@ -10,7 +10,7 @@ lxml
 python-dateutil
 simplejson
 requests_oauthlib
-sphinx
+sphinx>=1.4.8
 mypy-lang
 
 [analysis]

@@ -52,7 +52,7 @@ setup(name="CslBot",
           'python-dateutil',
           'simplejson',
           'requests_oauthlib',
-          'sphinx',
+          'sphinx>=1.4.8',  # search index fix
           'mypy-lang'
       ],
       extras_require={
