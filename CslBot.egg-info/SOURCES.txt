@@ -156,6 +156,7 @@ cslbot/helpers/config.py
 cslbot/helpers/control.py
 cslbot/helpers/control.pyi
 cslbot/helpers/core.py
+cslbot/helpers/core.pyi
 cslbot/helpers/exception.py
 cslbot/helpers/geoip.py
 cslbot/helpers/handler.py
@@ -293,6 +294,7 @@ test/stubs/packaging/requirements.pyi
 test/stubs/packaging/specifiers.pyi
 test/stubs/packaging/version.pyi
 test/stubs/pkg_resources/__init__.pyi
+test/stubs/setuptools/__init__.pyi
 test/stubs/sqlalchemy/__init__.pyi
 test/stubs/sqlalchemy/exc.pyi
 test/stubs/sqlalchemy/func.pyi

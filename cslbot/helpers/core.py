@@ -40,7 +40,7 @@ from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
 class IrcBot(bot.SingleServerIRCBot):
 
-    def __init__(self, confdir: str) -> None:
+    def __init__(self, confdir):
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)
         self.confdir = confdir
