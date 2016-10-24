@@ -176,12 +176,14 @@ class BotTest(unittest.TestCase):
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
             sorted([x[0] for x in self.raw_mock.call_args_list]),
-            [('AUTHENTICATE PLAIN',),
-             ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
-             ('NICK %s' % self.nick,),
-             ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
-             ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
-             ('USER %s 0 * :%s' % (self.nick, self.nick),)])
+            [
+                ('AUTHENTICATE PLAIN',),
+                ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
+                ('NICK %s' % self.nick,),
+                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
+                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
+                ('USER %s 0 * :%s' % (self.nick, self.nick),)
+            ])
         self.log_mock.reset_mock()
 
     def send_msg(self, mtype, source, target, arguments=None):

@@ -50,8 +50,8 @@ def setup_mocks() -> None:
     mock.patch('multiprocessing.Pool').start()
     mock.patch('concurrent.futures.ThreadPoolExecutor').start()
     mock.patch.object(threading, 'current_thread', ThreadMock).start()
-    mock.patch.object(workers.Workers, 'start_thread', lambda _, func, * args, ** kwargs: func(*args, **kwargs)).start()
-    mock.patch.object(workers.Workers, 'run_pool', new=lambda func, * args: func(*args)).start()
+    mock.patch.object(workers.Workers, 'start_thread', lambda _, func, *args, **kwargs: func(*args, **kwargs)).start()
+    mock.patch.object(workers.Workers, 'run_pool', new=lambda func, *args: func(*args)).start()
     mock.patch.object(workers.Workers, 'defer').start()
 
 

@@ -36,11 +36,12 @@ from sqlalchemy.orm import Session
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 
-from cslbot.helpers.orm import (Poll_responses,  # noqa
-                                Polls,
-                                Quotes,
-                                Scores,
-                                Urls)
+from cslbot.helpers.orm import (
+    Poll_responses,  # noqa
+    Polls,
+    Quotes,
+    Scores,
+    Urls)
 from cslbot.helpers.sql import get_session  # noqa
 
 

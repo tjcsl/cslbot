@@ -28,8 +28,12 @@ def cmd(send, *_):
 
     """
     a = ["primary", "secondary", "tertiary", "hydraulic", "compressed", "required", "pseudo", "intangible", "flux"]
-    b = ["compressor", "engine", "lift", "elevator", "irc bot", "stabilizer", "computer", "ahamilto", "csl", "4506", "router", "switch", "thingy",
-         "capacitor"]
-    c = ["broke", "exploded", "corrupted", "melted", "froze", "died", "reset", "was seen by the godofskies", "burned", "corroded",
-         "reversed polarity", "was accidentallied", "nuked"]
+    b = [
+        "compressor", "engine", "lift", "elevator", "irc bot", "stabilizer", "computer", "ahamilto", "csl", "4506", "router", "switch", "thingy",
+        "capacitor"
+    ]
+    c = [
+        "broke", "exploded", "corrupted", "melted", "froze", "died", "reset", "was seen by the godofskies", "burned", "corroded", "reversed polarity",
+        "was accidentallied", "nuked"
+    ]
     send("because %s %s %s" % ((choice(a), choice(b), choice(c))))

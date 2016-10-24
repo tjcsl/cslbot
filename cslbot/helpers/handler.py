@@ -614,8 +614,10 @@ class BotHandler(object):
         def send(msg, mtype='privmsg', target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
-        if e.type in ['account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse',
-                      'privnotice', 'welcome', 'whospcrpl']:
+        if e.type in [
+                'account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse',
+                'privnotice', 'welcome', 'whospcrpl'
+        ]:
             self.handle_event(msg, send, c, e)
             return
 

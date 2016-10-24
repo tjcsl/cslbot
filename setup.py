@@ -57,8 +57,8 @@ setup(
         'mypy-lang'
     ],
     extras_require={
-        'analysis': ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8',
-                     'docformatter'],
+        'analysis':
+        ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8', 'docformatter'],
         'test': ['pytest-xdist'],
     },
     classifiers=[

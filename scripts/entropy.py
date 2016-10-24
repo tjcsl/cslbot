@@ -42,8 +42,8 @@ def main(confdir="/etc/cslbot") -> None:
         Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 500).group_by(Log.source).all()
     freq = []
     for user in users:
-        lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0], or_(Log.type == 'privmsg', Log.type == 'pubmsg',
-                                                                                                Log.type == 'action')).all()
+        lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0],
+                                              or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
         text = '\n'.join([x[0] for x in lines])
         with open('/tmp/foo', 'w') as f:
             f.write(text)

@@ -40,8 +40,8 @@ def cmd(send, msg, args):
         return
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
     row = args['db'].query(Log).filter(
-        Log.msg.ilike("%%%s%%" % cmdargs.nick), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
-        Log.target == target, Log.source != args['botnick'], Log.source != cmdargs.nick, (Log.type == 'pubmsg') | (Log.type == 'privmsg') |
+        Log.msg.ilike("%%%s%%" % cmdargs.nick), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']), Log.target == target,
+        Log.source != args['botnick'], Log.source != cmdargs.nick, (Log.type == 'pubmsg') | (Log.type == 'privmsg') |
         (Log.type == 'action')).order_by(Log.time.desc()).first()
     if row is None:
         send("%s has never been pinged." % cmdargs.nick)
