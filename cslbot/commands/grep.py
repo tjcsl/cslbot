@@ -50,11 +50,11 @@ def cmd(send, msg, args):
         query = query.filter(Log.msg.ilike('%%%s%%' % escape(term)))
     else:
         query = query.filter(Log.msg.like('%%%s%%' % escape(term)))
-    rows = query.order_by(Log.time.desc()).all()
+    rows = query.order_by(Log.time.desc()).limit(1).all()
     if rows:
         row = rows[0]
         logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s was last said by %s at %s (%d occurrences)" % (row.msg, row.source, logtime, len(rows)))
+        send("%s was last said by %s at %s" % (row.msg, row.source, logtime))
     elif cmdargs.nick:
         send('%s has never said %s.' % (cmdargs.nick, term))
     else:
