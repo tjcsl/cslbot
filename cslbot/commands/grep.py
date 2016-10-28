@@ -51,12 +51,11 @@ def cmd(send, msg, args):
     else:
         query = query.filter(Log.msg.like('%%%s%%' % escape(term)))
     query = query.order_by(Log.time.desc())
-    rows = query.limit(1).all()
+    result = query.limit(1).first()
     count = query.count()
-    if rows:
-        row = rows[0]
-        logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s was last said by %s at %s (%d occurrences)" % (row.msg, row.source, logtime, count))
+    if result is not None:
+        logtime = result.time.strftime('%Y-%m-%d %H:%M:%S')
+        send("%s was last said by %s at %s (%d occurrences)" % (result.msg, result.source, logtime, count))
     elif cmdargs.nick:
         send('%s has never said %s.' % (cmdargs.nick, term))
     else:
