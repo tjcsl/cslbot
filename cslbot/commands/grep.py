@@ -21,7 +21,7 @@ from ..helpers.orm import Log
 from ..helpers.misc import escape
 
 
-@Command(['grep', 'loggrep'], ['config', 'db'])
+@Command(['grep', 'loggrep'], ['config', 'db'], limit=5)
 def cmd(send, msg, args):
     """Greps the log for a string.
 
