@@ -366,6 +366,14 @@ class FullwidthTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'ＴＥＳＴ', 'privmsg'), ('testnick', '#test-channel', 0, '!fullwidth', 'pubmsg')])
 
 
+class GrepTest(BotTest):
+
+    def test_grep_fwilson(self):
+        """Test grep with fwilson."""
+        calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!grep fwilson'])
+        self.assertEqual(calls, [('testBot', '#test-channel', 0, 'fwilson has never been said.', 'privmsg'),
+                                 ('testnick', '#test-channel', 0, '!grep fwilson', 'pubmsg')])
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
