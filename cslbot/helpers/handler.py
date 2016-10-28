@@ -652,6 +652,10 @@ class BotHandler(object):
 
         self.handle_hooks(send, nick, target, e, msg)
 
+        # We only process hooks for notices, not commands.
+        if e.type == 'pubnotice':
+            return
+
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
         cmd_name, cmdargs = self.get_cmd(msg)
 
