@@ -56,7 +56,7 @@ def cmd(send, msg, args):
     if rows:
         row = rows[0]
         logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s was last said by %s at %s (%d occurences)" % (row.msg, row.source, logtime, count))
+        send("%s was last said by %s at %s (%d occurrences)" % (row.msg, row.source, logtime, count))
     elif cmdargs.nick:
         send('%s has never said %s.' % (cmdargs.nick, term))
     else:
