@@ -26,25 +26,23 @@ from ..helpers.urlutils import get_short
 
 @Hook('reddit', ['pubmsg', 'action'], ['config'])
 def handle(send, msg, args):
-    match = re.search(r'(?:^|\s)/r/([\w|^/]*)\b', msg)
-    if not match:
-        return
-    subreddit = match.group(1)
-    if not check_exists(subreddit):
-        return
-    data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
-    output = ''
-    if data['public_description']:
-        for line in data['public_description'].splitlines():
-            output += line + " "
-    elif data['description']:
-        output += data['description'].splitlines()[0]
-    else:
-        output += data['display_name']
-    output = output.strip()
-    key = args['config']['api']['googleapikey']
-    if subreddit == 'random':
-        output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
-    else:
-        output = "%s -- %s" % (output, get_short('http://reddit.com/r/%s' % subreddit, key))
-    send(output)
+    for match in re.finditer(r'(?:^|\s)/r/([\w|^/]*)\b', msg):
+        subreddit = match.group(1)
+        if not check_exists(subreddit):
+            return
+        data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
+        output = ''
+        if data['public_description']:
+            for line in data['public_description'].splitlines():
+                output += line + " "
+        elif data['description']:
+            output += data['description'].splitlines()[0]
+        else:
+            output += data['display_name']
+        output = output.strip()
+        key = args['config']['api']['googleapikey']
+        if subreddit == 'random':
+            output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
+        else:
+            output = "%s -- %s" % (output, get_short('http://reddit.com/r/%s' % subreddit, key))
+        send(output)
