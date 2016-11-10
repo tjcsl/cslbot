@@ -47,4 +47,7 @@ def cmd(send, msg, _):
     words = get_list()
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]
     output = " ".join([choice(words[c]) for c in letters])
-    send('%s: %s' % (msg, output.title()))
+    if output:
+        send('%s: %s' % (msg, output.title()))
+    else:
+        send("No acronym found for %s" % msg)
