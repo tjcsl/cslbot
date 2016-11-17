@@ -374,6 +374,7 @@ class GrepTest(BotTest):
         self.assertEqual(calls, [('testBot', '#test-channel', 0, 'fwilson has never been said.', 'privmsg'),
                                  ('testnick', '#test-channel', 0, '!grep fwilson', 'pubmsg')])
 
+
 if __name__ == '__main__':
     loglevel = logging.DEBUG if '-v' in sys.argv else logging.INFO
     logging.basicConfig(level=loglevel)
