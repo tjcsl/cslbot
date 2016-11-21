@@ -131,13 +131,18 @@ def get_weather(cmdargs, send, apikey):
         else:
             send("Invalid or Ambiguous Location")
             return False
-        forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
+        if 'forecast' in forecastdata:
+            forecastdata = forecastdata['forecast']['simpleforecast']['forecastday'][0]
+        else:
+            send("WARNING: unable to retrieve forecast.")
+            forecastdata = None
     send("Current weather for %s:" % data['display_location']['full'])
     current = '%s, Temp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
         data['weather'], data['temp_f'], data['feelslike_f'], data['relative_humidity'], data['pressure_in'], data['wind_string'])
-    forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
     send(current)
-    send("Forecast: %s" % forecast)
+    if forecastdata is not None:
+        forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
+        send("Forecast: %s" % forecast)
     alertlist = []
     for alert in alertdata.get('alerts', []):
         alertlist.append("%s, expires %s" % (alert['description'], alert['expires']))
