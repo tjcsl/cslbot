@@ -169,6 +169,7 @@ cslbot/helpers/orm.py
 cslbot/helpers/orm.pyi
 cslbot/helpers/reddit.py
 cslbot/helpers/registry.py
+cslbot/helpers/registry.pyi
 cslbot/helpers/reloader.py
 cslbot/helpers/server.py
 cslbot/helpers/server.pyi

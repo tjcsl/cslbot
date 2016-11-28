@@ -23,12 +23,12 @@ from os.path import dirname, exists, join
 
 from pkg_resources import Requirement, resource_string
 
-from typing import Callable
+from typing import Callable, Union  # noqa
 
 try:
     _config_file
 except NameError:
-    _config_file = None  # type: str
+    _config_file = None  # type: Union[None,str]
 
 
 def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:

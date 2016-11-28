@@ -22,7 +22,7 @@ import logging
 import sys
 from glob import glob
 from os.path import basename, join
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Union
 
 from pkg_resources import Requirement, resource_filename, resource_string
 
@@ -120,14 +120,16 @@ def get_enabled(mod_type: str, package='CslBot') -> Tuple[List[str], List[str]]:
 
 def get_modules(mod_type: str) -> Tuple[List[str], List[str]]:
     core_enabled, core_disabled = get_enabled(mod_type)
-    for package in filter(None, registry.aux):
+    for package in registry.aux:
+        if not package:
+            continue
         aux_enabled, aux_disabled = get_enabled(mod_type, package)
         core_enabled.extend(aux_enabled)
         core_disabled.extend(aux_disabled)
     return core_enabled, core_disabled
 
 
-def safe_reload(modname: str) -> str:
+def safe_reload(modname: str) -> Union[None, str]:
     """Catch and log any errors that arise from reimporting a module, but do not die.
 
     :return: None when import was successful. String is the first line of the error message
@@ -142,7 +144,7 @@ def safe_reload(modname: str) -> str:
         return msg
 
 
-def safe_load(modname: str) -> str:
+def safe_load(modname: str) -> Union[None, str]:
     """Load a module, logging errors instead of dying if it fails to load.
 
     :return: None when import was successful. String is the first line of the error message
