@@ -148,7 +148,10 @@ def cmd(send, msg, args):
         else:
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     elif cmdargs.search:
-        send(search_quote(session, cmdargs.offset, cmdargs.search))
+        if cmdargs.approve or cmdargs.nick:
+            send("Invalid option for --search")
+        else:
+            send(search_quote(session, cmdargs.offset, cmdargs.search))
     else:
         if msg.isdigit():
             send(do_get_quote(session, int(msg)))
