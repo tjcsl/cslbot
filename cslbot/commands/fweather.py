@@ -18,6 +18,7 @@
 from lxml.html import fromstring
 
 from requests import get
+from requests.exceptions import ReadTimeout
 
 from ..helpers.command import Command
 
@@ -27,9 +28,12 @@ def cmd(send, msg, _):
     """Gets the F***ING weather!
     Syntax: {command} <location>
     """
-    req = get('http://thefuckingweather.com/April/%s' % msg)
-    doc = fromstring(req.text)
-    elem = doc.find('.//h1')
+    try:
+        req = get('http://thefuckingweather.com/April/%s' % msg, timeout=5)
+        doc = fromstring(req.text)
+        elem = doc.find('.//h1')
+    except ReadTimeout:
+        elem = None
     if elem is None:
         send('NO FSCKING RESULTS.')
     else:
