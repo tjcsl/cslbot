@@ -32,7 +32,9 @@ import pkg_resources  # noqa
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'irc': ('http://pythonhosted.org/irc', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+# TODO(pefoley): find the new location
+# 'irc': ('http://pythonhosted.org/irc', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
