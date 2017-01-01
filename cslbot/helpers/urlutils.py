@@ -15,12 +15,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import base64
 import re
 from contextlib import closing
 
 from lxml.html import document_fromstring
 
-from requests import Session, codes, exceptions, post
+from requests import Session, codes, exceptions, get, post
 
 from . import misc
 from .exception import CommandFailedException
@@ -69,7 +70,23 @@ def parse_title(req):
     return ctype
 
 
-def parse_mime(req):
+def identify_image(req, key):
+    img = get(req.url)
+    encoded_data = base64.b64encode(img.content)
+    req = post("https://vision.googleapis.com/v1/images:annotate",
+               params={'key': key},
+               json=({
+                   'requests': [{'image': {'content': encoded_data}, 'features': {'type': 'LABEL_DETECTION', 'maxResults': 5}}]
+               }),
+               headers={'Content-Type': 'application/json'})
+    data = req.json()
+    if 'error' in data:
+        return str(data['error'])
+    response = data['responses'][0]
+    return ", ".join([x['description'] for x in response['labelAnnotations']])
+
+
+def parse_mime(req, key):
     ctype = req.headers.get('Content-Type')
     if ctype is None:
         return ctype
@@ -77,7 +94,7 @@ def parse_mime(req):
     if ctype[0] == 'audio':
         return 'Audio'
     if ctype[0] == 'image':
-        return 'Image'
+        return identify_image(req, key) or 'Image'
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
@@ -90,7 +107,7 @@ def parse_mime(req):
     return None
 
 
-def get_title(url):
+def get_title(url, key):
     title = None
     timeout = (5, 20)
     with closing(Session()) as session:
@@ -99,7 +116,7 @@ def get_title(url):
         try:
             req = session.head(url, allow_redirects=True, verify=False, timeout=timeout)
             if req.status_code == codes.ok:
-                title = parse_mime(req)
+                title = parse_mime(req, key)
             # 405/501 mean this site doesn't support HEAD
             elif req.status_code not in [codes.not_allowed, codes.not_implemented]:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
@@ -111,7 +128,7 @@ def get_title(url):
         if title is None:
             req = session.get(url, timeout=timeout, stream=True)
             if req.status_code == codes.ok:
-                title = parse_mime(req) or parse_title(req)
+                title = parse_mime(req, key) or parse_title(req)
             else:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
     if title is None:
