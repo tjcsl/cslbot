@@ -123,7 +123,7 @@ def get_title(url, key):
         except exceptions.InvalidSchema:
             raise CommandFailedException('%s is not a supported url.' % url)
         except exceptions.MissingSchema:
-            return get_title('http://%s' % url)
+            return get_title('http://%s' % url, key)
         # HEAD didn't work, so try GET
         if title is None:
             req = session.get(url, timeout=timeout, stream=True)
