@@ -83,7 +83,10 @@ def identify_image(req, key):
     if 'error' in data:
         return str(data['error'])
     response = data['responses'][0]
-    return ", ".join([x['description'] for x in response['labelAnnotations']])
+    labels = []
+    for label in response['labelAnnotations']:
+        labels.append("{}: {:.2%}".format(label['description'], label['score']))
+    return ", ".join(labels)
 
 
 def parse_mime(req, key):
