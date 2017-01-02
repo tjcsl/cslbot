@@ -97,7 +97,7 @@ def parse_mime(req, key):
     if ctype[0] == 'audio':
         return 'Audio'
     if ctype[0] == 'image':
-        return identify_image(req, key) or 'Image'
+        return 'Image: {}'.format(identify_image(req, key))
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
