@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('ignore', ['config', 'db'], role="admin")
+@Command('ignore', ['config', 'db', 'nick'], role="admin")
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
     Syntax: {command} <--clear|--show/--list|--delete|nick>
@@ -57,6 +57,7 @@ def cmd(send, msg, args):
                 session.delete(row)
                 send("%s is no longer ignored." % cmdargs.nick)
     elif cmdargs.nick:
+        send("%s ignored %s" % (args['nick'], cmdargs.nick), target=args['config']['core']['ctrlchan'])
         send(misc.ignore(session, cmdargs.nick))
     else:
         send("Ignore who?")
