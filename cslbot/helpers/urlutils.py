@@ -84,7 +84,7 @@ def identify_image(req, key):
         return str(data['error'])
     response = data['responses'][0]
     labels = []
-    for label in response['labelAnnotations']:
+    for label in response.get('labelAnnotations', []):
         labels.append("{}: {:.2%}".format(label['description'], label['score']))
     return ", ".join(labels)
 
