@@ -86,7 +86,7 @@ def identify_image(req, key):
     labels = []
     for label in response.get('labelAnnotations', []):
         labels.append("{}: {:.2%}".format(label['description'], label['score']))
-    return ", ".join(labels)
+    return labels
 
 
 def parse_mime(req, key):
@@ -97,7 +97,10 @@ def parse_mime(req, key):
     if ctype[0] == 'audio':
         return 'Audio'
     if ctype[0] == 'image':
-        return 'Image: {}'.format(identify_image(req, key))
+        labels = identify_image(req, key)
+        if not labels:
+            return "Image"
+        return 'Image: {}'.format(','.join(labels))
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
