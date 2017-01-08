@@ -40,7 +40,7 @@ def cmd(send, msg, args):
     cmdchar, ctrlchan = args['config']['core']['cmdchar'], args['config']['core']['ctrlchan']
     last = get_last(args['db'], cmdchar, ctrlchan, msg)
     if last is None:
-        send("%s has never shown his face." % msg)
+        send("%s has never shown their face." % msg)
         return
     delta = datetime.now() - last.time
     # We only need second-level precision.

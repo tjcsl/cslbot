@@ -172,7 +172,7 @@ def vote(session, nick, pid, response):
         if response == old_vote.response:
             return "You've already voted %s." % response
         else:
-            msg = "%s changed his/her vote from %s to %s." % (nick, old_vote.response, response)
+            msg = "%s changed their vote from %s to %s." % (nick, old_vote.response, response)
             old_vote.response = response
             return msg
 
