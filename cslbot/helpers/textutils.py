@@ -108,6 +108,12 @@ def gen_slogan(msg):
     return re.sub('%s', msg, choice(slogan_cache))
 
 
+def gen_jeffsessionstheyoungman(msg):
+    msg = msg.split(" ")
+    k = randrange(0, len(msg))
+    return " ".join(msg[:k] + ["Jeff Sessions, the young man."] + msg[k:])
+
+
 def gen_morse(msg):
     morse_codes = {
         "a": ".-",
@@ -364,29 +370,30 @@ def gen_intensify(msg):
 
 output_filters = {
     "passthrough": lambda x: x,
-    "hashtag": gen_hashtag,
-    "fwilson": gen_fwilson,
-    "creffett": gen_creffett,
-    "slogan": gen_slogan,
-    "insult": gen_insult,
-    "morse": gen_morse,
-    "removevowels": gen_removevowels,
-    "binary": gen_binary,
-    "xkcd": gen_xkcd_sub,
-    "praise": gen_praise,
-    "reverse": reverse,
-    "lenny": gen_lenny,
-    "yoda": gen_yoda,
-    "gizoogle": gen_gizoogle,
-    "shakespeare": gen_shakespeare,
     "bard": gen_shakespeare,
-    "shibe": gen_shibe,
-    "underscore": gen_underscore,
-    "translate": gen_translate,
-    "randtrans": gen_random_translate,
-    "multitrans": gen_multi_translate,
-    "spacing": gen_spacing,
+    "binary": gen_binary,
+    "creffett": gen_creffett,
     "fullwidth": gen_fullwidth,
+    "fwilson": gen_fwilson,
+    "gizoogle": gen_gizoogle,
+    "hashtag": gen_hashtag,
+    "insult": gen_insult,
+    "jeffsessionstheyoungman": gen_jeffsessionstheyoungman,
+    "lenny": gen_lenny,
+    "morse": gen_morse,
+    "multitrans": gen_multi_translate,
+    "praise": gen_praise,
+    "randfilter": gen_randfilter,
+    "randtrans": gen_random_translate,
+    "removevowels": gen_removevowels,
+    "reverse": reverse,
     "sanitize": gen_sanitize,
-    "randfilter": gen_randfilter
+    "shakespeare": gen_shakespeare,
+    "shibe": gen_shibe,
+    "slogan": gen_slogan,
+    "spacing": gen_spacing,
+    "translate": gen_translate,
+    "underscore": gen_underscore,
+    "xkcd": gen_xkcd_sub,
+    "yoda": gen_yoda
 }
