@@ -100,7 +100,7 @@ def parse_mime(req, key):
         labels = identify_image(req, key)
         if not labels:
             return "Image"
-        return 'Image: {}'.format(','.join(labels))
+        return 'Image: {}'.format(', '.join(labels))
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
