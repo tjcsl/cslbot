@@ -73,12 +73,21 @@ def parse_title(req):
 def identify_image(req, key):
     img = get(req.url)
     encoded_data = base64.b64encode(img.content)
-    req = post("https://vision.googleapis.com/v1/images:annotate",
-               params={'key': key},
-               json=({
-                   'requests': [{'image': {'content': encoded_data}, 'features': {'type': 'LABEL_DETECTION', 'maxResults': 5}}]
-               }),
-               headers={'Content-Type': 'application/json'})
+    req = post(
+        "https://vision.googleapis.com/v1/images:annotate",
+        params={'key': key},
+        json=({
+            'requests': [{
+                'image': {
+                    'content': encoded_data
+                },
+                'features': {
+                    'type': 'LABEL_DETECTION',
+                    'maxResults': 5
+                }
+            }]
+        }),
+        headers={'Content-Type': 'application/json'})
     data = req.json()
     if 'error' in data:
         return str(data['error'])
