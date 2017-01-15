@@ -32,16 +32,18 @@ def cmd(send, msg, args):
     if args['type'] == 'privmsg':
         send('GCC is a group exercise!')
         return
+    if 'include' in msg:
+        send("We're not a terribly inclusive community around here.")
+        return
     tmpfile = tempfile.NamedTemporaryFile()
-    for line in msg.split('\\n'):
+    for line in msg.splitlines():
         line = line + '\n'
         tmpfile.write(line.encode())
     tmpfile.flush()
-    process = subprocess.Popen(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = process.communicate()[0]
+    process = subprocess.run(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5, universal_newlines=True)
     tmpfile.close()
     # Take the last 3 lines to prevent Excess Flood on long error messages
-    output = output.decode().splitlines()[:3]
+    output = process.stdout.splitlines()[:3]
     for line in output:
         send(line, target=args['nick'])
     if process.returncode == 0:
