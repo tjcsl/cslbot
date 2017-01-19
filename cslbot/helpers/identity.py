@@ -28,7 +28,7 @@ def handle_nick(handler, e):
             return False
 
 
-def get_chain(session, nick, limit=0):
+def get_chain(session, nick, limit=datetime.min):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
     chain = []
     curr_time = datetime.now()
