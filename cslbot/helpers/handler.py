@@ -603,10 +603,6 @@ class BotHandler(object):
         else:
             nick = e.source
 
-        # Matrix compatibility.
-        if nick.endswith('[m]'):
-            nick = nick[:-3]
-
         if e.arguments is None:
             msg = ""
         else:
