@@ -27,6 +27,10 @@ from . import misc
 from .exception import CommandFailedException
 
 
+class ImageException(Exception):
+    pass
+
+
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
@@ -90,11 +94,13 @@ def identify_image(req, key):
         headers={'Content-Type': 'application/json'})
     data = req.json()
     if 'error' in data:
-        return str(data['error'])
+        raise ImageException(data['error'])
     response = data['responses'][0]
     labels = []
     for label in response.get('labelAnnotations', []):
         labels.append("{}: {:.2%}".format(label['description'], label['score']))
+    if not labels:
+        raise ImageException("No labels found")
     return labels
 
 
@@ -106,10 +112,11 @@ def parse_mime(req, key):
     if ctype[0] == 'audio':
         return 'Audio'
     if ctype[0] == 'image':
-        labels = identify_image(req, key)
-        if not labels:
-            return "Image"
-        return 'Image: {}'.format(', '.join(labels))
+        try:
+            labels = identify_image(req, key)
+            return 'Image: {}'.format(', '.join(labels))
+        except ImageException as ex:
+            return "Image: {}".format(ex)
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
