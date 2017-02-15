@@ -64,12 +64,13 @@ def do_pull(srcdir=None, repo=None):
             proc = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
             return proc.stdout.splitlines()[-1]
         else:
-            proc = subprocess.run(['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT,
-                                  env=os.environ.copy(),
-                                  universal_newlines=True,
-                                  check=True)
+            proc = subprocess.run(
+                ['pip', 'install', '--no-deps', '-U', 'git+git://github.com/%s' % repo],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                env=os.environ.copy(),
+                universal_newlines=True,
+                check=True)
             output = proc.stdout.splitlines()[-1]
             # Strip ascii color codes
             return re.sub(r'\x1b[^m]*h', '', output)
@@ -145,10 +146,11 @@ def get_cmdchar(config: configparser.ConfigParser, connection: client.ServerConn
 
 
 def parse_header(header, msg):
-    proc = subprocess.run(['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'],
-                          stdout=subprocess.PIPE,
-                          universal_newlines=True,
-                          check=True)
+    proc = subprocess.run(
+        ['gcc', '-include', '%s.h' % header, '-fdirectives-only', '-E', '-xc', '/dev/null'],
+        stdout=subprocess.PIPE,
+        universal_newlines=True,
+        check=True)
     if header == 'errno':
         defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     else:
