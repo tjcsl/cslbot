@@ -1,6 +1,7 @@
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 import configparser
 from irc import client
+
 send_type = Callable[..., None]
 
 class BotHandler(object):

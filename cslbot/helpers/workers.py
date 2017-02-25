@@ -21,7 +21,7 @@ import signal
 import threading
 from collections import namedtuple
 from datetime import datetime, timedelta
-from typing import Any, Callable
+from typing import Any, Callable, Dict  # noqa
 
 import concurrent.futures
 

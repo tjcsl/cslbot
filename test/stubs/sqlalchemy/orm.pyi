@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, List, TypeVar
 
 class sessionmaker:
   def __init__(self, bind) -> None: ...

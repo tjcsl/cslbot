@@ -22,7 +22,7 @@ import fcntl
 import re
 import sys
 from os import makedirs, path
-from typing import IO  # noqa
+from typing import Dict, IO  # noqa
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):

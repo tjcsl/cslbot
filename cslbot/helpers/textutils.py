@@ -21,6 +21,7 @@ import re
 import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
+from typing import List  # noqa
 
 from lxml import html
 

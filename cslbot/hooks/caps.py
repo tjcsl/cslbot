@@ -17,6 +17,7 @@
 
 import string
 from threading import Lock
+from typing import List  # noqa
 
 from ..helpers.hook import Hook
 
