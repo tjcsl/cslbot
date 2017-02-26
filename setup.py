@@ -38,7 +38,7 @@ setup(
     package_data={
         '': [
             'alembic/env.py', 'alembic/script.py.mako', 'alembic/versions/*.py', 'static/*.example', 'static/slogans',
-            'static/shakespeare-dictionary.json', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
+            'static/shakespeare-dictionary.json', 'static/allstar.txt', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
         ],
     },
     setup_requires=setup_requires,
