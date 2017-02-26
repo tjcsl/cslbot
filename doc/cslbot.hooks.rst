@@ -84,6 +84,14 @@ cslbot.hooks.scores module
     :undoc-members:
     :show-inheritance:
 
+cslbot.hooks.shrek module
+-------------------------
+
+.. automodule:: cslbot.hooks.shrek
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot.hooks.stallman module
 ----------------------------
 

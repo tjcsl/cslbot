@@ -8,7 +8,8 @@ optional: band,
     butt,
     reddit,
     understanding,
-    voice
+    voice,
+    shrek
 disabled: bob,
     autodeop,
     ctf,

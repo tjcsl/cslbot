@@ -189,11 +189,13 @@ cslbot/hooks/ctf.py
 cslbot/hooks/note.py
 cslbot/hooks/reddit.py
 cslbot/hooks/scores.py
+cslbot/hooks/shrek.py
 cslbot/hooks/stallman.py
 cslbot/hooks/understanding.py
 cslbot/hooks/url.py
 cslbot/hooks/voice.py
 cslbot/hooks/xkcd.py
+cslbot/static/allstar.txt
 cslbot/static/config.example
 cslbot/static/groups.example
 cslbot/static/shakespeare-dictionary.json
