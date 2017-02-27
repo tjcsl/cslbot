@@ -84,7 +84,7 @@ class ZipParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        zipcode = re.search('\d{5}', value)
+        zipcode = re.search(r'\d{5}', value)
         if not zipcode:
             raise ArgumentException("Couldn't parse a ZIP code from %s" % (value))
         namespace.zipcode = zipcode.group(0)

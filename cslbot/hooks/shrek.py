@@ -28,6 +28,6 @@ def get_list():
 
 @Hook('shrek', 'pubmsg', ['nick'])
 def handle(send, msg, args):
-    if random.random() > 0.01:
+    if random.random() > 0.001:
         return
     send('{}: {}'.format(args['nick'], random.choice(get_list())))
