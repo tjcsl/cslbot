@@ -18,6 +18,7 @@
 
 import base64
 import collections
+import configparser
 import copy
 import logging
 import random
@@ -26,6 +27,7 @@ import threading
 import time
 import irc
 from datetime import datetime, timedelta
+from typing import List
 
 from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
@@ -34,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 class BotHandler(object):
 
-    def __init__(self, config, connection, channels, confdir):
+    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: List[str], confdir: str):
         """Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -45,23 +47,23 @@ class BotHandler(object):
         | db - Is a db wrapper for data storage.
 
         """
-        self.connection = connection  # type: client.ServerConnection
+        self.connection = connection
         self.channels = channels
-        self.config = config  # type: configparser.ConfigParser
-        self.db = sql.Sql(config, confdir)  # type: sql.Sql
+        self.config = config
+        self.db = sql.Sql(config, confdir)
         # FIXME: don't pass in self
-        self.workers = workers.Workers(self)  # type: workers.Workers
-        self.guarded = []  # type: List[str]
-        self.voiced = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
-        self.opers = collections.defaultdict(dict)  # type: Dict[str,Dict[str,bool]]
+        self.workers = workers.Workers(self)
+        self.guarded: List[str] = []
+        self.voiced: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
+        self.opers: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
-        self.abuselist = {}  # type: Dict[str,Dict[str,datetime]]
-        self.ping_map = {}  # type: Dict[str,str]
-        self.outputfilter = collections.defaultdict(list)  # type: Dict[str,List[Callable[[str],str]]]
+        self.abuselist: Dict[str, Dict[str, datetime]] = {}
+        self.ping_map: Dict[str, str] = {}
+        self.outputfilter: Dict[str, List[Callable[[str], str]]] = collections.defaultdict(list)
         self.kick_enabled = True
-        self.who_map = {}  # type: Dict[int,str]
+        self.who_map: Dict[int, str] = {}
         self.flood_lock = threading.Lock()
         self.data_lock = threading.RLock()
         self.last_msg_time = datetime.now()

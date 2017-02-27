@@ -65,14 +65,14 @@ def get_urls(session: Session) -> List[Dict[str, Any]]:
 
 def get_polls(session: Session) -> Dict[int, str]:
     rows = session.query(Polls).filter(Polls.deleted == 0, Polls.active == 1).order_by(Polls.id).all()
-    polls = collections.OrderedDict()  # type: Dict[int, str]
+    polls: Dict[int, str] = collections.OrderedDict()
     for row in rows:
         polls[row.id] = row.question
     return polls
 
 
 def get_responses(session: Session, polls: Dict[int, str]) -> Dict[int, Dict[str, List[str]]]:
-    responses = {}  # type: Dict[int, Dict[str, List[str]]]
+    responses: Dict[int, Dict[str, List[str]]] = {}
     for pid in polls.keys():
         responses[pid] = collections.OrderedDict()
         rows = session.query(Poll_responses).filter(Poll_responses.pid == pid).order_by(Poll_responses.response).all()
@@ -84,7 +84,7 @@ def get_responses(session: Session, polls: Dict[int, str]) -> Dict[int, Dict[str
 def get_winners(polls: Dict[int, str], responses: Dict[int, Dict[str, List[str]]]) -> Dict[int, str]:
     winners = {}
     for pid in polls.keys():
-        ranking = collections.defaultdict(list)  # type: Dict[int, List[str]]
+        ranking: Dict[int, List[str]] = collections.defaultdict(list)
         for response, voters in responses[pid].items():
             num = len(voters)
             ranking[num].append(response)

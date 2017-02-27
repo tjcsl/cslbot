@@ -46,7 +46,7 @@ class Workers(object):
         self.worker_lock = threading.Lock()
         with self.worker_lock:
             self.pool = multiprocessing.Pool(initializer=pool_init)
-            self.events = {}  # type: Dict[int, Event]
+            self.events: Dict[int, Event] = {}
         with executor_lock:
             self.executor = concurrent.futures.ThreadPoolExecutor(4)
         self.handler = handler

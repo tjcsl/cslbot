@@ -21,7 +21,7 @@ import re
 import string
 from html import escape, unescape
 from random import choice, randint, random, randrange
-from typing import List  # noqa
+from typing import List
 
 from lxml import html
 
@@ -31,7 +31,7 @@ from requests import get, post
 
 from . import config
 
-slogan_cache = []  # type: List[str]
+slogan_cache: List[str] = []
 
 
 def gen_removevowels(msg):

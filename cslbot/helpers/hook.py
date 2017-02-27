@@ -20,7 +20,7 @@ import functools
 import re
 import threading
 
-from typing import Callable, Dict, List, Set, Union  # noqa
+from typing import Callable, List, Union
 
 from . import backtrace, registry
 
@@ -28,7 +28,7 @@ from . import backtrace, registry
 class Hook(object):
 
     def __init__(self, name: str, types: Union[str, List[str]], args: List[str]=[]) -> None:
-        self.name = name  # type: str
+        self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args
         registry.hook_registry.register(self)

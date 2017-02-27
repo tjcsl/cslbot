@@ -17,11 +17,11 @@
 
 import string
 from threading import Lock
-from typing import List  # noqa
+from typing import List
 
 from ..helpers.hook import Hook
 
-_caps = []  # type: List[str]
+_caps: List[str] = []
 _caps_lock = Lock()
 
 

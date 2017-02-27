@@ -35,9 +35,9 @@ class ModuleData(object):
         self.reset()
 
     def reset(self) -> None:
-        self.groups = {'commands': set(), 'hooks': set()}  # type: Dict[str,Set[str]]
-        self.disabled = {'commands': set(), 'hooks': set()}  # type: Dict[str,Set[str]]
-        self.aux = []  # type: List[str]
+        self.groups: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
+        self.disabled: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
+        self.aux: List[str] = []
 
 
 registry = ModuleData()

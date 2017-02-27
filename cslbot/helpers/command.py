@@ -49,7 +49,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 class Command(object):
 
     def __init__(self, names: Union[str, list], args: List[str]=[], limit: int=0, role: str=None) -> None:
-        self.names = [names] if isinstance(names, str) else names
+        self.names: List[str] = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
         self.required_role = role
