@@ -16,12 +16,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import base64
+import contextlib
 import re
-from contextlib import closing
+import requests
 
 from lxml.html import document_fromstring
-
-from requests import Session, codes, exceptions, get, post
 
 from . import misc
 from .exception import CommandFailedException
@@ -35,8 +34,8 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     try:
-        with closing(
-                post(
+        with contextlib.closing(
+                requests.post(
                     'https://www.googleapis.com/urlshortener/v1/url',
                     params={'key': key},
                     json=({
@@ -45,9 +44,9 @@ def get_short(msg, key):
                     headers={'Content-Type': 'application/json'})) as req:
             data = req.json()
             return msg if 'error' in data else data['id']
-    except exceptions.ConnectTimeout as e:
+    except requests.exceptions.ConnectTimeout as e:
         # Sanitize the error before throwing it
-        raise exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
+        raise requests.exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
 
 
 def parse_title(req):
@@ -75,9 +74,9 @@ def parse_title(req):
 
 
 def identify_image(req, key):
-    img = get(req.url)
+    img = requests.get(req.url)
     encoded_data = base64.b64encode(img.content)
-    req = post(
+    req = requests.post(
         "https://vision.googleapis.com/v1/images:annotate",
         params={'key': key},
         json=({
@@ -132,24 +131,24 @@ def parse_mime(req, key):
 def get_title(url, key):
     title = None
     timeout = (5, 20)
-    with closing(Session()) as session:
+    with contextlib.closing(requests.Session()) as session:
         # User-Agent is really hard to get right :(
-        session.headers.update({'User-Agent': 'Mozilla/5.0 CslBot'})
+        session.headers['User-Agent'] = 'Mozilla/5.0 CslBot'
         try:
             req = session.head(url, allow_redirects=True, verify=False, timeout=timeout)
-            if req.status_code == codes.ok:
+            if req.status_code == requests.codes.ok:
                 title = parse_mime(req, key)
             # 405/501 mean this site doesn't support HEAD
-            elif req.status_code not in [codes.not_allowed, codes.not_implemented]:
-                title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
-        except exceptions.InvalidSchema:
+            elif req.status_code not in [requests.codes.not_allowed, requests.codes.not_implemented]:
+                title = 'HTTP2 Error %d: %s' % (req.status_code, req.reason)
+        except requests.exceptions.InvalidSchema:
             raise CommandFailedException('%s is not a supported url.' % url)
-        except exceptions.MissingSchema:
+        except requests.exceptions.MissingSchema:
             return get_title('http://%s' % url, key)
         # HEAD didn't work, so try GET
         if title is None:
             req = session.get(url, timeout=timeout, stream=True)
-            if req.status_code == codes.ok:
+            if req.status_code == requests.codes.ok:
                 title = parse_mime(req, key) or parse_title(req)
             else:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
