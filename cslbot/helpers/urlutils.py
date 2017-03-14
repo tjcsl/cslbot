@@ -140,7 +140,7 @@ def get_title(url, key):
                 title = parse_mime(req, key)
             # 405/501 mean this site doesn't support HEAD
             elif req.status_code not in [requests.codes.not_allowed, requests.codes.not_implemented]:
-                title = 'HTTP2 Error %d: %s' % (req.status_code, req.reason)
+                title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
         except requests.exceptions.InvalidSchema:
             raise CommandFailedException('%s is not a supported url.' % url)
         except requests.exceptions.MissingSchema:
