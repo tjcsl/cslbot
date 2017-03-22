@@ -138,8 +138,8 @@ def get_title(url, key):
             req = session.head(url, allow_redirects=True, verify=False, timeout=timeout)
             if req.status_code == requests.codes.ok:
                 title = parse_mime(req, key)
-            # 405/501 mean this site doesn't support HEAD
-            elif req.status_code not in [requests.codes.not_allowed, requests.codes.not_implemented]:
+            # 405/409/501 mean this site doesn't support HEAD
+            elif req.status_code not in [requests.codes.not_allowed, requests.codes.conflict, requests.codes.not_implemented]:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
         except requests.exceptions.InvalidSchema:
             raise CommandFailedException('%s is not a supported url.' % url)
