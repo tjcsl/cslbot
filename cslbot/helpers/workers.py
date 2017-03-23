@@ -76,7 +76,10 @@ class Workers(object):
     def run_action(self, func, args):
         try:
             thread = threading.current_thread()
-            thread_id = re.match(r'Thread-\d+', thread.name).group(0)
+            thread_id = re.match(r'Thread-\d+', thread.name)
+            if thread_id is None:
+                raise Exception("Invalid thread name {}".format(thread.name))
+            thread_id = thread_id.group(0)
             thread.name = '%s running %s' % (thread_id, func.__name__)
             func(*args)
         except Exception as ex:
