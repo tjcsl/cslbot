@@ -38,8 +38,8 @@ def main(confdir="/etc/cslbot") -> None:
         config.read_file(f)
     session = get_session(config)()
     channel = '#tjhsst'
-    users = session.query(Log.source).filter(Log.target == channel, or_(
-        Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(func.count(Log.id) > 500).group_by(Log.source).all()
+    users = session.query(Log.source).filter(Log.target == channel, or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).having(
+        func.count(Log.id) > 500).group_by(Log.source).all()
     freq = []
     for user in users:
         lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0],

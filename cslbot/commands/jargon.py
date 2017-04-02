@@ -56,10 +56,12 @@ def cmd(send, *_):
              [verb, noun, ingverb, adj, abbrev, noun], [adj, abbrev, noun, verb, adj, noun], [abbrev, noun, verb, adj, noun, verb, abbrev, noun],
              [ingverb, noun, verb, adj, abbrev, noun], [verb, adj, abbrev, noun, verb, abbrev, noun]]
     msgtype = [
-        "If we %s the %s, we can get to the %s %s through the %s %s %s!" % tuple(map(choice, words[0])), "We need to %s the %s %s %s!" %
-        tuple(map(choice, words[1])), "Try to %s the %s %s, maybe it will %s the %s %s!" % tuple(map(choice, words[2])),
-        "You can't %s the %s without %s the %s %s %s!" % tuple(map(choice, words[3])), "Use the %s %s %s, then you can %s the %s %s!" %
-        tuple(map(choice, words[4])), "The %s %s is down, %s the %s %s so we can %s the %s %s!" % tuple(map(choice, words[5])),
+        "If we %s the %s, we can get to the %s %s through the %s %s %s!" % tuple(map(choice, words[0])),
+        "We need to %s the %s %s %s!" % tuple(map(choice, words[1])),
+        "Try to %s the %s %s, maybe it will %s the %s %s!" % tuple(map(choice, words[2])),
+        "You can't %s the %s without %s the %s %s %s!" % tuple(map(choice, words[3])),
+        "Use the %s %s %s, then you can %s the %s %s!" % tuple(map(choice, words[4])),
+        "The %s %s is down, %s the %s %s so we can %s the %s %s!" % tuple(map(choice, words[5])),
         "%s the %s won't do anything, we need to %s the %s %s %s!" % tuple(map(choice, words[6])),
         "I'll %s the %s %s %s, that should %s the %s %s!" % tuple(map(choice, words[7]))
     ]

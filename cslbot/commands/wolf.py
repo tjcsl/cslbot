@@ -39,6 +39,9 @@ def cmd(send, msg, args):
     if req.status_code == 403:
         send("WolframAlpha is having issues.")
         return
+    if not req.content:
+        send("WolframAlpha returned an empty response.")
+        return
     xml = fromstring(req.content)
     output = xml.findall('./pod')
     key = args['config']['api']['googleapikey']
