@@ -87,7 +87,7 @@ class BotTest(unittest.TestCase):
 
     def who_mock(self, target, op=None):
         # Since we don't have a real server on the other end, we need to fake a WHOSPCRPL.
-        nick, tag = re.match('(#?[\w-]+) %naft,(\d+)', target).groups()
+        nick, tag = re.match(r'(#?[\w-]+) %naft,(\d+)', target).groups()
         self.send_msg('whospcrpl', self.server, self.nick, [tag, nick, 'H', nick])
 
     def cap_mock(self, cmd, arg=None):
