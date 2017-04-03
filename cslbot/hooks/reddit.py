@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import html
 import re
 
 from requests import get
@@ -40,6 +41,7 @@ def handle(send, msg, args):
         else:
             output += data['display_name']
         output = output.strip()
+        output = html.unescape(output)
         key = args['config']['api']['googleapikey']
         if subreddit == 'random':
             output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
