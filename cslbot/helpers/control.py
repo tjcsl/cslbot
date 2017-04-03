@@ -18,7 +18,7 @@
 import logging
 import re
 
-from . import arguments, orm, registry, web
+from . import acl, arguments, orm, registry, web
 
 
 def handle_chanserv(args):
@@ -94,19 +94,19 @@ def handle_enable(args):
 
 
 def handle_guard(args):
-    if args.nick in args.handler.guarded:
-        args.send("Already guarding %s" % args.nick)
+    if args.target_nick in args.handler.guarded:
+        args.send("Already guarding %s" % args.target_nick)
     else:
-        args.handler.guarded.append(args.nick)
-        args.send("Guarding %s" % args.nick)
+        args.handler.guarded.append(args.target_nick)
+        args.send("Guarding %s" % args.target_nick)
 
 
 def handle_unguard(args):
-    if args.nick not in args.handler.guarded:
-        args.send("%s is not being guarded" % args.nick)
+    if args.target_nick not in args.handler.guarded:
+        args.send("%s is not being guarded" % args.target_nick)
     else:
-        args.handler.guarded.remove(args.nick)
-        args.send("No longer guarding %s" % args.nick)
+        args.handler.guarded.remove(args.target_nick)
+        args.send("No longer guarding %s" % args.target_nick)
 
 
 def handle_show_pending(args):
@@ -255,12 +255,9 @@ def get_reject_msg(pending, type):
 
 
 def handle_quote(args):
-    command = [x.lower() for x in args.cmd]
-    for x in ['ns', 'nickserv', 'cs', 'chanserv']:
-        if x in command:
-            args.send("You wish!")
-            return
-    if args.cmd[0] == "join":
+    if not acl.has_role(args.db, "owner", args.nick):
+        args.send("Only owner can use quote.")
+    elif args.cmd[0] == "join":
         args.send("quote join is not suported, use !join.")
     else:
         args.handler.connection.send_raw(" ".join(args.cmd))
@@ -275,9 +272,9 @@ def handle_help(args):
     args.send("guard|unguard <nick>")
 
 
-def init_parser(send, handler, db):
+def init_parser(send, handler, nick, db):
     parser = arguments.ArgParser(handler.config)
-    parser.set_defaults(send=send, handler=handler, db=db)
+    parser.set_defaults(send=send, handler=handler, nick=nick, db=db)
     subparser = parser.add_subparsers()
 
     quote_parser = subparser.add_parser('quote')
@@ -303,15 +300,15 @@ def init_parser(send, handler, db):
     enable_parser.set_defaults(func=handle_enable)
 
     guard_parser = subparser.add_parser('guard')
-    guard_parser.add_argument('nick', action=arguments.NickParser)
+    guard_parser.add_argument('target_nick', action=arguments.NickParser)
     guard_parser.set_defaults(func=handle_guard)
 
     unguard_parser = subparser.add_parser('unguard')
-    unguard_parser.add_argument('nick', action=arguments.NickParser)
+    unguard_parser.add_argument('target_nick', action=arguments.NickParser)
     unguard_parser.set_defaults(func=handle_unguard)
 
     # We need the config in the guard_parser and unguard_parser namespaces but there's no way to pass arbitrary
-    # arguments to subparser.add_parser, and now way to talk to the parent parser from subparsers. Thus, we must
+    # arguments to subparser.add_parser, and no way to talk to the parent parser from subparsers. Thus, we must
     # fall back on hacky crap like this
     guard_parser.namespace.config = handler.config
     unguard_parser.namespace.config = handler.config
@@ -334,10 +331,10 @@ def init_parser(send, handler, db):
     return parser
 
 
-def handle_ctrlchan(handler, msg, send):
+def handle_ctrlchan(handler, msg, nick, send):
     """Handle the control channel."""
     with handler.db.session_scope() as db:
-        parser = init_parser(send, handler, db)
+        parser = init_parser(send, handler, nick, db)
         try:
             cmdargs = parser.parse_args(msg)
         except arguments.ArgumentException as e:

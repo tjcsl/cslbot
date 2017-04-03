@@ -579,7 +579,7 @@ class BotHandler(object):
         if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
             return
         with self.db.session_scope() as session:
-            if not cmd_obj.has_role(session, nick):
+            if not acl.has_role(session, cmd_obj.required_role, nick):
                 send("Insufficent privileges for command.")
                 return
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
@@ -647,7 +647,7 @@ class BotHandler(object):
             return
 
         if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):
-            control.handle_ctrlchan(self, msg, send)
+            control.handle_ctrlchan(self, msg, nick, send)
 
         if self.is_ignored(nick) and not self.is_admin(None, nick):
             return

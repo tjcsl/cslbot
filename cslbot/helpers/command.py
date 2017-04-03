@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session
 from typing import Any, Callable, Dict, List, Union
 
 from . import backtrace, registry
-from .orm import Commands, Log, Permissions
+from .orm import Commands, Log
 
 
 def record_command(cursor: Session, nick: str, command: str, channel: str) -> None:
@@ -99,14 +99,3 @@ class Command(object):
 
     def is_limited(self) -> bool:
         return self.limit != 0
-
-    def has_role(self, session, nick) -> bool:
-        if self.required_role is None:
-            return True
-        admin = session.query(Permissions).filter(Permissions.nick == nick).first()
-        if admin is None:
-            return False
-        if self.required_role == "owner":
-            return admin.role == "owner"
-        # owner is a superset of admin.
-        return True
