@@ -47,7 +47,7 @@ class ChanParser(argparse.Action):
             value = [value]
         namespace.channels = []
         for v in value:
-            if re.match(namespace.config['core']['chanregex'], v):
+            if re.match('{}$'.format(namespace.config['core']['chanregex']), v):
                 namespace.channels.append(v)
             else:
                 raise ArgumentException("Invalid chan %s." % v)
