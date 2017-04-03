@@ -255,11 +255,12 @@ def get_reject_msg(pending, type):
 
 
 def handle_quote(args):
-    if "nickserv" in [x.lower() for x in args.cmd]:
-        args.send("You wish!")
-    elif "chanserv" in [x.lower() for x in args.cmd]:
-        args.send("You wish!")
-    elif args.cmd[0] == "join":
+    command = [x.lower() for x in args.cmd]
+    for x in ['ns', 'nickserv', 'cs', 'chanserv']:
+        if x in command:
+            args.send("You wish!")
+            return
+    if args.cmd[0] == "join":
         args.send("quote join is not suported, use !join.")
     else:
         args.handler.connection.send_raw(" ".join(args.cmd))
