@@ -8,11 +8,11 @@ optional: band,
     butt,
     reddit,
     understanding,
-    voice,
-    shrek
+    voice
 disabled: bob,
     autodeop,
     ctf,
+    shrek,
     stallman,
     xkcd
 [commands]
