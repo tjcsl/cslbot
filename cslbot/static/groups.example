@@ -6,6 +6,7 @@ core: caps,
     url
 optional: band,
     butt,
+    make,
     reddit,
     understanding,
     voice

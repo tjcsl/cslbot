@@ -186,6 +186,7 @@ cslbot/hooks/bob.py
 cslbot/hooks/butt.py
 cslbot/hooks/caps.py
 cslbot/hooks/ctf.py
+cslbot/hooks/make.py
 cslbot/hooks/note.py
 cslbot/hooks/reddit.py
 cslbot/hooks/scores.py

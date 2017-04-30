@@ -60,6 +60,14 @@ cslbot\.hooks\.ctf module
     :undoc-members:
     :show-inheritance:
 
+cslbot\.hooks\.make module
+--------------------------
+
+.. automodule:: cslbot.hooks.make
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cslbot\.hooks\.note module
 --------------------------
 
