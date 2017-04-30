@@ -34,12 +34,21 @@ def get_categories(apikey):
 
 def get_item(category, apikey):
     url = 'http://svcs.ebay.com/services/search/FindingService/v1?'
-    params = [('itemFilter(0).name', 'FreeShippingOnly'), ('itemFilter(0).value', 'true'), ('itemFilter(1).name', 'MaxPrice'),
-              ('itemFilter(1).value', '1'), ('itemFilter(1).paramName', 'Currency'), ('itemFilter(1).paramValue', 'USD'),
-              ('itemFilter(2).name', 'ListingType'), ('itemFilter(2).value(0)', 'StoreInventory'), ('itemFilter(2).value(1)', 'FixedPrice'),
-              ('itemFilter(2).value(2)', 'AuctionWithBIN'), ('categoryId', category)]
+    params = {
+        'itemFilter(0).name': 'FreeShippingOnly',
+        'itemFilter(0).value': 'true',
+        'itemFilter(1).name': 'MaxPrice',
+        'itemFilter(1).value': '1',
+        'itemFilter(1).paramName': 'Currency',
+        'itemFilter(1).paramValue': 'USD',
+        'itemFilter(2).name': 'ListingType',
+        'itemFilter(2).value(0)': 'StoreInventory',
+        'itemFilter(2).value(1)': 'FixedPrice',
+        'itemFilter(2).value(2)': 'AuctionWithBIN',
+        'categoryId': category
+    }
     # If we use params=, requests will urlencode the (), making ebay very sad.
-    url += "&".join("%s=%s" % x for x in params)
+    url += "&".join("%s=%s" % x for x in params.items())
     headers = {'X-EBAY-SOA-RESPONSE-DATA-FORMAT': 'json', 'X-EBAY-SOA-OPERATION-NAME': 'findItemsAdvanced', 'X-EBAY-SOA-SECURITY-APPNAME': apikey}
     data = get(url, headers=headers).json()
     item = data['findItemsAdvancedResponse'][0]['searchResult'][0]
