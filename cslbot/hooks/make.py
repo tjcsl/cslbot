@@ -19,7 +19,9 @@ from ..helpers.hook import Hook
 
 
 @Hook('make', 'pubmsg')
-def handle(send, msg, args):
-    if msg.startswith('make '):
-        msg = msg.replace('make ', '')
-        send("make: *** No rule to make target '{}'.  Stop.".format(msg))
+def handle(send, msg, _):
+    msg = msg.split()
+    if len(msg) < 2:
+        return
+    if msg[0] == 'make':
+        send("make: *** No rule to make target '{}'.  Stop.".format(msg[1]))
