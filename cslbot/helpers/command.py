@@ -41,7 +41,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
     # the last one is the command we're currently executing, so get the penultimate one.
     last = cursor.query(Log).filter(Log.target == target, Log.type == 'pubmsg', Log.time >= limit).order_by(Log.time.desc()).offset(1).first()
     if last:
-        return last.msg == msg and last.source != nick
+        return bool(last.msg == msg and last.source != nick)
     else:
         return False
 

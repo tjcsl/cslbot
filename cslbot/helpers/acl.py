@@ -54,6 +54,6 @@ def has_role(session: Session, required_role: str, nick: str) -> bool:
     if admin is None:
         return False
     if required_role == "owner":
-        return admin.role == "owner"
+        return bool(admin.role == "owner")
     # owner is a superset of admin.
     return True

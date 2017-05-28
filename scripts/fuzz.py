@@ -58,7 +58,7 @@ def setup_mocks() -> None:
 def setup_bot() -> core.IrcBot:
     confdir = join(dirname(__file__), '..')
     bot = core.IrcBot(confdir)
-    mock.patch.dict(bot.handler, 'channels', {'#test-channel': mock.MagicMock()}).start()
+    mock.patch.object(bot.handler, 'channels', {'#test-channel': mock.MagicMock()}).start()
     mock.patch.object(bot.handler, 'is_ignored', return_value=False).start()
     mock.patch.object(bot.handler, 'db').start()
     # We don't actually connect to an irc server, so fake the event loop

@@ -20,6 +20,7 @@ import configparser
 import importlib
 import logging
 import sys
+import types
 from glob import glob
 from os.path import basename, join
 from typing import Dict, List, Set, Tuple, Union
@@ -43,7 +44,7 @@ class ModuleData(object):
 registry = ModuleData()
 
 
-def init_aux(config: configparser.ConfigParser) -> None:
+def init_aux(config: Dict[str, str]) -> None:
     registry.reset()
     registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
 
@@ -59,13 +60,13 @@ def load_groups(confdir: str) -> configparser.ConfigParser:
     return config_obj
 
 
-def init_groups(groups: configparser.SectionProxy, confdir: str) -> None:
+def init_groups(groups: Dict[str, str], confdir: str) -> None:
     config = load_groups(confdir)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')
 
 
-def add_to_groups(config: configparser.ConfigParser, groups: configparser.SectionProxy, mod_type: str) -> None:
+def add_to_groups(config: configparser.ConfigParser, groups: Dict[str, str], mod_type: str) -> None:
     enabled_groups = [x.strip() for x in groups[mod_type].split(',')]
     mod_group = parse_group(config[mod_type])
     for name, values in mod_group.items():
@@ -82,7 +83,7 @@ def loaded(mod_type: str, name: str) -> bool:
     return name in registry.groups[mod_type] or name in registry.disabled[mod_type]
 
 
-def parse_group(cfg: configparser.SectionProxy) -> Dict[str, List[str]]:
+def parse_group(cfg: Dict[str, str]) -> Dict[str, List[str]]:
     groups = {}
     for group in cfg.keys():
         groups[group] = [x.strip() for x in cfg[group].split(',')]
@@ -129,7 +130,7 @@ def get_modules(mod_type: str) -> Tuple[List[str], List[str]]:
     return core_enabled, core_disabled
 
 
-def safe_reload(modname: str) -> Union[None, str]:
+def safe_reload(modname: types.ModuleType) -> Union[None, str]:
     """Catch and log any errors that arise from reimporting a module, but do not die.
 
     :return: None when import was successful. String is the first line of the error message
