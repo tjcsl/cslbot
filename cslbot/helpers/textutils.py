@@ -39,7 +39,7 @@ def gen_removevowels(msg):
 
 
 def gen_word():
-    return get('http://randomword.setgetgo.com/get.php').text.strip()
+    return get('http://setgetgo.com/randomword/get.php').text.strip()
 
 
 def gen_hashtag(msg):
@@ -306,7 +306,7 @@ def gen_translate(msg, fromlang=None, tolang='en'):
             return "Invalid source language."
         params.update({'source': fromlang})
     data = get('https://www.googleapis.com/language/translate/v2', params=params).json()
-    return data['data']['translations'][0]['translatedText']
+    return unescape(data['data']['translations'][0]['translatedText'])
 
 
 def get_languages(key):
