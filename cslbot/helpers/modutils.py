@@ -23,7 +23,7 @@ import sys
 import types
 from glob import glob
 from os.path import basename, join
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Mapping, Set, Tuple, Union
 
 from pkg_resources import Requirement, resource_filename, resource_string
 
@@ -44,7 +44,7 @@ class ModuleData(object):
 registry = ModuleData()
 
 
-def init_aux(config: Dict[str, str]) -> None:
+def init_aux(config: Mapping[str, str]) -> None:
     registry.reset()
     registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
 
@@ -60,13 +60,13 @@ def load_groups(confdir: str) -> configparser.ConfigParser:
     return config_obj
 
 
-def init_groups(groups: Dict[str, str], confdir: str) -> None:
+def init_groups(groups: Mapping[str, str], confdir: str) -> None:
     config = load_groups(confdir)
     add_to_groups(config, groups, 'commands')
     add_to_groups(config, groups, 'hooks')
 
 
-def add_to_groups(config: configparser.ConfigParser, groups: Dict[str, str], mod_type: str) -> None:
+def add_to_groups(config: configparser.ConfigParser, groups: Mapping[str, str], mod_type: str) -> None:
     enabled_groups = [x.strip() for x in groups[mod_type].split(',')]
     mod_group = parse_group(config[mod_type])
     for name, values in mod_group.items():
@@ -83,7 +83,7 @@ def loaded(mod_type: str, name: str) -> bool:
     return name in registry.groups[mod_type] or name in registry.disabled[mod_type]
 
 
-def parse_group(cfg: Dict[str, str]) -> Dict[str, List[str]]:
+def parse_group(cfg: Mapping[str, str]) -> Dict[str, List[str]]:
     groups = {}
     for group in cfg.keys():
         groups[group] = [x.strip() for x in cfg[group].split(',')]
