@@ -18,15 +18,13 @@
 
 import warnings
 from os.path import abspath, dirname
-from sys import path
+import sys
 
 warnings.simplefilter('default')
+warnings.filterwarnings('ignore', category=ImportWarning, module='importlib')
 warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic.*')
-warnings.filterwarnings('ignore', category=DeprecationWarning, module='nltk')
-warnings.filterwarnings('ignore', category=DeprecationWarning, module='pygments')
-warnings.filterwarnings('ignore', category=PendingDeprecationWarning, module='nltk')
 
-path.insert(0, dirname(abspath(__file__)))
+sys.path.insert(0, dirname(abspath(__file__)))
 
 from cslbot.helpers import core  # noqa
 
