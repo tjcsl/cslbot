@@ -28,7 +28,7 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None]=logging.error) -> bool:
+def load_modules(cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None] = logging.error) -> bool:
     modutils.init_aux(cfg['core'])
     modutils.init_groups(cfg['groups'], confdir)
     errored_commands = registry.command_registry.scan_for_commands()

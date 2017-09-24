@@ -27,7 +27,7 @@ from . import backtrace, registry
 
 class Hook(object):
 
-    def __init__(self, name: str, types: Union[str, List[str]], args: List[str]=[]) -> None:
+    def __init__(self, name: str, types: Union[str, List[str]], args: List[str] = []) -> None:
         self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args
