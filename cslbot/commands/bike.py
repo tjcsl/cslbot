@@ -27,4 +27,5 @@ def cmd(send, *_):
     Syntax: {command}
 
     """
-    send('🚲')
+    send(' _f_,_')
+    send('(_)`(_)')
