@@ -27,5 +27,5 @@ def cmd(send, *_):
     Syntax: {command}
 
     """
-    send(' _f_,_')
+    send('\\_f_,_')
     send('(_)`(_)')
