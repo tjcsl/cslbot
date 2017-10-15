@@ -53,11 +53,13 @@ def cmd(send, msg, args):
         offset = randint(0, postcount - 1)
         response = get(
             'https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
-            params={'api_key': apikey,
-                    'offset': offset,
-                    'limit': 1,
-                    'type': 'text',
-                    'filter': 'text'}).json()
+            params={
+                'api_key': apikey,
+                'offset': offset,
+                'limit': 1,
+                'type': 'text',
+                'filter': 'text'
+            }).json()
         entry = response['response']['posts'][0]['body']
         # Account for possibility of multiple lines
         lines = entry.splitlines()
