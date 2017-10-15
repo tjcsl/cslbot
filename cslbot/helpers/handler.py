@@ -192,8 +192,8 @@ class BotHandler(object):
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
         if not ignore_length:
-            # Ignore everything after the first 650 chars.
-            msg = misc.truncate_msg(msg, 650)
+            # Ignore everything after the first 800 chars.
+            msg = misc.truncate_msg(msg, 800)
 
         # We can't send messages > 512 bytes to irc.
         max_len = misc.get_max_length(target, msgtype)
