@@ -249,7 +249,9 @@ class ErrnoTest(BotTest):
                          'EILSEQ, EINPROGRESS, EINTR, EINVAL, EIO, EISCONN, EISDIR, EISNAM, EKEYEXPIRED, EKEYREJECTED,', 'privmsg'),
                         ('testBot', '#test-channel', 0,
                          'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, ' +
-                         'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI,...', 'privmsg')]
+                         'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI, ENODATA, ' +
+                         'ENODEV, ENOENT, ENOEXEC, ENOKEY, ENOLCK, ENOLINK, ENOMEDIUM, ENOMEM, ENOMSG, ENONET, ENOPKG, ENOPROTOOPT, ' +
+                         'ENOSPC, ENOSR, ENOSTR, ENOSYS, ENOTBLK,...', 'privmsg')]
         self.assertEqual(calls, expected + [('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
 
