@@ -47,12 +47,17 @@ def main(confdir="/etc/cslbot") -> None:
         text = '\n'.join([x[0] for x in lines])
         with open('/tmp/foo', 'w') as f:
             f.write(text)
-        output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '-method', '5'], stderr=subprocess.STDOUT)
-        sizes = output.decode().splitlines()[-2]
-        before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
-        # 8 bits = 1 byte
-        count = 1024 * 1024 * 8 * float(after) / len(text)
-        freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
+        try:
+            output = subprocess.check_output(
+                ['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'], stderr=subprocess.STDOUT, universal_newlines=True)
+            sizes = output.splitlines()[-2]
+            before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
+            # 8 bits = 1 byte
+            count = 1024 * 1024 * 8 * float(after) / len(text)
+            freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
+        except subprocess.CalledProcessError as e:
+            print(e.stdout)
+            raise e
     with open('freq.json', 'w') as f:
         json.dump(freq, f, indent=True)
     for x in sorted(freq, key=lambda x: x[2]):
