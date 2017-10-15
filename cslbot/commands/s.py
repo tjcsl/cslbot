@@ -20,6 +20,8 @@ import re
 
 import sre_constants
 
+from sqlalchemy import or_
+
 from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException
 from ..helpers.orm import Log
@@ -27,8 +29,8 @@ from ..helpers.misc import escape
 
 
 def get_log(conn, target, user):
-    query = conn.query(Log).filter((Log.type == 'privmsg') | (Log.type == 'pubmsg') | (Log.type == 'action'),
-                                   Log.target == target).order_by(Log.time.desc())
+    type_filter = or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')
+    query = conn.query(Log).filter(type_filter, Log.target == target).order_by(Log.time.desc())
     if user is None:
         return query.offset(1).limit(500).all()
     else:
