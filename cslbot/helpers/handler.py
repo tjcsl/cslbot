@@ -27,7 +27,7 @@ import threading
 import time
 import irc
 from datetime import datetime, timedelta
-from typing import List
+from typing import Callable, Dict, List
 
 from . import acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers
 
