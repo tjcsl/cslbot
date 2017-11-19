@@ -25,8 +25,7 @@ def upgrade():
 
 
 def downgrade():
-    op.create_table('nicks',
-                    sa.Column('old', sa.TEXT(), autoincrement=False, nullable=True),
+    op.create_table('nicks', sa.Column('old', sa.TEXT(), autoincrement=False, nullable=True),
                     sa.Column('new', sa.TEXT(), autoincrement=False, nullable=True),
-                    sa.Column('time', sa.INTEGER(), autoincrement=False, nullable=True),
-                    sa.Column('id', sa.INTEGER(), nullable=False), sa.PrimaryKeyConstraint('id', name='nicks_pkey'))
+                    sa.Column('time', sa.INTEGER(), autoincrement=False, nullable=True), sa.Column('id', sa.INTEGER(), nullable=False),
+                    sa.PrimaryKeyConstraint('id', name='nicks_pkey'))
