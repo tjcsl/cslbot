@@ -126,7 +126,9 @@ def get_weather(cmdargs, send, apikey):
         if 'current_observation' in data:
             data = data['current_observation']
         elif 'results' in data['response']:
-            send("%d results found, please be more specific" % len(data['response']['results']))
+            results = data['response']['results']
+            names = ['{}/{}'.format(x['state'], x['country']) for x in results]
+            send("{} results found, please be more specific: {}".format(len(results), ', '.join(names)))
             return False
         else:
             send("Invalid or Ambiguous Location")
