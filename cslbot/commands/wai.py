@@ -29,7 +29,7 @@ def cmd(send, *_):
     """
     a = ["primary", "secondary", "tertiary", "hydraulic", "compressed", "required", "pseudo", "intangible", "flux"]
     b = [
-        "compressor", "engine", "lift", "elevator", "irc bot", "stabilizer", "computer", "csl", "4506", "router", "switch", "thingy",
+        "compressor", "engine", "lift", "elevator", "irc bot", "stabilizer", "computer", "fwilson", "csl", "4506", "router", "switch", "thingy",
         "capacitor"
     ]
     c = [
