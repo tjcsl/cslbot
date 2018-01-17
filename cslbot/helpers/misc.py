@@ -75,7 +75,7 @@ def do_pull(srcdir=None, repo=None):
             # Strip ascii color codes
             return re.sub(r'\x1b[^m]*h', '', output)
     except subprocess.CalledProcessError as e:
-        for line in e.output.decode().splitlines():
+        for line in e.output.splitlines():
             logging.error(line)
         raise e
 
