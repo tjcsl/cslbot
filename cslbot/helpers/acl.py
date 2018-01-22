@@ -18,8 +18,6 @@
 import re
 from datetime import datetime
 
-from sqlalchemy.orm import Session
-
 from .orm import Permissions
 
 
@@ -45,15 +43,3 @@ def set_admin(msg, handler):
             else:
                 admin.registered = True
                 admin.time = datetime.now()
-
-
-def has_role(session: Session, required_role: str, nick: str) -> bool:
-    if required_role is None:
-        return True
-    admin = session.query(Permissions).filter(Permissions.nick == nick, Permissions.registered).first()
-    if admin is None:
-        return False
-    if required_role == "owner":
-        return bool(admin.role == "owner")
-    # owner is a superset of admin.
-    return True

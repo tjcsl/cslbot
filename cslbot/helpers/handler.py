@@ -103,17 +103,23 @@ class BotHandler(object):
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
         self.rate_limited_send('who', '{} %naft,{}'.format(target, tag))
 
-    def is_admin(self, send, nick):
+    def is_admin(self, send, nick, required_role='admin'):
         """Checks if a nick is a admin.
 
         If NickServ hasn't responded yet, then the admin is unverified,
         so assume they aren't a admin.
 
         """
+        # If the required role is None, bypass checks.
+        if not required_role:
+            return True
         # Current roles are admin and owner, which is a superset of admin.
         with self.db.session_scope() as session:
             admin = session.query(orm.Permissions).filter(orm.Permissions.nick == nick).first()
             if admin is None:
+                return False
+            # owner implies admin, but not the other way around.
+            if required_role == "owner" and admin.role != "owner":
                 return False
             # no nickserv support, assume people are who they say they are.
             if not self.config['feature'].getboolean('nickserv'):
@@ -578,10 +584,9 @@ class BotHandler(object):
         cmd_obj = registry.command_registry.get_command(cmd_name)
         if cmd_obj.is_limited() and self.abusecheck(send, nick, target, cmd_obj.limit, cmd_name):
             return
-        with self.db.session_scope() as session:
-            if not acl.has_role(session, cmd_obj.required_role, nick):
-                send("Insufficent privileges for command.")
-                return
+        if not self.is_admin(send, nick, cmd_obj.required_role):
+            send("Insufficent privileges for command.")
+            return
         args = self.do_args(cmd_obj.args, send, nick, target, e.source, cmd_name, e.type)
         cmd_obj.run(filtersend, cmdargs, args, cmd_name, nick, target, self)
 

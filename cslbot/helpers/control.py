@@ -18,7 +18,7 @@
 import logging
 import re
 
-from . import acl, arguments, orm, registry, web
+from . import arguments, orm, registry, web
 
 
 def handle_chanserv(args):
@@ -255,7 +255,7 @@ def get_reject_msg(pending, type):
 
 
 def handle_quote(args):
-    if not acl.has_role(args.db, "owner", args.nick):
+    if not args.handler.is_admin(None, args.nick, "owner"):
         args.send("Only owner can use quote.")
     elif args.cmd[0] == "join":
         args.send("quote join is not suported, use !join.")
