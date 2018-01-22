@@ -101,7 +101,7 @@ class BotHandler(object):
     def send_who(self, target, tag):
         # http://faerion.sourceforge.net/doc/irc/whox.var
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
-        self.rate_limited_send('who', '%s %%naft,%d' % (target, tag))
+        self.rate_limited_send('who', '{} %naft,{}'.format(target, tag))
 
     def is_admin(self, send, nick):
         """Checks if a nick is a admin.
