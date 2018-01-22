@@ -50,7 +50,7 @@ def set_admin(msg, handler):
 def has_role(session: Session, required_role: str, nick: str) -> bool:
     if required_role is None:
         return True
-    admin = session.query(Permissions).filter(Permissions.nick == nick).first()
+    admin = session.query(Permissions).filter(Permissions.nick == nick, Permissions.registered).first()
     if admin is None:
         return False
     if required_role == "owner":
