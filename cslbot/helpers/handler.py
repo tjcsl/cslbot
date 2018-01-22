@@ -504,7 +504,7 @@ class BotHandler(object):
         with self.db.session_scope() as session:
             admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.arguments[1]).first()
             if admin is not None:
-                if e.arguments[3] != '0':
+                if e.arguments[1] == e.arguments[3]:
                     admin.registered = True
                     admin.time = datetime.now()
 
