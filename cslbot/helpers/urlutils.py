@@ -41,9 +41,7 @@ def get_short(msg, key):
                     json=({
                         'longUrl': msg
                     }),
-                    headers={
-                        'Content-Type': 'application/json'
-                    })) as req:
+                    headers={'Content-Type': 'application/json'})) as req:
             data = req.json()
             return msg if 'error' in data else data['id']
     except requests.exceptions.ConnectTimeout as e:
@@ -92,9 +90,7 @@ def identify_image(req, key):
                 }
             }]
         }),
-        headers={
-            'Content-Type': 'application/json'
-        })
+        headers={'Content-Type': 'application/json'})
     data = req.json()
     if 'error' in data:
         raise ImageException(data['error'])
