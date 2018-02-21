@@ -368,12 +368,34 @@ def gen_sanitize(msg):
 def gen_intensify(msg):
     return "[%s INTENSIFIES]" % msg.upper()
 
+def gen_djones(msg):
+    keyboard = [
+            'qwertyuiop',
+            '\0asdfghjkl',
+            '\0\0zxcvbnm\0\0',
+            ]
+    outmsg = ''
+    for letter in msg:
+        if random() < 0.15 and letter in ''.join(keyboard):
+            r = (0 if letter in keyboard[0] else (1 if letter in keyboard[1] else 2))
+            c = keyboard[r].find(letter)
+            nr = r + randint(-1, 1)
+            nc = c + randint(-1, 1)
+            while nr < 0 or nr >= len(keyboard) or nc < 0 or nc >= len(keyboard[0]) or keyboard[nr][nc] == '\0':
+                nr = r + randint(-1, 1)
+                nc = c + randint(-1, 1)
+            outmsg += keyboard[nr][nc]
+        else:
+            outmsg += letter
+    return outmsg
+
 
 output_filters = {
     "passthrough": lambda x: x,
     "bard": gen_shakespeare,
     "binary": gen_binary,
     "creffett": gen_creffett,
+    "djones": gen_djones,
     "fullwidth": gen_fullwidth,
     "fwilson": gen_fwilson,
     "gizoogle": gen_gizoogle,
