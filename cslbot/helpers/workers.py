@@ -37,7 +37,7 @@ Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
 def pool_init():
-    """We ignore Ctrl-C in the poll workers, so that we can clean things up properly."""
+    """We ignore Ctrl-C in the pool workers, so that we can clean things up properly."""
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -130,7 +130,7 @@ class Workers(object):
         self.defer(3600, False, self.send_quotes, handler, send)
         with handler.db.session_scope() as session:
             channel = self.handler.config['core']['channel']
-            send('QOTH: {}'.format(quote.do_get_quote(session), target=channel))
+            send('QOTH: {}'.format(quote.do_get_quote(session)), target=channel)
 
     def check_active(self, handler, send):
         # Re-schedule check_active
