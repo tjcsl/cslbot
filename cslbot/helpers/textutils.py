@@ -39,8 +39,13 @@ def gen_removevowels(msg):
 
 
 def gen_word():
-    wordlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
-    return choice(wordlist.strip().split()).decode()
+    r = random()
+
+    if random < 0.8:
+        wordlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
+        return choice(wordlist.strip().split()).decode()
+    else:
+        return "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable."
 
 
 def gen_hashtag(msg):
