@@ -41,7 +41,7 @@ def gen_removevowels(msg):
 def gen_word():
     r = random()
 
-    if random < 0.8:
+    if r < 0.8:
         wordlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
         return choice(wordlist.strip().split()).decode()
     else:
