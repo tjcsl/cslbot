@@ -40,7 +40,7 @@ def gen_removevowels(msg):
 
 def gen_word():
     wordlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
-    return choice(wordlist.strip().split())
+    return choice(wordlist.strip().split()).decode()
 
 
 def gen_hashtag(msg):
