@@ -39,7 +39,8 @@ def gen_removevowels(msg):
 
 
 def gen_word():
-    return get('http://setgetgo.com/randomword/get.php').text.strip()
+    with open(resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')) as f:
+        return choice([i.strip() for i in f.readlines()])
 
 
 def gen_hashtag(msg):
