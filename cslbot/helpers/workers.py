@@ -58,7 +58,8 @@ class Workers(object):
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
-        self.defer(3600, False, self.send_quotes, handler, send)
+        # DISABLED TO APPEASE THE MASSES
+        # self.defer(3600, False, self.send_quotes, handler, send)
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:

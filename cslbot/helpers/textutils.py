@@ -377,10 +377,10 @@ def gen_intensify(msg):
 
 def gen_djones(msg):
     keyboard = [
-            'qwertyuiop',
-            '\0asdfghjkl',
-            '\0\0zxcvbnm\0\0',
-            ]
+        'qwertyuiop',
+        '\0asdfghjkl',
+        '\0\0zxcvbnm\0\0',
+    ]
     filter_output = ''
     for letter in msg:
         if random() < 0.15 and letter in ''.join(keyboard):
