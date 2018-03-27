@@ -29,6 +29,7 @@ from sqlalchemy import or_
 
 from . import babble, backtrace, control
 from .orm import Babble_last, Log
+from ..commands import quote
 
 executor_lock = threading.Lock()
 
@@ -36,7 +37,7 @@ Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
 def pool_init():
-    """We ignore Ctrl-C in the poll workers, so that we can clean things up properly."""
+    """We ignore Ctrl-C in the pool workers, so that we can clean things up properly."""
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -57,6 +58,7 @@ class Workers(object):
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
+        self.defer(3600, False, self.send_quotes, handler, send)
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:
@@ -122,6 +124,13 @@ class Workers(object):
         self.defer(3600, False, self.handle_pending, handler, send)
         with handler.db.session_scope() as session:
             control.show_pending(session, send, True)
+
+    def send_quotes(self, handler, send):
+        # Re-schedule send_quotes
+        self.defer(3600, False, self.send_quotes, handler, send)
+        with handler.db.session_scope() as session:
+            channel = self.handler.config['core']['channel']
+            send('QOTH: {}'.format(quote.do_get_quote(session)), target=channel)
 
     def check_active(self, handler, send):
         # Re-schedule check_active
