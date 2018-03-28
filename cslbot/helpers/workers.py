@@ -58,8 +58,7 @@ class Workers(object):
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.check_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
-        # DISABLED TO APPEASE THE MASSES
-        # self.defer(3600, False, self.send_quotes, handler, send)
+        self.defer(3600, False, self.send_quotes, handler, send)
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:
@@ -128,10 +127,11 @@ class Workers(object):
 
     def send_quotes(self, handler, send):
         # Re-schedule send_quotes
-        self.defer(3600, False, self.send_quotes, handler, send)
+        # THE MASSES MUST BE APPEASED
+        self.defer(3600 * 24, False, self.send_quotes, handler, send)
         with handler.db.session_scope() as session:
             channel = self.handler.config['core']['channel']
-            send('QOTH: {}'.format(quote.do_get_quote(session)), target=channel)
+            send('QOTD: {}'.format(quote.do_get_quote(session)), target=channel)
 
     def check_active(self, handler, send):
         # Re-schedule check_active
