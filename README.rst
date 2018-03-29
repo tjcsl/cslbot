@@ -178,7 +178,7 @@ Licensed under the GPL v2
 
 This product may use GeoLite2 data created by MaxMind, available from http://www.maxmind.com.
 
-Created by fwilson (Fox Wilson, Class of 2016).  
+Created by empty_string (Tris Wilson, Class of 2016).  
 
 Rewritten by pfoley (Peter Foley, Class of 2013).  
 
