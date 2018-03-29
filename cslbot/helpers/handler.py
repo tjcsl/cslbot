@@ -551,11 +551,11 @@ class BotHandler(object):
             with self.db.session_scope() as session:
                 admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
                 if admin is not None:
-                    if e.arguments[0] == '*':
-                        admin.registered = False
-                    else:
+                    if e.arguments[0] == e.source.nick:
                         admin.registered = True
                         admin.time = datetime.now()
+                    else:
+                        admin.registered = False
 
     def get_cmd(self, msg):
         cmd = msg.split()[0]
