@@ -32,7 +32,7 @@ def start_poll(args):
     poll = Polls(question=args.msg, submitter=args.nick)
     args.session.add(poll)
     args.session.flush()
-    if args.isadmin:
+    if args.isadmin or not args.config.getboolean('adminrestrict', 'poll'):
         poll.accepted = 1
         return "Poll #%d created!" % poll.id
     else:
