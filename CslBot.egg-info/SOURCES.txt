@@ -51,6 +51,7 @@ cslbot/commands/choose.py
 cslbot/commands/cidr.py
 cslbot/commands/coin.py
 cslbot/commands/cve.py
+cslbot/commands/dc.py
 cslbot/commands/ddate.py
 cslbot/commands/defersay.py
 cslbot/commands/define.py

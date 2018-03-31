@@ -20,7 +20,7 @@ import subprocess
 from ..helpers.command import Command
 
 
-@Command(['dc', 'postfix'], ['db'])
+@Command(['dc', 'postfix'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
 
