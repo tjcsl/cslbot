@@ -115,6 +115,7 @@ def get_enabled(mod_type: str, package='CslBot') -> Tuple[List[str], List[str]]:
         elif group_disabled(mod_type, name):
             disabled.append(mod_name)
         elif name != '__init__':
+            logging.error("%s must be either enabled or disabled in groups.cfg" % mod_name)
             # default to disabled
             disabled.append(mod_name)
     return enabled, disabled
