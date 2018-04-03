@@ -33,7 +33,7 @@ def cmd(send, msg, args):
     msg += '\n'
     proc = subprocess.Popen(['dc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     try:
-        output = proc.communicate(msg.encode(), timeout=5)[0].splitlines()
+        output = proc.communicate(msg, timeout=5)[0].splitlines()
     except subprocess.TimeoutExpired:
         proc.terminate()
         send("Execution took too long, you might have better luck with WolframAlpha.")
