@@ -40,6 +40,8 @@ def cmd(send, msg, args):
         return
     if len(output) > 3:
         send("Your output is too long, have you tried mental math?")
+        return
+    for line in output:
+        send(line)
     else:
-        for line in output:
-            send(line)
+        send("No output 4 u!!!")
