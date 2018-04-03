@@ -31,17 +31,17 @@ def cmd(send, msg, args):
         send("Calculate what?")
         return
     msg += '\n'
-    proc = subprocess.Popen(['dc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(['dc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     try:
-        output = proc.communicate(msg.encode(), timeout=5)[0].decode().splitlines()
+        output = proc.communicate(msg.encode(), timeout=5)[0].splitlines()
     except subprocess.TimeoutExpired:
         proc.terminate()
         send("Execution took too long, you might have better luck with WolframAlpha.")
         return
-    if len(output) > 3:
+    if not output:
+        send("No output found, did you forget to specify 'p'?")
+    elif len(output) > 3:
         send("Your output is too long, have you tried mental math?")
-        return
-    for line in output:
-        send(line)
     else:
-        send("No output 4 u!!!")
+        for line in output:
+            send(line)
