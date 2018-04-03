@@ -51,9 +51,12 @@ def handle(send, msg, args):
         # Prevent botloops
         if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1:
             return
-        key = args['config']['api']['googleapikey']
-        title = urlutils.get_title(url, key)
-        short = urlutils.get_short(url, key)
+        imgkey = args['config']['api']['googleapikey']
+        title = urlutils.get_title(url, imgkey)
+
+        shortkey = args['config']['api']['bitlykey']
+        short = urlutils.get_short(url, shortkey)
+
         last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args['config']['feature'].getboolean('linkread'):
             if last is not None:

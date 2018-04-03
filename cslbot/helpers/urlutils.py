@@ -17,7 +17,6 @@
 
 import base64
 import contextlib
-import re
 import requests
 
 from lxml.html import document_fromstring
@@ -33,29 +32,13 @@ class ImageException(Exception):
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
-    try:
-        with contextlib.closing(
-                requests.post(
-                    'https://www.googleapis.com/urlshortener/v1/url',
-                    params={'key': key},
-                    json=({
-                        'longUrl': msg
-                    }),
-                    headers={'Content-Type': 'application/json'})) as req:
-            data = req.json()
-            return msg if 'error' in data else data['id']
-    except requests.exceptions.ConnectTimeout as e:
-        # Sanitize the error before throwing it
-        raise requests.exceptions.ConnectTimeout(re.sub('key=.*', 'key=<removed>', str(e)))
+    return requests.get('https://api-ssl.bitly.com/v3/shorten', params={'access_token': key, 'longUrl': msg, 'format': 'txt'}).text
 
 
 def parse_title(req):
     max_size = 1024 * 256  # 256KB
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
-    # FIXME: https://github.com/kennethreitz/requests/issues/2963
-    if req.raw._connection is not None:
-        req.raw._connection.close()
     ctype = req.headers.get('Content-Type')
     html = document_fromstring(content)
     t = html.find('.//title')

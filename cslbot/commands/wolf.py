@@ -44,7 +44,7 @@ def cmd(send, msg, args):
         return
     xml = fromstring(req.content)
     output = xml.findall('./pod')
-    key = args['config']['api']['googleapikey']
+    key = args['config']['api']['bitlykey']
     url = get_short("http://www.wolframalpha.com/input/?i=%s" % quote(msg), key)
     text = "No output found."
     for x in output:

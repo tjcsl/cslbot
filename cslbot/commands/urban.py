@@ -43,7 +43,7 @@ def cmd(send, msg, args):
     Syntax: {command} <[#<num>] <term>|--blacklist (word)|--unblacklist (word)>
 
     """
-    key = args['config']['api']['googleapikey']
+    key = args['config']['api']['bitlykey']
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('--blacklist')
     parser.add_argument('--unblacklist')

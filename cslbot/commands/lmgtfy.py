@@ -31,5 +31,5 @@ def cmd(send, msg, args):
         return
     msg = msg.replace(' ', '+')
     msg = 'http://lmgtfy.com/?q=%s' % msg
-    key = args['config']['api']['googleapikey']
+    key = args['config']['api']['bitlykey']
     send(get_short(msg, key))

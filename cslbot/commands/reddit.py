@@ -30,4 +30,4 @@ def cmd(send, msg, args):
         send("Non-existant subreddit.")
         return
     subreddit = msg if msg else None
-    send(random_post(subreddit, args['config']['api']['googleapikey']))
+    send(random_post(subreddit, args['config']['api']['bitlykey']))

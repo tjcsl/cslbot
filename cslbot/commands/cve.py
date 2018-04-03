@@ -51,6 +51,6 @@ def cmd(send, msg, args):
     if title.startswith('ERROR'):
         output = 'Invalid CVE Number'
     else:
-        key = args['config']['api']['googleapikey']
+        key = args['config']['api']['bitlykey']
         output = "%s -- %s" % (title, get_short(url, key))
     send(output)

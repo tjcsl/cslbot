@@ -67,7 +67,9 @@ Github: https://github.com/settings/tokens
 
 FML: http://www.fmylife.com/api/home
 
-Google: https://developers.google.com/url-shortener https://developers.google.com/custom-search/json-api/v1/overview
+Google: https://developers.google.com/custom-search/json-api/v1/overview
+
+Bitly: https://bitly.com/a/oauth_apps
 
 STANDS4 (zip code): http://www.abbreviations.com/apiuser.php
 
