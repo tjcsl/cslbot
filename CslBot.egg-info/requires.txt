@@ -8,7 +8,6 @@ irc>=12.2
 jinja2
 lxml
 python-dateutil
-simplejson
 requests_oauthlib
 sphinx>=1.4.8
 mypy

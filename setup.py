@@ -51,7 +51,6 @@ setup(
         'jinja2',
         'lxml',
         'python-dateutil',
-        'simplejson',
         'requests_oauthlib',
         'sphinx>=1.4.8',  # search index fix
         'mypy'
