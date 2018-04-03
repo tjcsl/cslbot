@@ -6,6 +6,8 @@
 .style.yapf
 .travis.yml
 COPYING
+Pipfile
+Pipfile.lock
 README.rst
 bot.py
 deploy
@@ -243,7 +245,6 @@ test/data/zipcode_12345.xml
 test/stubs/afl.pyi
 test/stubs/configparser.pyi
 test/stubs/requests_oauthlib.pyi
-test/stubs/simplejson.pyi
 test/stubs/sre_constants.pyi
 test/stubs/alembic/__init__.pyi
 test/stubs/alembic/command.pyi
