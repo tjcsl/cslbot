@@ -32,7 +32,8 @@ class ImageException(Exception):
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
-    return requests.get('https://api-ssl.bitly.com/v3/shorten', params={'access_token': key, 'longUrl': msg, 'format': 'txt'}).text
+    req = requests.get('https://api-ssl.bitly.com/v3/shorten', params={'access_token': key, 'longUrl': msg, 'format': 'txt'})
+    return req.text.strip()
 
 
 def parse_title(req):
