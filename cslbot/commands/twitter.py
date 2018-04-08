@@ -51,7 +51,7 @@ def cmd(send, msg, args):
         return
 
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('query')
+    parser.add_argument('query', nargs='*')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--user', dest='user', default=None)
     group.add_argument('--count', dest='count', type=int, default=1)
@@ -65,11 +65,11 @@ def cmd(send, msg, args):
 
     try:
         api = get_search_api(args['config'])
+        query = TwitterSearchOrder()
+        keywords = [' '.join(cmdargs.query)]
         if cmdargs.user:
-            query = TwitterUserOrder(cmdargs.user)
-        else:
-            query = TwitterSearchOrder()
-        query.set_keywords([msg])
+            keywords += ['from:{}'.format(cmdargs.user)]
+        query.set_keywords(keywords)
         query.set_language('en')
         query.set_result_type('recent')
         query.set_include_entities(False)
@@ -92,7 +92,7 @@ def cmd(send, msg, args):
         if cmdargs.count > max_chan_tweets:
             send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
 
-        for i in range(min(len(cmdargs.count), max_pm_tweets)):
+        for i in range(min(cmdargs.count, max_pm_tweets)):
             if cmdargs.count < max_chan_tweets:
                 send(tweet_text(results[i]))
             else:
