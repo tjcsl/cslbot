@@ -15,7 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from requests.utils import quote
 from TwitterSearch import TwitterSearch, TwitterSearchOrder, TwitterSearchException
 
 from ..helpers.command import Command
@@ -27,10 +26,7 @@ def get_search_api(config):
     access_token = config['api']['twitteraccesstoken']
     access_token_secret = config['api']['twitteraccesstokensecret']
 
-    return TwitterSearch(consumer_key=consumer_key,
-        consumer_secret=consumer_secret,
-        access_token=access_token,
-        access_token_secret=access_token_secret)
+    return TwitterSearch(consumer_key=consumer_key, consumer_secret=consumer_secret, access_token=access_token, access_token_secret=access_token_secret)
 
 
 def tweet_url(user, tid):
