@@ -44,7 +44,7 @@ def tweet_text(obj):
 def cmd(send, msg, args):
     """
     Search the Twitter API.
-    Syntax: {command} <query> <--from username> <--count 1>
+    Syntax: {command} <query> <--user username> <--count 1>
     """
     if not msg:
         send('What do you think I am, a bird?')
@@ -53,7 +53,7 @@ def cmd(send, msg, args):
     parser = arguments.ArgParser(args['config'])
     parser.add_argument('query')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--from', dest='from', default=None)
+    group.add_argument('--user', dest='user', default=None)
     group.add_argument('--count', dest='count', type=int, default=1)
     group.add_argument('--random', action='store_true', default=False)
 
@@ -65,35 +65,35 @@ def cmd(send, msg, args):
 
     try:
         api = get_search_api(args['config'])
-        if cmdargs['from']:
-            query = TwitterUserOrder(cmdargs['from'])
+        if cmdargs.user:
+            query = TwitterUserOrder(cmdargs.user)
         else:
             query = TwitterSearchOrder()
         query.set_keywords([msg])
         query.set_language('en')
         query.set_result_type('recent')
         query.set_include_entities(False)
-        query.set_count(cmdargs['count'])
+        query.set_count(cmdargs.count)
 
         results = list(api.search_tweets_iterable(query))
         if not results:
             send('No tweets here!')
             return
 
-        if cmdargs['random']:
+        if cmdargs.random:
             shuffle(results)
 
         max_chan_tweets = 5
         max_pm_tweets = 25
-        if cmdargs['count'] > max_pm_tweets:
+        if cmdargs.count > max_pm_tweets:
             send("That's too many tweets! The maximum allowed through PM is {}".format(max_pm_tweets))
             return
 
-        if cmdargs['count'] > max_chan_tweets:
+        if cmdargs.count > max_chan_tweets:
             send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
 
-        for i in range(min(len(cmdargs['count']), max_pm_tweets)):
-            if cmdargs['count'] < max_chan_tweets:
+        for i in range(min(len(cmdargs.count), max_pm_tweets)):
+            if cmdargs.count < max_chan_tweets:
                 send(tweet_text(results[i]))
             else:
                 send(tweet_text(results[i]), target=args['nick'])
