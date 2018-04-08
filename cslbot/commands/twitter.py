@@ -15,7 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from TwitterSearch import TwitterSearch, TwitterSearchOrder, TwitterSearchException
+from TwitterSearch import TwitterSearch, TwitterSearchOrder, TwitterUserOrder, TwitterSearchException
+from random import shuffle
 
 from ..helpers.command import Command
 
@@ -38,29 +39,63 @@ def tweet_text(obj):
     return '@{}: {} ({})'.format(user, obj['text'], tweet_url(user, obj['id_str']))
 
 
-@Command('twitter', ['config'])
+@Command('twitter', ['config', 'parser', 'nick'])
 def cmd(send, msg, args):
     """
     Search the Twitter API.
-    Syntax: {command} <query> <--from username>
+    Syntax: {command} <query> <--from username> <--count 1>
     """
     if not msg:
         send('What do you think I am, a bird?')
         return
 
+    parser = arguments.ArgParser(args['config'])
+    parser.add_argument('query', action=arguments.TumblrParser)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--from', dest='from', default=None)
+    group.add_argument('--count', dest='count', type=int, default=1)
+    group.add_argument('--random', action='store_true', default=False)
+
+    try:
+        cmdargs = parser.parse_args(msg)
+    except arguments.ArgumentException as e:
+        send(str(e))
+        return
+
     try:
         api = get_search_api(args['config'])
-        query = TwitterSearchOrder()
+        if cmdargs['from']:
+            query = TwitterUserOrder(cmdargs['from'])
+        else:
+            query = TwitterSearchOrder()
         query.set_keywords([msg])
         query.set_language('en')
+        query.set_result_type('recent')
         query.set_include_entities(False)
+        query.set_count(cmdargs['count'])
 
         results = list(api.search_tweets_iterable(query))
         if not results:
             send('No tweets here!')
             return
 
-        send(tweet_text(results[0]))
+        if cmdargs['random']:
+            shuffle(results)
+
+        max_chan_tweets = 5
+        max_pm_tweets = 25
+        if cmdargs['count'] > max_pm_tweets:
+            send("That's too many tweets! The maximum allowed through PM is {}".format(max_pm_tweets))
+            return
+
+        if cmdargs['count'] > max_chan_tweets:
+            send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
+
+        for i in range(min(len(cmdargs['count']), actual_max)):
+            if cmdargs['count'] < max_chan_tweets:
+                send(tweet_text(results[i]))
+            else:
+                send(tweet_text(results[i]), target=args['nick'])
     except TwitterSearchException as e:
         send("Sorry, there's something wrong with the Twitter API")
         send('Twitter search exception: {}'.format(e), target=args['config']['core']['ctrlchan'])
