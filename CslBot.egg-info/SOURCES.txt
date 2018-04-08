@@ -243,6 +243,7 @@ test/data/define_potatwo.xml
 test/data/wisdom_asimov.xml
 test/data/wisdom_jibberjabber.xml
 test/data/zipcode_12345.xml
+test/stubs/TwitterSearch.pyi
 test/stubs/afl.pyi
 test/stubs/configparser.pyi
 test/stubs/requests_oauthlib.pyi
