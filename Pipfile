@@ -11,7 +11,7 @@ requests-oauthlib = "*"
 lxml = "*"
 cslbot-tjhsst = "*"
 "psycopg2" = "*"
-python-twitter = "*"
+TwitterSearch = "*"
 
 [dev-packages]
 
