@@ -51,7 +51,7 @@ def cmd(send, msg, args):
         return
 
     parser = arguments.ArgParser(args['config'])
-    parser.add_argument('query', action=arguments.TumblrParser)
+    parser.add_argument('query')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--from', dest='from', default=None)
     group.add_argument('--count', dest='count', type=int, default=1)
