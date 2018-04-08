@@ -68,6 +68,8 @@ def cmd(send, msg, args):
         return
 
     api = get_search_api(args['config'])
+    api.authenticate()
+
     query = TwitterSearchOrder()
     keywords = [' '.join(cmdargs.query)]
     if cmdargs.user:
