@@ -18,6 +18,7 @@
 from TwitterSearch import TwitterSearch, TwitterSearchOrder, TwitterUserOrder, TwitterSearchException
 from random import shuffle
 
+from ..helpers import arguments
 from ..helpers.command import Command
 
 
@@ -91,7 +92,7 @@ def cmd(send, msg, args):
         if cmdargs['count'] > max_chan_tweets:
             send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
 
-        for i in range(min(len(cmdargs['count']), actual_max)):
+        for i in range(min(len(cmdargs['count']), max_pm_tweets)):
             if cmdargs['count'] < max_chan_tweets:
                 send(tweet_text(results[i]))
             else:
