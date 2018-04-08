@@ -45,7 +45,7 @@ def handle(send, msg, args):
         urls = result.get(5)
     except multiprocessing.TimeoutError:
         worker.restart_pool()
-        send('Url regex timed out.', target=args.config['core']['ctrlchan'])
+        send('Url regex timed out.', target=args['config']['core']['ctrlchan'])
         return
     for url in urls:
         # Prevent botloops
