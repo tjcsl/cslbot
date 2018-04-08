@@ -40,7 +40,7 @@ def tweet_text(obj):
     return '@{}: {} ({})'.format(user, obj['text'], tweet_url(user, obj['id_str']))
 
 
-@Command('twitter', ['config', 'parser', 'nick'])
+@Command('twitter', ['config', 'nick'])
 def cmd(send, msg, args):
     """
     Search the Twitter API.
