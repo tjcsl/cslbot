@@ -15,19 +15,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import time
-
 from requests.utils import quote
 from TwitterSearch import TwitterSearch, TwitterSearchOrder, TwitterSearchException
 
 from ..helpers.command import Command
 
 
-def get_search_api():
-    consumer_key = args['config']['api']['twitterconsumerkey']
-    consumer_secret = args['config']['api']['twitterconsumersecret']
-    access_token = args['config']['api']['twitteraccesstoken']
-    access_token_secret = args['config']['api']['twitteraccesstokensecret']
+def get_search_api(config):
+    consumer_key = config['api']['twitterconsumerkey']
+    consumer_secret = config['api']['twitterconsumersecret']
+    access_token = config['api']['twitteraccesstoken']
+    access_token_secret = config['api']['twitteraccesstokensecret']
 
     return TwitterSearch(consumer_key=consumer_key,
         consumer_secret=consumer_secret,
@@ -55,7 +53,7 @@ def cmd(send, msg, args):
         return
 
     try:
-        api = get_search_api()
+        api = get_search_api(args['config'])
         query = TwitterSearchOrder()
         query.set_keywords([msg])
         query.set_language('en')
