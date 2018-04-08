@@ -61,7 +61,8 @@ def parse_time(time):
 def do_pull(srcdir=None, repo=None):
     try:
         if repo is None:
-            proc = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
+            # This is a god-awful hack to unbreak reload pull.
+            proc = subprocess.run(['sudo', '-u', 'peter', '/etc/cslbot/pull.sh'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
             return proc.stdout.splitlines()[-1]
         else:
             proc = subprocess.run(

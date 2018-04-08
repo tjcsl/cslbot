@@ -36,6 +36,6 @@ def cmd(send, _, args):
         else:
             send(do_pull(repo=args['config']['api']['githubrepo']))
     except subprocess.CalledProcessError as ex:
-        for line in ex.output.decode().strip().splitlines():
+        for line in ex.output.strip().splitlines():
             logging.error(line)
         raise ex
