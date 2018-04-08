@@ -41,7 +41,8 @@ def tweet_url(user, tid):
 
 def tweet_text(obj):
     user = obj['user']['screen_name']
-    return '@{}: {} ({})'.format(user, obj['text'], tweet_url(user, obj['id_str']))
+    text = obj['text'].replace('\n', ' ')
+    return '@{}: {} ({})'.format(user, text, tweet_url(user, obj['id_str']))
 
 
 @Command('twitter', ['config', 'nick'])
@@ -68,7 +69,6 @@ def cmd(send, msg, args):
         return
 
     api = get_search_api(args['config'])
-    api.authenticate()
 
     query = TwitterSearchOrder()
     keywords = [' '.join(cmdargs.query)]
@@ -97,8 +97,8 @@ def cmd(send, msg, args):
     if cmdargs.count > max_chan_tweets:
         send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
 
-    for i in range(min(cmdargs.count, max_pm_tweets)):
-        if cmdargs.count < max_chan_tweets:
+    for i in range(0, min(cmdargs.count, max_pm_tweets)):
+        if cmdargs.count <= max_chan_tweets:
             send(tweet_text(results[i]))
         else:
             send(tweet_text(results[i]), target=args['nick'])
