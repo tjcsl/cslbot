@@ -36,6 +36,7 @@ def get_short(msg, key):
     link = req.text.strip()
     if link == 'ALREADY_A_BITLY_LINK':
         return msg
+    return link
 
 
 def parse_title(req):
