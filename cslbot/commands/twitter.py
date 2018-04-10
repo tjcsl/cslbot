@@ -21,18 +21,21 @@ from random import shuffle
 from ..helpers import arguments
 from ..helpers.command import Command
 
+_API = None
+
 
 def get_search_api(config):
+    global _API
+    if _API:
+        return _API
     consumer_key = config['api']['twitterconsumerkey']
     consumer_secret = config['api']['twitterconsumersecret']
     access_token = config['api']['twitteraccesstoken']
     access_token_secret = config['api']['twitteraccesstokensecret']
 
-    return TwitterSearch(
-        consumer_key=consumer_key,
-        consumer_secret=consumer_secret,
-        access_token=access_token,
-        access_token_secret=access_token_secret)
+    _API = TwitterSearch(
+        consumer_key=consumer_key, consumer_secret=consumer_secret, access_token=access_token, access_token_secret=access_token_secret)
+    return _API
 
 
 def tweet_url(user, tid):
