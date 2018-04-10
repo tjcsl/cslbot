@@ -33,7 +33,9 @@ def get_short(msg, key):
     if len(msg) < 20:
         return msg
     req = requests.get('https://api-ssl.bitly.com/v3/shorten', params={'access_token': key, 'longUrl': msg, 'format': 'txt'})
-    return req.text.strip()
+    link = req.text.strip()
+    if link == 'ALREADY_A_BITLY_LINK':
+        return msg
 
 
 def parse_title(req):
