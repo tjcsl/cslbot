@@ -28,7 +28,7 @@ import concurrent.futures
 from sqlalchemy import or_
 
 from . import babble, backtrace, control
-from .orm import Babble_last, Log
+from .orm import Log
 from ..commands import quote
 
 executor_lock = threading.Lock()
@@ -56,7 +56,7 @@ class Workers(object):
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
 
         self.defer(3600, False, self.handle_pending, handler, send)
-        self.defer(3600, False, self.check_babble, handler, send)
+        self.defer(3600, False, self.update_babble, handler, send)
         self.defer(3600, False, self.check_active, handler, send)
         self.defer(3600, False, self.send_quotes, handler, send)
 
@@ -148,19 +148,8 @@ class Workers(object):
                                                                 or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
                             handler.rate_limited_send('mode', name, '-v %s' % nick)
 
-    def check_babble(self, handler, send):
-        # Re-schedule check_babble
-        self.defer(3600, False, self.check_babble, handler, send)
-        cmdchar = handler.config['core']['cmdchar']
-        ctrlchan = handler.config['core']['ctrlchan']
+    def update_babble(self, handler, send):
+        # Re-schedule update_babble
+        self.defer(3600, False, self.update_babble, handler, send)
         with handler.db.session_scope() as session:
-            # If we don't actually update anything, don't bother checking the last row.
-            if not babble.update_markov(session, handler.config):
-                return
-            last = session.query(Babble_last).first()
-            row = session.query(Log).filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg'), ~Log.msg.startswith(cmdchar),
-                                            Log.target != ctrlchan).order_by(Log.id.desc()).first()
-            if last is None or row is None:
-                return
-            if abs(last.last - row.id) > 1:
-                raise Exception("Last row in babble cache (%d) does not match last row in log (%d)." % (last.last, row.id))
+            babble.update_markov(session, handler.config)
