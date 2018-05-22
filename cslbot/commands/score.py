@@ -22,22 +22,24 @@ from ..helpers.command import Command
 from ..helpers.orm import Scores
 
 
-@Command(['score', 'points'], ['config', 'db', 'botnick'])
+@Command(["score", "points"], ["config", "db", "botnick"])
 def cmd(send, msg, args):
     """Gets scores.
 
     Syntax: {command} <--high|--low|nick>
 
     """
-    if not args['config']['feature'].getboolean('hooks'):
-        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+    if not args["config"]["feature"].getboolean("hooks"):
+        send(
+            "Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s)."
+        )
         return
-    session = args['db']
-    parser = arguments.ArgParser(args['config'])
+    session = args["db"]
+    parser = arguments.ArgParser(args["config"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--high', action='store_true')
-    group.add_argument('--low', action='store_true')
-    group.add_argument('nick', nargs='?', action=arguments.NickParser)
+    group.add_argument("--high", action="store_true")
+    group.add_argument("--low", action="store_true")
+    group.add_argument("nick", nargs="?", action=arguments.NickParser)
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -45,26 +47,26 @@ def cmd(send, msg, args):
         return
     if cmdargs.high:
         data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
-        send('High Scores:')
+        send("High Scores:")
         for x in data:
             send("%s: %s" % (x.nick, x.score))
     elif cmdargs.low:
         data = session.query(Scores).order_by(Scores.score).limit(3).all()
-        send('Low Scores:')
+        send("Low Scores:")
         for x in data:
             send("%s: %s" % (x.nick, x.score))
     elif cmdargs.nick:
         name = cmdargs.nick.lower()
-        if name == 'c':
+        if name == "c":
             send("We all know you love C better than anything else, so why rub it in?")
             return
         score = session.query(Scores).filter(Scores.nick == name).scalar()
         if score is not None:
-            plural = '' if abs(score.score) == 1 else 's'
-            if name == args['botnick'].lower():
-                emote = ':)' if score.score > 0 else ':(' if score.score < 0 else ':|'
-                output = 'has %s point%s! %s' % (score.score, plural, emote)
-                send(output, 'action')
+            plural = "" if abs(score.score) == 1 else "s"
+            if name == args["botnick"].lower():
+                emote = ":)" if score.score > 0 else ":(" if score.score < 0 else ":|"
+                output = "has %s point%s! %s" % (score.score, plural, emote)
+                send(output, "action")
             else:
                 send("%s has %i point%s!" % (name, score.score, plural))
         else:
@@ -74,5 +76,5 @@ def cmd(send, msg, args):
             send("Nobody cares about anything =(")
         else:
             query = session.query(Scores).order_by(func.random()).first()
-            plural = '' if abs(query.score) == 1 else 's'
+            plural = "" if abs(query.score) == 1 else "s"
             send("%s has %i point%s!" % (query.nick, query.score, plural))

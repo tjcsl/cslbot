@@ -18,9 +18,9 @@
 from ..helpers.hook import Hook
 
 
-@Hook('bob', 'pubnotice', ['nick'])
+@Hook("bob", "pubnotice", ["nick"])
 def handle(send, msg, args):
-    if msg.startswith('[freenode-info]'):
+    if msg.startswith("[freenode-info]"):
         return
-    output = "msbob attacks %s for notice abuse!" % (args['nick'])
+    output = "msbob attacks %s for notice abuse!" % (args["nick"])
     send(output.upper())

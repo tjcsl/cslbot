@@ -22,31 +22,31 @@ from ..helpers.command import Command
 
 
 def get_incidents(key):
-    req = get('https://api.wmata.com/Incidents.svc/json/Incidents', headers={'api_key': key})
+    req = get("https://api.wmata.com/Incidents.svc/json/Incidents", headers={"api_key": key})
     data = req.json()
     incidents = collections.defaultdict(list)
-    for i in data['Incidents']:
-        incidents[i['IncidentType']].append(i['Description'])
+    for i in data["Incidents"]:
+        incidents[i["IncidentType"]].append(i["Description"])
     return incidents
 
 
 def get_type(t):
     t = t.capitalize()
-    if t == 'Alert':
-        return 'Alerts'
-    if t == 'Delay':
-        return 'Delays'
+    if t == "Alert":
+        return "Alerts"
+    if t == "Delay":
+        return "Delays"
     return t
 
 
-@Command(['metro', 'wmata'], ['config'])
+@Command(["metro", "wmata"], ["config"])
 def cmd(send, msg, args):
     """Provides Metro Info.
 
     Syntax: {command}
 
     """
-    incidents = get_incidents(args['config']['api']['wmatakey'])
+    incidents = get_incidents(args["config"]["api"]["wmatakey"])
     if not incidents:
         send("No incidents found. Sure you picked the right metro system?")
         return

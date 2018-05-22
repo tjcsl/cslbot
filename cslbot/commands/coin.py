@@ -20,17 +20,17 @@ from random import choice, randint
 from ..helpers.command import Command
 
 
-@Command('coin')
+@Command("coin")
 def cmd(send, msg, _):
     """Flips a coin a number of times.
 
     Syntax: {command} [number]
 
     """
-    coin = ['heads', 'tails']
+    coin = ["heads", "tails"]
     if not msg:
-        send('The coin lands on... %s' % choice(coin))
-    elif not msg.lstrip('-').isdigit():
+        send("The coin lands on... %s" % choice(coin))
+    elif not msg.lstrip("-").isdigit():
         send("Not A Valid Positive Integer.")
     else:
         msg = int(msg)
@@ -39,4 +39,4 @@ def cmd(send, msg, _):
             return
         headflips = randint(0, msg)
         tailflips = msg - headflips
-        send('The coins land on heads %g times and on tails %g times.' % (headflips, tailflips))
+        send("The coins land on heads %g times and on tails %g times." % (headflips, tailflips))

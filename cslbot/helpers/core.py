@@ -44,19 +44,25 @@ class IrcBot(bot.SingleServerIRCBot):
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)
         self.confdir = confdir
-        config_file = path.join(confdir, 'config.cfg')
+        config_file = path.join(confdir, "config.cfg")
         if not path.exists(config_file):
             logging.info("Setting up config file")
             config.do_setup(config_file)
             sys.exit(0)
         self.config = config.load_config(config_file, logging.info)
-        if self.config.getboolean('core', 'ssl'):
-            factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
+        if self.config.getboolean("core", "ssl"):
+            factory = connection.Factory(
+                wrapper=ssl.wrap_socket, ipv6=self.config.getboolean("core", "ipv6")
+            )
         else:
-            factory = connection.Factory(ipv6=self.config.getboolean('core', 'ipv6'))
-        passwd = None if self.config.getboolean('core', 'sasl') else self.config['auth']['serverpass']
-        serverinfo = bot.ServerSpec(self.config['core']['host'], self.config.getint('core', 'ircport'), passwd)
-        nick = self.config['core']['nick']
+            factory = connection.Factory(ipv6=self.config.getboolean("core", "ipv6"))
+        passwd = None if self.config.getboolean("core", "sasl") else self.config["auth"][
+            "serverpass"
+        ]
+        serverinfo = bot.ServerSpec(
+            self.config["core"]["host"], self.config.getint("core", "ircport"), passwd
+        )
+        nick = self.config["core"]["nick"]
         self.reactor_class = functools.partial(client.Reactor, on_connect=self.do_cap)
         super().__init__([serverinfo], nick, nick, connect_factory=factory)
         # These allow reload events to be processed when a reload has failed.
@@ -69,19 +75,39 @@ class IrcBot(bot.SingleServerIRCBot):
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
         # fix unicode problems
-        self.connection.buffer_class.errors = 'replace'
+        self.connection.buffer_class.errors = "replace"
 
         if not reloader.load_modules(self.config, confdir):
             raise Exception("Failed to load modules.")
 
         self.handler = handler.BotHandler(self.config, self.connection, self.channels, confdir)
-        if self.config['feature'].getboolean('server'):
+        if self.config["feature"].getboolean("server"):
             self.server = server.init_server(self)
 
     def handle_event(self, c, e):
         handled_types = [
-            'account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick', 'mode',
-            'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome', 'whospcrpl'
+            "account",
+            "action",
+            "authenticate",
+            "bannedfromchan",
+            "cap",
+            "ctcpreply",
+            "error",
+            "featurelist",
+            "join",
+            "kick",
+            "mode",
+            "nicknameinuse",
+            "nosuchnick",
+            "nick",
+            "part",
+            "privmsg",
+            "privnotice",
+            "pubnotice",
+            "pubmsg",
+            "topic",
+            "welcome",
+            "whospcrpl",
         ]
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
@@ -105,22 +131,22 @@ class IrcBot(bot.SingleServerIRCBot):
             return "cslbot - %s" % version
 
     def do_cap(self, _):
-        self.connection.cap('REQ', 'account-notify')
-        self.connection.cap('REQ', 'extended-join')
-        if self.config.getboolean('core', 'sasl'):
-            self.connection.cap('REQ', 'sasl')
+        self.connection.cap("REQ", "account-notify")
+        self.connection.cap("REQ", "extended-join")
+        if self.config.getboolean("core", "sasl"):
+            self.connection.cap("REQ", "sasl")
         else:
-            self.connection.cap('END')
+            self.connection.cap("END")
 
     @staticmethod
     def get_target(e):
-        if e.target[0] in ['#', '&', '+', '!']:
+        if e.target[0] in ["#", "&", "+", "!"]:
             return e.target
         else:
             return e.source.nick
 
     def shutdown(self, *_):
-        if hasattr(self, 'connection'):
+        if hasattr(self, "connection"):
             self.connection.disconnect("Bot received SIGTERM")
         self.shutdown_mp(False)
         sys.exit(0)
@@ -132,7 +158,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
         """
         # The server runs on a worker thread, so we need to shut it down first.
-        if hasattr(self, 'server'):
+        if hasattr(self, "server"):
             # Shutdown the server quickly.
             try:
                 # For some strange reason, this throws an OSError on windows.
@@ -141,16 +167,19 @@ class IrcBot(bot.SingleServerIRCBot):
                 pass
             self.server.socket.close()
             self.server.shutdown()
-        if hasattr(self, 'handler'):
+        if hasattr(self, "handler"):
             self.handler.workers.stop_workers(clean)
 
     def handle_quit(self, _, e):
         # Log quits.
         for channel in misc.get_channels(self.channels, e.source.nick):
-            self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
+            self.handler.do_log(channel, e.source, e.arguments[0], "quit")
         # If we're the one quiting, shut things down cleanly.
         # If it's an Excess Flood or other server-side quit we want to reconnect.
-        if e.source.nick == self.connection.real_nickname and e.arguments[0] in ['Client Quit', 'Quit: Goodbye, Cruel World!']:
+        if (
+            e.source.nick == self.connection.real_nickname
+            and e.arguments[0] in ["Client Quit", "Quit: Goodbye, Cruel World!"]
+        ):
             self.connection.close()
             self.shutdown_mp()
             sys.exit(0)
@@ -174,8 +203,8 @@ class IrcBot(bot.SingleServerIRCBot):
         if not cmd:
             return None
         cmd = misc.get_cmdchar(self.config, self.connection, cmd, e.type)
-        cmdchar = self.config['core']['cmdchar']
-        if cmd.startswith('%sreload' % cmdchar):
+        cmdchar = self.config["core"]["cmdchar"]
+        if cmd.startswith("%sreload" % cmdchar):
             return cmd
         else:
             return None
@@ -183,11 +212,11 @@ class IrcBot(bot.SingleServerIRCBot):
     def reload_handler(self, c, e):
         """This handles reloads."""
         cmd = self.is_reload(e)
-        cmdchar = self.config['core']['cmdchar']
+        cmdchar = self.config["core"]["cmdchar"]
         if cmd is not None:
             # If we're in a minimal reload state, only the owner can do stuff, as we can't rely on the db working.
             if self.reload_event.set():
-                admins = [self.config['auth']['owner']]
+                admins = [self.config["auth"]["owner"]]
             else:
                 with self.handler.db.session_scope() as session:
                     admins = [x.nick for x in session.query(orm.Permissions).all()]
@@ -196,10 +225,10 @@ class IrcBot(bot.SingleServerIRCBot):
                 return
             importlib.reload(reloader)
             self.reload_event.set()
-            cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
+            cmdargs = cmd[len("%sreload" % cmdchar) + 1:]
             try:
                 if reloader.do_reload(self, self.get_target(e), cmdargs):
-                    if self.config.getboolean('feature', 'server'):
+                    if self.config.getboolean("feature", "server"):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
                 logging.info("Successfully reloaded")
@@ -213,11 +242,13 @@ def init(confdir="/etc/cslbot"):
     | Initialize the bot and start processing messages.
 
     """
-    multiprocessing.set_start_method('spawn')
+    multiprocessing.set_start_method("spawn")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
-    parser.add_argument('--validate', help='Initialize the db and perform other sanity checks.', action='store_true')
+    parser.add_argument("-d", "--debug", help="Enable debug logging.", action="store_true")
+    parser.add_argument(
+        "--validate", help="Initialize the db and perform other sanity checks.", action="store_true"
+    )
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(module)s:%(message)s")
@@ -235,13 +266,13 @@ def init(confdir="/etc/cslbot"):
         cslbot.start()
     except KeyboardInterrupt:
         # KeyboardInterrupt means someone tried to ^C, so shut down the bot
-        cslbot.disconnect('Bot received a Ctrl-C')
+        cslbot.disconnect("Bot received a Ctrl-C")
         cslbot.shutdown_mp()
         sys.exit(0)
     except Exception as ex:
         cslbot.shutdown_mp(False)
         logging.error("The bot died! %s", ex)
         output = "".join(traceback.format_exc()).strip()
-        for line in output.split('\n'):
+        for line in output.split("\n"):
             logging.error(line)
         sys.exit(1)

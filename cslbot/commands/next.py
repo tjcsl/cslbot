@@ -34,11 +34,11 @@ squirrels = [
 ]
 
 
-@Command(['next', 'shipit'], ['name'])
+@Command(["next", "shipit"], ["name"])
 def cmd(send, _, args):
     """Ships a product.
 
     Syntax: {command}
 
     """
-    send("%s! %s" % (args['name'].upper(), random.choice(squirrels)))
+    send("%s! %s" % (args["name"].upper(), random.choice(squirrels)))

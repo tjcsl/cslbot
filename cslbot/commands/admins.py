@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
 
-@Command('admins', ['db', 'nick'])
+@Command("admins", ["db", "nick"])
 def cmd(send, _, args):
     """Returns a list of admins.
 
@@ -28,9 +28,9 @@ def cmd(send, _, args):
 
     """
     adminlist = []
-    for admin in args['db'].query(Permissions).order_by(Permissions.nick).all():
+    for admin in args["db"].query(Permissions).order_by(Permissions.nick).all():
         if admin.registered:
             adminlist.append("%s (V)" % admin.nick)
         else:
             adminlist.append("%s (U)" % admin.nick)
-    send(", ".join(adminlist), target=args['nick'])
+    send(", ".join(adminlist), target=args["nick"])

@@ -33,30 +33,30 @@ class IrcClient(client.SimpleIRCClient):
         super().__init__()
 
     def on_welcome(self, c, _):
-        c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        c.join(self.config["core"]["ctrlchan"], self.config["auth"]["ctrlkey"])
 
     def on_mode(self, c, e):
         if self.loading:
             return
         if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
-            cmdchar = self.config['core']['cmdchar']
-            c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
+            cmdchar = self.config["core"]["cmdchar"]
+            c.privmsg(self.config["core"]["ctrlchan"], "%sreload" % cmdchar)
             self.loading = True
 
     def on_join(self, c, _):
-        c.mode(self.config['core']['ctrlchan'], "")
+        c.mode(self.config["core"]["ctrlchan"], "")
 
     def on_channelmodeis(self, c, e):
         if self.loading:
             return
         if "m" not in e.arguments[1]:
-            cmdchar = self.config['core']['cmdchar']
-            c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
+            cmdchar = self.config["core"]["cmdchar"]
+            c.privmsg(self.config["core"]["ctrlchan"], "%sreload" % cmdchar)
             self.loading = True
 
     def on_pubmsg(self, c, e):
-        ctrlchan = self.config['core']['ctrlchan']
-        if e.source.nick == self.config['core']['nick']:
+        ctrlchan = self.config["core"]["ctrlchan"]
+        if e.source.nick == self.config["core"]["nick"]:
             if e.arguments[0] == "Aye Aye Capt'n":
                 print("Reload successful.")
                 c.part(ctrlchan)
@@ -72,17 +72,25 @@ class IrcClient(client.SimpleIRCClient):
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open('config.cfg') as f:
+    with open("config.cfg") as f:
         config.read_file(f)
     ctrl_nick = "bot-controller"
     ircclient = IrcClient(ctrl_nick, config)
-    if config.getboolean('core', 'ssl'):
-        factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
+    if config.getboolean("core", "ssl"):
+        factory = connection.Factory(
+            wrapper=ssl.wrap_socket, ipv6=config.getboolean("core", "ipv6")
+        )
     else:
-        factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
-    ircclient.connect(config['core']['host'], config.getint('core', 'ircport'), ctrl_nick, config['auth']['serverpass'], connect_factory=factory)
+        factory = connection.Factory(ipv6=config.getboolean("core", "ipv6"))
+    ircclient.connect(
+        config["core"]["host"],
+        config.getint("core", "ircport"),
+        ctrl_nick,
+        config["auth"]["serverpass"],
+        connect_factory=factory,
+    )
     ircclient.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

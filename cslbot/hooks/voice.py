@@ -18,10 +18,10 @@
 from ..helpers.hook import Hook
 
 
-@Hook('voice', ['pubmsg', 'action'], ['nick', 'target', 'handler', 'config'])
+@Hook("voice", ["pubmsg", "action"], ["nick", "target", "handler", "config"])
 def handle(send, _, args):
-    if not args['config'].getboolean('feature', 'voiceactive'):
+    if not args["config"].getboolean("feature", "voiceactive"):
         return
-    with args['handler'].data_lock:
-        if not args['handler'].voiced[args['target']].get(args['nick']):
-            args['handler'].connection.mode(args['target'], '+v %s' % args['nick'])
+    with args["handler"].data_lock:
+        if not args["handler"].voiced[args["target"]].get(args["nick"]):
+            args["handler"].connection.mode(args["target"], "+v %s" % args["nick"])

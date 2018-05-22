@@ -20,10 +20,10 @@ from random import random
 from ..helpers.hook import Hook
 
 
-@Hook('band', 'pubmsg', ['config'])
+@Hook("band", "pubmsg", ["config"])
 def handle(send, msg, args):
-    if not msg.startswith(args['config']['core']['cmdchar']):
-        if ':' in msg:
-            msg = msg.split(':')[1]
+    if not msg.startswith(args["config"]["core"]["cmdchar"]):
+        if ":" in msg:
+            msg = msg.split(":")[1]
         if len(msg.split()) == 3 and random() < 0.001:
             send('"%s" would be a good name for a band...' % msg.strip())

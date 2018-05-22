@@ -19,7 +19,7 @@ from ..helpers import textutils
 from ..helpers.command import Command
 
 
-@Command('slogan')
+@Command("slogan")
 def cmd(send, msg, _):
     """Gets a slogan.
 

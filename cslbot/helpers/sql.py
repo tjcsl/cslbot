@@ -28,13 +28,15 @@ from .orm import Log, setup_db
 
 
 def get_session(config: configparser.ConfigParser) -> sessionmaker:
-    if not config['db']['engine']:
+    if not config["db"]["engine"]:
         raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
     # In-memory sqlite db, only really useful for testing.
-    if config['db']['engine'] == 'sqlite://':
-        engine = create_engine(config['db']['engine'], connect_args={'check_same_thread': False}, poolclass=StaticPool)
+    if config["db"]["engine"] == "sqlite://":
+        engine = create_engine(
+            config["db"]["engine"], connect_args={"check_same_thread": False}, poolclass=StaticPool
+        )
     else:
-        engine = create_engine(config['db']['engine'])
+        engine = create_engine(config["db"]["engine"])
     return sessionmaker(bind=engine)
 
 
@@ -70,7 +72,9 @@ class Sql():
         | time: The current time (Unix Epoch).
 
         """
-        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=datetime.now())
+        entry = Log(
+            source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=datetime.now()
+        )
         with self.session_scope() as session:
             session.add(entry)
             session.flush()

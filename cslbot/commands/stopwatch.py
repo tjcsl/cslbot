@@ -75,12 +75,19 @@ def resume_stopwatch(args):
 
 
 def list_stopwatch(args):
-    active = args.session.query(Stopwatches).filter(Stopwatches.active == 1).order_by(Stopwatches.id).all()
-    paused = args.session.query(Stopwatches).filter(Stopwatches.active == 0).order_by(Stopwatches.id).all()
+    active = args.session.query(Stopwatches).filter(Stopwatches.active == 1).order_by(
+        Stopwatches.id
+    ).all()
+    paused = args.session.query(Stopwatches).filter(Stopwatches.active == 0).order_by(
+        Stopwatches.id
+    ).all()
     for x in active:
-        args.send('Active stopwatch #%d started at %s' % (x.id, x.time), target=args.nick)
+        args.send("Active stopwatch #%d started at %s" % (x.id, x.time), target=args.nick)
     for x in paused:
-        args.send('Paused stopwatch #%d started at %s time elapsed %d' % (x.id, x.time, x.elapsed), target=args.nick)
+        args.send(
+            "Paused stopwatch #%d started at %s time elapsed %d" % (x.id, x.time, x.elapsed),
+            target=args.nick,
+        )
     return "%d active and %d paused stopwatches." % (len(active), len(paused))
 
 
@@ -92,31 +99,31 @@ def get_stopwatch(args):
     return "%s %s" % (status, get_elapsed(args.session, args.id))
 
 
-@Command(['stopwatch', 'sw'], ['config', 'db', 'is_admin', 'nick'])
+@Command(["stopwatch", "sw"], ["config", "db", "is_admin", "nick"])
 def cmd(send, msg, args):
     """Start/stops/resume/get stopwatch
     Syntax: {command} <start|stop|resume|delete|get|list>
     """
 
-    parser = arguments.ArgParser(args['config'])
-    parser.set_defaults(session=args['db'])
+    parser = arguments.ArgParser(args["config"])
+    parser.set_defaults(session=args["db"])
     subparser = parser.add_subparsers()
-    start_parser = subparser.add_parser('start')
+    start_parser = subparser.add_parser("start")
     start_parser.set_defaults(func=create_stopwatch)
-    stop_parser = subparser.add_parser('stop')
-    stop_parser.add_argument('id', type=int)
+    stop_parser = subparser.add_parser("stop")
+    stop_parser.add_argument("id", type=int)
     stop_parser.set_defaults(func=stop_stopwatch)
-    resume_parser = subparser.add_parser('resume')
-    resume_parser.add_argument('id', type=int)
+    resume_parser = subparser.add_parser("resume")
+    resume_parser.add_argument("id", type=int)
     resume_parser.set_defaults(func=resume_stopwatch)
-    delete_parser = subparser.add_parser('delete')
-    delete_parser.add_argument('id', type=int)
-    delete_parser.set_defaults(func=delete_stopwatch, isadmin=args['is_admin'](args['nick']))
-    get_parser = subparser.add_parser('get')
-    get_parser.add_argument('id', type=int)
+    delete_parser = subparser.add_parser("delete")
+    delete_parser.add_argument("id", type=int)
+    delete_parser.set_defaults(func=delete_stopwatch, isadmin=args["is_admin"](args["nick"]))
+    get_parser = subparser.add_parser("get")
+    get_parser.add_argument("id", type=int)
     get_parser.set_defaults(func=get_stopwatch)
-    list_parser = subparser.add_parser('list')
-    list_parser.set_defaults(func=list_stopwatch, nick=args['nick'], send=send)
+    list_parser = subparser.add_parser("list")
+    list_parser.set_defaults(func=list_stopwatch, nick=args["nick"], send=send)
 
     if not msg:
         send("Please specify a command.")

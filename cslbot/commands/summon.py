@@ -21,12 +21,12 @@ from ..helpers.command import Command
 from ..helpers.orm import Notes
 
 
-@Command('summon', ['db', 'nick', 'type'], limit=5)
+@Command("summon", ["db", "nick", "type"], limit=5)
 def cmd(send, msg, args):
     """Summons a user
     Syntax: {command} <nick>
     """
-    if args['type'] == 'privmsg':
+    if args["type"] == "privmsg":
         send("Note-passing should be done in public.")
         return
     arguments = msg.split()
@@ -39,5 +39,5 @@ def cmd(send, msg, args):
     nick = arguments[0]
     message = "You have been summoned!"
     row = Notes(note=message, submitter="The Dark Gods", nick=nick, time=datetime.now())
-    args['db'].add(row)
+    args["db"].add(row)
     send("%s has been summoned!" % nick)

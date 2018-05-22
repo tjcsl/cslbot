@@ -22,13 +22,16 @@ from requests import get
 from ..helpers.command import Command
 
 
-@Command('fml', ['config'])
+@Command("fml", ["config"])
 def cmd(send, msg, args):
     """Gets a random FML post.
 
     Syntax: {command}
 
     """
-    req = get("http://api.fmylife.com/view/random", params={'language': 'en', 'key': args['config']['api']['fmlkey']})
+    req = get(
+        "http://api.fmylife.com/view/random",
+        params={"language": "en", "key": args["config"]["api"]["fmlkey"]},
+    )
     doc = fromstring(req.content)
-    send(doc.xpath('//text')[0].text)
+    send(doc.xpath("//text")[0].text)

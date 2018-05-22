@@ -54,7 +54,7 @@ nato_codes = {
     "7": "Seven",
     "8": "Eight",
     "9": "Nine",
-    "0": "Zero"
+    "0": "Zero",
 }
 
 
@@ -69,7 +69,7 @@ def gen_nato(msg):
     return nato
 
 
-@Command(['nato', 'ipa'])
+@Command(["nato", "ipa"])
 def cmd(send, msg, args):
     """Converts text into NATO form.
 

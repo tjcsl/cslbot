@@ -21,8 +21,8 @@ from os.path import dirname, exists, join
 from sys import path
 
 # Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+if exists(join(dirname(__file__), "../.git")):
+    path.insert(0, join(dirname(__file__), ".."))
 
 from alembic import command, config  # noqa
 from pkg_resources import Requirement, resource_filename  # noqa
@@ -30,15 +30,17 @@ from pkg_resources import Requirement, resource_filename  # noqa
 
 def main(confdir: str = "/etc/cslbot") -> None:
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(join(confdir, "config.cfg")) as f:
         botconfig.read_file(f)
     conf_obj = config.Config()
-    script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
-    conf_obj.set_main_option('script_location', script_location)
-    conf_obj.set_main_option('bot_config_path', confdir)
-    command.upgrade(conf_obj, 'head')
+    script_location = resource_filename(
+        Requirement.parse("CslBot"), botconfig["alembic"]["script_location"]
+    )
+    conf_obj.set_main_option("script_location", script_location)
+    conf_obj.set_main_option("bot_config_path", confdir)
+    command.upgrade(conf_obj, "head")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(join(dirname(__file__), ".."))

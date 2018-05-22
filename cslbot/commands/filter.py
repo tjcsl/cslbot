@@ -23,31 +23,31 @@ def get_filters(handler, target):
     # Strip the gen_ from the names
     names = [x.__name__[4:] for x in handler.outputfilter[target]]
     if not names:
-        names = ['passthrough']
+        names = ["passthrough"]
     return "Current filter(s): %s" % ", ".join(names)
 
 
-@Command('filter', ['config', 'target', 'handler', 'is_admin', 'nick', 'type'])
+@Command("filter", ["config", "target", "handler", "is_admin", "nick", "type"])
 def cmd(send, msg, args):
     """Changes the output filter.
 
     Syntax: {command} [--channel channel] <filter|--show|--list|--reset|--chain filter,[filter2,...]>
 
     """
-    if args['type'] == 'privmsg':
-        send('Filters must be set in channels, not via private message.')
+    if args["type"] == "privmsg":
+        send("Filters must be set in channels, not via private message.")
         return
-    isadmin = args['is_admin'](args['nick'])
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--channel', nargs='?', default=args['target'])
+    isadmin = args["is_admin"](args["nick"])
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--channel", nargs="?", default=args["target"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('filter', nargs='?')
-    group.add_argument('--show', action='store_true')
-    group.add_argument('--list', action='store_true')
-    group.add_argument('--reset', '--clear', action='store_true')
-    group.add_argument('--chain')
+    group.add_argument("filter", nargs="?")
+    group.add_argument("--show", action="store_true")
+    group.add_argument("--list", action="store_true")
+    group.add_argument("--reset", "--clear", action="store_true")
+    group.add_argument("--chain")
     if not msg:
-        send(get_filters(args['handler'], args['target']))
+        send(get_filters(args["handler"], args["target"]))
         return
     try:
         cmdargs = parser.parse_args(msg)
@@ -57,24 +57,24 @@ def cmd(send, msg, args):
     if cmdargs.list:
         send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
     elif cmdargs.reset and isadmin:
-        args['handler'].outputfilter[cmdargs.channel].clear()
+        args["handler"].outputfilter[cmdargs.channel].clear()
         send("Okay!")
     elif cmdargs.chain and isadmin:
-        if not args['handler'].outputfilter[cmdargs.channel]:
+        if not args["handler"].outputfilter[cmdargs.channel]:
             send("Must have a filter set in order to chain.")
             return
         filter_list, output = textutils.append_filters(cmdargs.chain)
         if filter_list is not None:
-            args['handler'].outputfilter[cmdargs.channel].extend(filter_list)
+            args["handler"].outputfilter[cmdargs.channel].extend(filter_list)
         send(output)
     elif cmdargs.show:
-        send(get_filters(args['handler'], cmdargs.channel))
+        send(get_filters(args["handler"], cmdargs.channel))
     elif isadmin:
         # If we're just adding a filter without chain, blow away any existing filters.
         filter_list, output = textutils.append_filters(cmdargs.filter)
         if filter_list is not None:
-            args['handler'].outputfilter[cmdargs.channel].clear()
-            args['handler'].outputfilter[cmdargs.channel].extend(filter_list)
+            args["handler"].outputfilter[cmdargs.channel].clear()
+            args["handler"].outputfilter[cmdargs.channel].extend(filter_list)
         send(output)
     else:
-        send('This command requires admin privileges.')
+        send("This command requires admin privileges.")

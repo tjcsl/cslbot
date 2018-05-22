@@ -20,7 +20,7 @@ from ipaddress import ip_network
 from ..helpers.command import Command
 
 
-@Command('cidr', [])
+@Command("cidr", [])
 def cmd(send, msg, args):
     """Gets a CIDR range.
 

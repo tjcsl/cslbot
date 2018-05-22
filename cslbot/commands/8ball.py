@@ -20,7 +20,7 @@ from random import choice
 from ..helpers.command import Command
 
 
-@Command('8ball', ['nick', 'handler'], limit=5)
+@Command("8ball", ["nick", "handler"], limit=5)
 def cmd(send, msg, args):
     """Asks the Magic 8-Ball a question.
     Syntax: {command} <question>
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     if not msg:
         send("What is your question?")
         # let people !8ball again if they screw up and forget the part where you ask a question.
-        args['handler'].abuselist[args['nick']]['8ball'].pop()
+        args["handler"].abuselist[args["nick"]]["8ball"].pop()
         return
     answers = {
         "It is certain": "yes",
@@ -50,7 +50,7 @@ def cmd(send, msg, args):
         "My reply is no": "no",
         "My sources say no": "no",
         "Outlook not so good": "no",
-        "Very doubtful": "no"
+        "Very doubtful": "no",
     }
     answer = choice(list(answers.keys()))
-    send('says... %s' % answer, 'action')
+    send("says... %s" % answer, "action")

@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_yoda
 
 
-@Command('yoda')
+@Command("yoda")
 def cmd(send, msg, _):
     """Convert a message to Yoda-speak.
     Syntax: {command} <msg>

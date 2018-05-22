@@ -18,10 +18,10 @@
 from ..helpers.command import Command
 
 
-@Command('quit', ['handler'], role="owner")
+@Command("quit", ["handler"], role="owner")
 def cmd(send, msg, args):
     """Makes the bot disconnect and shut off
     Syntax: {command}
     """
     # We can't actually shutdown the bot here, because this command is executing on one of the worker threads.
-    args['handler'].connection.quit('Goodbye, Cruel World!')
+    args["handler"].connection.quit("Goodbye, Cruel World!")

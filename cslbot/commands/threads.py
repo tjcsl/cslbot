@@ -21,7 +21,7 @@ import threading
 from ..helpers.command import Command
 
 
-@Command('threads')
+@Command("threads")
 def cmd(send, *_):
     """Enumerate threads.
 
@@ -30,18 +30,18 @@ def cmd(send, *_):
     """
     thread_names = []
     for x in sorted(threading.enumerate(), key=lambda k: k.name):
-        res = re.match(r'Thread-(\d+$)', x.name)
+        res = re.match(r"Thread-(\d+$)", x.name)
         if res:
             tid = int(res.group(1))
             # Handle the main server thread (permanently listed as _worker)
-            if x._target.__name__ == '_worker':
+            if x._target.__name__ == "_worker":
                 thread_names.append((tid, "%s running server thread" % x.name))
             # Handle the multiprocessing pool worker threads (they don't have names beyond Thread-x)
-            elif x._target.__module__ == 'multiprocessing.pool':
+            elif x._target.__module__ == "multiprocessing.pool":
                 thread_names.append((tid, "%s running multiprocessing pool worker thread" % x.name))
         # Handle everything else including MainThread and deferred threads
         else:
-            res = re.match(r'Thread-(\d+)', x.name)
+            res = re.match(r"Thread-(\d+)", x.name)
             tid = 0
             if res:
                 tid = int(res.group(1))

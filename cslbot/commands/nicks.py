@@ -21,7 +21,7 @@ from ..helpers.command import Command
 from ..helpers.identity import get_chain
 
 
-@Command('nicks', ['db', 'handler', 'target', 'nick'])
+@Command("nicks", ["db", "handler", "target", "nick"])
 def cmd(send, msg, args):
     """Gets previous nicks.
 
@@ -29,10 +29,14 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        with args['handler'].data_lock:
-            users = list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else [args['nick']]
+        with args["handler"].data_lock:
+            users = list(args["handler"].channels[args["target"]].users()) if args[
+                "target"
+            ] != "private" else [
+                args["nick"]
+            ]
         msg = choice(users)
-    chain = get_chain(args['db'], msg)
+    chain = get_chain(args["db"], msg)
     if chain:
         send(" -> ".join(chain))
     else:

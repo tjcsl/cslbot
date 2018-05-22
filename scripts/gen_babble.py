@@ -22,36 +22,41 @@ from os.path import dirname, exists, join
 from sys import path
 
 # Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+if exists(join(dirname(__file__), "../.git")):
+    path.insert(0, join(dirname(__file__), ".."))
 
 from cslbot.helpers import babble, sql  # noqa
 
 
 def main(confdir: str = "/etc/cslbot") -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(join(confdir, "config.cfg")) as f:
         config.read_file(f)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
+    parser.add_argument("--nick", help="The nick to generate babble cache for (testing only).")
     parser.add_argument(
-        '--incremental', action='store_false', help='Whether to build the cache from scratch or incrementally update an existing one.')
+        "--incremental",
+        action="store_false",
+        help="Whether to build the cache from scratch or incrementally update an existing one.",
+    )
     args = parser.parse_args()
     session = sql.get_session(config)()
-    cmdchar = config['core']['cmdchar']
-    ctrlchan = config['core']['ctrlchan']
-    print('Generating markov.')
+    cmdchar = config["core"]["cmdchar"]
+    ctrlchan = config["core"]["ctrlchan"]
+    print("Generating markov.")
     # FIXME: support locking for other dialects?
-    if session.bind.dialect.name == 'postgresql':
-        session.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+    if session.bind.dialect.name == "postgresql":
+        session.execute("LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT")
+        session.execute("LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT")
+        session.execute("LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT")
+        session.execute("LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT")
     t = time.time()
-    babble.build_markov(session, cmdchar, ctrlchan, args.nick, initial_run=args.incremental, debug=True)
-    print('Finished markov in %f' % (time.time() - t))
+    babble.build_markov(
+        session, cmdchar, ctrlchan, args.nick, initial_run=args.incremental, debug=True
+    )
+    print("Finished markov in %f" % (time.time() - t))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(join(dirname(__file__), ".."))

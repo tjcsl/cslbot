@@ -23,7 +23,7 @@ from ..helpers.command import Command
 from ..helpers.urlutils import get_short
 
 
-@Command(['movie', 'imdb'], ['config'])
+@Command(["movie", "imdb"], ["config"])
 def cmd(send, msg, args):
     """Gets a random movie.
 
@@ -31,8 +31,8 @@ def cmd(send, msg, args):
 
     """
 
-    req = get('http://www.imdb.com/random/title')
+    req = get("http://www.imdb.com/random/title")
     html = fromstring(req.text)
-    name = html.find('head/title').text.split('-')[0].strip()
-    key = args['config']['api']['bitlykey']
+    name = html.find("head/title").text.split("-")[0].strip()
+    key = args["config"]["api"]["bitlykey"]
     send("%s -- %s" % (name, get_short(req.url, key)))

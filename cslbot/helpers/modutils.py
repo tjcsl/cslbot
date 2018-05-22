@@ -36,8 +36,8 @@ class ModuleData(object):
         self.reset()
 
     def reset(self) -> None:
-        self.groups: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
-        self.disabled: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
+        self.groups: Dict[str, Set[str]] = {"commands": set(), "hooks": set()}
+        self.disabled: Dict[str, Set[str]] = {"commands": set(), "hooks": set()}
         self.aux: List[str] = []
 
 
@@ -46,33 +46,40 @@ registry = ModuleData()
 
 def init_aux(config: Mapping[str, str]) -> None:
     registry.reset()
-    registry.aux.extend([x.strip() for x in config['extramodules'].split(',')])
+    registry.aux.extend([x.strip() for x in config["extramodules"].split(",")])
 
 
 def load_groups(confdir: str) -> configparser.ConfigParser:
     example_obj = configparser.ConfigParser()
-    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example').decode())
+    example_obj.read_string(
+        resource_string(Requirement.parse("CslBot"), "cslbot/static/groups.example").decode()
+    )
     config_obj = configparser.ConfigParser()
-    with open(join(confdir, 'groups.cfg')) as cfgfile:
+    with open(join(confdir, "groups.cfg")) as cfgfile:
         config_obj.read_file(cfgfile)
     if config_obj.sections() != example_obj.sections():
-        raise Exception("Invalid or missing section in groups.cfg, only valid sections are %s" % ",".join(example_obj.sections()))
+        raise Exception(
+            "Invalid or missing section in groups.cfg, only valid sections are %s"
+            % ",".join(example_obj.sections())
+        )
     return config_obj
 
 
 def init_groups(groups: Mapping[str, str], confdir: str) -> None:
     config = load_groups(confdir)
-    add_to_groups(config, groups, 'commands')
-    add_to_groups(config, groups, 'hooks')
+    add_to_groups(config, groups, "commands")
+    add_to_groups(config, groups, "hooks")
 
 
-def add_to_groups(config: configparser.ConfigParser, groups: Mapping[str, str], mod_type: str) -> None:
-    enabled_groups = [x.strip() for x in groups[mod_type].split(',')]
+def add_to_groups(
+    config: configparser.ConfigParser, groups: Mapping[str, str], mod_type: str
+) -> None:
+    enabled_groups = [x.strip() for x in groups[mod_type].split(",")]
     mod_group = parse_group(config[mod_type])
     for name, values in mod_group.items():
         for x in values:
             if loaded(mod_type, x):
-                raise Exception('Module %s cannot occur multiple times in groups.cfg' % x)
+                raise Exception("Module %s cannot occur multiple times in groups.cfg" % x)
             if name in enabled_groups:
                 registry.groups[mod_type].add(x)
             else:
@@ -86,12 +93,12 @@ def loaded(mod_type: str, name: str) -> bool:
 def parse_group(cfg: Mapping[str, str]) -> Dict[str, List[str]]:
     groups = {}
     for group in cfg.keys():
-        groups[group] = [x.strip() for x in cfg[group].split(',')]
+        groups[group] = [x.strip() for x in cfg[group].split(",")]
     return groups
 
 
 def group_enabled(mod_type: str, name: str) -> bool:
-    if mod_type == 'helpers':
+    if mod_type == "helpers":
         return True
     return name in registry.groups[mod_type]
 
@@ -104,17 +111,17 @@ def get_disabled(mod_type: str) -> Set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package='CslBot') -> Tuple[List[str], List[str]]:
+def get_enabled(mod_type: str, package="CslBot") -> Tuple[List[str], List[str]]:
     enabled, disabled = [], []
     full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
-    for f in glob(join(full_dir, '*.py')):
-        name = basename(f).split('.')[0]
+    for f in glob(join(full_dir, "*.py")):
+        name = basename(f).split(".")[0]
         mod_name = "%s.%s.%s" % (package.lower(), mod_type, name)
         if group_enabled(mod_type, name):
             enabled.append(mod_name)
         elif group_disabled(mod_type, name):
             disabled.append(mod_name)
-        elif name != '__init__':
+        elif name != "__init__":
             logging.error("%s must be either enabled or disabled in groups.cfg" % mod_name)
             # default to disabled
             disabled.append(mod_name)

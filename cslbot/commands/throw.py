@@ -22,7 +22,7 @@ from ..helpers.command import Command
 from ..helpers.misc import get_users
 
 
-@Command('throw', ['handler', 'target'])
+@Command("throw", ["handler", "target"])
 def cmd(send, msg, args):
     """Throw something.
 
@@ -31,22 +31,22 @@ def cmd(send, msg, args):
     """
     users = get_users(args)
     if " into " in msg and msg != "into":
-        match = re.match('(.*) into (.*)', msg)
+        match = re.match("(.*) into (.*)", msg)
         if match:
-            msg = 'throws %s into %s' % (match.group(1), match.group(2))
-            send(msg, 'action')
+            msg = "throws %s into %s" % (match.group(1), match.group(2))
+            send(msg, "action")
         else:
             return
     elif " at " in msg and msg != "at":
-        match = re.match('(.*) at (.*)', msg)
+        match = re.match("(.*) at (.*)", msg)
         if match:
-            msg = 'throws %s at %s' % (match.group(1), match.group(2))
-            send(msg, 'action')
+            msg = "throws %s at %s" % (match.group(1), match.group(2))
+            send(msg, "action")
         else:
             return
     elif msg:
-        msg = 'throws %s at %s' % (msg, choice(users))
-        send(msg, 'action')
+        msg = "throws %s at %s" % (msg, choice(users))
+        send(msg, "action")
     else:
         send("Throw what?")
         return

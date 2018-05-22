@@ -22,13 +22,13 @@ from requests import get
 from ..helpers.command import Command
 
 
-@Command('distro')
+@Command("distro")
 def cmd(send, *_):
     """Gets a random distro.
 
     Syntax: {command}
 
     """
-    url = get('http://distrowatch.com/random.php').url
-    match = re.search('=(.*)', url)
+    url = get("http://distrowatch.com/random.php").url
+    match = re.search("=(.*)", url)
     send(match.group(1))

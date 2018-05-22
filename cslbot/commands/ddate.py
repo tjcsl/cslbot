@@ -20,7 +20,7 @@ import subprocess
 from ..helpers.command import Command
 
 
-@Command('ddate')
+@Command("ddate")
 def cmd(send, *_):
     """Returns the Discordian date.
 
@@ -28,7 +28,7 @@ def cmd(send, *_):
 
     """
     try:
-        output = subprocess.check_output(['ddate']).decode().rstrip()
+        output = subprocess.check_output(["ddate"]).decode().rstrip()
     except subprocess.CalledProcessError:
-        output = 'Today is the day you install ddate!'
+        output = "Today is the day you install ddate!"
     send(output)

@@ -23,25 +23,28 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('define', ['config'])
+@Command("define", ["config"])
 def cmd(send, msg, args):
     """Gets the definition of a word
     Syntax: {command} (word)
     Powered by STANDS4, www.stands4.com
     """
-    uid = args['config']['api']['stands4uid']
-    token = args['config']['api']['stands4token']
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--entry', type=int, default=0, nargs='?')
-    parser.add_argument('word', nargs='+')
+    uid = args["config"]["api"]["stands4uid"]
+    token = args["config"]["api"]["stands4token"]
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--entry", type=int, default=0, nargs="?")
+    parser.add_argument("word", nargs="+")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    cmdargs.word = ' '.join(cmdargs.word)
+    cmdargs.word = " ".join(cmdargs.word)
 
-    req = get("http://www.stands4.com/services/v2/defs.php", params={'uid': uid, 'tokenid': token, 'word': cmdargs.word})
+    req = get(
+        "http://www.stands4.com/services/v2/defs.php",
+        params={"uid": uid, "tokenid": token, "word": cmdargs.word},
+    )
     xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     if len(xml) == 0:
         send("No results found for %s" % cmdargs.word)
@@ -49,7 +52,7 @@ def cmd(send, msg, args):
     if cmdargs.entry >= len(xml):
         send("Invalid index %d for term %s" % (cmdargs.entry, cmdargs.word))
         return
-    term = xml[cmdargs.entry].find('term').text
-    definition = xml[cmdargs.entry].find('definition').text
-    definition = ' '.join(definition.splitlines()).strip()
+    term = xml[cmdargs.entry].find("term").text
+    definition = xml[cmdargs.entry].find("definition").text
+    definition = " ".join(definition.splitlines()).strip()
     send("%s: %s" % (term, definition))

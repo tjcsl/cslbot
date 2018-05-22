@@ -31,15 +31,19 @@ from .misc import escape
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     query = cursor.query(Log).filter(Log.id > newer_than_id)
     # Ignore commands, and messages addressed to the ctrlchan
-    query = query.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
+    query = query.filter(
+        or_(Log.type == "pubmsg", Log.type == "privmsg", Log.type == "action"),
+        ~Log.msg.startswith(cmdchar),
+        Log.target != ctrlchan,
+    )
     if speaker is not None:
-        location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
-        query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
+        location = "target" if speaker.startswith(("#", "+", "@")) else "source"
+        query = query.filter(getattr(Log, location).ilike(speaker, escape="$"))
     return query.order_by(Log.id).all()
 
 
 # Don't exclude (, because lenny.
-exclude_re = re.compile('https?://|^[0-9%s]+$' % string.punctuation.replace('(', ''))
+exclude_re = re.compile("https?://|^[0-9%s]+$" % string.punctuation.replace("(", ""))
 
 
 def clean_msg(msg):
@@ -52,7 +56,9 @@ def get_markov(cursor, length, node, initial_run):
         return ret
     table = Babble if length == 1 else Babble2
     key, source, target = node
-    old = cursor.query(table).filter(table.key == key, table.source == source, table.target == target).all()
+    old = cursor.query(table).filter(
+        table.key == key, table.source == source, table.target == target
+    ).all()
     ret.update({x.word: x.freq for x in old})
     return ret
 
@@ -60,15 +66,15 @@ def get_markov(cursor, length, node, initial_run):
 def update_count(cursor, length, source, target):
     rows = cursor.query(Babble_count).filter(Babble_count.length == length).all()
     try:
-        count_source = next(r for r in rows if r.type == 'source' and r.key == source)
+        count_source = next(r for r in rows if r.type == "source" and r.key == source)
         count_source.count = count_source.count + 1
     except StopIteration:
-        cursor.add(Babble_count(type='source', length=length, key=source, count=1))
+        cursor.add(Babble_count(type="source", length=length, key=source, count=1))
     try:
-        count_target = next(r for r in rows if r.type == 'target' and r.key == target)
+        count_target = next(r for r in rows if r.type == "target" and r.key == target)
         count_target.count = count_target.count + 1
     except StopIteration:
-        cursor.add(Babble_count(type='target', length=length, key=target, count=1))
+        cursor.add(Babble_count(type="target", length=length, key=target, count=1))
 
 
 def generate_markov(cursor, length, messages, initial_run):
@@ -96,7 +102,9 @@ def build_rows(cursor, length, markov, initial_run):
         key, source, target = node
         if not initial_run:
             row_dict = {}
-            for row in cursor.query(table).filter(table.key == key, table.source == source, table.target == target):
+            for row in cursor.query(table).filter(
+                table.key == key, table.source == source, table.target == target
+            ):
                 row_dict[row.word] = row
         for word, freq in word_freqs.items():
             row = None
@@ -114,9 +122,9 @@ def build_rows(cursor, length, markov, initial_run):
                 data.append((source, target, key, word, freq))
     count_data = []
     for source, count in count_source.items():
-        count_data.append({'type': 'source', 'key': source, 'count': count, 'length': length})
+        count_data.append({"type": "source", "key": source, "count": count, "length": length})
     for target, count in count_target.items():
-        count_data.append({'type': 'target', 'key': target, 'count': count, 'length': length})
+        count_data.append({"type": "target", "key": target, "count": count, "length": length})
     return data, count_data
 
 
@@ -127,24 +135,24 @@ def postgres_hack(cursor, length, data):
     prev = 0
     insert_str = "INSERT INTO " + table + " (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);"
     for i in range(20000, len(data), 20000):
-        args_str = '\n'.join([raw_cursor.mogrify(insert_str, x).decode() for x in data[prev:i]])
+        args_str = "\n".join([raw_cursor.mogrify(insert_str, x).decode() for x in data[prev:i]])
         # Don't die on empty log table.
         if args_str:
             raw_cursor.execute(args_str)
         prev = i
-    args_str = '\n'.join([raw_cursor.mogrify(insert_str, x).decode() for x in data[prev:]])
+    args_str = "\n".join([raw_cursor.mogrify(insert_str, x).decode() for x in data[prev:]])
     # Don't die on empty log table.
     if args_str:
         raw_cursor.execute(args_str)
 
 
 def delete_tables(cursor):
-    if cursor.bind.dialect.name == 'mysql':
-        cursor.execute('DROP INDEX ix_babble_key ON babble')
-        cursor.execute('DROP INDEX ix_babble2_key ON babble2')
+    if cursor.bind.dialect.name == "mysql":
+        cursor.execute("DROP INDEX ix_babble_key ON babble")
+        cursor.execute("DROP INDEX ix_babble2_key ON babble2")
     else:
-        cursor.execute('DROP INDEX IF EXISTS ix_babble_key')
-        cursor.execute('DROP INDEX IF EXISTS ix_babble2_key')
+        cursor.execute("DROP INDEX IF EXISTS ix_babble_key")
+        cursor.execute("DROP INDEX IF EXISTS ix_babble2_key")
     cursor.execute(Babble.__table__.delete())
     cursor.execute(Babble2.__table__.delete())
     cursor.execute(Babble_count.__table__.delete())
@@ -165,57 +173,61 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
     markov = generate_markov(cursor, 1, messages, initial_run)
     markov2 = generate_markov(cursor, 2, messages, initial_run)
     if debug:
-        print('Generated markov in %f' % (time.time() - t))
+        print("Generated markov in %f" % (time.time() - t))
         t = time.time()
     data, count_data = build_rows(cursor, 1, markov, initial_run)
     data2, count_data2 = build_rows(cursor, 2, markov2, initial_run)
     if debug:
-        print('Rows built in %f' % (time.time() - t))
+        print("Rows built in %f" % (time.time() - t))
     if initial_run:
         t = time.time()  # for debug
         delete_tables(cursor)
         if debug:
-            print('Tables deleted in %f' % (time.time() - t))
+            print("Tables deleted in %f" % (time.time() - t))
     t = time.time()  # for debug
-    if initial_run and cursor.bind.dialect.name == 'postgresql':
+    if initial_run and cursor.bind.dialect.name == "postgresql":
         postgres_hack(cursor, 1, data)
         postgres_hack(cursor, 2, data2)
     else:
-        data = [{'source': x[0], 'target': x[1], 'key': x[2], 'word': x[3], 'freq': x[4]} for x in data]
+        data = [
+            {"source": x[0], "target": x[1], "key": x[2], "word": x[3], "freq": x[4]} for x in data
+        ]
         cursor.bulk_insert_mappings(Babble, data)
-        data2 = [{'source': x[0], 'target': x[1], 'key': x[2], 'word': x[3], 'freq': x[4]} for x in data2]
+        data2 = [
+            {"source": x[0], "target": x[1], "key": x[2], "word": x[3], "freq": x[4]} for x in data2
+        ]
         cursor.bulk_insert_mappings(Babble2, data2)
     cursor.bulk_insert_mappings(Babble_count, count_data)
     cursor.bulk_insert_mappings(Babble_count, count_data2)
     if debug:
-        print('Inserted rows in %f' % (time.time() - t))
+        print("Inserted rows in %f" % (time.time() - t))
     if curr is not None:
         lastrow.last = curr
     if initial_run:
         if debug:
             t = time.time()
-        key_index = Index('ix_babble_key', Babble.key)
-        key_index2 = Index('ix_babble2_key', Babble2.key)
+        key_index = Index("ix_babble_key", Babble.key)
+        key_index2 = Index("ix_babble2_key", Babble2.key)
         key_index.create(cursor.connection())
         key_index2.create(cursor.connection())
         if debug:
-            print('Created index in %f' % (time.time() - t))
+            print("Created index in %f" % (time.time() - t))
     t = time.time()  # for debug
     cursor.commit()
     if debug:
-        print('Commited in %f' % (time.time() - t))
+        print("Commited in %f" % (time.time() - t))
 
 
 def update_markov(cursor, config):
-    cmdchar = config['core']['cmdchar']
-    ctrlchan = config['core']['ctrlchan']
+    cmdchar = config["core"]["cmdchar"]
+    ctrlchan = config["core"]["ctrlchan"]
     try:
         # FIXME: support locking for other dialects?
-        if cursor.bind.dialect.name == 'postgresql':
-            cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+        if cursor.bind.dialect.name == "postgresql":
+            cursor.execute("LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT")
+            cursor.execute("LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT")
+            cursor.execute("LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT")
+            cursor.execute("LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT")
         build_markov(cursor, cmdchar, ctrlchan)
         return True
     except OperationalError as ex:

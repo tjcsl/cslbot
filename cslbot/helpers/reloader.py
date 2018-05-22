@@ -28,9 +28,11 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None] = logging.error) -> bool:
-    modutils.init_aux(cfg['core'])
-    modutils.init_groups(cfg['groups'], confdir)
+def load_modules(
+    cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None] = logging.error
+) -> bool:
+    modutils.init_aux(cfg["core"])
+    modutils.init_groups(cfg["groups"], confdir)
     errored_commands = registry.command_registry.scan_for_commands()
     if errored_commands:
         logging.error("Failed to load some commands.")
@@ -63,16 +65,16 @@ def do_reload(bot, target, cmdargs, server_send=None):
 
     confdir = bot.handler.confdir
 
-    if cmdargs == 'pull':
-        if exists(join(confdir, '.git')):
+    if cmdargs == "pull":
+        if exists(join(confdir, ".git")):
             send(misc.do_pull(srcdir=confdir))
         else:
-            send(misc.do_pull(repo=bot.config['api']['githubrepo']))
+            send(misc.do_pull(repo=bot.config["api"]["githubrepo"]))
     # Reload config
     importlib.reload(config)
-    bot.config = config.load_config(join(confdir, 'config.cfg'), send)
+    bot.config = config.load_config(join(confdir, "config.cfg"), send)
     # Reimport helpers
-    errored_helpers = modutils.scan_and_reimport('helpers')
+    errored_helpers = modutils.scan_and_reimport("helpers")
     if errored_helpers:
         send("Failed to load some helpers.")
         for error in errored_helpers:

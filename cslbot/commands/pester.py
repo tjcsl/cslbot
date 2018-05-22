@@ -20,7 +20,7 @@ import re
 from ..helpers.command import Command
 
 
-@Command('pester', ['config'], limit=5)
+@Command("pester", ["config"], limit=5)
 def cmd(send, msg, args):
     """Pesters somebody.
 
@@ -30,9 +30,9 @@ def cmd(send, msg, args):
     if not msg or len(msg.split()) < 2:
         send("Pester needs at least two arguments.")
         return
-    match = re.match('(%s+) (.*)' % args['config']['core']['nickregex'], msg)
+    match = re.match("(%s+) (.*)" % args["config"]["core"]["nickregex"], msg)
     if match:
         message = match.group(2) + " "
-        send('%s: %s' % (match.group(1), message * 3))
+        send("%s: %s" % (match.group(1), message * 3))
     else:
         send("Invalid Syntax.")

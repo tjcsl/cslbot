@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_praise
 
 
-@Command('praise')
+@Command("praise")
 def cmd(send, msg, _):
     """Praises something.
 

@@ -19,7 +19,7 @@ import sys
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(".."))
 import pkg_resources  # noqa
 
 # -- General configuration ------------------------------------------------
@@ -30,35 +30,41 @@ import pkg_resources  # noqa
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
+]
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 # TODO(pefoley): find the new location
 # 'irc': ('http://pythonhosted.org/irc', None)}
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
-source_suffix = ['.rst']
+source_suffix = [".rst"]
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'CslBot'
-copyright = '2013-2018, Tris Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser'
-author = 'Tris Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser'
+project = "CslBot"
+copyright = "2013-2018, Tris Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser"
+author = "Tris Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forcier and Reed Koser"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = next(pkg_resources.find_distributions('..')).version
+version = next(pkg_resources.find_distributions("..")).version
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -95,7 +101,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -110,7 +116,7 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = "alabaster"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -202,20 +208,17 @@ html_theme = 'alabaster'
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CslBot_doc'
+htmlhelp_basename = "CslBot_doc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
-
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
 }
@@ -223,7 +226,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [(master_doc, 'CslBot.tex', 'CslBot Documentation', 'Peter Foley', 'manual')]
+latex_documents = [(master_doc, "CslBot.tex", "CslBot Documentation", "Peter Foley", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -249,7 +252,7 @@ latex_documents = [(master_doc, 'CslBot.tex', 'CslBot Documentation', 'Peter Fol
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'cslbot', 'CslBot Documentation', [author], 1)]
+man_pages = [(master_doc, "cslbot", "CslBot Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -259,7 +262,17 @@ man_pages = [(master_doc, 'cslbot', 'CslBot Documentation', [author], 1)]
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [(master_doc, 'CslBot', 'CslBot Documentation', author, 'CslBot', 'An easily extensible, modular irc bot.', 'Miscellaneous')]
+texinfo_documents = [
+    (
+        master_doc,
+        "CslBot",
+        "CslBot Documentation",
+        author,
+        "CslBot",
+        "An easily extensible, modular irc bot.",
+        "Miscellaneous",
+    )
+]
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []

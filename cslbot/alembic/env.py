@@ -25,8 +25,8 @@ from alembic import context
 from sqlalchemy import create_engine
 
 # Make this work from git.
-if exists(join(dirname(__file__), '../../.git')):
-    path.insert(0, join(dirname(__file__), '../..'))
+if exists(join(dirname(__file__), "../../.git")):
+    path.insert(0, join(dirname(__file__), "../.."))
 
 from cslbot.helpers import orm  # noqa
 
@@ -57,10 +57,10 @@ def run_migrations_offline():
 
     """
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
-    with open(join(config_path, 'config.cfg')) as f:
+    config_path = config.get_main_option("bot_config_path", join(dirname(__file__), "../.."))
+    with open(join(config_path, "config.cfg")) as f:
         botconfig.read_file(f)
-    url = botconfig['db']['engine']
+    url = botconfig["db"]["engine"]
 
     context.configure(url=url, target_metadata=target_metadata)
 
@@ -76,14 +76,16 @@ def run_migrations_online():
 
     """
     botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
-    with open(join(config_path, 'config.cfg')) as f:
+    config_path = config.get_main_option("bot_config_path", join(dirname(__file__), "../.."))
+    with open(join(config_path, "config.cfg")) as f:
         botconfig.read_file(f)
-    url = botconfig['db']['engine']
+    url = botconfig["db"]["engine"]
 
     connectable = create_engine(url)
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata, render_as_batch=True)
+        context.configure(
+            connection=connection, target_metadata=target_metadata, render_as_batch=True
+        )
 
         with context.begin_transaction():
             context.run_migrations()

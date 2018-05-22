@@ -20,12 +20,12 @@ import hashlib
 from ..helpers.command import Command
 
 
-@Command('sha512')
+@Command("sha512")
 def cmd(send, msg, _):
     """SHA512 hashes something.
 
     Syntax: {command} <msg>
 
     """
-    msg = msg.encode('utf-8')
+    msg = msg.encode("utf-8")
     send(hashlib.sha512(msg).hexdigest())

@@ -21,7 +21,20 @@ from ..helpers.command import Command
 
 
 def gen_roman(num):
-    mapping = {1: 'I', 4: 'IV', 5: 'V', 9: 'IX', 10: 'X', 40: 'XL', 50: 'L', 90: 'XC', 100: 'C', 500: 'D', 900: 'CM', 1000: 'M'}
+    mapping = {
+        1: "I",
+        4: "IV",
+        5: "V",
+        9: "IX",
+        10: "X",
+        40: "XL",
+        50: "L",
+        90: "XC",
+        100: "C",
+        500: "D",
+        900: "CM",
+        1000: "M",
+    }
     if num >= 5000:
         return "If you want to deal with really big roman numerals, that's your problem."
     if num == 0:
@@ -38,7 +51,7 @@ def gen_roman(num):
     return output
 
 
-@Command('roman')
+@Command("roman")
 def cmd(send, msg, _):
     """Convert a number to the roman numeral equivalent.
 

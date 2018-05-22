@@ -21,35 +21,37 @@ from ..helpers import arguments, misc
 from ..helpers.command import Command
 
 
-@Command('version', ['config', 'handler'])
+@Command("version", ["config", "handler"])
 def cmd(send, msg, args):
     """Check the git revison.
 
     Syntax: {command} [check|master]
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('action', choices=['check', 'master', 'commit'], nargs='?')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("action", choices=["check", "master", "commit"], nargs="?")
 
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    api_output = get('https://api.github.com/repos/%s/branches/master' % args['config']['api']['githubrepo']).json()
-    commit, version = misc.get_version(args['handler'].confdir)
+    api_output = get(
+        "https://api.github.com/repos/%s/branches/master" % args["config"]["api"]["githubrepo"]
+    ).json()
+    commit, version = misc.get_version(args["handler"].confdir)
     if not cmdargs.action:
         send(version)
         return
-    if cmdargs.action == 'master':
-        send(api_output['commit']['sha'])
-    elif cmdargs.action == 'check':
+    if cmdargs.action == "master":
+        send(api_output["commit"]["sha"])
+    elif cmdargs.action == "check":
         if commit is None:
             send("Not running from git, version %s" % version)
         else:
-            check = 'Same' if api_output['commit']['sha'] == commit else 'Different'
+            check = "Same" if api_output["commit"]["sha"] == commit else "Different"
             send(check)
-    elif cmdargs.action == 'commit':
+    elif cmdargs.action == "commit":
         if commit is None:
             send("Not running from git, version %s" % version)
         else:

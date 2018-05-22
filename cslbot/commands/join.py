@@ -19,17 +19,17 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('join', ['handler', 'config', 'nick', 'type'], role="admin")
+@Command("join", ["handler", "config", "nick", "type"], role="admin")
 def cmd(send, msg, args):
     """Orders the bot to join a channel
     Syntax: {command} <channel> [channel] ...
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('channel', nargs='+', action=arguments.ChanParser)
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("channel", nargs="+", action=arguments.ChanParser)
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
     for chan in cmdargs.channels:
-        args['handler'].do_join(chan, args['nick'], args['type'], send, args['handler'].connection)
+        args["handler"].do_join(chan, args["nick"], args["type"], send, args["handler"].connection)

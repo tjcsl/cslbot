@@ -25,26 +25,32 @@ from ..helpers.reddit import check_exists
 from ..helpers.urlutils import get_short
 
 
-@Hook('reddit', ['pubmsg', 'action'], ['config'])
+@Hook("reddit", ["pubmsg", "action"], ["config"])
 def handle(send, msg, args):
-    for match in re.finditer(r'(?:^|\s)/r/([\w|^/]*)\b', msg):
+    for match in re.finditer(r"(?:^|\s)/r/([\w|^/]*)\b", msg):
         subreddit = match.group(1)
         if not check_exists(subreddit):
             return
-        data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
-        output = ''
-        if data['public_description']:
-            for line in data['public_description'].splitlines():
+        data = get(
+            "http://reddit.com/r/%s/about.json" % subreddit, headers={"User-Agent": "CslBot/1.0"}
+        ).json()[
+            "data"
+        ]
+        output = ""
+        if data["public_description"]:
+            for line in data["public_description"].splitlines():
                 output += line + " "
-        elif data['description']:
-            output += data['description'].splitlines()[0]
+        elif data["description"]:
+            output += data["description"].splitlines()[0]
         else:
-            output += data['display_name']
+            output += data["display_name"]
         output = output.strip()
         output = html.unescape(output)
-        key = args['config']['api']['bitlykey']
-        if subreddit == 'random':
-            output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
+        key = args["config"]["api"]["bitlykey"]
+        if subreddit == "random":
+            output = "%s -- %s (/r/%s)" % (
+                output, get_short("http://reddit.com%s" % data["url"], key), data["display_name"]
+            )
         else:
-            output = "%s -- %s" % (output, get_short('http://reddit.com/r/%s' % subreddit, key))
+            output = "%s -- %s" % (output, get_short("http://reddit.com/r/%s" % subreddit, key))
         send(output)

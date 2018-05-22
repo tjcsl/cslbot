@@ -157,20 +157,20 @@ def handle_show(args):
 
 def show_pending_items(type, items, send):
     for x in items:
-        if type == 'quotes':
+        if type == "quotes":
             send("#%d %s -- %s, Submitted by %s" % (x.id, x.quote, x.nick, x.submitter))
-        elif type == 'issues':
-            nick = x.source.split('!')[0]
+        elif type == "issues":
+            nick = x.source.split("!")[0]
             send("#%d %s, Submitted by %s" % (x.id, x.title, nick))
-        elif type == 'polls':
+        elif type == "polls":
             send("#%d -- %s, Submitted by %s" % (x.id, x.question, x.submitter))
-        elif type == 'tumblrs':
+        elif type == "tumblrs":
             send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
 
 
 def show_pending(db, send, ping=False):
     admins = ": ".join([x.nick for x in db.query(orm.Permissions).all()])
-    pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
+    pending = {"issues": [], "quotes": [], "polls": [], "tumblrs": []}
     for name in pending:
         table = getattr(orm, name.capitalize())
         pending[name] = db.query(table).filter(table.accepted == 0).all()
@@ -196,30 +196,38 @@ def handle_accept(args):
         args.send(msg)
         return
     pending.accepted = 1
-    ctrlchan = args.handler.config['core']['ctrlchan']
-    channel = args.handler.config['core']['channel']
-    botnick = args.handler.config['core']['nick']
-    nick = pending.source.split('!')[0] if args.cmd == 'issue' else pending.submitter
+    ctrlchan = args.handler.config["core"]["ctrlchan"]
+    channel = args.handler.config["core"]["channel"]
+    botnick = args.handler.config["core"]["nick"]
+    nick = pending.source.split("!")[0] if args.cmd == "issue" else pending.submitter
     args.handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    args.handler.do_log('private', botnick, msg, 'privmsg')
+    args.handler.do_log("private", botnick, msg, "privmsg")
 
 
 def get_accept_msg(handler, pending, type):
     success = True
-    if type == 'quote':
-        msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
-    elif type == 'poll':
-        msg = "Poll #%d accepted: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
-    elif type == 'issue':
-        repo = handler.config['api']['githubrepo']
-        apikey = handler.config['api']['githubapikey']
-        msg, success = web.create_issue(pending.title, pending.description, pending.source, repo, apikey)
+    if type == "quote":
+        msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (
+            pending.id, pending.quote, pending.nick, pending.submitter
+        )
+    elif type == "poll":
+        msg = "Poll #%d accepted: %s, Submitted by %s" % (
+            pending.id, pending.question, pending.submitter
+        )
+    elif type == "issue":
+        repo = handler.config["api"]["githubrepo"]
+        apikey = handler.config["api"]["githubapikey"]
+        msg, success = web.create_issue(
+            pending.title, pending.description, pending.source, repo, apikey
+        )
         if success:
             msg = "Issue Created -- %s -- %s" % (msg, pending.title)
-    elif type == 'tumblr':
+    elif type == "tumblr":
         msg, success = web.post_tumblr(handler.config, pending.blog, pending.post)
         if success:
-            msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
+            msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (
+                pending.id, pending.post, pending.submitter
+            )
     return msg, success
 
 
@@ -232,26 +240,32 @@ def handle_reject(args):
     if pending.accepted == 1:
         args.send("%s already accepted" % args.cmd.capitialize())
         return
-    ctrlchan = args.handler.config['core']['ctrlchan']
-    channel = args.handler.config['core']['channel']
-    botnick = args.handler.config['core']['nick']
+    ctrlchan = args.handler.config["core"]["ctrlchan"]
+    channel = args.handler.config["core"]["channel"]
+    botnick = args.handler.config["core"]["nick"]
     msg = get_reject_msg(pending, args.cmd)
-    nick = pending.source.split('!')[0] if args.cmd == 'issue' else pending.submitter
+    nick = pending.source.split("!")[0] if args.cmd == "issue" else pending.submitter
     args.handler.connection.privmsg_many([ctrlchan, channel, nick], msg)
-    args.handler.do_log('private', botnick, msg, 'privmsg')
+    args.handler.do_log("private", botnick, msg, "privmsg")
     args.db.delete(pending)
 
 
 def get_reject_msg(pending, type):
-    if type == 'issue':
-        nick = pending.source.split('!')[0]
+    if type == "issue":
+        nick = pending.source.split("!")[0]
         return "Issue Rejected -- %s, Submitted by %s" % (pending.title, nick)
-    elif type == 'quote':
-        return "Quote #%d Rejected: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
-    elif type == 'poll':
-        return "Poll #%d rejected: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
-    elif type == 'tumblr':
-        return "Tumblr #%d rejected: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
+    elif type == "quote":
+        return "Quote #%d Rejected: %s -- %s, Submitted by %s" % (
+            pending.id, pending.quote, pending.nick, pending.submitter
+        )
+    elif type == "poll":
+        return "Poll #%d rejected: %s, Submitted by %s" % (
+            pending.id, pending.question, pending.submitter
+        )
+    elif type == "tumblr":
+        return "Tumblr #%d rejected: %s, Submitted by %s" % (
+            pending.id, pending.post, pending.submitter
+        )
 
 
 def handle_quote(args):
@@ -266,8 +280,12 @@ def handle_quote(args):
 def handle_help(args):
     args.send("quote <raw command>")
     args.send("cs|chanserv <chanserv command>")
-    args.send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
-    args.send("show <guarded|issues|quotes|polls|pending|tumblr> <disabled|enabled> <commands|hooks>")
+    args.send(
+        "disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>"
+    )
+    args.send(
+        "show <guarded|issues|quotes|polls|pending|tumblr> <disabled|enabled> <commands|hooks>"
+    )
     args.send("accept|reject <issue|quote|poll> <num>")
     args.send("guard|unguard <nick>")
 
@@ -277,34 +295,36 @@ def init_parser(send, handler, nick, db):
     parser.set_defaults(send=send, handler=handler, nick=nick, db=db)
     subparser = parser.add_subparsers()
 
-    quote_parser = subparser.add_parser('quote')
-    quote_parser.add_argument('cmd', nargs='+')
+    quote_parser = subparser.add_parser("quote")
+    quote_parser.add_argument("cmd", nargs="+")
     quote_parser.set_defaults(func=handle_quote)
 
-    help_parser = subparser.add_parser('help')
+    help_parser = subparser.add_parser("help")
     help_parser.set_defaults(func=handle_help)
 
-    cs_parser = subparser.add_parser('chanserv', aliases=['cs'])
-    cs_parser.add_argument('cmd', choices=['op', 'deop', 'voice', 'devoice'])
-    cs_parser.add_argument('args', nargs='+')
+    cs_parser = subparser.add_parser("chanserv", aliases=["cs"])
+    cs_parser.add_argument("cmd", choices=["op", "deop", "voice", "devoice"])
+    cs_parser.add_argument("args", nargs="+")
     cs_parser.set_defaults(func=handle_chanserv)
 
-    disable_parser = subparser.add_parser('disable')
-    disable_parser.add_argument('cmd', choices=['kick', 'command', 'hook', 'logging', 'chanlog'])
-    disable_parser.add_argument('args', nargs='*')
+    disable_parser = subparser.add_parser("disable")
+    disable_parser.add_argument("cmd", choices=["kick", "command", "hook", "logging", "chanlog"])
+    disable_parser.add_argument("args", nargs="*")
     disable_parser.set_defaults(func=handle_disable)
 
-    enable_parser = subparser.add_parser('enable')
-    enable_parser.add_argument('cmd', choices=['kick', 'command', 'hook', 'logging', 'chanlog', 'all'])
-    enable_parser.add_argument('args', nargs='*')
+    enable_parser = subparser.add_parser("enable")
+    enable_parser.add_argument(
+        "cmd", choices=["kick", "command", "hook", "logging", "chanlog", "all"]
+    )
+    enable_parser.add_argument("args", nargs="*")
     enable_parser.set_defaults(func=handle_enable)
 
-    guard_parser = subparser.add_parser('guard')
-    guard_parser.add_argument('target_nick', action=arguments.NickParser)
+    guard_parser = subparser.add_parser("guard")
+    guard_parser.add_argument("target_nick", action=arguments.NickParser)
     guard_parser.set_defaults(func=handle_guard)
 
-    unguard_parser = subparser.add_parser('unguard')
-    unguard_parser.add_argument('target_nick', action=arguments.NickParser)
+    unguard_parser = subparser.add_parser("unguard")
+    unguard_parser.add_argument("target_nick", action=arguments.NickParser)
     unguard_parser.set_defaults(func=handle_unguard)
 
     # We need the config in the guard_parser and unguard_parser namespaces but there's no way to pass arbitrary
@@ -313,19 +333,21 @@ def init_parser(send, handler, nick, db):
     guard_parser.namespace.config = handler.config
     unguard_parser.namespace.config = handler.config
 
-    show_parser = subparser.add_parser('show')
-    show_parser.add_argument('cmd', choices=['guarded', 'issues', 'quotes', 'polls', 'pending', 'disabled', 'enabled'])
-    show_parser.add_argument('args', nargs='*')
+    show_parser = subparser.add_parser("show")
+    show_parser.add_argument(
+        "cmd", choices=["guarded", "issues", "quotes", "polls", "pending", "disabled", "enabled"]
+    )
+    show_parser.add_argument("args", nargs="*")
     show_parser.set_defaults(func=handle_show)
 
-    show_parser = subparser.add_parser('accept')
-    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll', 'tumblr'])
-    show_parser.add_argument('num', type=int)
+    show_parser = subparser.add_parser("accept")
+    show_parser.add_argument("cmd", choices=["issue", "quote", "poll", "tumblr"])
+    show_parser.add_argument("num", type=int)
     show_parser.set_defaults(func=handle_accept)
 
-    show_parser = subparser.add_parser('reject')
-    show_parser.add_argument('cmd', choices=['issue', 'quote', 'poll', 'tumblr'])
-    show_parser.add_argument('num', type=int)
+    show_parser = subparser.add_parser("reject")
+    show_parser.add_argument("cmd", choices=["issue", "quote", "poll", "tumblr"])
+    show_parser.add_argument("num", type=int)
     show_parser.set_defaults(func=handle_reject)
 
     return parser

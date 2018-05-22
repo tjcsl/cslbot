@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_shakespeare
 
 
-@Command(['bard', 'shakespeare'])
+@Command(["bard", "shakespeare"])
 def cmd(send, msg, _):
     """Translates something into Shakespearese.
 

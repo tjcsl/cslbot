@@ -39,7 +39,13 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're currently executing, so get the penultimate one.
-    last = cursor.query(Log).filter(Log.target == target, Log.type == 'pubmsg', Log.time >= limit).order_by(Log.time.desc()).offset(1).first()
+    last = cursor.query(Log).filter(
+        Log.target == target, Log.type == "pubmsg", Log.time >= limit
+    ).order_by(
+        Log.time.desc()
+    ).offset(
+        1
+    ).first()
     if last:
         return bool(last.msg == msg and last.source != nick)
     else:
@@ -48,7 +54,9 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 class Command(object):
 
-    def __init__(self, names: Union[str, list], args: List[str] = [], limit: int = 0, role: str = None) -> None:
+    def __init__(
+        self, names: Union[str, list], args: List[str] = [], limit: int = 0, role: str = None
+    ) -> None:
         self.names: List[str] = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -56,19 +64,27 @@ class Command(object):
         for name in self.names:
             registry.command_registry.register(self, name)
 
-    def __call__(self, func: Callable[[Callable[[str], None], str, Dict[str, str]], None]) -> Callable[[str], None]:
+    def __call__(
+        self, func: Callable[[Callable[[str], None], str, Dict[str, str]], None]
+    ) -> Callable[[str], None]:
 
         @functools.wraps(func)
         def wrapper(send, msg: str, args: Dict[str, str]) -> None:
             try:
                 thread = threading.current_thread()
-                match = re.match(r'Thread-\d+', thread.name)
+                match = re.match(r"Thread-\d+", thread.name)
                 thread_id = "Unknown" if match is None else match.group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
-                with self.handler.db.session_scope() as args['db']:
+                with self.handler.db.session_scope() as args["db"]:
                     func(send, msg, args)
             except Exception as ex:
-                backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
+                backtrace.handle_traceback(
+                    ex,
+                    self.handler.connection,
+                    self.target,
+                    self.handler.config,
+                    "commands.%s" % self.names[0],
+                )
             finally:
                 thread.name = "%s idle, last ran command.%s" % (thread_id, self.names[0])
 
@@ -84,7 +100,16 @@ class Command(object):
     def __repr__(self) -> str:
         return self.names[0]
 
-    def run(self, send: Callable[[str], None], msg: str, args: Dict[str, Any], command: str, nick: str, target: str, handler) -> None:
+    def run(
+        self,
+        send: Callable[[str], None],
+        msg: str,
+        args: Dict[str, Any],
+        command: str,
+        nick: str,
+        target: str,
+        handler,
+    ) -> None:
         if [x for x in self.names if registry.command_registry.is_disabled(x)]:
             send("Sorry, that command is disabled.")
         else:

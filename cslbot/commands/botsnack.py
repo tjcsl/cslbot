@@ -18,7 +18,7 @@
 from ..helpers.command import Command
 
 
-@Command('botsnack', ['botnick'])
+@Command("botsnack", ["botnick"])
 def cmd(send, msg, args):
     """Causes the bot to snack on something.
 
@@ -27,7 +27,7 @@ def cmd(send, msg, args):
     """
     if not msg:
         send("This tastes yummy!")
-    elif msg == args['botnick']:
+    elif msg == args["botnick"]:
         send("wyang says Cannibalism is generally frowned upon.")
     else:
         send("%s tastes yummy!" % msg.capitalize())

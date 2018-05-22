@@ -33,20 +33,28 @@ class Hook(object):
         self.args = args
         registry.hook_registry.register(self)
 
-    def __call__(self, func: Callable[[Callable[[str], None], str, List[str]], None]) -> Callable[[str], None]:
+    def __call__(
+        self, func: Callable[[Callable[[str], None], str, List[str]], None]
+    ) -> Callable[[str], None]:
 
         @functools.wraps(func)
         def wrapper(send, msg, msgtype, args):
             if msgtype in self.types:
                 try:
                     thread = threading.current_thread()
-                    thread_id = re.match(r'Thread-\d+', thread.name)
+                    thread_id = re.match(r"Thread-\d+", thread.name)
                     thread_id = "Unknown" if thread_id is None else thread_id.group(0)
                     thread.name = "%s running %s" % (thread_id, func.__module__)
-                    with self.handler.db.session_scope() as args['db']:
+                    with self.handler.db.session_scope() as args["db"]:
                         func(send, msg, args)
                 except Exception as ex:
-                    backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
+                    backtrace.handle_traceback(
+                        ex,
+                        self.handler.connection,
+                        self.target,
+                        self.handler.config,
+                        func.__module__,
+                    )
                 finally:
                     thread.name = "%s idle, last ran %s" % (thread_id, func.__module__)
 
@@ -59,7 +67,15 @@ class Hook(object):
     def __repr__(self) -> str:
         return self.name
 
-    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler, target: str, args: List[str]) -> None:
+    def run(
+        self,
+        send: Callable[[str], None],
+        msg: str,
+        msgtype: str,
+        handler,
+        target: str,
+        args: List[str],
+    ) -> None:
         if registry.hook_registry.is_disabled(self.name):
             return
         self.handler = handler

@@ -20,10 +20,10 @@ from ..helpers.command import Command
 from ..helpers.registry import hook_registry
 
 
-@Command('hooks')
+@Command("hooks")
 def cmd(send, *_):
     """Lists loaded hooks
     Syntax: {command}
     """
-    hooklist = ', '.join([str(x) for x in hook_registry.get_known_hooks()])
-    send('Loaded hooks: %s' % (hooklist))
+    hooklist = ", ".join([str(x) for x in hook_registry.get_known_hooks()])
+    send("Loaded hooks: %s" % (hooklist))

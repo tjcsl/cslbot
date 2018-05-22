@@ -19,33 +19,36 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('mode', ['nick', 'handler', 'botnick', 'target', 'config'], role="admin")
+@Command("mode", ["nick", "handler", "botnick", "target", "config"], role="admin")
 def cmd(send, msg, args):
     """Sets a mode.
 
     Syntax: {command} [--chan <chan>] <mode>
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--chan', '--channel', action=arguments.ChanParser)
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--chan", "--channel", action=arguments.ChanParser)
     try:
         cmdargs, extra = parser.parse_known_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
+    target = cmdargs.channels[0] if hasattr(cmdargs, "channels") else args["target"]
     mode = " ".join(extra)
     if not mode:
-        send('Please specify a mode.')
-    elif target == 'private':
+        send("Please specify a mode.")
+    elif target == "private":
         send("Modes don't work in a PM!")
     else:
-        with args['handler'].data_lock:
-            if target not in args['handler'].channels:
+        with args["handler"].data_lock:
+            if target not in args["handler"].channels:
                 send("Bot not in channel %s" % target)
-            elif args['botnick'] not in args['handler'].opers[target]:
+            elif args["botnick"] not in args["handler"].opers[target]:
                 send("Bot must be opped in channel %s" % target)
             else:
-                args['handler'].connection.mode(target, mode)
-                if args['target'] != args['config']['core']['ctrlchan']:
-                    send("Mode \"%s\" on %s by %s" % (mode, target, args['nick']), target=args['config']['core']['ctrlchan'])
+                args["handler"].connection.mode(target, mode)
+                if args["target"] != args["config"]["core"]["ctrlchan"]:
+                    send(
+                        'Mode "%s" on %s by %s' % (mode, target, args["nick"]),
+                        target=args["config"]["core"]["ctrlchan"],
+                    )

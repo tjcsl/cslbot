@@ -22,31 +22,36 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_slogan
 
 
-@Command('gcc', ['type', 'nick'])
+@Command("gcc", ["type", "nick"])
 def cmd(send, msg, args):
     """Compiles stuff.
 
     Syntax: {command} <code>
 
     """
-    if args['type'] == 'privmsg':
-        send('GCC is a group exercise!')
+    if args["type"] == "privmsg":
+        send("GCC is a group exercise!")
         return
-    if 'include' in msg:
+    if "include" in msg:
         send("We're not a terribly inclusive community around here.")
         return
     tmpfile = tempfile.NamedTemporaryFile()
     for line in msg.splitlines():
-        line = line + '\n'
+        line = line + "\n"
         tmpfile.write(line.encode())
     tmpfile.flush()
     process = subprocess.run(
-        ['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5, universal_newlines=True)
+        ["gcc", "-o", "/dev/null", "-xc", tmpfile.name],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        timeout=5,
+        universal_newlines=True,
+    )
     tmpfile.close()
     # Take the last 3 lines to prevent Excess Flood on long error messages
     output = process.stdout.splitlines()[:3]
     for line in output:
-        send(line, target=args['nick'])
+        send(line, target=args["nick"])
     if process.returncode == 0:
         send(gen_slogan("gcc victory"))
     else:

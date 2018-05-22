@@ -25,7 +25,7 @@ _caps: List[str] = []
 _caps_lock = Lock()
 
 
-@Hook('caps', 'pubmsg', ['nick', 'do_kick', 'target', 'config'])
+@Hook("caps", "pubmsg", ["nick", "do_kick", "target", "config"])
 def handle(_, msg, args):
     """Check for capslock abuse.
 
@@ -35,19 +35,19 @@ def handle(_, msg, args):
     """
     # SHUT CAPS LOCK OFF, MORON
 
-    if args['config']['feature'].getboolean('capskick'):
-        nick = args['nick']
+    if args["config"]["feature"].getboolean("capskick"):
+        nick = args["nick"]
         threshold = 0.65
         text = "shutting caps lock off"
         upper = [i for i in msg if i in string.ascii_uppercase]
         if len(msg) == 0:
             return
-        upper_ratio = len(upper) / len(msg.replace(' ', ''))
-        if args['target'] != 'private':
+        upper_ratio = len(upper) / len(msg.replace(" ", ""))
+        if args["target"] != "private":
             with _caps_lock:
                 if upper_ratio > threshold and len(msg) > 10:
                     if nick in _caps:
-                        args['do_kick'](args['target'], nick, text)
+                        args["do_kick"](args["target"], nick, text)
                         _caps.remove(nick)
                     else:
                         _caps.append(nick)

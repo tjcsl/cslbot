@@ -23,48 +23,56 @@ from ..helpers.command import Command
 
 
 def get_categories(apikey):
-    params = {'callname': 'GetCategoryInfo', 'CategoryID': -1, 'IncludeSelector': 'ChildCategories'}
-    headers = {'X-EBAY-API-RESPONSE-ENCODING': 'JSON', 'X-EBAY-API-VERSION': '733', 'X-EBAY-API-APP-ID': apikey}
-    req = get('http://open.api.ebay.com/shopping', params=params, headers=headers)
+    params = {"callname": "GetCategoryInfo", "CategoryID": -1, "IncludeSelector": "ChildCategories"}
+    headers = {
+        "X-EBAY-API-RESPONSE-ENCODING": "JSON",
+        "X-EBAY-API-VERSION": "733",
+        "X-EBAY-API-APP-ID": apikey,
+    }
+    req = get("http://open.api.ebay.com/shopping", params=params, headers=headers)
     data = req.json()
-    categories = [category['CategoryID'] for category in data['CategoryArray']['Category']]
-    categories.remove('-1')
+    categories = [category["CategoryID"] for category in data["CategoryArray"]["Category"]]
+    categories.remove("-1")
     return categories
 
 
 def get_item(category, apikey):
-    url = 'http://svcs.ebay.com/services/search/FindingService/v1?'
+    url = "http://svcs.ebay.com/services/search/FindingService/v1?"
     params = {
-        'itemFilter(0).name': 'FreeShippingOnly',
-        'itemFilter(0).value': 'true',
-        'itemFilter(1).name': 'MaxPrice',
-        'itemFilter(1).value': '1',
-        'itemFilter(1).paramName': 'Currency',
-        'itemFilter(1).paramValue': 'USD',
-        'itemFilter(2).name': 'ListingType',
-        'itemFilter(2).value(0)': 'StoreInventory',
-        'itemFilter(2).value(1)': 'FixedPrice',
-        'itemFilter(2).value(2)': 'AuctionWithBIN',
-        'categoryId': category
+        "itemFilter(0).name": "FreeShippingOnly",
+        "itemFilter(0).value": "true",
+        "itemFilter(1).name": "MaxPrice",
+        "itemFilter(1).value": "1",
+        "itemFilter(1).paramName": "Currency",
+        "itemFilter(1).paramValue": "USD",
+        "itemFilter(2).name": "ListingType",
+        "itemFilter(2).value(0)": "StoreInventory",
+        "itemFilter(2).value(1)": "FixedPrice",
+        "itemFilter(2).value(2)": "AuctionWithBIN",
+        "categoryId": category,
     }
     # If we use params=, requests will urlencode the (), making ebay very sad.
     url += "&".join("%s=%s" % x for x in params.items())
-    headers = {'X-EBAY-SOA-RESPONSE-DATA-FORMAT': 'json', 'X-EBAY-SOA-OPERATION-NAME': 'findItemsAdvanced', 'X-EBAY-SOA-SECURITY-APPNAME': apikey}
+    headers = {
+        "X-EBAY-SOA-RESPONSE-DATA-FORMAT": "json",
+        "X-EBAY-SOA-OPERATION-NAME": "findItemsAdvanced",
+        "X-EBAY-SOA-SECURITY-APPNAME": apikey,
+    }
     data = get(url, headers=headers).json()
-    item = data['findItemsAdvancedResponse'][0]['searchResult'][0]
-    if int(item['@count']) == 0:
+    item = data["findItemsAdvancedResponse"][0]["searchResult"][0]
+    if int(item["@count"]) == 0:
         return None
     else:
-        item = choice(item['item'])
-    return item['title'][0] + ' -- http://www.ebay.com/itm/' + item['itemId'][0]
+        item = choice(item["item"])
+    return item["title"][0] + " -- http://www.ebay.com/itm/" + item["itemId"][0]
 
 
-@Command('ebay', ['config'])
+@Command("ebay", ["config"])
 def cmd(send, _, args):
     """Implements xkcd 576.
     Syntax: {command}
     """
-    apikey = args['config']['api']['ebayapikey']
+    apikey = args["config"]["api"]["ebayapikey"]
     categories = get_categories(apikey)
     item = None
     while not item:

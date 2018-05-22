@@ -39,13 +39,15 @@ quit\t\t\tquit the console session
 
 
 def init_server(bot):
-    port = bot.config.getint('core', 'serverport')
+    port = bot.config.getint("core", "serverport")
     try:
-        server = BotNetServer(('localhost', port), BotNetHandler)
+        server = BotNetServer(("localhost", port), BotNetHandler)
     except OSError as ex:
         bot.shutdown_mp()
         if ex.errno == 98:
-            raise Exception("Please make sure that there is no other service running on port %d" % port)
+            raise Exception(
+                "Please make sure that there is no other service running on port %d" % port
+            )
         else:
             raise ex
     server.bot = bot
@@ -73,8 +75,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         if cmd[0] == "help":
             send(HELP)
         elif cmd[0] == "reload":
-            cmdargs = cmd[1] if len(cmd) > 1 else ''
-            ctrlchan = bot.config['core']['ctrlchan']
+            cmdargs = cmd[1] if len(cmd) > 1 else ""
+            ctrlchan = bot.config["core"]["ctrlchan"]
             bot.reload_event.set()
             if reloader.do_reload(bot, ctrlchan, cmdargs, send):
                 bot.server = init_server(bot)
@@ -107,7 +109,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
-            ctrlpass = bot.config['auth']['ctrlpass']
+            ctrlpass = bot.config["auth"]["ctrlpass"]
             if not msg or msg[0].strip() != ctrlpass:
                 send("Incorrect password.\n")
                 self.request.close()
@@ -136,8 +138,8 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     break
         except Exception as ex:
             msg, _ = backtrace.output_traceback(ex)
-            ctrlchan = bot.config['core']['ctrlchan']
-            send('%s\n' % msg)
+            ctrlchan = bot.config["core"]["ctrlchan"]
+            send("%s\n" % msg)
             # If we've disconnected, there isn't much point sending errors to the network.
             if not isinstance(ex, client.ServerNotConnectedError):
                 bot.connection.privmsg(ctrlchan, msg)

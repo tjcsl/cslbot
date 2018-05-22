@@ -19,23 +19,23 @@ from ..helpers.command import Command
 from ..helpers.misc import do_nuke
 
 
-@Command('nuke', ['nick', 'handler', 'target', 'config', 'botnick'], role="admin")
+@Command("nuke", ["nick", "handler", "target", "config", "botnick"], role="admin")
 def cmd(send, msg, args):
     """Nukes somebody.
 
     Syntax: {command} <target>
 
     """
-    c, nick = args['handler'].connection, args['nick']
-    channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
+    c, nick = args["handler"].connection, args["nick"]
+    channel = args["target"] if args["target"] != "private" else args["config"]["core"]["channel"]
     if not msg:
         send("Nuke who?")
         return
-    with args['handler'].data_lock:
-        users = args['handler'].channels[channel].users()
+    with args["handler"].data_lock:
+        users = args["handler"].channels[channel].users()
     if msg in users:
         do_nuke(c, nick, msg, channel)
-    elif msg == args['botnick']:
+    elif msg == args["botnick"]:
         send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
     else:
         send("I'm sorry. Anonymous Nuking is not allowed")

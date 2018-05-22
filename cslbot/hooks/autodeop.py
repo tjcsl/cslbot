@@ -20,19 +20,19 @@ import re
 from ..helpers.hook import Hook
 
 
-@Hook('autodeop', ['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
+@Hook("autodeop", ["pubmsg", "action", "mode"], ["config", "target", "type", "handler"])
 def handle(_, msg, args):
-    if 'autodeop' not in args['config']['core']:
+    if "autodeop" not in args["config"]["core"]:
         return
 
-    to_deop = [x.strip() for x in args['config']['core']['autodeop'].split(',')]
+    to_deop = [x.strip() for x in args["config"]["core"]["autodeop"].split(",")]
 
-    if args['type'] == 'mode':
+    if args["type"] == "mode":
         for nick in to_deop:
-            if re.match(r'^\+[^ ]*o.+%s.*$' % nick, msg):
-                args['handler'].connection.mode(args['target'], '-o %s' % nick)
+            if re.match(r"^\+[^ ]*o.+%s.*$" % nick, msg):
+                args["handler"].connection.mode(args["target"], "-o %s" % nick)
     else:
-        with args['handler'].data_lock:
+        with args["handler"].data_lock:
             for nick in to_deop:
-                if nick in args['handler'].opers[args['target']]:
-                    args['handler'].connection.mode(args['target'], '-o %s' % nick)
+                if nick in args["handler"].opers[args["target"]]:
+                    args["handler"].connection.mode(args["target"], "-o %s" % nick)

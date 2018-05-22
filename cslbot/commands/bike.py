@@ -18,7 +18,7 @@
 from ..helpers.command import Command
 
 
-@Command('bike')
+@Command("bike")
 def cmd(send, *_):
     """I've got a bike, you can ride it if you like.
 
@@ -27,5 +27,5 @@ def cmd(send, *_):
     Syntax: {command}
 
     """
-    send('\\_f_,_')
-    send('(_)`(_)')
+    send("\\_f_,_")
+    send("(_)`(_)")

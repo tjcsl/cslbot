@@ -25,19 +25,19 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('wisdom', ['config'])
+@Command("wisdom", ["config"])
 def cmd(send, msg, args):
     """Gets words of wisdom
     Syntax: {command} (--author <author>|--search <topic>)
     Powered by STANDS4, www.stands4.com
     """
-    uid = args['config']['api']['stands4uid']
-    token = args['config']['api']['stands4token']
-    parser = arguments.ArgParser(args['config'])
+    uid = args["config"]["api"]["stands4uid"]
+    token = args["config"]["api"]["stands4token"]
+    parser = arguments.ArgParser(args["config"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--author', action='store_true')
-    group.add_argument('--search', action='store_true')
-    parser.add_argument('query', nargs='*')
+    group.add_argument("--author", action="store_true")
+    group.add_argument("--search", action="store_true")
+    parser.add_argument("query", nargs="*")
 
     try:
         cmdargs = parser.parse_args(msg)
@@ -49,29 +49,26 @@ def cmd(send, msg, args):
         if not cmdargs.query:
             send("No author specified")
             return
-        searchtype = 'author'
+        searchtype = "author"
     elif cmdargs.search:
         if not cmdargs.query:
             send("No search terms specified")
             return
-        searchtype = 'search'
+        searchtype = "search"
     else:
-        searchtype = 'random'
+        searchtype = "random"
 
     if cmdargs.query:
-        cmdargs.query = ' '.join(cmdargs.query)
+        cmdargs.query = " ".join(cmdargs.query)
     req = get(
-        "http://www.stands4.com/services/v2/quotes.php", params={
-            'uid': uid,
-            'tokenid': token,
-            'query': cmdargs.query,
-            'searchtype': searchtype
-        })
+        "http://www.stands4.com/services/v2/quotes.php",
+        params={"uid": uid, "tokenid": token, "query": cmdargs.query, "searchtype": searchtype},
+    )
     xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     if len(xml) == 0:
         send("No words of wisdom found")
         return
     entry = choice(xml)
-    quote = entry.find('quote').text
-    author = entry.find('author').text
+    quote = entry.find("quote").text
+    author = entry.find("author").text
     send("%s -- %s" % (quote, author))

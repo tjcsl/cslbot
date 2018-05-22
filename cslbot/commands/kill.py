@@ -18,7 +18,7 @@
 from ..helpers.command import Command
 
 
-@Command('kill', ['botnick'])
+@Command("kill", ["botnick"])
 def cmd(send, msg, args):
     """Kills somebody.
 
@@ -28,7 +28,7 @@ def cmd(send, msg, args):
     if not msg:
         send("kill who?")
         return
-    if msg.lower() == args['botnick'].lower():
-        send('%s is not feeling suicidal right now.' % msg)
+    if msg.lower() == args["botnick"].lower():
+        send("%s is not feeling suicidal right now." % msg)
     else:
-        send('Die, %s!' % msg)
+        send("Die, %s!" % msg)

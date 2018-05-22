@@ -32,7 +32,7 @@ class NickParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        if re.match(namespace.config['core']['nickregex'], value):
+        if re.match(namespace.config["core"]["nickregex"], value):
             namespace.nick = value
         else:
             raise ArgumentException("Invalid nick %s." % value)
@@ -47,7 +47,7 @@ class ChanParser(argparse.Action):
             value = [value]
         namespace.channels = []
         for v in value:
-            if re.match('{}$'.format(namespace.config['core']['chanregex']), v):
+            if re.match("{}$".format(namespace.config["core"]["chanregex"]), v):
                 namespace.channels.append(v)
             else:
                 raise ArgumentException("Invalid chan %s." % v)
@@ -59,7 +59,7 @@ class DateParser(argparse.Action):
         if value is None:
             return
         if isinstance(value, list):
-            value = ' '.join(value)
+            value = " ".join(value)
         try:
             namespace.date = dateutil.parser.parse(value)
         except (ValueError, OverflowError) as e:
@@ -71,11 +71,16 @@ class TumblrParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        if '.' not in value:
+        if "." not in value:
             value += ".tumblr.com"
-        response = get('http://api.tumblr.com/v2/blog/%s/info' % value, params={'api_key': namespace.config['api']['tumblrconsumerkey']}).json()
-        if response['meta']['status'] != 200:
-            raise ArgumentException("Error in checking status of blog %s: %s" % (value, response['meta']['msg']))
+        response = get(
+            "http://api.tumblr.com/v2/blog/%s/info" % value,
+            params={"api_key": namespace.config["api"]["tumblrconsumerkey"]},
+        ).json()
+        if response["meta"]["status"] != 200:
+            raise ArgumentException(
+                "Error in checking status of blog %s: %s" % (value, response["meta"]["msg"])
+            )
         namespace.blogname = value
 
 
@@ -84,7 +89,7 @@ class ZipParser(argparse.Action):
     def __call__(self, parser, namespace, value, option_strings):
         if value is None:
             return
-        zipcode = re.search(r'\d{5}', value)
+        zipcode = re.search(r"\d{5}", value)
         if not zipcode:
             raise ArgumentException("Couldn't parse a ZIP code from %s" % (value))
         namespace.zipcode = zipcode.group(0)

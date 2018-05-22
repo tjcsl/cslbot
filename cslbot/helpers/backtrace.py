@@ -29,12 +29,12 @@ def output_traceback(ex):
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
     output = "".join(traceback.format_exc()).strip()
-    for line in output.split('\n'):
+    for line in output.split("\n"):
         logging.error(line)
     trace_obj = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace_obj[0]), trace_obj[1]]
     name = type(ex).__name__
-    output = str(ex).replace('\n', ' ')
+    output = str(ex).replace("\n", " ")
     msg = "%s in %s on line %s: %s" % (name, trace[0], trace[1], output)
     return (msg, output)
 
@@ -42,23 +42,24 @@ def output_traceback(ex):
 def handle_traceback(ex, c, target, config, source="the bot"):
     msg, output = output_traceback(ex)
     name = type(ex).__name__
-    ctrlchan = config['core']['ctrlchan']
-    prettyerrors = config['feature'].getboolean('prettyerrors')
+    ctrlchan = config["core"]["ctrlchan"]
+    prettyerrors = config["feature"].getboolean("prettyerrors")
     # If we've disconnected, there isn't much point sending errors to the network.
     if isinstance(ex, client.ServerNotConnectedError):
 
         def send(_, msg):
             logging.error(msg)
+
     else:
         send = c.privmsg
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors and target != ctrlchan:
-        if name == 'CommandFailedException':
+        if name == "CommandFailedException":
             send(target, "%s -- %s" % (source, output))
         else:
             send(target, "%s occured in %s. See the control channel for details." % (name, source))
-    msg = 'Error in channel %s -- %s -- %s' % (target, source, msg)
+    msg = "Error in channel %s -- %s -- %s" % (target, source, msg)
     # Handle over-long exceptions.
-    max_len = misc.get_max_length(errtarget, 'privmsg')
+    max_len = misc.get_max_length(errtarget, "privmsg")
     msg = misc.truncate_msg(msg, max_len)
     send(errtarget, msg)

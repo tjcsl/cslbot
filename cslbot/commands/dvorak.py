@@ -21,7 +21,9 @@ from ..helpers.orm import Log
 
 
 def get_log(conn, user, target):
-    query = conn.query(Log.msg).filter(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc())
+    query = conn.query(Log.msg).filter(Log.type == "pubmsg", Log.target == target).order_by(
+        Log.time.desc()
+    )
     if user is None:
         return query.offset(1).limit(1).scalar()
     else:
@@ -36,16 +38,16 @@ def translate(msg, encode=True):
     return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
 
 
-@Command(['dvorak', 'sdamashek'], ['db', 'config', 'target'])
+@Command(["dvorak", "sdamashek"], ["db", "config", "target"])
 def cmd(send, msg, args):
     """Converts a message to/from dvorak.
 
     Syntax: {command} <--nick <nick>|msg>
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--nick', action=arguments.NickParser)
-    parser.add_argument('msg', nargs='*')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--nick", action=arguments.NickParser)
+    parser.add_argument("msg", nargs="*")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -53,11 +55,11 @@ def cmd(send, msg, args):
         return
     if cmdargs.msg:
         if cmdargs.nick:
-            send('--nick cannot be combined with a message')
+            send("--nick cannot be combined with a message")
         else:
             send(translate(" ".join(cmdargs.msg), False).strip())
     else:
-        log = get_log(args['db'], cmdargs.nick, args['target'])
+        log = get_log(args["db"], cmdargs.nick, args["target"])
         if not log:
             send("Couldn't find a message from %s :(" % cmdargs.nick)
         else:
