@@ -20,7 +20,7 @@ from requests import get
 from ..helpers.command import Command
 
 
-@Command('isup', ['nick'])
+@Command("isup", ["nick"])
 def cmd(send, msg, args):
     """Checks if a website is up.
 
@@ -30,7 +30,7 @@ def cmd(send, msg, args):
     if not msg:
         send("What are you trying to get to?")
         return
-    nick = args['nick']
+    nick = args["nick"]
     isup = get("http://isup.me/%s" % msg).text
     if "looks down from here" in isup:
         send("%s: %s is down" % (nick, msg))

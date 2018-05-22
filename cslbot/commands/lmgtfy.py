@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.urlutils import get_short
 
 
-@Command(['lmgtfy', 'explain'], ['config'])
+@Command(["lmgtfy", "explain"], ["config"])
 def cmd(send, msg, args):
     """Explain things.
 
@@ -29,7 +29,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Explain What?")
         return
-    msg = msg.replace(' ', '+')
-    msg = 'http://lmgtfy.com/?q=%s' % msg
-    key = args['config']['api']['bitlykey']
+    msg = msg.replace(" ", "+")
+    msg = "http://lmgtfy.com/?q=%s" % msg
+    key = args["config"]["api"]["bitlykey"]
     send(get_short(msg, key))

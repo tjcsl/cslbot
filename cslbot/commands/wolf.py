@@ -24,7 +24,7 @@ from ..helpers.command import Command
 from ..helpers.urlutils import get_short
 
 
-@Command('wolf', ['config'])
+@Command("wolf", ["config"])
 def cmd(send, msg, args):
     """Queries WolframAlpha.
 
@@ -34,8 +34,13 @@ def cmd(send, msg, args):
     if not msg:
         send("Evaluate what?")
         return
-    params = {'format': 'plaintext', 'reinterpret': 'true', 'input': msg, 'appid': args['config']['api']['wolframapikey']}
-    req = get('http://api.wolframalpha.com/v2/query', params=params)
+    params = {
+        "format": "plaintext",
+        "reinterpret": "true",
+        "input": msg,
+        "appid": args["config"]["api"]["wolframapikey"],
+    }
+    req = get("http://api.wolframalpha.com/v2/query", params=params)
     if req.status_code == 403:
         send("WolframAlpha is having issues.")
         return
@@ -43,13 +48,13 @@ def cmd(send, msg, args):
         send("WolframAlpha returned an empty response.")
         return
     xml = fromstring(req.content)
-    output = xml.findall('./pod')
-    key = args['config']['api']['bitlykey']
+    output = xml.findall("./pod")
+    key = args["config"]["api"]["bitlykey"]
     url = get_short("http://www.wolframalpha.com/input/?i=%s" % quote(msg), key)
     text = "No output found."
     for x in output:
-        if 'primary' in x.keys():
-            text = x.find('./subpod/plaintext').text
+        if "primary" in x.keys():
+            text = x.find("./subpod/plaintext").text
     if text is None:
         send("No Output parsable")
     else:

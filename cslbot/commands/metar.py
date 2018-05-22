@@ -23,15 +23,15 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command(['metar'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
+@Command(["metar"], ["nick", "config", "db", "name", "source", "handler"])
 def cmd(send, msg, args):
     """Gets the weather.
 
     Syntax: {command} <station> [station2...]
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('stations', nargs='*')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("stations", nargs="*")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -41,26 +41,27 @@ def cmd(send, msg, args):
         send("What station?")
         return
     if isinstance(cmdargs.stations, list):
-        cmdargs.stations = ','.join(cmdargs.stations)
+        cmdargs.stations = ",".join(cmdargs.stations)
     req = get(
-        'http://aviationweather.gov/adds/dataserver_current/httpparam',
+        "http://aviationweather.gov/adds/dataserver_current/httpparam",
         params={
-            'datasource': 'metars',
-            'requestType': 'retrieve',
-            'format': 'xml',
-            'mostRecentForEachStation': 'constraint',
-            'hoursBeforeNow': '1.25',
-            'stationString': cmdargs.stations
-        })
+            "datasource": "metars",
+            "requestType": "retrieve",
+            "format": "xml",
+            "mostRecentForEachStation": "constraint",
+            "hoursBeforeNow": "1.25",
+            "stationString": cmdargs.stations,
+        },
+    )
     xml = ElementTree.fromstring(req.text)
-    errors = xml.find('./errors')
+    errors = xml.find("./errors")
     if len(errors):
-        errstring = ','.join([error.text for error in errors])
-        send('Error: %s' % errstring)
+        errstring = ",".join([error.text for error in errors])
+        send("Error: %s" % errstring)
         return
-    data = xml.find('./data')
-    if data.attrib['num_results'] == '0':
-        send('No results found.')
+    data = xml.find("./data")
+    if data.attrib["num_results"] == "0":
+        send("No results found.")
     else:
         for station in data:
-            send(station.find('raw_text').text)
+            send(station.find("raw_text").text)

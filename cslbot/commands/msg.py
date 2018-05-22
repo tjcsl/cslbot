@@ -19,19 +19,22 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('msg', ['nick', 'config'], role="admin")
+@Command("msg", ["nick", "config"], role="admin")
 def cmd(send, msg, args):
     """Sends a message to a channel
     Syntax: {command} <channel> <message>
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('channel', action=arguments.ChanParser)
-    parser.add_argument('message', nargs='+')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("channel", action=arguments.ChanParser)
+    parser.add_argument("message", nargs="+")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    cmdargs.message = ' '.join(cmdargs.message)
+    cmdargs.message = " ".join(cmdargs.message)
     send(cmdargs.message, target=cmdargs.channels[0])
-    send("%s sent message %s to %s" % (args['nick'], cmdargs.message, cmdargs.channels[0]), target=args['config']['core']['ctrlchan'])
+    send(
+        "%s sent message %s to %s" % (args["nick"], cmdargs.message, cmdargs.channels[0]),
+        target=args["config"]["core"]["ctrlchan"],
+    )

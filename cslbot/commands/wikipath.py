@@ -27,41 +27,49 @@ from ..helpers.command import Command
 
 def gen_path(cmdargs):
     epoch = datetime.now().timestamp()
-    params = {'a1': cmdargs.first, 'linktype': 1, 'a2': cmdargs.second, 'allowsideboxes': 1, 'submit': epoch}
-    html = get('http://beta.degreesofwikipedia.com/', params=params).text
-    path = fromstring(html).find('pre')
+    params = {
+        "a1": cmdargs.first,
+        "linktype": 1,
+        "a2": cmdargs.second,
+        "allowsideboxes": 1,
+        "submit": epoch,
+    }
+    html = get("http://beta.degreesofwikipedia.com/", params=params).text
+    path = fromstring(html).find("pre")
     if path is None:
         return False
     output = []
     for x in path.text.splitlines():
-        if '=>' in x:
-            output.append(x.split('=>')[1].strip())
+        if "=>" in x:
+            output.append(x.split("=>")[1].strip())
     return " -> ".join(output)
 
 
 def get_article():
-    params = {'action': 'query', 'list': 'random', 'rnlimit': 1, 'rnnamespace': 0, 'format': 'json'}
-    data = get('http://en.wikipedia.org/w/api.php', params=params).json()
-    data = data['query']['random']
-    return data[0]['title'].replace(' ', '_')
+    params = {"action": "query", "list": "random", "rnlimit": 1, "rnnamespace": 0, "format": "json"}
+    data = get("http://en.wikipedia.org/w/api.php", params=params).json()
+    data = data["query"]["random"]
+    return data[0]["title"].replace(" ", "_")
 
 
 def check_article(name):
-    params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': name}
-    data = get('http://en.wikipedia.org/w/api.php', params=params).json()
-    return data['query']['search']
+    params = {
+        "format": "json", "action": "query", "list": "search", "srlimit": "1", "srsearch": name
+    }
+    data = get("http://en.wikipedia.org/w/api.php", params=params).json()
+    return data["query"]["search"]
 
 
-@Command('wikipath', ['config'])
+@Command("wikipath", ["config"])
 def cmd(send, msg, args):
     """Find a path between two wikipedia articles.
 
     Syntax: {command} [article] [article]
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('first', nargs='?')
-    parser.add_argument('second', nargs='?')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("first", nargs="?")
+    parser.add_argument("second", nargs="?")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
@@ -82,6 +90,9 @@ def cmd(send, msg, args):
 
     path = gen_path(cmdargs)
     if path:
-        send(path.replace('_', ' '))
+        send(path.replace("_", " "))
     else:
-        send("No path found between %s and %s. Do you need to add more links?" % (cmdargs.first.replace('_', ' '), cmdargs.second.replace('_', ' ')))
+        send(
+            "No path found between %s and %s. Do you need to add more links?"
+            % (cmdargs.first.replace("_", " "), cmdargs.second.replace("_", " "))
+        )

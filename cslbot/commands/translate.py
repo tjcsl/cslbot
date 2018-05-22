@@ -20,7 +20,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_translate
 
 
-@Command(['translate', 'trans'], ['config'])
+@Command(["translate", "trans"], ["config"])
 def cmd(send, msg, args):
     """Translate something.
 
@@ -28,13 +28,13 @@ def cmd(send, msg, args):
     See https://cloud.google.com/translate/v2/translate-reference#supported_languages for a list of valid language codes
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--lang', '--from', default=None)
-    parser.add_argument('--to', default='en')
-    parser.add_argument('msg', nargs='+')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--lang", "--from", default=None)
+    parser.add_argument("--to", default="en")
+    parser.add_argument("msg", nargs="+")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    send(gen_translate(' '.join(cmdargs.msg), cmdargs.lang, cmdargs.to))
+    send(gen_translate(" ".join(cmdargs.msg), cmdargs.lang, cmdargs.to))

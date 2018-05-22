@@ -20,7 +20,7 @@ import subprocess
 from ..helpers.command import Command
 
 
-@Command('wtf')
+@Command("wtf")
 def cmd(send, msg, _):
     """Tells you what acronyms mean.
 
@@ -28,7 +28,7 @@ def cmd(send, msg, _):
 
     """
     try:
-        answer = subprocess.check_output(['wtf', msg], stderr=subprocess.STDOUT)
-        send(answer.decode().strip().replace('\n', ' or ').replace('fuck', 'fsck'))
+        answer = subprocess.check_output(["wtf", msg], stderr=subprocess.STDOUT)
+        send(answer.decode().strip().replace("\n", " or ").replace("fuck", "fsck"))
     except subprocess.CalledProcessError as ex:
         send(ex.output.decode().rstrip().splitlines()[0])

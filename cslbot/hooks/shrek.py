@@ -23,11 +23,13 @@ from pkg_resources import Requirement, resource_string
 
 
 def get_list():
-    return resource_string(Requirement.parse('CslBot'), 'cslbot/static/allstar.txt').decode().splitlines()
+    return resource_string(
+        Requirement.parse("CslBot"), "cslbot/static/allstar.txt"
+    ).decode().splitlines()
 
 
-@Hook('shrek', 'pubmsg', ['nick'])
+@Hook("shrek", "pubmsg", ["nick"])
 def handle(send, msg, args):
     if random.random() > 0.001:
         return
-    send('{}: {}'.format(args['nick'], random.choice(get_list())))
+    send("{}: {}".format(args["nick"], random.choice(get_list())))

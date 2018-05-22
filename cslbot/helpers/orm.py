@@ -21,7 +21,17 @@ from alembic import command, config
 
 from pkg_resources import Requirement, resource_filename
 
-from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    Unicode,
+    UnicodeText,
+)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -38,17 +48,19 @@ def setup_db(session, botconfig, confdir):
     """Sets up the database."""
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.
-    if not session.get_bind().has_table('alembic_version'):
+    if not session.get_bind().has_table("alembic_version"):
         conf_obj = config.Config()
-        script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
-        conf_obj.set_main_option('script_location', script_location)
-        conf_obj.set_main_option('bot_config_path', confdir)
-        command.stamp(conf_obj, 'head')
+        script_location = resource_filename(
+            Requirement.parse("CslBot"), botconfig["alembic"]["script_location"]
+        )
+        conf_obj.set_main_option("script_location", script_location)
+        conf_obj.set_main_option("bot_config_path", confdir)
+        command.stamp(conf_obj, "head")
 
     # Populate permissions table with owner.
-    owner_nick = botconfig['auth']['owner']
+    owner_nick = botconfig["auth"]["owner"]
     if not session.query(Permissions).filter(Permissions.nick == owner_nick).count():
-        session.add(Permissions(nick=owner_nick, role='owner'))
+        session.add(Permissions(nick=owner_nick, role="owner"))
 
 
 class Log(Base):
@@ -126,7 +138,7 @@ class Notes(Base):
 
 
 class Babble(Base):
-    __table_args__ = {'mysql_row_format': 'dynamic'}
+    __table_args__ = {"mysql_row_format": "dynamic"}
     key = Column(Unicode(length=512), index=True)
     source = Column(UnicodeText)
     target = Column(UnicodeText)
@@ -135,7 +147,7 @@ class Babble(Base):
 
 
 class Babble2(Base):
-    __table_args__ = {'mysql_row_format': 'dynamic'}
+    __table_args__ = {"mysql_row_format": "dynamic"}
     key = Column(Unicode(length=512), index=True)
     source = Column(UnicodeText)
     target = Column(UnicodeText)

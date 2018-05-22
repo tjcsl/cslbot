@@ -26,7 +26,7 @@ from ..helpers.command import Command
 
 def get_list():
     # wordlist (COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
-    rawlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
+    rawlist = resource_string(Requirement.parse("CslBot"), "cslbot/static/wordlist")
     rawlist = sorted(rawlist.decode().splitlines())
     words = {}
     for key, group in groupby(rawlist, key=lambda word: word[0].lower()):
@@ -48,6 +48,6 @@ def cmd(send, msg, _):
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]
     output = " ".join([choice(words[c]) for c in letters])
     if output:
-        send('%s: %s' % (msg, output.title()))
+        send("%s: %s" % (msg, output.title()))
     else:
         send("No acronym found for %s" % msg)

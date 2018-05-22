@@ -23,36 +23,36 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('man', ['config'])
+@Command("man", ["config"])
 def cmd(send, msg, args):
     """Gets a man page.
 
     Syntax: {command} [section] <command>
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('section', nargs='?')
-    parser.add_argument('command')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("section", nargs="?")
+    parser.add_argument("command")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
     if cmdargs.section:
-        html = get('http://linux.die.net/man/%s/%s' % (cmdargs.section, cmdargs.command))
+        html = get("http://linux.die.net/man/%s/%s" % (cmdargs.section, cmdargs.command))
         short = fromstring(html.text).find('.//meta[@name="description"]')
         if short is not None:
-            short = short.get('content')
+            short = short.get("content")
             send("%s -- http://linux.die.net/man/%s/%s" % (short, cmdargs.section, cmdargs.command))
         else:
             send("No manual entry for %s in section %s" % (cmdargs.command, cmdargs.section))
     else:
         for section in range(0, 8):
-            html = get('http://linux.die.net/man/%d/%s' % (section, cmdargs.command))
+            html = get("http://linux.die.net/man/%d/%s" % (section, cmdargs.command))
             if html.status_code == 200:
                 short = fromstring(html.text).find('.//meta[@name="description"]')
                 if short is not None:
-                    short = short.get('content')
+                    short = short.get("content")
                     send("%s -- http://linux.die.net/man/%d/%s" % (short, section, cmdargs.command))
                     return
         send("No manual entry for %s" % cmdargs.command)

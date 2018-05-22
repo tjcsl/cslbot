@@ -34,7 +34,7 @@ logging.getLogger("alembic").setLevel(logging.WARNING)
 
 def start_thread(self, func, *args, **kwargs):
     # We need to actually run the server thread to avoid blocking.
-    if hasattr(func, '__func__') and func.__func__.__name__ == 'serve_forever':
+    if hasattr(func, "__func__") and func.__func__.__name__ == "serve_forever":
         with self.worker_lock:
             self.executor.submit(func, *args, **kwargs)
     else:
@@ -53,28 +53,30 @@ class BotTest(unittest.TestCase):
         cls.user_done = False
         cls.cap_list = []
         cls.confdir = tempfile.TemporaryDirectory()
-        srcdir = join(dirname(__file__), '..', 'cslbot', 'static')
-        config_file = join(cls.confdir.name, 'config.cfg')
-        shutil.copy(join(srcdir, 'config.example'), config_file)
-        shutil.copy(join(srcdir, 'groups.example'), join(cls.confdir.name, 'groups.cfg'))
+        srcdir = join(dirname(__file__), "..", "cslbot", "static")
+        config_file = join(cls.confdir.name, "config.cfg")
+        shutil.copy(join(srcdir, "config.example"), config_file)
+        shutil.copy(join(srcdir, "groups.example"), join(cls.confdir.name, "groups.cfg"))
         config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         with open(config_file) as f:
             config_obj.read_file(f)
 
         # Prevent server port conflicts
-        config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
+        config_obj["core"]["serverport"] = str(
+            config_obj.getint("core", "serverport") + random.randint(1000, 2000)
+        )
         # Use an in-memory sqlite db for testing
-        config_obj['db']['engine'] = 'sqlite://'
+        config_obj["db"]["engine"] = "sqlite://"
 
         # Setup some default values.
-        config_obj['core']['nick'] = 'testBot'
-        config_obj['core']['host'] = 'irc.does.not.exist'
-        config_obj['core']['channel'] = '#test-channel'
-        config_obj['core']['ctrlchan'] = '#test-control'
-        config_obj['core']['sasl'] = 'True'
-        config_obj['auth']['serverpass'] = 'dankmemes'
+        config_obj["core"]["nick"] = "testBot"
+        config_obj["core"]["host"] = "irc.does.not.exist"
+        config_obj["core"]["channel"] = "#test-channel"
+        config_obj["core"]["ctrlchan"] = "#test-control"
+        config_obj["core"]["sasl"] = "True"
+        config_obj["auth"]["serverpass"] = "dankmemes"
 
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             config_obj.write(f)
 
     @classmethod
@@ -83,19 +85,19 @@ class BotTest(unittest.TestCase):
 
     def join_mock(self, channel, key=None):
         # Since we don't have a real server on the other end, we need to fake a JOIN reply.
-        self.send_msg('join', self.nick, channel)
+        self.send_msg("join", self.nick, channel)
 
     def who_mock(self, target, op=None):
         # Since we don't have a real server on the other end, we need to fake a WHOSPCRPL.
-        nick, tag = re.match(r'(#?[\w-]+) %naft,(\d+)', target).groups()
-        self.send_msg('whospcrpl', self.server, self.nick, [tag, nick, 'H', nick])
+        nick, tag = re.match(r"(#?[\w-]+) %naft,(\d+)", target).groups()
+        self.send_msg("whospcrpl", self.server, self.nick, [tag, nick, "H", nick])
 
     def cap_mock(self, cmd, arg=None):
-        if cmd == 'END':
+        if cmd == "END":
             self.cap_done = True
         elif self.cap_done:
-            raise Exception('%s %s sent after CAP END' % (cmd, arg))
-        elif cmd == 'REQ' and arg is not None:
+            raise Exception("%s %s sent after CAP END" % (cmd, arg))
+        elif cmd == "REQ" and arg is not None:
             self.cap_list.append(arg)
         else:
             raise Exception("Unhandled CAP %s %s" % (cmd, arg))
@@ -103,25 +105,25 @@ class BotTest(unittest.TestCase):
     def user_mock(self, username, realname):
         self.bot.connection.send_raw("USER %s 0 * :%s" % (username, realname))
         for cap in self.cap_list:
-            self.send_msg('cap', self.server, '*', ['ACK', cap])
+            self.send_msg("cap", self.server, "*", ["ACK", cap])
         self.cap_list.clear()
 
     def raw_handler(self, msg):
         logging.debug("TO SERVER: %s", msg)
         msg = msg.split()
-        if msg == ['AUTHENTICATE', 'PLAIN']:
-            self.send_msg('authenticate', None, '+')
+        if msg == ["AUTHENTICATE", "PLAIN"]:
+            self.send_msg("authenticate", None, "+")
 
     def setUp(self):
-        mock.patch('irc.connection.Factory').start()
-        mock.patch.object(irc.client.ServerConnection, 'join', self.join_mock).start()
-        mock.patch.object(irc.client.ServerConnection, 'who', self.who_mock).start()
-        mock.patch.object(irc.client.ServerConnection, 'cap', self.cap_mock).start()
-        mock.patch.object(irc.client.ServerConnection, 'user', self.user_mock).start()
+        mock.patch("irc.connection.Factory").start()
+        mock.patch.object(irc.client.ServerConnection, "join", self.join_mock).start()
+        mock.patch.object(irc.client.ServerConnection, "who", self.who_mock).start()
+        mock.patch.object(irc.client.ServerConnection, "cap", self.cap_mock).start()
+        mock.patch.object(irc.client.ServerConnection, "user", self.user_mock).start()
         self.bot = core.IrcBot(self.confdir.name)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
-        with mock.patch.object(irc.client.Reactor, 'process_forever'):
+        with mock.patch.object(irc.client.Reactor, "process_forever"):
             self.bot.start()
         self.do_welcome()
 
@@ -130,18 +132,22 @@ class BotTest(unittest.TestCase):
 
     def setup_handler(self):
         # We don't need to rate-limit sending.
-        mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
+        mock.patch.object(handler.BotHandler, "rate_limited_send", rate_limited_send).start()
         # Setup the mock to record log calls.
-        self.log_mock = mock.patch.object(self.bot.handler.db, 'log').start()
-        self.raw_mock = mock.patch.object(irc.client.ServerConnection, 'send_raw', mock.Mock(wraps=self.raw_handler)).start()
+        self.log_mock = mock.patch.object(self.bot.handler.db, "log").start()
+        self.raw_mock = mock.patch.object(
+            irc.client.ServerConnection, "send_raw", mock.Mock(wraps=self.raw_handler)
+        ).start()
         # Force normally-threaded operations to execute synchronously
-        mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
+        mock.patch.object(workers.Workers, "start_thread", start_thread).start()
 
     def join_channel(self, nick, channel):
-        calls = self.send_msg('join', nick, channel)
-        expected_calls = [(nick, channel, 0, '', 'join')]
+        calls = self.send_msg("join", nick, channel)
+        expected_calls = [(nick, channel, 0, "", "join")]
         if nick == self.nick:
-            expected_calls.append((nick, self.ctrlchan, 0, 'Joined channel %s' % channel, 'privmsg'))
+            expected_calls.append(
+                (nick, self.ctrlchan, 0, "Joined channel %s" % channel, "privmsg")
+            )
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
@@ -151,44 +157,61 @@ class BotTest(unittest.TestCase):
 
     @property
     def channel(self):
-        return self.bot.config['core']['channel']
+        return self.bot.config["core"]["channel"]
 
     @property
     def ctrlchan(self):
-        return self.bot.config['core']['ctrlchan']
+        return self.bot.config["core"]["ctrlchan"]
 
     @property
     def server(self):
-        return self.bot.config['core']['host']
+        return self.bot.config["core"]["host"]
 
     def do_welcome(self):
-        with self.assertLogs('cslbot.helpers.handler') as mock_log:
-            calls = self.send_msg('welcome', self.server, self.nick, ['Welcome to TestIRC, %s!' % self.nick])
-        self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server %s' % self.server])
-        self.assertTrue(self.bot.handler.features['account-notify'])
-        self.assertTrue(self.bot.handler.features['extended-join'])
+        with self.assertLogs("cslbot.helpers.handler") as mock_log:
+            calls = self.send_msg(
+                "welcome", self.server, self.nick, ["Welcome to TestIRC, %s!" % self.nick]
+            )
+        self.assertEqual(
+            mock_log.output, ["INFO:cslbot.helpers.handler:Connected to server %s" % self.server]
+        )
+        self.assertTrue(self.bot.handler.features["account-notify"])
+        self.assertTrue(self.bot.handler.features["extended-join"])
         # We support WHOX!
-        self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
-        self.assertTrue(self.bot.handler.features['whox'])
-        expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'),
-                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan,
-                           'privmsg'), (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
+        self.send_msg("featurelist", self.server, self.nick, ["WHOX"])
+        self.assertTrue(self.bot.handler.features["whox"])
+        expected_calls = [
+            (self.nick, self.channel, 0, "", "join"),
+            (self.nick, self.ctrlchan, 0, "", "join"),
+            (self.nick, self.ctrlchan, 0, "Joined channel %s" % self.ctrlchan, "privmsg"),
+            (self.nick, "private", 0, "Joined channel %s" % self.channel, "privmsg"),
+        ]
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
             sorted([x[0] for x in self.raw_mock.call_args_list]),
             [
-                ('AUTHENTICATE PLAIN',),
-                ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
-                ('NICK %s' % self.nick,),
-                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
-                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
-                ('USER %s 0 * :%s' % (self.nick, self.nick),)
-            ])
+                ("AUTHENTICATE PLAIN",),
+                (
+                    "AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==",
+                ),  # nick=testBot, password=dankmemes
+                ("NICK %s" % self.nick,),
+                ("PRIVMSG %s :Joined channel %s" % (self.ctrlchan, self.channel),),
+                ("PRIVMSG %s :Joined channel %s" % (self.ctrlchan, self.ctrlchan),),
+                ("USER %s 0 * :%s" % (self.nick, self.nick),),
+            ],
+        )
         self.log_mock.reset_mock()
 
     def send_msg(self, mtype, source, target, arguments=None):
         e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments or [])
-        logging.debug("type: %s, source: %s, target: %s, arguments: %s, tags: %s", e.type, e.source, e.target, e.arguments, e.tags)
+        logging.debug(
+            "type: %s, source: %s, target: %s, arguments: %s, tags: %s",
+            e.type,
+            e.source,
+            e.target,
+            e.arguments,
+            e.tags,
+        )
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         # Make hermetic

@@ -25,18 +25,18 @@ from ..helpers.command import Command
 from ..helpers.urlutils import get_short
 
 
-@Command(['cve', 'cveid'], ['config'])
+@Command(["cve", "cveid"], ["config"])
 def cmd(send, msg, args):
     """Gets info on a CVE id from MITRE's CVE database
     Syntax: {command} <cveid>
     """
-    elements = msg.split('-')
+    elements = msg.split("-")
     if len(elements) > 3 or len(elements) < 2:
         send("Invalid CVE format")
         return
     # If there are three fields, ignore the first (we don't actually need to send CVE-
     if len(elements) == 3:
-        if elements[0].upper() != 'CVE':
+        if elements[0].upper() != "CVE":
             send("Invalid CVE format")
             return
         elements.pop(0)
@@ -45,12 +45,12 @@ def cmd(send, msg, args):
         send("Invalid CVE format")
         return
     search = "%s-%s" % (elements[0], elements[1])
-    url = 'http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search
+    url = "http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s" % search
     html = fromstring(get(url).text)
     title = html.find(".//title").text.splitlines()[2]
-    if title.startswith('ERROR'):
-        output = 'Invalid CVE Number'
+    if title.startswith("ERROR"):
+        output = "Invalid CVE Number"
     else:
-        key = args['config']['api']['bitlykey']
+        key = args["config"]["api"]["bitlykey"]
         output = "%s -- %s" % (title, get_short(url, key))
     send(output)

@@ -22,7 +22,7 @@ from time import time
 from ..helpers.command import Command
 
 
-@Command(['ping', 'ping6'], ['handler', 'target', 'config', 'nick', 'name'])
+@Command(["ping", "ping6"], ["handler", "target", "config", "nick", "name"])
 def cmd(send, msg, args):
     """Ping something.
 
@@ -32,7 +32,7 @@ def cmd(send, msg, args):
     if not msg:
         send("Ping what?")
         return
-    channel = args['target'] if args['target'] != 'private' else args['nick']
+    channel = args["target"] if args["target"] != "private" else args["nick"]
     # CTCP PING
     if "." not in msg and ":" not in msg:
         targets = set(msg.split())
@@ -40,14 +40,16 @@ def cmd(send, msg, args):
             send("Please specify three or fewer people to ping.")
             return
         for target in targets:
-            if not re.match(args['config']['core']['nickregex'], target):
+            if not re.match(args["config"]["core"]["nickregex"], target):
                 send("Invalid nick %s" % target)
             else:
-                args['handler'].ping_map[target] = channel
-                args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
+                args["handler"].ping_map[target] = channel
+                args["handler"].connection.ctcp("PING", target, " ".join(str(time()).split(".")))
         return
     try:
-        answer = subprocess.check_output([args['name'], '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
+        answer = subprocess.check_output(
+            [args["name"], "-W", "1", "-c", "1", msg], stderr=subprocess.STDOUT
+        )
         answer = answer.decode().splitlines()
         send(answer[0])
         send(answer[1])

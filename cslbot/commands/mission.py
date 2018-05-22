@@ -18,11 +18,14 @@
 from ..helpers.command import Command
 
 
-@Command('mission')
+@Command("mission")
 def cmd(send, *_):
     """Announces the mission.
 
     Syntax: {command}
 
     """
-    send("'s mission is to provide all functionality necessary so that you never have to leave IRC again.", "action")
+    send(
+        "'s mission is to provide all functionality necessary so that you never have to leave IRC again.",
+        "action",
+    )

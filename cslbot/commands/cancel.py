@@ -18,7 +18,7 @@
 from ..helpers.command import Command
 
 
-@Command('cancel', ['nick', 'handler'], role="admin")
+@Command("cancel", ["nick", "handler"], role="admin")
 def cmd(send, msg, args):
     """Cancels a deferred action with the given id.
 
@@ -26,7 +26,7 @@ def cmd(send, msg, args):
 
     """
     try:
-        args['handler'].workers.cancel(int(msg))
+        args["handler"].workers.cancel(int(msg))
     except ValueError:
         send("Index must be a digit.")
         return

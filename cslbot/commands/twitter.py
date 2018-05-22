@@ -28,42 +28,46 @@ def get_search_api(config):
     global _API
     if _API:
         return _API
-    consumer_key = config['api']['twitterconsumerkey']
-    consumer_secret = config['api']['twitterconsumersecret']
-    access_token = config['api']['twitteraccesstoken']
-    access_token_secret = config['api']['twitteraccesstokensecret']
+    consumer_key = config["api"]["twitterconsumerkey"]
+    consumer_secret = config["api"]["twitterconsumersecret"]
+    access_token = config["api"]["twitteraccesstoken"]
+    access_token_secret = config["api"]["twitteraccesstokensecret"]
 
     _API = TwitterSearch(
-        consumer_key=consumer_key, consumer_secret=consumer_secret, access_token=access_token, access_token_secret=access_token_secret)
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token,
+        access_token_secret=access_token_secret,
+    )
     return _API
 
 
 def tweet_url(user, tid):
-    return 'https://twitter.com/{}/status/{}'.format(user, tid)
+    return "https://twitter.com/{}/status/{}".format(user, tid)
 
 
 def tweet_text(obj):
-    user = obj['user']['screen_name']
-    text = obj['text'].replace('\n', ' ')
-    return '@{}: {} ({})'.format(user, text, tweet_url(user, obj['id_str']))
+    user = obj["user"]["screen_name"]
+    text = obj["text"].replace("\n", " ")
+    return "@{}: {} ({})".format(user, text, tweet_url(user, obj["id_str"]))
 
 
-@Command('twitter', ['config', 'nick'])
+@Command("twitter", ["config", "nick"])
 def cmd(send, msg, args):
     """
     Search the Twitter API.
     Syntax: {command} <query> <--user username> <--count 1>
     """
     if not msg:
-        send('What do you think I am, a bird?')
+        send("What do you think I am, a bird?")
         return
 
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('query', nargs='*')
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("query", nargs="*")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--user', dest='user', default=None)
-    group.add_argument('--count', dest='count', type=int, default=1)
-    group.add_argument('--random', action='store_true', default=False)
+    group.add_argument("--user", dest="user", default=None)
+    group.add_argument("--count", dest="count", type=int, default=1)
+    group.add_argument("--random", action="store_true", default=False)
 
     try:
         cmdargs = parser.parse_args(msg)
@@ -71,21 +75,21 @@ def cmd(send, msg, args):
         send(str(e))
         return
 
-    api = get_search_api(args['config'])
+    api = get_search_api(args["config"])
 
     query = TwitterSearchOrder()
-    keywords = [' '.join(cmdargs.query)]
+    keywords = [" ".join(cmdargs.query)]
     if cmdargs.user:
-        keywords += ['from:{}'.format(cmdargs.user)]
+        keywords += ["from:{}".format(cmdargs.user)]
     query.set_keywords(keywords)
-    query.set_language('en')
-    query.set_result_type('recent')
+    query.set_language("en")
+    query.set_result_type("recent")
     query.set_include_entities(False)
     query.set_count(cmdargs.count)
 
     results = list(api.search_tweets_iterable(query))
     if not results:
-        send('No tweets here!')
+        send("No tweets here!")
         return
 
     if cmdargs.random:
@@ -98,10 +102,12 @@ def cmd(send, msg, args):
         return
 
     if cmdargs.count > max_chan_tweets:
-        send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
+        send(
+            "That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets)
+        )
 
     for i in range(0, min(cmdargs.count, max_pm_tweets)):
         if cmdargs.count <= max_chan_tweets:
             send(tweet_text(results[i]))
         else:
-            send(tweet_text(results[i]), target=args['nick'])
+            send(tweet_text(results[i]), target=args["nick"])

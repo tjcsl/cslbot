@@ -19,13 +19,13 @@ from ..helpers import textutils
 from ..helpers.hook import Hook
 
 
-@Hook('xkcd', ['pubmsg', 'action'], ['nick', 'type'])
+@Hook("xkcd", ["pubmsg", "action"], ["nick", "type"])
 def handle(send, msg, args):
     """Implements several XKCD comics."""
     output = textutils.gen_xkcd_sub(msg, True)
     if output is None:
         return
-    if args['type'] == 'action':
-        send("correction: * %s %s" % (args['nick'], output))
+    if args["type"] == "action":
+        send("correction: * %s %s" % (args["nick"], output))
     else:
-        send("%s actually meant: %s" % (args['nick'], output))
+        send("%s actually meant: %s" % (args["nick"], output))

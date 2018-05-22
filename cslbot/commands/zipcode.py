@@ -23,24 +23,27 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command(['zipcode', 'zip'], ['config'])
+@Command(["zipcode", "zip"], ["config"])
 def cmd(send, msg, args):
     """Gets the location of a ZIP code
     Syntax: {command} (zipcode)
     Powered by STANDS4, www.stands4.com
     """
-    uid = args['config']['api']['stands4uid']
-    token = args['config']['api']['stands4token']
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('zipcode', action=arguments.ZipParser)
+    uid = args["config"]["api"]["stands4uid"]
+    token = args["config"]["api"]["stands4token"]
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("zipcode", action=arguments.ZipParser)
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
 
-    req = get("http://www.stands4.com/services/v2/zip.php", params={'uid': uid, 'tokenid': token, 'zip': cmdargs.zipcode})
+    req = get(
+        "http://www.stands4.com/services/v2/zip.php",
+        params={"uid": uid, "tokenid": token, "zip": cmdargs.zipcode},
+    )
 
     xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
-    location = xml.find('location').text
+    location = xml.find("location").text
     send("%s: %s" % (cmdargs.zipcode, location))

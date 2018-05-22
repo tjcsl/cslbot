@@ -21,7 +21,7 @@ from ..helpers.hook import Hook
 from ..helpers.orm import Scores
 
 
-@Hook('scores', ['pubmsg', 'privmsg', 'action'], ['nick', 'config', 'type', 'db', 'abuse'])
+@Hook("scores", ["pubmsg", "privmsg", "action"], ["nick", "config", "type", "db", "abuse"])
 def handle(send, msg, args):
     """Handles scores.
 
@@ -29,22 +29,22 @@ def handle(send, msg, args):
     themselves. Otherwise substract one point.
 
     """
-    session = args['db']
-    matches = re.findall(r"\b(?<!-)(%s{2,16})(\+\+|--)" % args['config']['core']['nickregex'], msg)
+    session = args["db"]
+    matches = re.findall(r"\b(?<!-)(%s{2,16})(\+\+|--)" % args["config"]["core"]["nickregex"], msg)
     if not matches:
         return
-    if args['type'] == 'privmsg':
-        send('Hey, no points in private messages!')
+    if args["type"] == "privmsg":
+        send("Hey, no points in private messages!")
         return
     for match in matches:
         # limit to 5 score changes per minute
-        if args['abuse'](args['nick'], 5, 'scores'):
+        if args["abuse"](args["nick"], 5, "scores"):
             return
         name, direction = match[0].lower(), match[1]
         if direction == "++":
             score = 1
-            if name == args['nick'].lower():
-                send("%s: No self promotion! You lose 10 points." % args['nick'])
+            if name == args["nick"].lower():
+                send("%s: No self promotion! You lose 10 points." % args["nick"])
                 score = -10
         else:
             score = -1

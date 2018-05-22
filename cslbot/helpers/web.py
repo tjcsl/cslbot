@@ -31,8 +31,8 @@ from .orm import UrbanBlacklist
 def get_rand_word(session):
     term = None
     while term is None or session.query(UrbanBlacklist).filter(UrbanBlacklist.word == term).count():
-        url = get('http://www.urbandictionary.com/random.php?page').url
-        term = parse.unquote_plus(url.split('=')[1])
+        url = get("http://www.urbandictionary.com/random.php?page").url
+        term = parse.unquote_plus(url.split("=")[1])
     return term
 
 
@@ -48,11 +48,11 @@ def get_urban(msg, session, key):
 
 def get_urban_definition(msg, key):
     msg = msg.split()
-    index = msg[0][1:] if msg[0].startswith('#') else None
+    index = msg[0][1:] if msg[0].startswith("#") else None
     term = " ".join(msg[1:]) if index is not None else " ".join(msg)
     try:
-        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
-        data = req.json()['list']
+        req = get("http://api.urbandictionary.com/v0/define", params={"term": term}, timeout=10)
+        data = req.json()["list"]
     except json.JSONDecodeError:
         return "UrbanDictionary is having problems.", None
     except ReadTimeout:
@@ -60,14 +60,14 @@ def get_urban_definition(msg, key):
     if len(data) == 0:
         return "UrbanDictionary doesn't have an answer for you.", None
     elif index is None:
-        output = data[0]['definition']
+        output = data[0]["definition"]
     elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
         output = "Invalid Index"
     else:
-        output = data[int(index) - 1]['definition']
-    output = ' '.join(output.splitlines()).strip()
+        output = data[int(index) - 1]["definition"]
+    output = " ".join(output.splitlines()).strip()
     if len(output) > 650:
-        url = urlutils.get_short('http://urbandictionary.com/define.php?term=%s' % term, key)
+        url = urlutils.get_short("http://urbandictionary.com/define.php?term=%s" % term, key)
     else:
         url = None
     return output, url
@@ -75,30 +75,35 @@ def get_urban_definition(msg, key):
 
 def create_issue(title, desc, nick, repo, apikey):
     body = {"title": title, "body": "%s\nIssue created by %s" % (desc, nick), "labels": ["bot"]}
-    headers = {'Authorization': 'token %s' % apikey}
-    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
+    headers = {"Authorization": "token %s" % apikey}
+    req = post(
+        "https://api.github.com/repos/%s/issues" % repo, headers=headers, data=json.dumps(body)
+    )
     data = req.json()
-    if 'html_url' in data.keys():
-        return data['html_url'], True
-    elif 'message' in data.keys():
-        return data['message'], False
+    if "html_url" in data.keys():
+        return data["html_url"], True
+    elif "message" in data.keys():
+        return data["message"], False
     else:
         return "Unknown error", False
 
 
 def post_tumblr(config, blog, body):
     tumblr = OAuth1Session(
-        client_key=config['api']['tumblrconsumerkey'],
-        client_secret=config['api']['tumblrconsumersecret'],
-        resource_owner_key=config['api']['tumblroauthkey'],
-        resource_owner_secret=config['api']['tumblroauthsecret'])
-    data = {'body': body}
-    response = tumblr.post('https://api.tumblr.com/v2/blog/%s/post' % blog, params={'type': 'text'}, data=data).json()
-    if response['meta']['status'] == 201:
+        client_key=config["api"]["tumblrconsumerkey"],
+        client_secret=config["api"]["tumblrconsumersecret"],
+        resource_owner_key=config["api"]["tumblroauthkey"],
+        resource_owner_secret=config["api"]["tumblroauthsecret"],
+    )
+    data = {"body": body}
+    response = tumblr.post(
+        "https://api.tumblr.com/v2/blog/%s/post" % blog, params={"type": "text"}, data=data
+    ).json()
+    if response["meta"]["status"] == 201:
         return "Posted!", True
     else:
-        if isinstance(response['response'], dict):
-            error = response['response']['errors'][0]
+        if isinstance(response["response"], dict):
+            error = response["response"]["errors"][0]
         else:
-            error = response['meta']['msg']
-    return "Got error %d from Tumblr: %s" % (response['meta']['status'], error), False
+            error = response["meta"]["msg"]
+    return "Got error %d from Tumblr: %s" % (response["meta"]["status"], error), False

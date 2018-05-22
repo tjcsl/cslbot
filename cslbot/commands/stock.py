@@ -24,23 +24,30 @@ from ..helpers.command import Command
 
 
 def gen_stock(msg):
-    quote = get("http://dev.markitondemand.com/Api/v2/Quote/json", params={'symbol': msg}).json()
-    if 'Message' in quote.keys():
-        return quote['Message']
+    quote = get("http://dev.markitondemand.com/Api/v2/Quote/json", params={"symbol": msg}).json()
+    if "Message" in quote.keys():
+        return quote["Message"]
     else:
-        changepercent = "%.3f%%" % quote['ChangePercent']
-        if quote['ChangePercent'] >= 0:
-            changepercent = '+' + changepercent
-        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent, quote['High'],
-                                                             quote['Low'])
+        changepercent = "%.3f%%" % quote["ChangePercent"]
+        if quote["ChangePercent"] >= 0:
+            changepercent = "+" + changepercent
+        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (
+            quote["Name"],
+            msg,
+            quote["Timestamp"],
+            quote["LastPrice"],
+            changepercent,
+            quote["High"],
+            quote["Low"],
+        )
 
 
 def random_stock():
-    html = get('http://www.openicon.com/rsp/rsp_n100.php').text
-    return re.search(r'\((.*)\)', html).group(1)
+    html = get("http://www.openicon.com/rsp/rsp_n100.php").text
+    return re.search(r"\((.*)\)", html).group(1)
 
 
-@Command('stock', ['config'])
+@Command("stock", ["config"])
 def cmd(send, msg, args):
     """Gets a stock quote.
 
@@ -48,8 +55,8 @@ def cmd(send, msg, args):
     Powered by markit on demand (http://dev.markitondemand.com)
 
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('stock', nargs='?', default=random_stock())
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("stock", nargs="?", default=random_stock())
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:

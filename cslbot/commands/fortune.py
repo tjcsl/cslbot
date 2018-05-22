@@ -19,17 +19,17 @@ from ..helpers.command import Command
 from ..helpers.misc import get_fortune, list_fortunes
 
 
-@Command(['fortune', 'bofh', 'excuse'], ['name'])
+@Command(["fortune", "bofh", "excuse"], ["name"])
 def cmd(send, msg, args):
     """Returns a fortune.
 
     Syntax: {command} <list|[-a|-o] [module]>
 
     """
-    if msg == 'list':
+    if msg == "list":
         fortunes = list_fortunes() + list_fortunes(True)
         send(" ".join(fortunes), ignore_length=True)
     else:
-        output = get_fortune(msg, args['name'])
+        output = get_fortune(msg, args["name"])
         for line in output.splitlines():
             send(line)

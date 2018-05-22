@@ -23,18 +23,18 @@ from requests.exceptions import ReadTimeout
 from ..helpers.command import Command
 
 
-@Command('fweather')
+@Command("fweather")
 def cmd(send, msg, _):
     """Gets the F***ING weather!
     Syntax: {command} <location>
     """
     try:
-        req = get('http://thefuckingweather.com/April/%s' % msg, timeout=5)
+        req = get("http://thefuckingweather.com/April/%s" % msg, timeout=5)
         doc = fromstring(req.text)
-        elem = doc.find('.//h1')
+        elem = doc.find(".//h1")
     except ReadTimeout:
         elem = None
     if elem is None:
-        send('NO FSCKING RESULTS.')
+        send("NO FSCKING RESULTS.")
     else:
         send(elem.text)

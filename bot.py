@@ -20,13 +20,13 @@ import warnings
 from os.path import abspath, dirname
 import sys
 
-warnings.simplefilter('default')
-warnings.filterwarnings('ignore', category=ImportWarning, module='importlib')
-warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic.*')
+warnings.simplefilter("default")
+warnings.filterwarnings("ignore", category=ImportWarning, module="importlib")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="alembic.*")
 
 sys.path.insert(0, dirname(abspath(__file__)))
 
 from cslbot.helpers import core  # noqa
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     core.init(dirname(abspath(__file__)))

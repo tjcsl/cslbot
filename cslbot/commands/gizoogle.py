@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_gizoogle
 
 
-@Command('gizoogle')
+@Command("gizoogle")
 def cmd(send, msg, args):
     """Translates something into gangsta.
 

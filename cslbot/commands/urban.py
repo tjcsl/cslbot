@@ -36,36 +36,36 @@ def unblacklist_word(session, msg):
     return "Removed blacklisting of %s" % msg
 
 
-@Command('urban', ['config', 'db', 'is_admin', 'nick'])
+@Command("urban", ["config", "db", "is_admin", "nick"])
 def cmd(send, msg, args):
     """Gets a definition from urban dictionary.
 
     Syntax: {command} <[#<num>] <term>|--blacklist (word)|--unblacklist (word)>
 
     """
-    key = args['config']['api']['bitlykey']
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--blacklist')
-    parser.add_argument('--unblacklist')
+    key = args["config"]["api"]["bitlykey"]
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--blacklist")
+    parser.add_argument("--unblacklist")
 
     try:
         cmdargs, msg = parser.parse_known_args(msg)
-        msg = ' '.join(msg)
+        msg = " ".join(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
     if cmdargs.blacklist:
-        if args['is_admin'](args['nick']):
-            send(blacklist_word(args['db'], cmdargs.blacklist))
+        if args["is_admin"](args["nick"]):
+            send(blacklist_word(args["db"], cmdargs.blacklist))
         else:
             send("Blacklisting is admin-only")
     elif cmdargs.unblacklist:
-        if args['is_admin'](args['nick']):
-            send(unblacklist_word(args['db'], cmdargs.unblacklist))
+        if args["is_admin"](args["nick"]):
+            send(unblacklist_word(args["db"], cmdargs.unblacklist))
         else:
             send("Unblacklisting is admin-only")
     else:
-        defn, url = get_urban(msg, args['db'], key)
+        defn, url = get_urban(msg, args["db"], key)
         send(defn)
         if url:
             send("See full definition at %s" % url)

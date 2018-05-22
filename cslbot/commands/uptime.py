@@ -21,7 +21,7 @@ from datetime import datetime
 from ..helpers.command import Command
 
 
-@Command('uptime', ['handler'])
+@Command("uptime", ["handler"])
 def cmd(send, _, args):
     """Shows the bot's uptime.
 
@@ -29,9 +29,9 @@ def cmd(send, _, args):
 
     """
     curr = datetime.now()
-    uptime = args['handler'].uptime
-    load_avg = ', '.join([str(x) for x in os.getloadavg()])
-    starttime = curr - uptime['start']
-    reloaded = curr - uptime['reloaded']
+    uptime = args["handler"].uptime
+    load_avg = ", ".join([str(x) for x in os.getloadavg()])
+    starttime = curr - uptime["start"]
+    reloaded = curr - uptime["reloaded"]
     send("Time since start: %s, load average: %s" % (starttime, load_avg))
     send("Time since reload: %s" % reloaded)

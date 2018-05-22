@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.textutils import gen_morse, gen_word
 
 
-@Command('morse')
+@Command("morse")
 def cmd(send, msg, args):
     """Converts text to morse code.
 

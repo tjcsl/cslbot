@@ -20,23 +20,23 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('ignore', ['config', 'db', 'nick'], role="admin")
+@Command("ignore", ["config", "db", "nick"], role="admin")
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
     Syntax: {command} <--clear|--show/--list|--delete|nick>
     """
-    parser = arguments.ArgParser(args['config'])
+    parser = arguments.ArgParser(args["config"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--clear', action='store_true')
-    group.add_argument('--show', '--list', action='store_true')
-    group.add_argument('--delete', '--remove', action='store_true')
-    parser.add_argument('nick', nargs='?')
+    group.add_argument("--clear", action="store_true")
+    group.add_argument("--show", "--list", action="store_true")
+    group.add_argument("--delete", "--remove", action="store_true")
+    parser.add_argument("nick", nargs="?")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    session = args['db']
+    session = args["db"]
     if cmdargs.clear:
         session.query(Ignore).delete()
         send("Ignore list cleared.")
@@ -57,7 +57,10 @@ def cmd(send, msg, args):
                 session.delete(row)
                 send("%s is no longer ignored." % cmdargs.nick)
     elif cmdargs.nick:
-        send("%s ignored %s" % (args['nick'], cmdargs.nick), target=args['config']['core']['ctrlchan'])
+        send(
+            "%s ignored %s" % (args["nick"], cmdargs.nick),
+            target=args["config"]["core"]["ctrlchan"],
+        )
         send(misc.ignore(session, cmdargs.nick))
     else:
         send("Ignore who?")

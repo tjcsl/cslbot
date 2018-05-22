@@ -36,7 +36,13 @@ logger = logging.getLogger(__name__)
 
 class BotHandler(object):
 
-    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: List[str], confdir: str):
+    def __init__(
+        self,
+        config: configparser.ConfigParser,
+        connection: irc.client.ServerConnection,
+        channels: List[str],
+        confdir: str,
+    ):
         """Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -56,9 +62,9 @@ class BotHandler(object):
         self.guarded: List[str] = []
         self.voiced: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
         self.opers: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
-        self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
+        self.features = {"account-notify": False, "extended-join": False, "whox": False}
         start = datetime.now()
-        self.uptime = {'start': start, 'reloaded': start}
+        self.uptime = {"start": start, "reloaded": start}
         self.abuselist: Dict[str, Dict[str, datetime]] = {}
         self.ping_map: Dict[str, str] = {}
         self.outputfilter: Dict[str, List[Callable[[str], str]]] = collections.defaultdict(list)
@@ -73,37 +79,37 @@ class BotHandler(object):
     def get_data(self):
         """Saves the handler's data for :func:`.reloader.do_reload`"""
         data = {}
-        data['guarded'] = self.guarded[:]
-        data['voiced'] = copy.deepcopy(self.voiced)
-        data['opers'] = copy.deepcopy(self.opers)
-        data['features'] = self.features.copy()
-        data['uptime'] = self.uptime.copy()
-        data['abuselist'] = self.abuselist.copy()
-        data['who_map'] = self.who_map.copy()
+        data["guarded"] = self.guarded[:]
+        data["voiced"] = copy.deepcopy(self.voiced)
+        data["opers"] = copy.deepcopy(self.opers)
+        data["features"] = self.features.copy()
+        data["uptime"] = self.uptime.copy()
+        data["abuselist"] = self.abuselist.copy()
+        data["who_map"] = self.who_map.copy()
         return data
 
     def set_data(self, data):
         """Called from :func:`.reloader.do_reload` to restore the handler's data."""
         for key, val in data.items():
             setattr(self, key, val)
-        self.uptime['reloaded'] = datetime.now()
+        self.uptime["reloaded"] = datetime.now()
 
     def update_authstatus(self, nick):
-        if self.features['whox']:
+        if self.features["whox"]:
             tag = random.randint(0, 999)
             self.who_map[tag] = nick
             self.send_who(nick, tag)
-        elif self.config['feature']['servicestype'] == "ircservices":
-            self.rate_limited_send('privmsg', 'NickServ', 'STATUS %s' % nick)
-        elif self.config['feature']['servicestype'] == "atheme":
-            self.rate_limited_send('privmsg', 'NickServ', 'ACC %s' % nick)
+        elif self.config["feature"]["servicestype"] == "ircservices":
+            self.rate_limited_send("privmsg", "NickServ", "STATUS %s" % nick)
+        elif self.config["feature"]["servicestype"] == "atheme":
+            self.rate_limited_send("privmsg", "NickServ", "ACC %s" % nick)
 
     def send_who(self, target, tag):
         # http://faerion.sourceforge.net/doc/irc/whox.var
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
-        self.rate_limited_send('who', '{} %naft,{}'.format(target, tag))
+        self.rate_limited_send("who", "{} %naft,{}".format(target, tag))
 
-    def is_admin(self, send, nick, required_role='admin'):
+    def is_admin(self, send, nick, required_role="admin"):
         """Checks if a nick is a admin.
 
         If NickServ hasn't responded yet, then the admin is unverified,
@@ -122,16 +128,16 @@ class BotHandler(object):
             if required_role == "owner" and admin.role != "owner":
                 return False
             # no nickserv support, assume people are who they say they are.
-            if not self.config['feature'].getboolean('nickserv'):
+            if not self.config["feature"].getboolean("nickserv"):
                 return True
             if not admin.registered:
                 self.update_authstatus(nick)
                 # We don't necessarily want to complain in all cases.
                 if send is not None:
-                    send("Unverified admin: %s" % nick, target=self.config['core']['channel'])
+                    send("Unverified admin: %s" % nick, target=self.config["core"]["channel"])
                 return False
             else:
-                if not self.features['account-notify']:
+                if not self.features["account-notify"]:
                     # reverify every 5min if we don't have the notification feature.
                     if datetime.now() - admin.time > timedelta(minutes=5):
                         self.update_authstatus(nick)
@@ -140,7 +146,7 @@ class BotHandler(object):
     def get_admins(self):
         """Check verification for all admins."""
         # no nickserv support, assume people are who they say they are.
-        if not self.config['feature'].getboolean('nickserv'):
+        if not self.config["feature"].getboolean("nickserv"):
             return
         with self.db.session_scope() as session:
             for a in session.query(orm.Permissions).all():
@@ -167,7 +173,7 @@ class BotHandler(object):
             if datetime.now() - x < timedelta(seconds=60):
                 count = count + 1
         if count > limit:
-            msg = "%s: don't abuse scores!" if cmd == 'scores' else "%s: stop abusing the bot!"
+            msg = "%s: don't abuse scores!" if cmd == "scores" else "%s: stop abusing the bot!"
             send(msg % nick, target=target)
             with self.db.session_scope() as session:
                 send(misc.ignore(session, nick))
@@ -180,7 +186,7 @@ class BotHandler(object):
         while sum(map(len, msg_enc)) > max_len:
             split, msg_enc = misc.split_msg(msg_enc, max_len)
             msgs.append(split)
-        msgs.append(''.join([x.decode() for x in msg_enc]).strip())
+        msgs.append("".join([x.decode() for x in msg_enc]).strip())
         return msgs
 
     def send(self, target, nick, msg, msgtype, ignore_length=False, filters=None):
@@ -190,11 +196,13 @@ class BotHandler(object):
 
         """
         if not isinstance(msg, str):
-            raise Exception("Trying to send a %s to irc, only strings allowed." % type(msg).__name__)
+            raise Exception(
+                "Trying to send a %s to irc, only strings allowed." % type(msg).__name__
+            )
         if filters is None:
             filters = self.outputfilter[target]
         for i in filters:
-            if target != self.config['core']['ctrlchan']:
+            if target != self.config["core"]["ctrlchan"]:
                 msg = i(msg)
         # Avoid spam from commands that produce excessive output.
         if not ignore_length:
@@ -207,10 +215,10 @@ class BotHandler(object):
 
         for i in msgs:
             self.do_log(target, nick, i, msgtype)
-            if msgtype == 'action':
-                self.rate_limited_send('action', target, i)
+            if msgtype == "action":
+                self.rate_limited_send("action", target, i)
             else:
-                self.rate_limited_send('privmsg', target, i)
+                self.rate_limited_send("privmsg", target, i)
 
     def rate_limited_send(self, mtype, target, msg=None):
         with self.flood_lock:
@@ -234,7 +242,7 @@ class BotHandler(object):
         target = target.lower()
         flags = 0
         # Properly handle /msg +#channel
-        if target.startswith(('+', '@')):
+        if target.startswith(("+", "@")):
             target = target[1:]
         with self.data_lock:
             if target in self.channels:
@@ -243,14 +251,14 @@ class BotHandler(object):
                 if self.voiced[target].get(nick, False):
                     flags |= 2
             else:
-                target = 'private'
+                target = "private"
         # FIXME: should we special-case this?
         # strip ctrl chars from !creffett
-        msg = msg.replace('\x02\x038,4', '<rage>')
+        msg = msg.replace("\x02\x038,4", "<rage>")
         self.db.log(nick, target, flags, msg, msgtype)
 
         if self.log_to_ctrlchan:
-            ctrlchan = self.config['core']['ctrlchan']
+            ctrlchan = self.config["core"]["ctrlchan"]
             if target != ctrlchan:
                 ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
                 # If we call self.send, we'll get a infinite loop.
@@ -262,8 +270,8 @@ class BotHandler(object):
         Prevent user from leaving the primary channel.
 
         """
-        channel = self.config['core']['channel']
-        botnick = self.config['core']['nick']
+        channel = self.config["core"]["channel"]
+        botnick = self.config["core"]["nick"]
         if not cmdargs:
             # don't leave the primary channel
             if target == channel:
@@ -271,14 +279,14 @@ class BotHandler(object):
                 return
             else:
                 cmdargs = target
-        if not cmdargs.startswith(('#', '+', '@')):
-            cmdargs = '#' + cmdargs
+        if not cmdargs.startswith(("#", "+", "@")):
+            cmdargs = "#" + cmdargs
         # don't leave the primary channel
         if cmdargs == channel:
             send("%s must have a home." % botnick)
             return
         # don't leave the control channel
-        if cmdargs == self.config['core']['ctrlchan']:
+        if cmdargs == self.config["core"]["ctrlchan"]:
             send("%s must remain under control, or bad things will happen." % botnick)
             return
         self.send(cmdargs, nick, "Leaving at the request of %s" % nick, msgtype)
@@ -293,15 +301,15 @@ class BotHandler(object):
         if not cmdargs:
             send("Join what?")
             return
-        if cmdargs == '0':
+        if cmdargs == "0":
             send("I'm sorry, Dave. I'm afraid I can't do that.")
             return
-        if not cmdargs.startswith(('#', '+', '@')):
-            cmdargs = '#' + cmdargs
+        if not cmdargs.startswith(("#", "+", "@")):
+            cmdargs = "#" + cmdargs
         cmd = cmdargs.split()
         # FIXME: use argparse
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
-            send("%s is already a member of %s" % (self.config['core']['nick'], cmd[0]))
+            send("%s is already a member of %s" % (self.config["core"]["nick"], cmd[0]))
             return
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
@@ -309,9 +317,9 @@ class BotHandler(object):
     def check_mode(self, mode):
         if mode[2] != self.connection.real_nickname:
             return False
-        if (mode[0], mode[1]) == ('-', 'o'):
+        if (mode[0], mode[1]) == ("-", "o"):
             return True
-        elif (mode[0], mode[1]) == ('+', 'b'):
+        elif (mode[0], mode[1]) == ("+", "b"):
             return True
         return False
 
@@ -320,18 +328,18 @@ class BotHandler(object):
         mode_changes = irc.modes.parse_channel_modes(msg)
         with self.data_lock:
             for change in mode_changes:
-                if change[1] == 'v':
-                    self.voiced[target][change[2]] = True if change[0] == '+' else False
-                if change[1] == 'o':
-                    self.opers[target][change[2]] = True if change[0] == '+' else False
+                if change[1] == "v":
+                    self.voiced[target][change[2]] = True if change[0] == "+" else False
+                if change[1] == "o":
+                    self.opers[target][change[2]] = True if change[0] == "+" else False
         # reop
         # FIXME: handle -o+o msbobBot msbobBot
         if [x for x in mode_changes if self.check_mode(x)]:
             send("%s: :(" % nick, target=target)
             # Assume bot admins know what they're doing.
             if not self.is_admin(None, nick):
-                send("OP %s" % target, target='ChanServ')
-                send("UNBAN %s" % target, target='ChanServ')
+                send("OP %s" % target, target="ChanServ")
+                send("UNBAN %s" % target, target="ChanServ")
 
         if len(self.guarded) > 0:
             # if user is guarded and quieted, devoiced, or deopped, fix that
@@ -340,7 +348,10 @@ class BotHandler(object):
             if match and nick not in [match.group(3), self.connection.real_nickname]:
                 modestring = "+voe-qb %s" % (" ".join([match.group(3)] * 5))
                 self.connection.mode(target, modestring)
-                send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
+                send(
+                    "Mode %s on %s by the guard system" % (modestring, target),
+                    target=self.config["core"]["ctrlchan"],
+                )
 
     def do_kick(self, send, target, nick, msg, slogan=True):
         """Kick users.
@@ -357,9 +368,9 @@ class BotHandler(object):
             return
         with self.data_lock:
             ops = [k for k, v in self.opers[target].items() if v]
-        botnick = self.config['core']['nick']
+        botnick = self.config["core"]["nick"]
         if botnick not in ops:
-            ops = ['someone'] if not ops else ops
+            ops = ["someone"] if not ops else ops
             send(textutils.gen_creffett("%s: /op the bot" % random.choice(ops)), target=target)
         elif random.random() < 0.01 and msg == "shutting caps lock off":
             if nick in ops:
@@ -377,18 +388,18 @@ class BotHandler(object):
         """Handle the various args that modules need."""
         realargs = {}
         args = {
-            'nick': nick,
-            'handler': self,
-            'db': None,
-            'config': self.config,
-            'source': source,
-            'name': name,
-            'type': msgtype,
-            'botnick': self.connection.real_nickname,
-            'target': target if target[0] == "#" else "private",
-            'do_kick': lambda target, nick, msg: self.do_kick(send, target, nick, msg),
-            'is_admin': lambda nick: self.is_admin(send, nick),
-            'abuse': lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd)
+            "nick": nick,
+            "handler": self,
+            "db": None,
+            "config": self.config,
+            "source": source,
+            "name": name,
+            "type": msgtype,
+            "botnick": self.connection.real_nickname,
+            "target": target if target[0] == "#" else "private",
+            "do_kick": lambda target, nick, msg: self.do_kick(send, target, nick, msg),
+            "is_admin": lambda nick: self.is_admin(send, nick),
+            "abuse": lambda nick, limit, cmd: self.abusecheck(send, nick, target, limit, cmd),
         }
         for arg in modargs:
             if arg in args:
@@ -404,14 +415,16 @@ class BotHandler(object):
         - Join the control channel.
 
         """
-        self.rate_limited_send('join', self.config['core']['channel'])
-        self.rate_limited_send('join', self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
+        self.rate_limited_send("join", self.config["core"]["channel"])
+        self.rate_limited_send(
+            "join", self.config["core"]["ctrlchan"], self.config["auth"]["ctrlkey"]
+        )
         # We use this to pick up info on admins who aren't currently in a channel.
         self.workers.defer(5, False, self.get_admins)
-        extrachans = self.config['core']['extrachans']
+        extrachans = self.config["core"]["extrachans"]
         if extrachans:
-            for chan in [x.strip() for x in extrachans.split(',')]:
-                self.rate_limited_send('join', chan)
+            for chan in [x.strip() for x in extrachans.split(",")]:
+                self.rate_limited_send("join", chan)
 
     def is_ignored(self, nick):
         with self.db.session_scope() as session:
@@ -420,12 +433,12 @@ class BotHandler(object):
     def get_filtered_send(self, cmdargs, send, target):
         """Parse out any filters."""
         parser = arguments.ArgParser(self.config)
-        parser.add_argument('--filter')
+        parser.add_argument("--filter")
         try:
             filterargs, remainder = parser.parse_known_args(cmdargs)
         except arguments.ArgumentException as ex:
             return str(ex), None
-        cmdargs = ' '.join(remainder)
+        cmdargs = " ".join(remainder)
         if filterargs.filter is None:
             return cmdargs, send
         filter_list, output = textutils.append_filters(filterargs.filter)
@@ -433,8 +446,15 @@ class BotHandler(object):
             return output, None
 
         # define a new send to handle filter chaining
-        def filtersend(msg, mtype='privmsg', target=target, ignore_length=False):
-            self.send(target, self.connection.real_nickname, msg, mtype, ignore_length, filters=filter_list)
+        def filtersend(msg, mtype="privmsg", target=target, ignore_length=False):
+            self.send(
+                target,
+                self.connection.real_nickname,
+                msg,
+                mtype,
+                ignore_length,
+                filters=filter_list,
+            )
 
         return cmdargs, filtersend
 
@@ -444,58 +464,63 @@ class BotHandler(object):
             c.join(e.arguments[0])
 
     def handle_event(self, msg, send, c, e):
-        if e.type == 'whospcrpl':
+        if e.type == "whospcrpl":
             self.handle_who(e)
-        elif e.type == 'account':
+        elif e.type == "account":
             self.handle_account(e)
-        elif e.type == 'authenticate':
+        elif e.type == "authenticate":
             self.handle_authenticate(e)
-        elif e.type == 'bannedfromchan':
+        elif e.type == "bannedfromchan":
             self.workers.defer(5, False, self.do_rejoin, c, e)
-        elif e.type == 'cap':
+        elif e.type == "cap":
             self.handle_cap(e)
-        elif e.type in ['ctcpreply', 'nosuchnick']:
+        elif e.type in ["ctcpreply", "nosuchnick"]:
             misc.ping(self.ping_map, c, e, datetime.now())
-        elif e.type == 'error':
+        elif e.type == "error":
             logger.error(e.target)
-        elif e.type == 'featurelist':
-            if 'WHOX' in e.arguments:
-                self.features['whox'] = True
-        elif e.type == 'nick':
+        elif e.type == "featurelist":
+            if "WHOX" in e.arguments:
+                self.features["whox"] = True
+        elif e.type == "nick":
             self.handle_nick(send, e)
-        elif e.type == 'nicknameinuse':
-            self.connection.nick('Guest%d' % random.getrandbits(20))
-        elif e.type == 'privnotice':
-            if e.source.nick == 'NickServ':
+        elif e.type == "nicknameinuse":
+            self.connection.nick("Guest%d" % random.getrandbits(20))
+        elif e.type == "privnotice":
+            if e.source.nick == "NickServ":
                 # FIXME: don't pass self
                 acl.set_admin(msg, self)
-        elif e.type == 'welcome':
+        elif e.type == "welcome":
             self.handle_welcome()
 
     def handle_authenticate(self, e):
-        passwd = self.config['auth']['serverpass']
-        user = self.config['core']['nick']
-        if e.target == '+':
-            token = base64.b64encode('\0'.join([user, user, passwd]).encode())
-            self.connection.send_raw('AUTHENTICATE %s' % token.decode())
-            self.connection.cap('END')
+        passwd = self.config["auth"]["serverpass"]
+        user = self.config["core"]["nick"]
+        if e.target == "+":
+            token = base64.b64encode("\0".join([user, user, passwd]).encode())
+            self.connection.send_raw("AUTHENTICATE %s" % token.decode())
+            self.connection.cap("END")
 
     def handle_account(self, e):
         with self.db.session_scope() as session:
-            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+            admin = session.query(orm.Permissions).filter(
+                orm.Permissions.nick == e.source.nick
+            ).first()
             if admin is not None:
-                if e.target == '*':
+                if e.target == "*":
                     admin.registered = False
                 else:
                     admin.registered = True
                     admin.time = datetime.now()
 
     def handle_welcome(self):
-        passwd = self.config['auth']['serverpass']
-        user = self.config['core']['nick']
-        logger.info("Connected to server %s", self.config['core']['host'])
-        if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
-            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
+        passwd = self.config["auth"]["serverpass"]
+        user = self.config["core"]["nick"]
+        logger.info("Connected to server %s", self.config["core"]["host"])
+        if (
+            self.config.getboolean("feature", "nickserv")
+            and self.connection.real_nickname != self.config["core"]["nick"]
+        ):
+            self.connection.privmsg("NickServ", "REGAIN %s %s" % (user, passwd))
         self.do_welcome()
 
     def handle_who(self, e):
@@ -505,30 +530,34 @@ class BotHandler(object):
         # properly track voiced status.
         location = self.who_map[int(e.arguments[0])]
         # FIXME: devoice if G in modes
-        self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
-        self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
+        self.voiced[location][e.arguments[1]] = "+" in e.arguments[2]
+        self.opers[location][e.arguments[1]] = "@" in e.arguments[2]
         with self.db.session_scope() as session:
-            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.arguments[1]).first()
+            admin = session.query(orm.Permissions).filter(
+                orm.Permissions.nick == e.arguments[1]
+            ).first()
             if admin is not None:
                 if e.arguments[1] == e.arguments[3]:
                     admin.registered = True
                     admin.time = datetime.now()
 
     def handle_cap(self, e):
-        if e.arguments[0] == 'ACK':
-            if e.arguments[1].strip() == 'sasl':
-                self.connection.send_raw('AUTHENTICATE PLAIN')
-            elif e.arguments[1].strip() == 'account-notify':
-                self.features['account-notify'] = True
-            elif e.arguments[1].strip() == 'extended-join':
-                self.features['extended-join'] = True
+        if e.arguments[0] == "ACK":
+            if e.arguments[1].strip() == "sasl":
+                self.connection.send_raw("AUTHENTICATE PLAIN")
+            elif e.arguments[1].strip() == "account-notify":
+                self.features["account-notify"] = True
+            elif e.arguments[1].strip() == "extended-join":
+                self.features["extended-join"] = True
 
     def handle_nick(self, send, e):
         with self.data_lock:
             for channel in misc.get_channels(self.channels, e.target):
-                self.do_log(channel, e.source.nick, e.target, 'nick')
+                self.do_log(channel, e.source.nick, e.target, "nick")
                 # Move the voice+op status to the new nick
-                if e.source.nick in self.voiced[channel].keys():  # In case we somehow didn't set the voice state on the old nick
+                if e.source.nick in self.voiced[
+                    channel
+                ].keys():  # In case we somehow didn't set the voice state on the old nick
                     self.voiced[channel][e.target] = self.voiced[channel].pop(e.source.nick)
                 if e.source.nick in self.opers[channel].keys():  # As above, for ops
                     self.opers[channel][e.target] = self.opers[channel].pop(e.source.nick)
@@ -538,7 +567,7 @@ class BotHandler(object):
 
     def handle_join(self, c, e, target, send):
         # Get status for all nicks in-channel when we join, or the new nick when somebody else joins.
-        if self.features['whox']:
+        if self.features["whox"]:
             tag = random.randint(0, 999)
             self.who_map[tag] = target
             if e.source.nick == c.real_nickname:
@@ -546,10 +575,12 @@ class BotHandler(object):
             else:
                 self.send_who(e.source.nick, tag)
         if e.source.nick == c.real_nickname:
-            send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
-        elif self.features['extended-join']:
+            send("Joined channel %s" % target, target=self.config["core"]["ctrlchan"])
+        elif self.features["extended-join"]:
             with self.db.session_scope() as session:
-                admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+                admin = session.query(orm.Permissions).filter(
+                    orm.Permissions.nick == e.source.nick
+                ).first()
                 if admin is not None:
                     if e.arguments[0] == e.source.nick:
                         admin.registered = True
@@ -559,14 +590,14 @@ class BotHandler(object):
 
     def get_cmd(self, msg):
         cmd = msg.split()[0]
-        cmdchar = self.config['core']['cmdchar']
+        cmdchar = self.config["core"]["cmdchar"]
 
         cmdlen = len(cmd) + 1
         # FIXME: figure out a better way to handle !s
-        if cmd.startswith('%ss' % cmdchar):
+        if cmd.startswith("%ss" % cmdchar):
             # escape special regex chars
-            raw_cmdchar = '\\' + cmdchar if re.match(r'[\[\].^$*+?]', cmdchar) else cmdchar
-            match = re.match(r'%ss(\W)' % raw_cmdchar, cmd)
+            raw_cmdchar = "\\" + cmdchar if re.match(r"[\[\].^$*+?]", cmdchar) else cmdchar
+            match = re.match(r"%ss(\W)" % raw_cmdchar, cmd)
             if match:
                 cmd = cmd.split(match.group(1))[0]
                 cmdlen = len(cmd)
@@ -592,12 +623,12 @@ class BotHandler(object):
 
     def handle_kick(self, c, e, target, send):
         if e.arguments[0] == c.real_nickname:
-            send("Kicked from channel %s" % target, target=self.config['core']['ctrlchan'])
+            send("Kicked from channel %s" % target, target=self.config["core"]["ctrlchan"])
             # Auto-rejoin after 5 seconds.
             self.workers.defer(5, False, self.connection.join, target)
 
     def handle_hooks(self, send, nick, target, e, msg):
-        if self.config['feature'].getboolean('hooks'):
+        if self.config["feature"].getboolean("hooks"):
             for h in registry.hook_registry.get_hook_objects():
                 realargs = self.do_args(h.args, send, nick, target, e.source, h, e.type)
                 h.run(send, msg, e.type, self, target, realargs)
@@ -605,7 +636,7 @@ class BotHandler(object):
     def handle_msg(self, c, e):
         """The Heart and Soul of IrcBot."""
 
-        if e.type not in ['authenticate', 'error', 'join', 'part', 'quit']:
+        if e.type not in ["authenticate", "error", "join", "part", "quit"]:
             nick = e.source.nick
         else:
             nick = e.source
@@ -616,42 +647,53 @@ class BotHandler(object):
             msg = " ".join(e.arguments).strip()
 
         # Send the response to private messages to the sending nick.
-        target = nick if e.type == 'privmsg' else e.target
+        target = nick if e.type == "privmsg" else e.target
 
-        def send(msg, mtype='privmsg', target=target, ignore_length=False):
+        def send(msg, mtype="privmsg", target=target, ignore_length=False):
             self.send(target, self.connection.real_nickname, msg, mtype, ignore_length)
 
         if e.type in [
-                'account', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'nosuchnick', 'nick', 'nicknameinuse',
-                'privnotice', 'welcome', 'whospcrpl'
+            "account",
+            "authenticate",
+            "bannedfromchan",
+            "cap",
+            "ctcpreply",
+            "error",
+            "featurelist",
+            "nosuchnick",
+            "nick",
+            "nicknameinuse",
+            "privnotice",
+            "welcome",
+            "whospcrpl",
         ]:
             self.handle_event(msg, send, c, e)
             return
 
         # ignore empty messages
-        if not msg and e.type != 'join':
+        if not msg and e.type != "join":
             return
 
         self.do_log(target, nick, msg, e.type)
 
-        if e.type == 'mode':
+        if e.type == "mode":
             self.do_mode(target, msg, nick, send)
             return
 
-        if e.type == 'join':
+        if e.type == "join":
             self.handle_join(c, e, target, send)
             return
 
-        if e.type == 'part':
+        if e.type == "part":
             if nick == c.real_nickname:
-                send("Parted channel %s" % target, target=self.config['core']['ctrlchan'])
+                send("Parted channel %s" % target, target=self.config["core"]["ctrlchan"])
             return
 
-        if e.type == 'kick':
+        if e.type == "kick":
             self.handle_kick(c, e, target, send)
             return
 
-        if e.target == self.config['core']['ctrlchan'] and self.is_admin(None, nick):
+        if e.target == self.config["core"]["ctrlchan"] and self.is_admin(None, nick):
             control.handle_ctrlchan(self, msg, nick, send)
 
         if self.is_ignored(nick) and not self.is_admin(None, nick):
@@ -660,7 +702,7 @@ class BotHandler(object):
         self.handle_hooks(send, nick, target, e, msg)
 
         # We only process hooks for notices, not commands.
-        if e.type == 'pubnotice':
+        if e.type == "pubnotice":
             return
 
         msg = misc.get_cmdchar(self.config, c, msg, e.type)
@@ -669,7 +711,7 @@ class BotHandler(object):
         if registry.command_registry.is_registered(cmd_name):
             self.run_cmd(send, nick, target, cmd_name, cmdargs, e)
         # special commands
-        elif cmd_name == 'reload':
+        elif cmd_name == "reload":
             with self.db.session_scope() as session:
                 if session.query(orm.Permissions).filter(orm.Permissions.nick == nick).count():
                     send("Aye Aye Capt'n")

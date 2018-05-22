@@ -20,7 +20,7 @@ from random import random
 from ..helpers.hook import Hook
 
 
-@Hook('understanding', 'pubmsg')
+@Hook("understanding", "pubmsg")
 def handle(send, msg, _):
-    if msg == 'ic' and random() < 0.005:
-        send('But do you understand?')
+    if msg == "ic" and random() < 0.005:
+        send("But do you understand?")

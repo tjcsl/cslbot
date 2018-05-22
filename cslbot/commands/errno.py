@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.misc import parse_header
 
 
-@Command('errno')
+@Command("errno")
 def cmd(send, msg, _):
     """Return either a random value or the specified one from errno.h.
 
@@ -27,6 +27,6 @@ def cmd(send, msg, _):
 
     """
     try:
-        send(parse_header('errno', msg))
+        send(parse_header("errno", msg))
     except FileNotFoundError:
         send("Please install gcc.")

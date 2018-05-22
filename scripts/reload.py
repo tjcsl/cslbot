@@ -23,14 +23,20 @@ from os.path import dirname, join
 
 def main(confdir="/etc/cslbot") -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(join(confdir, "config.cfg")) as f:
         config.read_file(f)
-    passwd = config['auth']['ctrlpass']
-    port = config['core']['serverport']
-    msg = '%s\nreload' % passwd
+    passwd = config["auth"]["ctrlpass"]
+    port = config["core"]["serverport"]
+    msg = "%s\nreload" % passwd
     try:
         proc = subprocess.run(
-            ['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
+            ["nc", "localhost", port],
+            input=msg,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            check=True,
+        )
         output = proc.stdout.splitlines()
         for line in output:
             print(line)
@@ -40,6 +46,6 @@ def main(confdir="/etc/cslbot") -> None:
         raise Exception("Could not connect to server, is bot running?")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(join(dirname(__file__), ".."))

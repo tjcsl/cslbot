@@ -26,7 +26,9 @@ from ..helpers.registry import command_registry
 
 
 def get_command_totals(session):
-    rows = session.query(Commands.command, func.count(Commands.command)).group_by(Commands.command).all()
+    rows = session.query(Commands.command, func.count(Commands.command)).group_by(
+        Commands.command
+    ).all()
     return {x[0]: x[1] for x in rows}
 
 
@@ -52,29 +54,31 @@ def get_command(session, command, totals):
         return "Nobody has used that command."
     else:
         maxuser = maxuser[-1]
-        return "%s is the most frequent user of %s with %d out of %d uses." % (maxuser, command, nicktotals[maxuser], totals[command])
+        return "%s is the most frequent user of %s with %d out of %d uses." % (
+            maxuser, command, nicktotals[maxuser], totals[command]
+        )
 
 
-@Command('stats', ['config', 'db'])
+@Command("stats", ["config", "db"])
 def cmd(send, msg, args):
     """Gets stats.
 
     Syntax: {command} <--high|--low|--userhigh|--nick <nick>|command>
 
     """
-    parser = arguments.ArgParser(args['config'])
+    parser = arguments.ArgParser(args["config"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--high', action='store_true')
-    group.add_argument('--low', action='store_true')
-    group.add_argument('--userhigh', action='store_true')
-    group.add_argument('--nick', action=arguments.NickParser)
-    group.add_argument('command', nargs='?')
+    group.add_argument("--high", action="store_true")
+    group.add_argument("--low", action="store_true")
+    group.add_argument("--userhigh", action="store_true")
+    group.add_argument("--nick", action=arguments.NickParser)
+    group.add_argument("command", nargs="?")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    session = args['db']
+    session = args["db"]
     totals = get_command_totals(session)
     sortedtotals = sorted(totals, key=totals.get)
     if command_registry.is_registered(cmdargs.command):
@@ -82,13 +86,13 @@ def cmd(send, msg, args):
     elif cmdargs.command and not command_registry.is_registered(cmdargs.command):
         send("Command %s not found." % cmdargs.command)
     elif cmdargs.high:
-        send('Most Used Commands:')
+        send("Most Used Commands:")
         high = list(reversed(sortedtotals))
         for x in range(3):
             if x < len(high):
                 send("%s: %s" % (high[x], totals[high[x]]))
     elif cmdargs.low:
-        send('Least Used Commands:')
+        send("Least Used Commands:")
         low = sortedtotals
         for x in range(3):
             if x < len(low):
@@ -97,7 +101,7 @@ def cmd(send, msg, args):
         totals = get_nick_totals(session)
         sortedtotals = sorted(totals, key=totals.get)
         high = list(reversed(sortedtotals))
-        send('Most active bot users:')
+        send("Most active bot users:")
         for x in range(3):
             if x < len(high):
                 send("%s: %s" % (high[x], totals[high[x]]))

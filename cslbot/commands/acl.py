@@ -20,23 +20,23 @@ from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
 
-@Command('acl', ['config', 'db'], role="owner")
+@Command("acl", ["config", "db"], role="owner")
 def cmd(send, msg, args):
     """Handles permissions
     Syntax: {command} (--add|--remove) --nick (nick) --role (admin)
     """
-    parser = arguments.ArgParser(args['config'])
-    parser.add_argument('--nick', action=arguments.NickParser, required=True)
-    parser.add_argument('--role', choices=['admin'], required=True)
+    parser = arguments.ArgParser(args["config"])
+    parser.add_argument("--nick", action=arguments.NickParser, required=True)
+    parser.add_argument("--role", choices=["admin"], required=True)
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--add', action='store_true')
-    group.add_argument('--remove', action='store_true')
+    group.add_argument("--add", action="store_true")
+    group.add_argument("--remove", action="store_true")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    session = args['db']
+    session = args["db"]
     admin = session.query(Permissions).filter(Permissions.nick == cmdargs.nick).first()
     if cmdargs.add:
         if admin is None:

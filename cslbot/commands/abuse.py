@@ -20,27 +20,27 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('abuse', ['config', 'db', 'handler'], role="admin")
+@Command("abuse", ["config", "db", "handler"], role="admin")
 def cmd(send, msg, args):
     """Shows or clears the abuse list
     Syntax: {command} <--clear|--show>
     """
-    parser = arguments.ArgParser(args['config'])
+    parser = arguments.ArgParser(args["config"])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--clear', action='store_true')
-    group.add_argument('--show', action='store_true')
+    group.add_argument("--clear", action="store_true")
+    group.add_argument("--show", action="store_true")
     try:
         cmdargs = parser.parse_args(msg)
     except arguments.ArgumentException as e:
         send(str(e))
         return
     if cmdargs.clear:
-        args['handler'].abuselist.clear()
+        args["handler"].abuselist.clear()
         send("Abuse list cleared.")
     elif cmdargs.show:
         abusers = []
-        for x in args['handler'].abuselist.keys():
-            if args['db'].query(Ignore).filter(Ignore.nick == x).count():
+        for x in args["handler"].abuselist.keys():
+            if args["db"].query(Ignore).filter(Ignore.nick == x).count():
                 abusers.append(x)
         if abusers:
             send(", ".join(abusers))

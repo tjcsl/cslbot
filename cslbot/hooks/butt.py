@@ -20,7 +20,7 @@ from random import random
 from ..helpers.hook import Hook
 
 
-@Hook('butt', 'pubmsg', ['type', 'nick'])
+@Hook("butt", "pubmsg", ["type", "nick"])
 def handle(send, msg, args):
     if "the cloud" in msg:
         msg = msg.replace("the cloud", "my butt")
@@ -31,7 +31,7 @@ def handle(send, msg, args):
     # make it more random.
     if random() > 0.005:
         return
-    if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], msg))
+    if args["type"] == "pubmsg":
+        send("%s actually meant: %s" % (args["nick"], msg))
     else:
-        send("correction: * %s %s" % (args['nick'], msg))
+        send("correction: * %s %s" % (args["nick"], msg))

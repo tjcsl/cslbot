@@ -19,14 +19,14 @@ from ..helpers.command import Command
 from ..helpers.registry import command_registry
 
 
-@Command('help', ['nick', 'config'])
+@Command("help", ["nick", "config"])
 def cmd(send, msg, args):
     """Gives help.
 
     Syntax: {command} [command]
 
     """
-    cmdchar = args['config']['core']['cmdchar']
+    cmdchar = args["config"]["core"]["cmdchar"]
     if msg:
         if msg.startswith(cmdchar):
             msg = msg[len(cmdchar):]
@@ -40,9 +40,9 @@ def cmd(send, msg, args):
                 send("No documentation found.")
             else:
                 for line in doc.splitlines():
-                    send(line.format(command=cmdchar + msg), target=args['nick'])
+                    send(line.format(command=cmdchar + msg), target=args["nick"])
     else:
         modules = sorted(command_registry.get_enabled_commands())
-        cmdlist = (' %s' % cmdchar).join(modules)
-        send('Commands: %s%s' % (cmdchar, cmdlist), target=args['nick'], ignore_length=True)
-        send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])
+        cmdlist = (" %s" % cmdchar).join(modules)
+        send("Commands: %s%s" % (cmdchar, cmdlist), target=args["nick"], ignore_length=True)
+        send("%shelp <command> for more info on a command." % cmdchar, target=args["nick"])

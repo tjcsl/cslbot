@@ -23,7 +23,7 @@ from ..helpers.command import Command
 from ..helpers.misc import do_pull
 
 
-@Command('pull', ['config', 'handler'], role="owner")
+@Command("pull", ["config", "handler"], role="owner")
 def cmd(send, _, args):
     """Pull changes.
 
@@ -31,10 +31,10 @@ def cmd(send, _, args):
 
     """
     try:
-        if exists(join(args['handler'].confdir, '.git')):
-            send(do_pull(srcdir=args['handler'].confdir))
+        if exists(join(args["handler"].confdir, ".git")):
+            send(do_pull(srcdir=args["handler"].confdir))
         else:
-            send(do_pull(repo=args['config']['api']['githubrepo']))
+            send(do_pull(repo=args["config"]["api"]["githubrepo"]))
     except subprocess.CalledProcessError as ex:
         for line in ex.output.strip().splitlines():
             logging.error(line)

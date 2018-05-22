@@ -26,7 +26,7 @@ def get_scores(cursor):
     return {row.nick: row.score for row in rows}
 
 
-@Command(['bc', 'math'], ['db'])
+@Command(["bc", "math"], ["db"])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
 
@@ -36,13 +36,15 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
-    cursor = args['db']
+    cursor = args["db"]
     scores = get_scores(cursor)
     for word in msg.split():
         if word in scores:
             msg = msg.replace(word, str(scores[word]))
-    msg += '\n'
-    proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    msg += "\n"
+    proc = subprocess.Popen(
+        ["bc", "-l"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
     try:
         output = proc.communicate(msg.encode(), timeout=5)[0].decode().splitlines()
     except subprocess.TimeoutExpired:

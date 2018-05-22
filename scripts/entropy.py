@@ -25,8 +25,8 @@ from os import path
 from sqlalchemy import func, or_
 
 # Make this work from git.
-if path.exists(path.join(path.dirname(__file__), '..', '.git')):
-    sys.path.insert(0, path.join(path.dirname(__file__), '..'))
+if path.exists(path.join(path.dirname(__file__), "..", ".git")):
+    sys.path.insert(0, path.join(path.dirname(__file__), ".."))
 
 from cslbot.helpers.orm import Log  # noqa
 from cslbot.helpers.sql import get_session  # noqa
@@ -34,37 +34,47 @@ from cslbot.helpers.sql import get_session  # noqa
 
 def main(confdir="/etc/cslbot") -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(path.join(confdir, 'config.cfg')) as f:
+    with open(path.join(confdir, "config.cfg")) as f:
         config.read_file(f)
     session = get_session(config)()
-    channel = '#tjhsst'
-    type_filter = or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')
-    users = session.query(Log.source).filter(Log.target == channel, type_filter).having(func.count(Log.id) > 500).group_by(Log.source).all()
+    channel = "#tjhsst"
+    type_filter = or_(Log.type == "privmsg", Log.type == "pubmsg", Log.type == "action")
+    users = session.query(Log.source).filter(Log.target == channel, type_filter).having(
+        func.count(Log.id) > 500
+    ).group_by(
+        Log.source
+    ).all()
     freq = []
     for user in users:
-        lines = session.query(Log.msg).filter(Log.target == channel, Log.source == user[0],
-                                              or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')).all()
-        text = '\n'.join([x[0] for x in lines])
-        with open('/tmp/foo', 'w') as f:
+        lines = session.query(Log.msg).filter(
+            Log.target == channel,
+            Log.source == user[0],
+            or_(Log.type == "privmsg", Log.type == "pubmsg", Log.type == "action"),
+        ).all()
+        text = "\n".join([x[0] for x in lines])
+        with open("/tmp/foo", "w") as f:
             f.write(text)
         try:
             output = subprocess.check_output(
-                ['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'], stderr=subprocess.STDOUT, universal_newlines=True)
+                ["zpaq", "add", "foo.zpaq", "/tmp/foo", "-test", "-summary", "1", "-method", "5"],
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+            )
             sizes = output.splitlines()[-2]
-            before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
+            before, after = re.match(".*\((.*) -> .* -> (.*)\).*", sizes).groups()
             # 8 bits = 1 byte
             count = 1024 * 1024 * 8 * float(after) / len(text)
             freq.append((user[0], len(lines), float(after) / float(before) * 100, count))
         except subprocess.CalledProcessError as e:
             print(e.stdout)
             raise e
-    with open('freq.json', 'w') as f:
+    with open("freq.json", "w") as f:
         json.dump(freq, f, indent=True)
     for x in sorted(freq, key=lambda x: x[2]):
         print("%s: (%d lines) (%f%% compressed) (%f bits per char)" % x)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # If we're running from a git checkout, override the config path.
     # main(path.join(path.dirname(__file__), '..'))
     main()

@@ -24,20 +24,22 @@ from ..helpers.orm import Poll_responses, Polls
 
 def start_poll(args):
     """Starts a poll."""
-    if args.type == 'privmsg':
+    if args.type == "privmsg":
         return "We don't have secret ballots in this benevolent dictatorship!"
     if not args.msg:
         return "Polls need a question."
-    ctrlchan = args.config['core']['ctrlchan']
+    ctrlchan = args.config["core"]["ctrlchan"]
     poll = Polls(question=args.msg, submitter=args.nick)
     args.session.add(poll)
     args.session.flush()
-    if args.isadmin or not args.config.getboolean('adminrestrict', 'poll'):
+    if args.isadmin or not args.config.getboolean("adminrestrict", "poll"):
         poll.accepted = 1
         return "Poll #%d created!" % poll.id
     else:
         args.send("Poll submitted for approval.", target=args.nick)
-        args.send("New Poll: #%d -- %s, Submitted by %s" % (poll.id, args.msg, args.nick), target=ctrlchan)
+        args.send(
+            "New Poll: #%d -- %s, Submitted by %s" % (poll.id, args.msg, args.nick), target=ctrlchan
+        )
         return ""
 
 
@@ -61,7 +63,9 @@ def delete_poll(args):
 
 
 def get_open_poll(session, pid):
-    return session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
+    return session.query(Polls).filter(
+        Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid
+    ).first()
 
 
 def edit_poll(args):
@@ -150,7 +154,9 @@ def tally_poll(args):
 
 
 def get_response(session, pid, nick):
-    return session.query(Poll_responses).filter(Poll_responses.pid == pid, Poll_responses.voter == nick).first()
+    return session.query(Poll_responses).filter(
+        Poll_responses.pid == pid, Poll_responses.voter == nick
+    ).first()
 
 
 def vote(session, nick, pid, response):
@@ -192,10 +198,10 @@ def retract(args):
 
 def list_polls(args):
     num = args.session.query(Polls).filter(Polls.active == 1).count()
-    return "There are %d polls. Check them out at %spolls.html" % (num, args.config['core']['url'])
+    return "There are %d polls. Check them out at %spolls.html" % (num, args.config["core"]["url"])
 
 
-@Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
+@Command(["vote", "poll"], ["db", "nick", "is_admin", "type", "config"])
 def cmd(send, msg, args):
     """Handles voting.
 
@@ -211,30 +217,32 @@ def cmd(send, msg, args):
         command = command[0]
     # FIXME: integrate this with ArgParser
     if command.isdigit():
-        if args['type'] == 'privmsg':
+        if args["type"] == "privmsg":
             send("We don't have secret ballots in this benevolent dictatorship!")
         else:
-            send(vote(args['db'], args['nick'], int(command), msg))
+            send(vote(args["db"], args["nick"], int(command), msg))
         return
-    isadmin = args['is_admin'](args['nick'])
-    parser = arguments.ArgParser(args['config'])
-    parser.set_defaults(session=args['db'], msg=msg, nick=args['nick'])
+    isadmin = args["is_admin"](args["nick"])
+    parser = arguments.ArgParser(args["config"])
+    parser.set_defaults(session=args["db"], msg=msg, nick=args["nick"])
     subparser = parser.add_subparsers()
-    start_parser = subparser.add_parser('start', config=args['config'], aliases=['open', 'add', 'create'])
-    start_parser.set_defaults(func=start_poll, send=send, isadmin=isadmin, type=args['type'])
-    tally_parser = subparser.add_parser('tally')
+    start_parser = subparser.add_parser(
+        "start", config=args["config"], aliases=["open", "add", "create"]
+    )
+    start_parser.set_defaults(func=start_poll, send=send, isadmin=isadmin, type=args["type"])
+    tally_parser = subparser.add_parser("tally")
     tally_parser.set_defaults(func=tally_poll, send=send)
-    list_parser = subparser.add_parser('list', config=args['config'])
+    list_parser = subparser.add_parser("list", config=args["config"])
     list_parser.set_defaults(func=list_polls)
-    retract_parser = subparser.add_parser('retract')
+    retract_parser = subparser.add_parser("retract")
     retract_parser.set_defaults(func=retract)
-    end_parser = subparser.add_parser('end', aliases=['close'])
+    end_parser = subparser.add_parser("end", aliases=["close"])
     end_parser.set_defaults(func=end_poll, isadmin=isadmin)
-    delete_parser = subparser.add_parser('delete')
+    delete_parser = subparser.add_parser("delete")
     delete_parser.set_defaults(func=delete_poll, isadmin=isadmin)
-    edit_parser = subparser.add_parser('edit')
+    edit_parser = subparser.add_parser("edit")
     edit_parser.set_defaults(func=edit_poll, isadmin=isadmin)
-    reopen_parser = subparser.add_parser('reopen')
+    reopen_parser = subparser.add_parser("reopen")
     reopen_parser.set_defaults(func=reopen, isadmin=isadmin)
     try:
         cmdargs = parser.parse_args(command)

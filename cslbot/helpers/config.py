@@ -31,9 +31,13 @@ except NameError:
     _config_file: Union[None, str] = None
 
 
-def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:
+def migrate_config(
+    config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]
+) -> None:
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
+    example_obj.read_string(
+        resource_string(Requirement.parse("CslBot"), "cslbot/static/config.example").decode()
+    )
     modified = False
 
     # Check for new sections/options
@@ -57,7 +61,7 @@ def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send
             send("Obsolete config section %s, consider removing." % section)
     if modified:
         send("Config file automatically migrated, please review.")
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             config_obj.write(f)
 
 
@@ -80,46 +84,53 @@ def load_config(config_file: str, send: Callable[[str], None]) -> configparser.C
 
 
 def do_config(config: configparser.ConfigParser) -> None:
-    nickregex = config['core']['nickregex']
+    nickregex = config["core"]["nickregex"]
     channelregex = "#[^ ,]{1,49}"
     prompttext = "Please enter a valid %s for the bot: "
 
     nick = ""
     while not re.match(nickregex, nick):
         nick = input(prompttext % "nick")
-    config['core']['nick'] = nick
+    config["core"]["nick"] = nick
 
     channel = ""
     while not re.match(channelregex, channel):
         channel = input(prompttext % "primary channel")
-    config['core']['channel'] = channel
+    config["core"]["channel"] = channel
 
     controlchannel = ""
     while not re.match(channelregex, controlchannel):
         controlchannel = input(prompttext % "control channel")
-    config['core']['ctrlchan'] = controlchannel
+    config["core"]["ctrlchan"] = controlchannel
 
     owner = ""
     while not re.match(nickregex, owner):
         owner = input(prompttext % "nick of owner")
-    config['auth']['owner'] = owner
+    config["auth"]["owner"] = owner
 
 
 def do_setup(configfile: str) -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
+    config.read_string(
+        resource_string(Requirement.parse("CslBot"), "cslbot/static/config.example").decode()
+    )
     do_config(config)
     configdir = dirname(configfile)
     try:
         if not exists(configdir):
             mkdir(configdir)
-        with open(configfile, 'w') as cfgfile:
+        with open(configfile, "w") as cfgfile:
             config.write(cfgfile)
-        groupsfile = join(configdir, 'groups.cfg')
+        groupsfile = join(configdir, "groups.cfg")
         if not exists(groupsfile):
-            with open(groupsfile, 'wb') as f:
-                f.write(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example'))
+            with open(groupsfile, "wb") as f:
+                f.write(
+                    resource_string(Requirement.parse("CslBot"), "cslbot/static/groups.example")
+                )
     except PermissionError:
-        raise Exception("Please make sure that the user you are running CslBot as has permission to write to %s" % configdir)
-    print('WARNING: you must set the db.engine option for the bot to work.')
+        raise Exception(
+            "Please make sure that the user you are running CslBot as has permission to write to %s"
+            % configdir
+        )
+    print("WARNING: you must set the db.engine option for the bot to work.")
     print("Configuration succeded, please review %s and restart the bot." % configfile)

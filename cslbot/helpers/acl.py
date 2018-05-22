@@ -27,9 +27,9 @@ def set_admin(msg, handler):
     | If NickServ tells us that the nick is authed, mark it as verified.
 
     """
-    if handler.config['feature']['servicestype'] == "ircservices":
+    if handler.config["feature"]["servicestype"] == "ircservices":
         match = re.match("STATUS (.*) ([0-3])", msg)
-    elif handler.config['feature']['servicestype'] == "atheme":
+    elif handler.config["feature"]["servicestype"] == "atheme":
         match = re.match("(.*) ACC ([0-3])", msg)
     if match:
         status = int(match.group(2))
@@ -39,7 +39,9 @@ def set_admin(msg, handler):
         with handler.db.session_scope() as session:
             admin = session.query(Permissions).filter(Permissions.nick == nick).first()
             if admin is None:
-                session.add(Permissions(nick=nick, role='admin', registered=True, time=datetime.now()))
+                session.add(
+                    Permissions(nick=nick, role="admin", registered=True, time=datetime.now())
+                )
             else:
                 admin.registered = True
                 admin.time = datetime.now()

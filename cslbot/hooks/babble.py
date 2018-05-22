@@ -20,9 +20,9 @@ from ..helpers.hook import Hook
 from ..helpers.orm import Babble
 
 
-@Hook('babble', ['pubmsg', 'privmsg'], ['db', 'config'])
+@Hook("babble", ["pubmsg", "privmsg"], ["db", "config"])
 def hook(send, msg, args):
     # No babble cache, so nothing to update
-    if not args['db'].query(Babble).count():
+    if not args["db"].query(Babble).count():
         return
-    update_markov(args['db'], args['config'])
+    update_markov(args["db"], args["config"])

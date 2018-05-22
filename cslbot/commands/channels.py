@@ -18,13 +18,13 @@
 from ..helpers.command import Command
 
 
-@Command('channels', ['handler', 'type'])
+@Command("channels", ["handler", "type"])
 def cmd(send, _, args):
     """Returns a listing of the current channels.
 
     Syntax: {command}
 
     """
-    with args['handler'].data_lock:
-        channels = ", ".join(sorted(args['handler'].channels))
+    with args["handler"].data_lock:
+        channels = ", ".join(sorted(args["handler"].channels))
     send(channels)

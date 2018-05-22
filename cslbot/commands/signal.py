@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.misc import parse_header
 
 
-@Command('signal')
+@Command("signal")
 def cmd(send, msg, _):
     """Return either a random value or the specified one from signal.h.
 
@@ -27,6 +27,6 @@ def cmd(send, msg, _):
 
     """
     try:
-        send(parse_header('signal', msg))
+        send(parse_header("signal", msg))
     except FileNotFoundError:
         send("Please install gcc.")

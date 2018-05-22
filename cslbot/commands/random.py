@@ -21,22 +21,22 @@ from random import getrandbits, randrange
 from ..helpers.command import Command
 
 
-@Command('random')
+@Command("random")
 def cmd(send, msg, args):
     """For when you don't have enough randomness in your life.
 
     Syntax: {command} [--int] [len]
 
     """
-    match = re.match(r'--(.+?)\b', msg)
-    randtype = 'hex'
+    match = re.match(r"--(.+?)\b", msg)
+    randtype = "hex"
     if match:
-        if match.group(1) == 'int':
-            randtype = 'int'
+        if match.group(1) == "int":
+            randtype = "int"
         else:
             send("Invalid Flag.")
             return
-    if randtype == 'hex':
+    if randtype == "hex":
         send(hex(getrandbits(50)))
     else:
         maxlen = 1000000000

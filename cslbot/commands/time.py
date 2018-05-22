@@ -20,14 +20,14 @@ import time
 from ..helpers.command import Command
 
 
-@Command(['time', 'date'])
+@Command(["time", "date"])
 def cmd(send, msg, _):
     """Tells the time.
 
     Syntax: {command}
 
     """
-    bold = '\x02'
+    bold = "\x02"
     if not msg:
         msg = bold + "Date: " + bold + "%A, %m/%d/%Y" + bold + "   Time: " + bold + "%H:%M:%S"
     send(time.strftime(msg))

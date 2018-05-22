@@ -24,8 +24,10 @@ from .urlutils import get_short, get_title
 
 def check_exists(subreddit):
     """Make sure that a subreddit actually exists."""
-    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
-    if req.json().get('kind') == 'Listing':
+    req = get(
+        "http://www.reddit.com/r/%s/about.json" % subreddit, headers={"User-Agent": "CslBot/1.0"}
+    )
+    if req.json().get("kind") == "Listing":
         # no subreddit exists, search results page is shown
         return False
     return req.status_code == 200
@@ -33,7 +35,7 @@ def check_exists(subreddit):
 
 def random_post(subreddit, apikey):
     """Gets a random post from a subreddit and returns a title and shortlink to it."""
-    subreddit = '/r/random' if subreddit is None else '/r/%s' % subreddit
-    urlstr = 'http://reddit.com%s/random?%s' % (subreddit, time.time())
-    url = get(urlstr, headers={'User-Agent': 'CslBot/1.0'}).url
-    return '** %s - %s' % (get_title(url, apikey), get_short(url, apikey))
+    subreddit = "/r/random" if subreddit is None else "/r/%s" % subreddit
+    urlstr = "http://reddit.com%s/random?%s" % (subreddit, time.time())
+    url = get(urlstr, headers={"User-Agent": "CslBot/1.0"}).url
+    return "** %s - %s" % (get_title(url, apikey), get_short(url, apikey))

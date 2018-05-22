@@ -22,12 +22,15 @@ from ..helpers.orm import Log
 
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
-    command = '%sseen %s' % (cmdchar, nick)
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command,
-                                    Log.type != 'join').order_by(Log.time.desc()).first()
+    command = "%sseen %s" % (cmdchar, nick)
+    return cursor.query(Log).filter(
+        Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command, Log.type != "join"
+    ).order_by(
+        Log.time.desc()
+    ).first()
 
 
-@Command('seen', ['db', 'config'])
+@Command("seen", ["db", "config"])
 def cmd(send, msg, args):
     """When a nick was last seen.
 
@@ -37,8 +40,8 @@ def cmd(send, msg, args):
     if not msg:
         send("Seen who?")
         return
-    cmdchar, ctrlchan = args['config']['core']['cmdchar'], args['config']['core']['ctrlchan']
-    last = get_last(args['db'], cmdchar, ctrlchan, msg)
+    cmdchar, ctrlchan = args["config"]["core"]["cmdchar"], args["config"]["core"]["ctrlchan"]
+    last = get_last(args["db"], cmdchar, ctrlchan, msg)
     if last is None:
         send("%s has never shown their face." % msg)
         return
@@ -46,24 +49,24 @@ def cmd(send, msg, args):
     # We only need second-level precision.
     delta -= delta % timedelta(seconds=1)
     output = "%s was last seen %s ago " % (msg, delta)
-    if last.type == 'pubmsg' or last.type == 'privmsg':
+    if last.type == "pubmsg" or last.type == "privmsg":
         output += 'saying "%s"' % last.msg
-    elif last.type == 'action':
+    elif last.type == "action":
         output += 'doing "%s"' % last.msg
-    elif last.type == 'part':
+    elif last.type == "part":
         output += 'leaving and saying "%s"' % last.msg
-    elif last.type == 'nick':
-        output += 'nicking to %s' % last.msg
-    elif last.type == 'quit':
+    elif last.type == "nick":
+        output += "nicking to %s" % last.msg
+    elif last.type == "quit":
         output += 'quiting and saying "%s"' % last.msg
-    elif last.type == 'kick':
-        output += 'kicking %s for "%s"' % last.msg.split(',')
-    elif last.type == 'topic':
-        output += 'changing topic to %s' % last.msg
-    elif last.type in ['pubnotice', 'privnotice']:
-        output += 'sending notice %s' % last.msg
-    elif last.type == 'mode':
-        output += 'setting mode %s' % last.msg
+    elif last.type == "kick":
+        output += 'kicking %s for "%s"' % last.msg.split(",")
+    elif last.type == "topic":
+        output += "changing topic to %s" % last.msg
+    elif last.type in ["pubnotice", "privnotice"]:
+        output += "sending notice %s" % last.msg
+    elif last.type == "mode":
+        output += "setting mode %s" % last.msg
     else:
         raise Exception("Invalid type.")
     send(output)

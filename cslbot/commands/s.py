@@ -29,7 +29,7 @@ from ..helpers.misc import escape
 
 
 def get_log(conn, target, user):
-    type_filter = or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')
+    type_filter = or_(Log.type == "privmsg", Log.type == "pubmsg", Log.type == "action")
     query = conn.query(Log).filter(type_filter, Log.target == target).order_by(Log.time.desc())
     if user is None:
         return query.offset(1).limit(500).all()
@@ -38,45 +38,45 @@ def get_log(conn, target, user):
 
 
 def get_modifiers(msg, nick, nickregex):
-    mods = {'ignorecase': False, 'allnicks': False, 'nick': nick}
+    mods = {"ignorecase": False, "allnicks": False, "nick": nick}
     if not msg:
         return mods
     elif msg == "i":
-        mods['ignorecase'] = True
+        mods["ignorecase"] = True
     elif msg == "g":
-        mods['allnicks'] = True
-        mods['nick'] = None
+        mods["allnicks"] = True
+        mods["nick"] = None
     elif msg == "ig" or msg == "gi":
-        mods['allnicks'] = True
-        mods['ignorecase'] = True
-        mods['nick'] = None
+        mods["allnicks"] = True
+        mods["ignorecase"] = True
+        mods["nick"] = None
     elif re.match(nickregex, msg):
-        mods['nick'] = escape(msg)
+        mods["nick"] = escape(msg)
     else:
         return None
     return mods
 
 
 def do_replace(log, config, char, regex, replacement):
-    startchars = [config['cmdchar']]
-    startchars.extend(config['altcmdchars'].split(','))
+    startchars = [config["cmdchar"]]
+    startchars.extend(config["altcmdchars"].split(","))
     # pre-generate the possible start strings
-    starttuple = tuple(['%ss%s' % (startchar.strip(), char) for startchar in startchars])
+    starttuple = tuple(["%ss%s" % (startchar.strip(), char) for startchar in startchars])
     for line in log:
         # ignore previous !s calls.
         if line.msg.startswith(starttuple):
             continue
-        if line.msg.startswith('%s: s%s' % (config['nick'], char)):
+        if line.msg.startswith("%s: s%s" % (config["nick"], char)):
             continue
         if regex.search(line.msg):
             output = regex.sub(replacement, line.msg)
-            if line.type == 'action':
+            if line.type == "action":
                 return "correction: * %s %s" % (line.source, output)
-            elif line.type != 'mode':
+            elif line.type != "mode":
                 return "%s actually meant: %s" % (line.source, output)
 
 
-@Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])
+@Command("s", ["db", "type", "nick", "config", "botnick", "target", "handler"])
 def cmd(send, msg, args):
     """Corrects a previous message.
 
@@ -87,29 +87,31 @@ def cmd(send, msg, args):
         send("Invalid Syntax.")
         return
     char = msg[0]
-    msg = [x.replace(r'\/', '/') for x in re.split(r'(?<!\\)\%s' % char, msg[1:], maxsplit=2)]
+    msg = [x.replace(r"\/", "/") for x in re.split(r"(?<!\\)\%s" % char, msg[1:], maxsplit=2)]
     # fix for people who forget a trailing slash
-    if len(msg) == 2 and args['config']['feature'].getboolean('lazyregex'):
-        msg.append('')
+    if len(msg) == 2 and args["config"]["feature"].getboolean("lazyregex"):
+        msg.append("")
     # not a valid sed statement.
     if not msg or len(msg) < 3:
         send("Invalid Syntax.")
         return
-    if args['type'] == 'privmsg':
-        send("Don't worry, %s is not a grammar Nazi." % args['botnick'])
+    if args["type"] == "privmsg":
+        send("Don't worry, %s is not a grammar Nazi." % args["botnick"])
         return
     string = msg[0]
     replacement = msg[1]
-    modifiers = get_modifiers(msg[2], args['nick'], args['config']['core']['nickregex'])
+    modifiers = get_modifiers(msg[2], args["nick"], args["config"]["core"]["nickregex"])
     if modifiers is None:
         send("Invalid modifiers.")
         return
 
     try:
-        regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
-        log = get_log(args['db'], args['target'], modifiers['nick'])
-        workers = args['handler'].workers
-        result = workers.run_pool(do_replace, [log, args['config']['core'], char, regex, replacement])
+        regex = re.compile(string, re.IGNORECASE) if modifiers["ignorecase"] else re.compile(string)
+        log = get_log(args["db"], args["target"], modifiers["nick"])
+        workers = args["handler"].workers
+        result = workers.run_pool(
+            do_replace, [log, args["config"]["core"], char, regex, replacement]
+        )
         try:
             msg = result.get(5)
         except multiprocessing.TimeoutError:

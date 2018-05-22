@@ -33,7 +33,7 @@ from ..commands import quote
 
 executor_lock = threading.Lock()
 
-Event = namedtuple('Event', ['event', 'run_on_cancel'])
+Event = namedtuple("Event", ["event", "run_on_cancel"])
 
 
 def pool_init():
@@ -52,8 +52,8 @@ class Workers(object):
             self.executor = concurrent.futures.ThreadPoolExecutor(4)
         self.handler = handler
 
-        def send(msg, target=handler.config['core']['ctrlchan']):
-            handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
+        def send(msg, target=handler.config["core"]["ctrlchan"]):
+            handler.send(target, handler.config["core"]["nick"], msg, "privmsg")
 
         self.defer(3600, False, self.handle_pending, handler, send)
         self.defer(3600, False, self.update_babble, handler, send)
@@ -78,19 +78,21 @@ class Workers(object):
     def run_action(self, func, args):
         try:
             thread = threading.current_thread()
-            thread_id = re.match(r'Thread-\d+', thread.name)
+            thread_id = re.match(r"Thread-\d+", thread.name)
             if thread_id is None:
                 raise Exception("Invalid thread name {}".format(thread.name))
             thread_id = thread_id.group(0)
-            thread.name = '%s running %s' % (thread_id, func.__name__)
+            thread.name = "%s running %s" % (thread_id, func.__name__)
             func(*args)
         except Exception as ex:
-            ctrlchan = self.handler.config['core']['ctrlchan']
+            ctrlchan = self.handler.config["core"]["ctrlchan"]
             backtrace.handle_traceback(ex, self.handler.connection, ctrlchan, self.handler.config)
 
-    def defer(self, t: int, run_on_cancel: bool, func: Callable[[Any, Any], None], *args: Any) -> int:
-        event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
-        event.name = '%s deferring %s' % (event.name, func.__name__)
+    def defer(
+        self, t: int, run_on_cancel: bool, func: Callable[[Any, Any], None], *args: Any
+    ) -> int:
+        event = threading.Timer(t, self.run_action, kwargs={"func": func, "args": args})
+        event.name = "%s deferring %s" % (event.name, func.__name__)
         event.start()
         with self.worker_lock:
             self.events[event.ident] = Event(event, run_on_cancel)
@@ -130,13 +132,13 @@ class Workers(object):
         # THE MASSES MUST BE APPEASED
         self.defer(3600 * 24, False, self.send_quotes, handler, send)
         with handler.db.session_scope() as session:
-            channel = self.handler.config['core']['channel']
-            send('QOTD: {}'.format(quote.do_get_quote(session)), target=channel)
+            channel = self.handler.config["core"]["channel"]
+            send("QOTD: {}".format(quote.do_get_quote(session)), target=channel)
 
     def check_active(self, handler, send):
         # Re-schedule check_active
         self.defer(3600, False, self.check_active, handler, send)
-        if not self.handler.config.getboolean('feature', 'voiceactive'):
+        if not self.handler.config.getboolean("feature", "voiceactive"):
             return
         # Mark inactive after 24 hours.
         active_time = datetime.now() - timedelta(hours=24)
@@ -144,9 +146,16 @@ class Workers(object):
             with handler.data_lock:
                 for name in handler.channels.keys():
                     for nick, voiced in handler.voiced[name].items():
-                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time,
-                                                                or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
-                            handler.rate_limited_send('mode', name, '-v %s' % nick)
+                        if (
+                            voiced
+                            and session.query(Log).filter(
+                                Log.source == nick,
+                                Log.time >= active_time,
+                                or_(Log.type == "pubmsg", Log.type == "action"),
+                            ).count()
+                            == 0
+                        ):
+                            handler.rate_limited_send("mode", name, "-v %s" % nick)
 
     def update_babble(self, handler, send):
         # Re-schedule update_babble

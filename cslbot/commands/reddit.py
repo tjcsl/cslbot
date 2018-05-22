@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.reddit import check_exists, random_post
 
 
-@Command(['reddit'], ['name', 'config'])
+@Command(["reddit"], ["name", "config"])
 def cmd(send, msg, args):
     """Gets a random Reddit post.
 
@@ -30,4 +30,4 @@ def cmd(send, msg, args):
         send("Non-existant subreddit.")
         return
     subreddit = msg if msg else None
-    send(random_post(subreddit, args['config']['api']['bitlykey']))
+    send(random_post(subreddit, args["config"]["api"]["bitlykey"]))

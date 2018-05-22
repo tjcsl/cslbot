@@ -20,7 +20,7 @@ import subprocess
 from ..helpers.command import Command
 
 
-@Command(['dc', 'postfix'])
+@Command(["dc", "postfix"])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
 
@@ -30,8 +30,14 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
-    msg += '\n'
-    proc = subprocess.Popen(['dc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    msg += "\n"
+    proc = subprocess.Popen(
+        ["dc"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+    )
     try:
         output = proc.communicate(msg, timeout=5)[0].splitlines()
     except subprocess.TimeoutExpired:
