@@ -1,2 +1,3 @@
 #!/bin/bash
-autopep8 -ir -aa --experimental .
+shopt -s extglob
+find -name "*.py" | xargs black -l 100
