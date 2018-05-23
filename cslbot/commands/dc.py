@@ -18,9 +18,10 @@
 import subprocess
 
 from ..helpers.command import Command
+from ..helpers.textutils import gen_slogan
 
 
-@Command(['dc', 'postfix'])
+@Command(['dc', 'postfix'], ['do_kick', 'source', 'target'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
 
@@ -30,6 +31,11 @@ def cmd(send, msg, args):
     if not msg:
         send("Calculate what?")
         return
+
+    if "!" in msg:
+        args['do_kick'](args['target'], args['source'], gen_slogan("hacking"))
+        return
+
     msg += '\n'
     proc = subprocess.Popen(['dc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     try:
