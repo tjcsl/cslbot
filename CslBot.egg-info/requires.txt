@@ -12,6 +12,7 @@ requests_oauthlib
 sphinx>=1.4.8
 mypy
 TwitterSearch
+tweepy
 
 [analysis]
 flake8-debugger
