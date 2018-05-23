@@ -58,7 +58,7 @@ def handle(send, msg, args):
             twitter_api = get_api(args["config"])
             status = twitter_api.get_status(tid)
 
-            send("** {} on Twitter: {}".format(status.author.screen_name, status.text))
+            send("** {} on Twitter: {}".format(status.author.screen_name, status.full_text))
             return
 
         imgkey = args['config']['api']['googleapikey']
