@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 from ..helpers import urlutils
 from ..helpers.hook import Hook
 from ..helpers.orm import Urls
+from ..helpers.twitter import get_api
 
 
 def get_urls(msg):
@@ -51,6 +52,15 @@ def handle(send, msg, args):
         # Prevent botloops
         if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1:
             return
+
+        if url.startswith("https://twitter.com"):
+            tid = url.split("/")[-1]
+            twitter_api = get_api(args["config"])
+            status = twitter_api.get_status(tid)
+
+            send("** {} on Twitter: {}".format(status.author.screen_name, status.text))
+            return
+
         imgkey = args['config']['api']['googleapikey']
         title = urlutils.get_title(url, imgkey)
 
