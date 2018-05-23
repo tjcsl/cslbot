@@ -18,10 +18,9 @@
 import subprocess
 
 from ..helpers.command import Command
-from ..helpers.textutils import gen_slogan
 
 
-@Command(['dc', 'postfix'], ['do_kick', 'source', 'target'])
+@Command(['dc', 'postfix'], ['do_kick', 'nick', 'target'])
 def cmd(send, msg, args):
     """Evaluates mathmatical expressions.
 
@@ -33,7 +32,7 @@ def cmd(send, msg, args):
         return
 
     if "!" in msg:
-        args['do_kick'](args['target'], args['source'].split('!')[0], "hacking")
+        args['do_kick'](args['target'], args['nick'], "hacking")
         return
 
     msg += '\n'
