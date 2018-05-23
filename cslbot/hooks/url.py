@@ -57,8 +57,9 @@ def handle(send, msg, args):
             tid = url.split("/")[-1]
             twitter_api = get_api(args["config"])
             status = twitter_api.get_status(tid, tweet_mode='extended')
+            text = status._json['full_text'].replace('\n', ' / ')
 
-            send("** {} on Twitter: {}".format(status.author.screen_name, status._json['full_text']))
+            send("** {} on Twitter: {}".format(status.author.screen_name, text))
             return
 
         imgkey = args['config']['api']['googleapikey']
