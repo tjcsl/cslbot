@@ -33,7 +33,8 @@ def cmd(send, msg, args):
         return
 
     if "!" in msg:
-        args['do_kick'](args['target'], args['source'], gen_slogan("hacking"))
+        send("you can't do that {}".format(args['source']))
+        args['do_kick'](args['target'], args['source'], "hacking")
         return
 
     msg += '\n'
