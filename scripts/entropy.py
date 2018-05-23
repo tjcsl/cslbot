@@ -51,7 +51,10 @@ def main(confdir="/etc/cslbot") -> None:
             output = subprocess.check_output(
                 ['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'], stderr=subprocess.STDOUT, universal_newlines=True)
             sizes = output.splitlines()[-2]
-            before, after = re.match('.*\((.*) -> .* -> (.*)\).*', sizes).groups()
+            match = re.match('.*\((.*) -> .* -> (.*)\).*', sizes)
+            if not match:
+                raise Exception('oh no')
+            before, after = match.groups()
             # 8 bits = 1 byte
             count = 1024 * 1024 * 8 * float(after) / len(text)
             freq.append((user[0], len(lines), float(after) / float(before) * 100, count))

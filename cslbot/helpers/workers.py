@@ -90,6 +90,8 @@ class Workers(object):
 
     def defer(self, t: int, run_on_cancel: bool, func: Callable[[Any, Any], None], *args: Any) -> int:
         event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
+        if not event.ident:
+            raise Exception('No ident for you!')
         event.name = '%s deferring %s' % (event.name, func.__name__)
         event.start()
         with self.worker_lock:
