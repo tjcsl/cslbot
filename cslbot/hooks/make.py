@@ -15,6 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import random
+
 from ..helpers.hook import Hook
 
 
@@ -23,5 +25,5 @@ def handle(send, msg, _):
     msg = msg.split()
     if len(msg) < 2:
         return
-    if msg[0] == 'make':
+    if msg[0] == 'make' and random.random() < 0.1:
         send("make: *** No rule to make target '{}'.  Stop.".format(msg[1]))
