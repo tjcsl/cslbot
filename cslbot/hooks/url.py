@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import multiprocessing
+import html
 import re
 from datetime import datetime, timedelta
 
@@ -33,46 +34,62 @@ def get_urls(msg):
     return [x[0] for x in url_regex.findall(msg)]
 
 
-@Hook('url', ['pubmsg', 'action'], ['config', 'db', 'nick', 'handler'])
+@Hook("url", ["pubmsg", "action"], ["config", "db", "nick", "handler"])
 def handle(send, msg, args):
     """Get titles for urls.
 
     Generate a short url. Get the page title.
 
     """
-    worker = args['handler'].workers
+    worker = args["handler"].workers
     result = worker.run_pool(get_urls, [msg])
     try:
         urls = result.get(5)
     except multiprocessing.TimeoutError:
         worker.restart_pool()
-        send('Url regex timed out.', target=args['config']['core']['ctrlchan'])
+        send("Url regex timed out.", target=args["config"]["core"]["ctrlchan"])
         return
     for url in urls:
         # Prevent botloops
-        if args['db'].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1:
+        if (
+            args["db"].query(Urls).filter(
+                Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)
+            ).count()
+            > 1
+        ):
             return
 
         if url.startswith("https://twitter.com"):
             tid = url.split("/")[-1]
             twitter_api = get_api(args["config"])
-            status = twitter_api.get_status(tid, tweet_mode='extended')
-            text = status._json['full_text'].replace('\n', ' / ')
+            status = twitter_api.get_status(tid, tweet_mode="extended")
+            text = html.unescape(status._json["full_text"].replace("\n", " / "))
 
-            send("** {} (@{}) on Twitter: {}".format(status.author.name, status.author.screen_name, text))
+            send(
+                "** {} (@{}) on Twitter: {}".format(
+                    status.author.name, status.author.screen_name, text
+                )
+            )
             return
 
-        imgkey = args['config']['api']['googleapikey']
+        imgkey = args["config"]["api"]["googleapikey"]
         title = urlutils.get_title(url, imgkey)
 
-        shortkey = args['config']['api']['bitlykey']
+        shortkey = args["config"]["api"]["bitlykey"]
         short = urlutils.get_short(url, shortkey)
 
-        last = args['db'].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
-        if args['config']['feature'].getboolean('linkread'):
+        last = args["db"].query(Urls).filter(Urls.url == url).order_by(
+            Urls.time.desc()
+        ).first()
+        if args["config"]["feature"].getboolean("linkread"):
             if last is not None:
-                lasttime = last.time.strftime('%H:%M:%S on %Y-%m-%d')
-                send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
+                lasttime = last.time.strftime("%H:%M:%S on %Y-%m-%d")
+                send(
+                    "Url %s previously posted at %s by %s -- %s"
+                    % (short, lasttime, last.nick, title)
+                )
             else:
-                send('** %s - %s' % (title, short))
-        args['db'].add(Urls(url=url, title=title, nick=args['nick'], time=datetime.now()))
+                send("** %s - %s" % (title, short))
+        args["db"].add(
+            Urls(url=url, title=title, nick=args["nick"], time=datetime.now())
+        )
