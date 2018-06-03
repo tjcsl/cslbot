@@ -51,12 +51,7 @@ def handle(send, msg, args):
         return
     for url in urls:
         # Prevent botloops
-        if (
-            args["db"].query(Urls).filter(
-                Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)
-            ).count()
-            > 1
-        ):
+        if (args["db"].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1):
             return
 
         if url.startswith("https://twitter.com"):
@@ -65,11 +60,7 @@ def handle(send, msg, args):
             status = twitter_api.get_status(tid, tweet_mode="extended")
             text = html.unescape(status._json["full_text"].replace("\n", " / "))
 
-            send(
-                "** {} (@{}) on Twitter: {}".format(
-                    status.author.name, status.author.screen_name, text
-                )
-            )
+            send("** {} (@{}) on Twitter: {}".format(status.author.name, status.author.screen_name, text))
             return
 
         imgkey = args["config"]["api"]["googleapikey"]
@@ -78,18 +69,11 @@ def handle(send, msg, args):
         shortkey = args["config"]["api"]["bitlykey"]
         short = urlutils.get_short(url, shortkey)
 
-        last = args["db"].query(Urls).filter(Urls.url == url).order_by(
-            Urls.time.desc()
-        ).first()
+        last = args["db"].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
         if args["config"]["feature"].getboolean("linkread"):
             if last is not None:
                 lasttime = last.time.strftime("%H:%M:%S on %Y-%m-%d")
-                send(
-                    "Url %s previously posted at %s by %s -- %s"
-                    % (short, lasttime, last.nick, title)
-                )
+                send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
             else:
                 send("** %s - %s" % (title, short))
-        args["db"].add(
-            Urls(url=url, title=title, nick=args["nick"], time=datetime.now())
-        )
+        args["db"].add(Urls(url=url, title=title, nick=args["nick"], time=datetime.now()))

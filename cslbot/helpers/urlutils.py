@@ -36,6 +36,8 @@ def get_short(msg, key):
     link = req.text.strip()
     if link == 'ALREADY_A_BITLY_LINK':
         return msg
+    if link == 'INVALID_URI' and not link.startswith('http://'):
+        return get_short('http://%s' % msg, key)
     return link
 
 
