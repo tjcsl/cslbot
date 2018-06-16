@@ -140,9 +140,8 @@ def get_weather(cmdargs, send, apikey):
             forecastdata = None
     send("Current weather for %s:" % data['display_location']['full'])
     weather = '%s, ' % data['weather'] if data['weather'] else ''
-    current = '%sTemp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (weather, data['temp_f'], data['feelslike_f'],
-                                                                                     data['relative_humidity'], data['pressure_in'],
-                                                                                     data['wind_string'])
+    current = '%sTemp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
+        weather, data['temp_f'], data['feelslike_f'], data['relative_humidity'], data['pressure_in'], data['wind_string'])
     send(current)
     if forecastdata is not None:
         forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
