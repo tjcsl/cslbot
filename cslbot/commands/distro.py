@@ -31,4 +31,7 @@ def cmd(send, *_):
     """
     url = get('http://distrowatch.com/random.php').url
     match = re.search('=(.*)', url)
-    send(match.group(1))
+    if match:
+        send(match.group(1))
+    else:
+        send("no distro found")

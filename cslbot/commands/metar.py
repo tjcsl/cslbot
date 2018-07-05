@@ -59,7 +59,7 @@ def cmd(send, msg, args):
         send('Error: %s' % errstring)
         return
     data = xml.find('./data')
-    if data.attrib['num_results'] == '0':
+    if data is None or data.attrib['num_results'] == '0':
         send('No results found.')
     else:
         for station in data:

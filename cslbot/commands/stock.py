@@ -37,7 +37,11 @@ def gen_stock(msg):
 
 def random_stock():
     html = get('http://www.openicon.com/rsp/rsp_n100.php').text
-    return re.search(r'\((.*)\)', html).group(1)
+    match = re.search(r'\((.*)\)', html)
+    if match:
+        return match.group(1)
+    else:
+        return 'Unknown'
 
 
 @Command('stock', ['config'])

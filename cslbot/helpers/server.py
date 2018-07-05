@@ -99,12 +99,12 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         return True
 
     def handle(self):
+
+        def send(msg):
+            self.request.send(msg.encode())
+
+        bot = self.server.bot
         try:
-
-            def send(msg):
-                self.request.send(msg.encode())
-
-            bot = self.server.bot
             send("Password: ")
             msg = self.get_data().splitlines()
             ctrlpass = bot.config['auth']['ctrlpass']
