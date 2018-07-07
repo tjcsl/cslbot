@@ -15,13 +15,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import tweepy
+# import tweepy
 
 
 def get_api(config):
-    api = config["api"]
+    return None
+    # api = config["api"]
 
-    auth = tweepy.OAuthHandler(api["twitterconsumerkey"], api["twitterconsumersecret"])
-    auth.set_access_token(api["twitteraccesstoken"], api["twitteraccesstokensecret"])
+    # auth = tweepy.OAuthHandler(api["twitterconsumerkey"], api["twitterconsumersecret"])
+    # auth.set_access_token(api["twitteraccesstoken"], api["twitteraccesstokensecret"])
 
-    return tweepy.API(auth)
+    # return tweepy.API(auth)
