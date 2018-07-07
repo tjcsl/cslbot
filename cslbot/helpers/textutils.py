@@ -396,8 +396,13 @@ def gen_djones(msg):
     return filter_output
 
 
+def gen_aniceshinyurl(self):
+    return "A nice shiny url would go here if somebody found a library that supports python 3.7"
+
+
 output_filters = {
     "passthrough": lambda x: x,
+    "aniceshinyurl": gen_aniceshinyurl,
     "bard": gen_shakespeare,
     "binary": gen_binary,
     "creffett": gen_creffett,
