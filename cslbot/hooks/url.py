@@ -16,14 +16,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import multiprocessing
-import html
 import re
 from datetime import datetime, timedelta
 
 from ..helpers import urlutils
 from ..helpers.hook import Hook
 from ..helpers.orm import Urls
-from ..helpers.twitter import get_api
 
 
 def get_urls(msg):
@@ -55,12 +53,7 @@ def handle(send, msg, args):
             return
 
         if url.startswith("https://twitter.com"):
-            tid = url.split("/")[-1]
-            twitter_api = get_api(args["config"])
-            status = twitter_api.get_status(tid, tweet_mode="extended")
-            text = html.unescape(status._json["full_text"].replace("\n", " / "))
-
-            send("** {} (@{}) on Twitter: {}".format(status.author.name, status.author.screen_name, text))
+            send("A nice shiny url would go here if somebody found a library that supports python 3.7")
             return
 
         imgkey = args["config"]["api"]["googleapikey"]

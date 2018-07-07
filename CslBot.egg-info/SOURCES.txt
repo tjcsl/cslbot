@@ -179,7 +179,6 @@ cslbot/helpers/server.py
 cslbot/helpers/server.pyi
 cslbot/helpers/sql.py
 cslbot/helpers/textutils.py
-cslbot/helpers/twitter.py
 cslbot/helpers/urlutils.py
 cslbot/helpers/web.py
 cslbot/helpers/workers.py
