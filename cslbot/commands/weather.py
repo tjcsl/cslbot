@@ -19,14 +19,13 @@ import datetime
 import json
 import re
 import socket
-from os.path import join
+from importlib import resources
 
 import geoip2
 
-from pkg_resources import Requirement, resource_filename
-
 from requests import get
 
+from .. import static
 from ..helpers import arguments, exception
 from ..helpers.command import Command
 from ..helpers.geoip import get_zipcode
@@ -52,8 +51,8 @@ def get_default(nick, session, send, config, source):
                 hostip = hostip.group()
             if hostip:
                 hostip = re.sub('-', '.', hostip)
-                db_file = resource_filename(Requirement.parse('CslBot'), join('cslbot', config['db']['geoip']))
-                location = get_zipcode(db_file, hostip)
+                with resources.path(static, config['db']['geoip']) as db_file:
+                    location = get_zipcode(str(db_file), hostip)
                 if location is not None:
                     send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
                     return location

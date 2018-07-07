@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import configparser
+from importlib import resources
 from os.path import dirname, exists, join
 from sys import path
 
@@ -25,7 +26,6 @@ if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
 from alembic import command, config  # noqa
-from pkg_resources import Requirement, resource_filename  # noqa
 
 
 def main(confdir: str = "/etc/cslbot") -> None:
@@ -33,10 +33,10 @@ def main(confdir: str = "/etc/cslbot") -> None:
     with open(join(confdir, 'config.cfg')) as f:
         botconfig.read_file(f)
     conf_obj = config.Config()
-    script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
-    conf_obj.set_main_option('script_location', script_location)
     conf_obj.set_main_option('bot_config_path', confdir)
-    command.upgrade(conf_obj, 'head')
+    with resources.path('cslbot', botconfig['alembic']['script_location']) as script_location:
+        conf_obj.set_main_option('script_location', str(script_location))
+        command.upgrade(conf_obj, 'head')
 
 
 if __name__ == '__main__':

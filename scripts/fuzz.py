@@ -22,13 +22,12 @@ from sys import path, stdin
 from unittest import mock
 
 import afl
+import irc.client
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../.git')):
     path.insert(0, join(dirname(__file__), '..'))
 
-# Imports pkg_resources, so must come after the path is modified
-import irc.client  # noqa
 from cslbot.helpers import core, server, workers  # noqa
 
 

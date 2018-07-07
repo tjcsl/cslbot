@@ -21,11 +21,10 @@ import importlib
 import logging
 import sys
 import types
-from glob import glob
+
+from importlib import resources
 from os.path import basename, join
 from typing import Dict, List, Mapping, Set, Tuple, Union
-
-from pkg_resources import Requirement, resource_filename, resource_string
 
 from . import backtrace
 
@@ -51,7 +50,7 @@ def init_aux(config: Mapping[str, str]) -> None:
 
 def load_groups(confdir: str) -> configparser.ConfigParser:
     example_obj = configparser.ConfigParser()
-    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example').decode())
+    example_obj.read_string(importlib.resources.read_text('cslbot.static', 'groups.example'))
     config_obj = configparser.ConfigParser()
     with open(join(confdir, 'groups.cfg')) as cfgfile:
         config_obj.read_file(cfgfile)
@@ -104,10 +103,11 @@ def get_disabled(mod_type: str) -> Set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package='CslBot') -> Tuple[List[str], List[str]]:
+def get_enabled(mod_type: str, package='cslbot') -> Tuple[List[str], List[str]]:
     enabled, disabled = [], []
-    full_dir = resource_filename(Requirement.parse(package), join(package.lower(), mod_type))
-    for f in glob(join(full_dir, '*.py')):
+    for f in resources.contents("%s.%s" % (package, mod_type)):
+        if not f.endswith('.py'):
+            continue
         name = basename(f).split('.')[0]
         mod_name = "%s.%s.%s" % (package.lower(), mod_type, name)
         if group_enabled(mod_type, name):
@@ -164,8 +164,12 @@ def safe_load(modname: str) -> Union[None, str]:
 
 def scan_and_reimport(mod_type: str) -> List[Tuple[str, str]]:
     """Scans folder for modules."""
-    mod_enabled, mod_disabled = get_modules(mod_type)
-    errors = []
+    errors: List[Tuple[str, str]] = []
+    try:
+        mod_enabled, mod_disabled = get_modules(mod_type)
+    # Auxiliary packages may not have all types of modules.
+    except ModuleNotFoundError:
+        return errors
     for mod in mod_enabled + mod_disabled:
         if mod in sys.modules:
             msg = safe_reload(sys.modules[mod])

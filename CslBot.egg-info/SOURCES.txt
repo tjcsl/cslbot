@@ -200,6 +200,7 @@ cslbot/hooks/understanding.py
 cslbot/hooks/url.py
 cslbot/hooks/voice.py
 cslbot/hooks/xkcd.py
+cslbot/static/__init__.py
 cslbot/static/allstar.txt
 cslbot/static/config.example
 cslbot/static/groups.example

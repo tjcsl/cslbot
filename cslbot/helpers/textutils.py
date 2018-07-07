@@ -20,12 +20,11 @@ import json
 import re
 import string
 from html import escape, unescape
+from importlib import resources
 from random import choice, randint, random, randrange
 from typing import List
 
 from lxml import html
-
-from pkg_resources import Requirement, resource_string
 
 from requests import get, post
 
@@ -42,8 +41,8 @@ def gen_word():
     r = random()
 
     if r < 0.8:
-        wordlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
-        return choice(wordlist.strip().split()).decode()
+        wordlist = resources.read_text('cslbot.static', 'wordlist').strip().split()
+        return choice(wordlist)
     else:
         return "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable."
 
@@ -68,7 +67,7 @@ def gen_gizoogle(msg):
 
 def gen_shakespeare(msg):
     # Originally from http://www.shmoop.com/shakespeare-translator/
-    table = json.loads(resource_string(Requirement.parse('CslBot'), 'cslbot/static/shakespeare-dictionary.json').decode())
+    table = json.loads(resources.read_text('cslbot/static', 'shakespeare-dictionary.json'))
     replist = reversed(sorted(table.keys(), key=len))
     pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
     # Normalize text to hopefully match more words.
@@ -109,7 +108,7 @@ def gen_creffett(msg):
 def gen_slogan(msg):
     # Originally from sloganizer.com
     if not slogan_cache:
-        slogan_cache.extend(resource_string(Requirement.parse('CslBot'), 'cslbot/static/slogans').decode().splitlines())
+        slogan_cache.extend(resources.read_text('cslbot.static', 'slogans').splitlines())
     # handle arguments that end in '\', which is valid in irc, but causes issues with re.
     msg = msg.replace('\\', '\\\\')
     return re.sub('%s', msg, choice(slogan_cache))

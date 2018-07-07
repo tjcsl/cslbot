@@ -27,9 +27,9 @@ ctrlkey:
 owner:
 [db]
 engine:
-geoip: static/geoip.db
+geoip: geoip.db
 [alembic]
-script_location: cslbot/alembic
+script_location: alembic
 [feature]
 nickserv: True
 server: True

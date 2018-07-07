@@ -128,7 +128,7 @@ The file will only be run if it is added to helpers/groups.cfg.
 GeoIP
 -----
 To get GeoIP support, download the free database (in MMDB format) from http://dev.maxmind.com/geoip/geoip2/geolite2/.
-You will then need to store the db at static/geoip.db.
+You will then need to store the db at cslbot/static/geoip.db.
 
 parsedata.py
 ------------

@@ -20,8 +20,7 @@ import configparser
 import re
 from os import mkdir
 from os.path import dirname, exists, join
-
-from pkg_resources import Requirement, resource_string
+from importlib import resources
 
 from typing import Callable, Union
 
@@ -33,7 +32,7 @@ except NameError:
 
 def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    example_obj.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
+    example_obj.read_string(resources.read_text('cslbot.static', 'config.example'))
     modified = False
 
     # Check for new sections/options
@@ -107,7 +106,7 @@ def do_config(config: configparser.ConfigParser) -> None:
 
 def do_setup(configfile: str) -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config.read_string(resource_string(Requirement.parse('CslBot'), 'cslbot/static/config.example').decode())
+    config.read_string(resources.read_text('cslbot.static', 'config.example'))
     do_config(config)
     configdir = dirname(configfile)
     try:
@@ -117,8 +116,8 @@ def do_setup(configfile: str) -> None:
             config.write(cfgfile)
         groupsfile = join(configdir, 'groups.cfg')
         if not exists(groupsfile):
-            with open(groupsfile, 'wb') as f:
-                f.write(resource_string(Requirement.parse('CslBot'), 'cslbot/static/groups.example'))
+            with open(groupsfile, 'w') as f:
+                f.write(resources.read_text('cslbot.static', 'groups.example'))
     except PermissionError:
         raise Exception("Please make sure that the user you are running CslBot as has permission to write to %s" % configdir)
     print('WARNING: you must set the db.engine option for the bot to work.')

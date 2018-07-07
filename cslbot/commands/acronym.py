@@ -18,16 +18,14 @@
 import string
 from itertools import groupby
 from random import choice
-
-from pkg_resources import Requirement, resource_string
+from importlib import resources
 
 from ..helpers.command import Command
 
 
 def get_list():
     # wordlist (COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
-    rawlist = resource_string(Requirement.parse('CslBot'), 'cslbot/static/wordlist')
-    rawlist = sorted(rawlist.decode().splitlines())
+    rawlist = sorted(resources.read_text('cslbot.static', 'wordlist').splitlines())
     words = {}
     for key, group in groupby(rawlist, key=lambda word: word[0].lower()):
         words[key] = list(group)

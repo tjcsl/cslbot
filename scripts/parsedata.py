@@ -24,12 +24,12 @@ import shutil
 import sys
 from datetime import datetime, timedelta
 from os import makedirs, path
+from importlib import resources
 from time import strftime
 from typing import Any, Dict, List
 
 from jinja2 import Environment, FileSystemLoader
 
-from pkg_resources import Requirement, resource_filename
 from sqlalchemy.orm import Session
 
 # Make this work from git.
@@ -138,21 +138,22 @@ def main(confdir="/etc/cslbot") -> None:
     parser.add_argument('outdir', help='The output dir.')
     cmdargs = parser.parse_args()
     session = get_session(config)()
-    template_path = resource_filename(Requirement.parse('CslBot'), 'cslbot/templates')
-    env = Environment(loader=FileSystemLoader(template_path))
     time = strftime('Last Updated at %I:%M %p on %a, %b %d, %Y')
 
     if not path.exists(cmdargs.outdir):
         makedirs(cmdargs.outdir)
     lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    # Copy the js
-    shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
 
-    output_quotes(env, session, cmdargs.outdir, time)
-    output_scores(env, session, cmdargs.outdir, time)
-    output_polls(env, session, cmdargs.outdir, time)
-    output_urls(env, session, cmdargs.outdir, time)
+    with resources.path('cslbot', 'templates') as template_path:
+        # Copy the js
+        shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
+
+        env = Environment(loader=FileSystemLoader(str(template_path)))
+        output_quotes(env, session, cmdargs.outdir, time)
+        output_scores(env, session, cmdargs.outdir, time)
+        output_polls(env, session, cmdargs.outdir, time)
+        output_urls(env, session, cmdargs.outdir, time)
 
     fcntl.lockf(lockfile, fcntl.LOCK_UN)
     lockfile.close()

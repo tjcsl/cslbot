@@ -16,14 +16,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import random
+from importlib import resources
 
 from ..helpers.hook import Hook
 
-from pkg_resources import Requirement, resource_string
-
 
 def get_list():
-    return resource_string(Requirement.parse('CslBot'), 'cslbot/static/allstar.txt').decode().splitlines()
+    return resources.read_text('cslbot.static', 'allstar.txt').splitlines()
 
 
 @Hook('shrek', 'pubmsg', ['nick'])

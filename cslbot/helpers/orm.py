@@ -18,8 +18,7 @@
 # USA.
 
 from alembic import command, config
-
-from pkg_resources import Requirement, resource_filename
+from importlib import resources
 
 from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
@@ -40,10 +39,10 @@ def setup_db(session, botconfig, confdir):
     # If we're creating a fresh db, we don't need to worry about migrations.
     if not session.get_bind().has_table('alembic_version'):
         conf_obj = config.Config()
-        script_location = resource_filename(Requirement.parse('CslBot'), botconfig['alembic']['script_location'])
-        conf_obj.set_main_option('script_location', script_location)
         conf_obj.set_main_option('bot_config_path', confdir)
-        command.stamp(conf_obj, 'head')
+        with resources.path('cslbot', botconfig['alembic']['script_location']) as script_location:
+            conf_obj.set_main_option('script_location', str(script_location))
+            command.stamp(conf_obj, 'head')
 
     # Populate permissions table with owner.
     owner_nick = botconfig['auth']['owner']
