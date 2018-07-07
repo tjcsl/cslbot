@@ -71,11 +71,11 @@ def identify_image(req, key):
         json=({
             'requests': [{
                 'image': {
-                    'content': encoded_data
+                    'content': encoded_data.decode(),
                 },
                 'features': {
                     'type': 'LABEL_DETECTION',
-                    'maxResults': 5
+                    'maxResults': 5,
                 }
             }]
         }),
