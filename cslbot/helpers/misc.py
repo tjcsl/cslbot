@@ -80,7 +80,7 @@ def do_pull(srcdir=None, repo=None):
                     "pip",
                     "install",
                     "--process-dependency-links",
-                    "--no-deps",
+                    "--allow-all-external",
                     "-U",
                     "git+git://github.com/%s" % repo,
                 ],
