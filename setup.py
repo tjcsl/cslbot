@@ -50,8 +50,7 @@ setup(
         ]
     },
     setup_requires=setup_requires,
-    install_requires=setup_requires
-    + [
+    install_requires=setup_requires + [
         "SQLAlchemy>=1.0.0",  # bulk_insert_mappings
         "requests>=2.4.0",  # ConnectTimeout
         "alembic",
@@ -66,9 +65,7 @@ setup(
         "TwitterSearch",
         "tweepy==9999",
     ],
-    dependency_links=[
-        "https://github.com/tweepy/tweepy/tarball/master#egg=tweepy-9999"
-    ],
+    dependency_links=["https://github.com/tweepy/tweepy/tarball/master#egg=tweepy-9999"],
     extras_require={
         "analysis": [
             "flake8-debugger",

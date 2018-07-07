@@ -34,11 +34,7 @@ from . import orm
 
 def get_users(args):
     with args["handler"].data_lock:
-        users = list(args["handler"].channels[args["target"]].users()) if args[
-            "target"
-        ] != "private" else [
-            "you"
-        ]
+        users = list(args["handler"].channels[args["target"]].users()) if args["target"] != "private" else ["you"]
     return users
 
 
@@ -147,10 +143,10 @@ def get_channels(chanlist, nick):
 
 
 def get_cmdchar(
-    config: configparser.ConfigParser,
-    connection: client.ServerConnection,
-    msg: str,
-    msgtype: str,
+        config: configparser.ConfigParser,
+        connection: client.ServerConnection,
+        msg: str,
+        msgtype: str,
 ) -> str:
     cmdchar = config["core"]["cmdchar"]
     botnick = "%s: " % connection.real_nickname
@@ -252,16 +248,8 @@ def get_version(srcdir):
     if not exists(gitdir):
         return None, pkg_resources.get_distribution("CslBot").version
     try:
-        commit = subprocess.check_output(
-            ["git", "--git-dir=%s" % gitdir, "rev-parse", "HEAD"]
-        ).decode().splitlines()[
-            0
-        ]
-        version = subprocess.check_output(
-            ["git", "--git-dir=%s" % gitdir, "describe", "--tags"]
-        ).decode().splitlines()[
-            0
-        ]
+        commit = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "rev-parse", "HEAD"]).decode().splitlines()[0]
+        version = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "describe", "--tags"]).decode().splitlines()[0]
         return commit, version
     except subprocess.CalledProcessError:
         return None, None
