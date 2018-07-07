@@ -18,10 +18,10 @@
 
 from setuptools import find_packages, setup
 
-with open('README.rst', 'r') as f:
+with open("README.rst", "r") as f:
     long_description = f.read()
 
-setup_requires = ['setuptools', 'setuptools_git']
+setup_requires = ["setuptools", "setuptools_git"]
 
 setup(
     name="CslBot",
@@ -33,49 +33,70 @@ setup(
     version="0.21",
     license="GPL",
     zip_safe=False,
-    packages=find_packages(exclude=['cslbot.tjhsst']),
-    test_suite='test.test',
+    packages=find_packages(exclude=["cslbot.tjhsst"]),
+    test_suite="test.test",
     package_data={
-        '': [
-            'alembic/env.py', 'alembic/script.py.mako', 'alembic/versions/*.py', 'static/*.example', 'static/slogans',
-            'static/shakespeare-dictionary.json', 'static/allstar.txt', 'static/wordlist', 'templates/sorttable.js', 'templates/*.html'
-        ],
+        "": [
+            "alembic/env.py",
+            "alembic/script.py.mako",
+            "alembic/versions/*.py",
+            "static/*.example",
+            "static/slogans",
+            "static/shakespeare-dictionary.json",
+            "static/allstar.txt",
+            "static/wordlist",
+            "templates/sorttable.js",
+            "templates/*.html",
+        ]
     },
     setup_requires=setup_requires,
-    install_requires=setup_requires + [
-        'SQLAlchemy>=1.0.0',  # bulk_insert_mappings
-        'requests>=2.4.0',  # ConnectTimeout
-        'alembic',
-        'geoip2',
-        'irc>=12.2',  # WHOX support
-        'jinja2',
-        'lxml',
-        'python-dateutil',
-        'requests_oauthlib',
-        'sphinx>=1.4.8',  # search index fix
-        'mypy',
-        'TwitterSearch',
-        'tweepy',
+    install_requires=setup_requires
+    + [
+        "SQLAlchemy>=1.0.0",  # bulk_insert_mappings
+        "requests>=2.4.0",  # ConnectTimeout
+        "alembic",
+        "geoip2",
+        "irc>=12.2",  # WHOX support
+        "jinja2",
+        "lxml",
+        "python-dateutil",
+        "requests_oauthlib",
+        "sphinx>=1.4.8",  # search index fix
+        "mypy",
+        "TwitterSearch",
+        "tweepy==9999",
+    ],
+    dependency_links=[
+        "https://github.com/tweepy/tweepy/tarball/master#egg=tweepy-9999"
     ],
     extras_require={
-        'analysis':
-        ['flake8-debugger', 'flake8-import-order', 'flake8-string-format', 'flake8-coding', 'pep8-naming', 'radon', 'autopep8', 'docformatter'],
-        'test': ['pytest-xdist'],
+        "analysis": [
+            "flake8-debugger",
+            "flake8-import-order",
+            "flake8-string-format",
+            "flake8-coding",
+            "pep8-naming",
+            "radon",
+            "autopep8",
+            "docformatter",
+        ],
+        "test": ["pytest-xdist"],
     },
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
-        'Programming Language :: Python :: 3.5',
-        'Topic :: Communications :: Chat :: Internet Relay Chat',
+        "Development Status :: 4 - Beta",
+        "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+        "Programming Language :: Python :: 3.5",
+        "Topic :: Communications :: Chat :: Internet Relay Chat",
     ],
-    keywords=['csl', 'tjhsst', 'tj', 'irc', 'bot'],
+    keywords=["csl", "tjhsst", "tj", "irc", "bot"],
     entry_points={
-        'console_scripts': [
-            'cslbot = cslbot.helpers.core:init',
-            'cslbot-parselogs = scripts.parselogs:main',
-            'cslbot-parsedata = scripts.parsedata:main',
-            'cslbot-genbabble = scripts.gen_babble:main',
-            'cslbot-reload = scripts.reload:main',
-            'cslbot-migrate = scripts.migrate:main',
+        "console_scripts": [
+            "cslbot = cslbot.helpers.core:init",
+            "cslbot-parselogs = scripts.parselogs:main",
+            "cslbot-parsedata = scripts.parsedata:main",
+            "cslbot-genbabble = scripts.gen_babble:main",
+            "cslbot-reload = scripts.reload:main",
+            "cslbot-migrate = scripts.migrate:main",
         ]
-    })
+    },
+)
