@@ -126,9 +126,13 @@ def get_modules(mod_type: str) -> Tuple[List[str], List[str]]:
     for package in registry.aux:
         if not package:
             continue
-        aux_enabled, aux_disabled = get_enabled(mod_type, package)
-        core_enabled.extend(aux_enabled)
-        core_disabled.extend(aux_disabled)
+        try:
+            aux_enabled, aux_disabled = get_enabled(mod_type, package)
+            core_enabled.extend(aux_enabled)
+            core_disabled.extend(aux_disabled)
+        # Auxiliary packages may not have all types of modules.
+        except ModuleNotFoundError:
+            pass
     return core_enabled, core_disabled
 
 
@@ -164,12 +168,8 @@ def safe_load(modname: str) -> Union[None, str]:
 
 def scan_and_reimport(mod_type: str) -> List[Tuple[str, str]]:
     """Scans folder for modules."""
-    errors: List[Tuple[str, str]] = []
-    try:
-        mod_enabled, mod_disabled = get_modules(mod_type)
-    # Auxiliary packages may not have all types of modules.
-    except ModuleNotFoundError:
-        return errors
+    mod_enabled, mod_disabled = get_modules(mod_type)
+    errors = []
     for mod in mod_enabled + mod_disabled:
         if mod in sys.modules:
             msg = safe_reload(sys.modules[mod])
