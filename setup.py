@@ -63,9 +63,8 @@ setup(
         "sphinx>=1.4.8",  # search index fix
         "mypy",
         "TwitterSearch",
-        # "tweepy==9999",
+        "python-twitter",
     ],
-    dependency_links=["https://github.com/tweepy/tweepy/tarball/master#egg=tweepy-9999"],
     extras_require={
         "analysis": [
             "flake8-debugger",

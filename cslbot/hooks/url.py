@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 from ..helpers import urlutils
 from ..helpers.hook import Hook
 from ..helpers.orm import Urls
+from ..helpers.twitter import get_api
 
 
 def get_urls(msg):
@@ -53,7 +54,10 @@ def handle(send, msg, args):
             return
 
         if url.startswith("https://twitter.com"):
-            send("A nice shiny url would go here if somebody found a library that supports python 3.7")
+            tid = url.split("/")[-1]
+            twitter_api = get_api(args["config"])
+            status = twitter_api.GetStatus(tid)
+            send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, status.text))
             return
 
         imgkey = args["config"]["api"]["googleapikey"]

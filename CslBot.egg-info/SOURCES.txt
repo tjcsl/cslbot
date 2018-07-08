@@ -250,7 +250,7 @@ test/stubs/afl.pyi
 test/stubs/configparser.pyi
 test/stubs/requests_oauthlib.pyi
 test/stubs/sre_constants.pyi
-test/stubs/tweepy.pyi
+test/stubs/twitter.pyi
 test/stubs/alembic/__init__.pyi
 test/stubs/alembic/command.pyi
 test/stubs/alembic/config.pyi
