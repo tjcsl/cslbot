@@ -63,7 +63,7 @@ setup(
         "sphinx>=1.4.8",  # search index fix
         "mypy",
         "TwitterSearch",
-        # "tweepy==9999",
+        "tweepy==9999",
     ],
     dependency_links=["https://github.com/tweepy/tweepy/tarball/master#egg=tweepy-9999"],
     extras_require={
