@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import multiprocessing
-import random
 import re
 from datetime import datetime, timedelta
 
@@ -55,14 +54,10 @@ def handle(send, msg, args):
             return
 
         if url.startswith("https://twitter.com"):
-            if random.random() < 0.1:
-                send("A nice shiny url would go here if somebody found a library that supports python 3.7")
-                return
             tid = url.split("/")[-1]
             twitter_api = get_api(args["config"])
             status = twitter_api.GetStatus(tid)
-            text = status.text.replace("\n", " / ")
-            send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, text))
+            send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, status.text))
             return
 
         imgkey = args["config"]["api"]["googleapikey"]
