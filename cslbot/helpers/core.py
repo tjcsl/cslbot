@@ -20,6 +20,7 @@ import functools
 import importlib
 import logging
 import multiprocessing
+import queue
 import signal
 import socket
 import ssl
@@ -30,11 +31,10 @@ from os import path
 
 from irc import bot, client, connection
 
-if sys.version_info < (3, 6):
-    # Dependency on variable type annotations
-    raise Exception("Need Python 3.6 or higher.")
+if sys.version_info < (3, 7):
+    # Dependency on importlib.resources
+    raise Exception("Need Python 3.7 or higher.")
 
-import queue  # noqa
 from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
 
@@ -198,7 +198,7 @@ class IrcBot(bot.SingleServerIRCBot):
             self.reload_event.set()
             cmdargs = cmd[len('%sreload' % cmdchar) + 1:]
             try:
-                if reloader.do_reload(self, self.get_target(e), cmdargs):
+                if reloader.do_reload(self, e, cmdargs):
                     if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()

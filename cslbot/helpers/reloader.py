@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
 import importlib
+import irc
 import logging
 from os.path import exists, join
 from typing import Callable
@@ -54,16 +55,19 @@ def do_reload(bot, target, cmdargs, server_send=None):
     - Create a new handler and restore all the data.
 
     """
-
     def send(msg):
         if server_send is not None:
             server_send("%s\n" % msg)
         else:
-            do_log(bot.connection, target, msg)
+            do_log(bot.connection, bot.get_target(target), msg)
 
     confdir = bot.handler.confdir
 
     if cmdargs == 'pull':
+        # Permission checks.
+        if isinstance(target, irc.client.Event) and target.source.nick != bot.config['auth']['owner']:
+            bot.connection.privmsg(bot.get_target(target), "Nope, not gonna do it.")
+            return
         if exists(join(confdir, '.git')):
             send(misc.do_pull(srcdir=confdir))
         else:
