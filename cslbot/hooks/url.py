@@ -55,9 +55,6 @@ def handle(send, msg, args):
             return
 
         if url.startswith("https://twitter.com"):
-            if random.random() < 0.1:
-                send("A nice shiny url would go here if somebody found a library that supports python 3.7")
-                return
             tid = url.split("/")[-1]
             twitter_api = get_api(args["config"])
             status = twitter_api.GetStatus(tid)
