@@ -55,6 +55,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
     - Create a new handler and restore all the data.
 
     """
+
     def send(msg):
         if server_send is not None:
             server_send("%s\n" % msg)
