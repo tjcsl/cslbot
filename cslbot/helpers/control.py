@@ -94,19 +94,19 @@ def handle_enable(args):
 
 
 def handle_guard(args):
-    if args.target_nick in args.handler.guarded:
-        args.send("Already guarding %s" % args.target_nick)
+    if args.nick in args.handler.guarded:
+        args.send("Already guarding %s" % args.nick)
     else:
-        args.handler.guarded.append(args.target_nick)
-        args.send("Guarding %s" % args.target_nick)
+        args.handler.guarded.append(args.nick)
+        args.send("Guarding %s" % args.nick)
 
 
 def handle_unguard(args):
-    if args.target_nick not in args.handler.guarded:
-        args.send("%s is not being guarded" % args.target_nick)
+    if args.nick not in args.handler.guarded:
+        args.send("%s is not being guarded" % args.nick)
     else:
-        args.handler.guarded.remove(args.target_nick)
-        args.send("No longer guarding %s" % args.target_nick)
+        args.handler.guarded.remove(args.nick)
+        args.send("No longer guarding %s" % args.nick)
 
 
 def handle_show_pending(args):
