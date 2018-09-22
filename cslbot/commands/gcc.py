@@ -35,6 +35,9 @@ def cmd(send, msg, args):
     if 'include' in msg:
         send("We're not a terribly inclusive community around here.")
         return
+    if 'import' in msg:
+        send("I'll have you know that standards compliance is important.")
+        return
     tmpfile = tempfile.NamedTemporaryFile()
     for line in msg.splitlines():
         line = line + '\n'
