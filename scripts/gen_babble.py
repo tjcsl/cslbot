@@ -17,7 +17,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import configparser
-import importlib
 import time
 import os
 import sys
@@ -40,11 +39,12 @@ def main(argv) -> None:
     if os.path.exists(os.path.join(parent_directory, '.git')):
         sys.path.insert(0, parent_directory)
         FLAGS.set_default('confdir', parent_directory)
+
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(os.path.join(FLAGS.confdir, 'config.cfg')) as f:
         config.read_file(f)
 
-    sql = importlib.import_module('cslbot.helpers.sql')
+    from cslbot.helpers import babble, sql
     session = sql.get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
@@ -56,7 +56,6 @@ def main(argv) -> None:
         session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
-    babble = importlib.import_module('cslbot.helpers.babble')
     babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=FLAGS.incremental, debug=True)
     print('Finished markov in %f' % (time.time() - t))
 
