@@ -56,7 +56,7 @@ def main(argv) -> None:
         session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
-    babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=FLAGS.incremental, debug=True)
+    babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=not FLAGS.incremental, debug=True)
     print('Finished markov in %f' % (time.time() - t))
 
 
