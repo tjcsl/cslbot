@@ -23,6 +23,3 @@ pep8-naming
 radon
 autopep8
 docformatter
-
-[test]
-pytest-xdist

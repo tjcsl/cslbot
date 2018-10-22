@@ -76,7 +76,6 @@ setup(
             "autopep8",
             "docformatter",
         ],
-        "test": ["pytest-xdist"],
     },
     classifiers=[
         "Development Status :: 4 - Beta",

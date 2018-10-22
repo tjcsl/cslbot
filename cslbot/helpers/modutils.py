@@ -49,11 +49,11 @@ def init_aux(config: Mapping[str, str]) -> None:
 
 
 def load_groups(confdir: str) -> configparser.ConfigParser:
-    example_obj = configparser.ConfigParser()
-    example_obj.read_string(importlib.resources.read_text('cslbot.static', 'groups.example'))
     config_obj = configparser.ConfigParser()
     with open(join(confdir, 'groups.cfg')) as cfgfile:
         config_obj.read_file(cfgfile)
+    example_obj = configparser.ConfigParser()
+    example_obj.read_string(importlib.resources.read_text('cslbot.static', 'groups.example'))
     if config_obj.sections() != example_obj.sections():
         raise Exception("Invalid or missing section in groups.cfg, only valid sections are %s" % ",".join(example_obj.sections()))
     return config_obj

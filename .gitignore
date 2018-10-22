@@ -15,4 +15,3 @@ __pycache__
 *.py[co]
 *.sw?
 .mypy_cache
-CslBot.egg-info/PKG-INFO
