@@ -53,6 +53,7 @@ setup(
     install_requires=setup_requires + [
         "SQLAlchemy>=1.0.0",  # bulk_insert_mappings
         "requests>=2.4.0",  # ConnectTimeout
+        "absl-py",
         "alembic",
         "geoip2",
         "irc>=12.2",  # WHOX support

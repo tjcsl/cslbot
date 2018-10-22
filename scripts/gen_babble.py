@@ -15,28 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import argparse
+
 import configparser
+import importlib
 import time
-from os.path import dirname, exists, join
-from sys import path
+import os
+import sys
 
-# Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+from absl import app
+from absl import flags
 
-from cslbot.helpers import babble, sql  # noqa
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('nick', None, 'The nick to generate babble cache for (testing only).')
+flags.DEFINE_bool('incremental', False, 'Whether to build the cache from scratch or incrementally update an existing one.')
+flags.DEFINE_string('confdir', '/etc/cslbot', 'Where to read the configuration from.')
 
 
-def main(confdir: str = "/etc/cslbot") -> None:
+def main(argv) -> None:
+    if len(argv) > 1:
+        raise app.UsageError("Unexpected argument(s) received: %s" % argv)
+    # If we're running from a git checkout, override paths.
+    parent_directory = os.path.join(os.path.dirname(__file__), '..')
+    if os.path.exists(os.path.join(parent_directory, '.git')):
+        sys.path.insert(0, parent_directory)
+        FLAGS.set_default('confdir', parent_directory)
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
+    with open(os.path.join(FLAGS.confdir, 'config.cfg')) as f:
         config.read_file(f)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nick', help='The nick to generate babble cache for (testing only).')
-    parser.add_argument(
-        '--incremental', action='store_false', help='Whether to build the cache from scratch or incrementally update an existing one.')
-    args = parser.parse_args()
+
+    sql = importlib.import_module('cslbot.helpers.sql')
     session = sql.get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
@@ -48,10 +56,10 @@ def main(confdir: str = "/etc/cslbot") -> None:
         session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
         session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
     t = time.time()
-    babble.build_markov(session, cmdchar, ctrlchan, args.nick, initial_run=args.incremental, debug=True)
+    babble = importlib.import_module('cslbot.helpers.babble')
+    babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=FLAGS.incremental, debug=True)
     print('Finished markov in %f' % (time.time() - t))
 
 
 if __name__ == '__main__':
-    # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    app.run(main)

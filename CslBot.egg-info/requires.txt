@@ -2,6 +2,7 @@ setuptools
 setuptools_git
 SQLAlchemy>=1.0.0
 requests>=2.4.0
+absl-py
 alembic
 geoip2
 irc>=12.2
