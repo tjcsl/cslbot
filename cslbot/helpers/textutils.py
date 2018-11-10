@@ -67,7 +67,7 @@ def gen_gizoogle(msg):
 
 def gen_shakespeare(msg):
     # Originally from http://www.shmoop.com/shakespeare-translator/
-    table = json.loads(resources.read_text('cslbot/static', 'shakespeare-dictionary.json'))
+    table = json.loads(resources.read_text('cslbot.static', 'shakespeare-dictionary.json'))
     replist = reversed(sorted(table.keys(), key=len))
     pattern = re.compile(r'\b(' + '|'.join(replist) + r')\b', re.I)
     # Normalize text to hopefully match more words.
