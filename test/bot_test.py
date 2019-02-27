@@ -171,8 +171,8 @@ class BotTest(unittest.TestCase):
         self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
         self.assertTrue(self.bot.handler.features['whox'])
         expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'),
-                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan,
-                           'privmsg'), (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
+                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
+                          (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
             sorted([x[0] for x in self.raw_mock.call_args_list]),

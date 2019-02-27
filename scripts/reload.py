@@ -29,8 +29,12 @@ def main(confdir="/etc/cslbot") -> None:
     port = config['core']['serverport']
     msg = '%s\nreload' % passwd
     try:
-        proc = subprocess.run(
-            ['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, check=True)
+        proc = subprocess.run(['nc', 'localhost', port],
+                              input=msg,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT,
+                              universal_newlines=True,
+                              check=True)
         output = proc.stdout.splitlines()
         for line in output:
             print(line)

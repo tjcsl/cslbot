@@ -48,10 +48,11 @@ def main(confdir="/etc/cslbot") -> None:
         with open('/tmp/foo', 'w') as f:
             f.write(text)
         try:
-            output = subprocess.check_output(
-                ['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'], stderr=subprocess.STDOUT, universal_newlines=True)
+            output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'],
+                                             stderr=subprocess.STDOUT,
+                                             universal_newlines=True)
             sizes = output.splitlines()[-2]
-            match = re.match('.*\((.*) -> .* -> (.*)\).*', sizes)
+            match = re.match(r'.*\((.*) -> .* -> (.*)\).*', sizes)
             if not match:
                 raise Exception('oh no')
             before, after = match.groups()

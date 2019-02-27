@@ -111,6 +111,7 @@ cslbot/commands/quote.py
 cslbot/commands/random.py
 cslbot/commands/randtranslate.py
 cslbot/commands/reddit.py
+cslbot/commands/repost.py
 cslbot/commands/roman.py
 cslbot/commands/s.py
 cslbot/commands/score.py
