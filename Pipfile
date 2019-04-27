@@ -9,7 +9,6 @@ alembic = "*"
 requests = "*"
 requests-oauthlib = "*"
 lxml = "*"
-cslbot-tjhsst = "*"
 "psycopg2" = "*"
 TwitterSearch = "*"
 

@@ -140,8 +140,8 @@ class WisdomTest(BotTest):
 
         calls = self.send_msg('pubmsg', 'testnick', '#test-channel', ['!wisdom --author Isaac Asimov'])
         self.assertEqual(calls, [(
-            'testBot', '#test-channel', 0, "One, a robot may not injure a human being, or through inaction, allow a human being to come to harm " +
-            "Two, a robot must obey the orders given it by human beings except where such orders would conflict with the First Law " +
+            'testBot', '#test-channel', 0, "One, a robot may not injure a human being, or through inaction, allow a human being to come to harm "
+            "Two, a robot must obey the orders given it by human beings except where such orders would conflict with the First Law "
             "Three, a robot must protect its own existence as long as such protection does not conflict with the First or Second Laws. -- Isaac Asimov",
             'privmsg'), ('testnick', '#test-channel', 0, '!wisdom --author Isaac Asimov', 'pubmsg')])
 
@@ -243,14 +243,14 @@ class ErrnoTest(BotTest):
             expected = [('testBot', '#test-channel', 0, 'Please install gcc.', 'privmsg')]
         else:
             expected = [('testBot', '#test-channel', 0,
-                         'EACCES, EADDRINUSE, EADDRNOTAVAIL, EADV, EAFNOSUPPORT, EAGAIN, EALREADY, EBADE, EBADF, EBADFD, EBADMSG, ' +
-                         'EBADR, EBADRQC, EBADSLT, EBFONT, EBUSY, ECANCELED, ECHILD, ECHRNG, ECOMM, ECONNABORTED, ECONNREFUSED, ECONNRESET, ' +
-                         'EDEADLK, EDESTADDRREQ, EDOM, EDOTDOT, EDQUOT, EEXIST, EFAULT, EFBIG, EHOSTDOWN, EHOSTUNREACH, EHWPOISON, EIDRM, ' +
+                         'EACCES, EADDRINUSE, EADDRNOTAVAIL, EADV, EAFNOSUPPORT, EAGAIN, EALREADY, EBADE, EBADF, EBADFD, EBADMSG, '
+                         'EBADR, EBADRQC, EBADSLT, EBFONT, EBUSY, ECANCELED, ECHILD, ECHRNG, ECOMM, ECONNABORTED, ECONNREFUSED, ECONNRESET, '
+                         'EDEADLK, EDESTADDRREQ, EDOM, EDOTDOT, EDQUOT, EEXIST, EFAULT, EFBIG, EHOSTDOWN, EHOSTUNREACH, EHWPOISON, EIDRM, '
                          'EILSEQ, EINPROGRESS, EINTR, EINVAL, EIO, EISCONN, EISDIR, EISNAM, EKEYEXPIRED, EKEYREJECTED,', 'privmsg'),
                         ('testBot', '#test-channel', 0,
-                         'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, ' +
-                         'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI, ENODATA, ' +
-                         'ENODEV, ENOENT, ENOEXEC, ENOKEY, ENOLCK, ENOLINK, ENOMEDIUM, ENOMEM, ENOMSG, ENONET, ENOPKG, ENOPROTOOPT, ' +
+                         'EKEYREVOKED, ELIBACC, ELIBBAD, ELIBEXEC, ELIBMAX, ELIBSCN, ELNRNG, ELOOP, EMEDIUMTYPE, EMFILE, EMLINK, EMSGSIZE, '
+                         'EMULTIHOP, ENAMETOOLONG, ENAVAIL, ENETDOWN, ENETRESET, ENETUNREACH, ENFILE, ENOANO, ENOBUFS, ENOCSI, ENODATA, '
+                         'ENODEV, ENOENT, ENOEXEC, ENOKEY, ENOLCK, ENOLINK, ENOMEDIUM, ENOMEM, ENOMSG, ENONET, ENOPKG, ENOPROTOOPT, '
                          'ENOSPC, ENOSR, ENOSTR, ENOSYS, ENOTBLK,...', 'privmsg')]
         self.assertEqual(calls, expected + [('testnick', '#test-channel', 0, '!errno list', 'pubmsg')])
 
