@@ -87,11 +87,10 @@ def create_issue(title, desc, nick, repo, apikey):
 
 
 def post_tumblr(config, blog, body):
-    tumblr = OAuth1Session(
-        client_key=config['api']['tumblrconsumerkey'],
-        client_secret=config['api']['tumblrconsumersecret'],
-        resource_owner_key=config['api']['tumblroauthkey'],
-        resource_owner_secret=config['api']['tumblroauthsecret'])
+    tumblr = OAuth1Session(client_key=config['api']['tumblrconsumerkey'],
+                           client_secret=config['api']['tumblrconsumersecret'],
+                           resource_owner_key=config['api']['tumblroauthkey'],
+                           resource_owner_secret=config['api']['tumblroauthsecret'])
     data = {'body': body}
     response = tumblr.post('https://api.tumblr.com/v2/blog/%s/post' % blog, params={'type': 'text'}, data=data).json()
     if response['meta']['status'] == 201:

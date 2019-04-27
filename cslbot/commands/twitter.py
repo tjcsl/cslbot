@@ -33,8 +33,10 @@ def get_search_api(config):
     access_token = config['api']['twitteraccesstoken']
     access_token_secret = config['api']['twitteraccesstokensecret']
 
-    _API = TwitterSearch(
-        consumer_key=consumer_key, consumer_secret=consumer_secret, access_token=access_token, access_token_secret=access_token_secret)
+    _API = TwitterSearch(consumer_key=consumer_key,
+                         consumer_secret=consumer_secret,
+                         access_token=access_token,
+                         access_token_secret=access_token_secret)
     return _API
 
 

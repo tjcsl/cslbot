@@ -25,5 +25,5 @@ def cmd(send, _, args):
     Syntax: {command}
 
     """
-    send("See https://github.com/%s Developed by the TJHSST CSL. Type %shelp for a list of commands." % (args['config']['api']['githubrepo'],
-                                                                                                         args['config']['core']['cmdchar']))
+    send("See https://github.com/%s Developed by the TJHSST CSL. Type %shelp for a list of commands." %
+         (args['config']['api']['githubrepo'], args['config']['core']['cmdchar']))
