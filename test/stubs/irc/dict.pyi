@@ -4,6 +4,9 @@
 
 from jaraco.collections import KeyTransformingDict
 
+
 class IRCDict(KeyTransformingDict):
+
     @staticmethod
-    def transform_key(key): ...
+    def transform_key(key):
+        ...

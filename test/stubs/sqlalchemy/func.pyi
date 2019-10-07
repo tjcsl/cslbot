@@ -1,2 +1,5 @@
 from . import Column
-def count(Column) -> int: ...
+
+
+def count(Column) -> int:
+    ...
