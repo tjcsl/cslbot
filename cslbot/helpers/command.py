@@ -24,7 +24,7 @@ from inspect import getdoc
 
 from sqlalchemy.orm import Session
 
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from . import backtrace, registry
 from .orm import Commands, Log
@@ -94,7 +94,7 @@ class Command(object):
                 record_command(session, nick, command, target)
             handler.workers.start_thread(self.exe, send, msg, args)
 
-    def get_doc(self) -> str:
+    def get_doc(self) -> Optional[str]:
         return self.doc
 
     def is_limited(self) -> bool:
