@@ -18,6 +18,7 @@
 import multiprocessing
 import re
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 from ..helpers import urlutils
 from ..helpers.hook import Hook
@@ -54,7 +55,7 @@ def handle(send, msg, args):
             return
 
         if url.startswith("https://twitter.com"):
-            tid = url.split("/")[-1]
+            tid = urlparse(url).path.split("/")[-1]
             twitter_api = get_api(args["config"])
             status = twitter_api.GetStatus(tid)
             text = status.text.replace("\n", " / ")
