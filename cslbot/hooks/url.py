@@ -57,10 +57,11 @@ def handle(send, msg, args):
         if url.startswith("https://twitter.com"):
             tid = urlparse(url).path.split("/")[-1]
             twitter_api = get_api(args["config"])
-            status = twitter_api.GetStatus(tid)
-            text = status.text.replace("\n", " / ")
-            send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, text))
-            return
+            if tid.isdigit():
+                status = twitter_api.GetStatus(tid)
+                text = status.text.replace("\n", " / ")
+                send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, text))
+                return
 
         imgkey = args["config"]["api"]["googleapikey"]
         title = urlutils.get_title(url, imgkey)
