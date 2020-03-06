@@ -32,13 +32,14 @@ class ImageException(Exception):
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
-    req = requests.get('https://api-ssl.bitly.com/v3/shorten', params={'access_token': key, 'longUrl': msg, 'format': 'txt'})
-    link = req.text.strip()
-    if link == 'ALREADY_A_BITLY_LINK':
+    resp = requests.post('https://api-ssl.bitly.com/v4/shorten', json={'long_url': msg}, headers={'Authorization': 'Bearer %s' % key}).json()
+    if 'link' in resp:
+        return resp['link']
+    if resp['message'] == 'ALREADY_A_BITLY_LINK':
         return msg
-    if link == 'INVALID_URI' and not link.startswith('http://'):
+    if resp['message'] == 'INVALID_ARG_LONG_URL' and not msg.startswith('http://'):
         return get_short('http://%s' % msg, key)
-    return link
+    return "Could not shorten url: %s" % resp
 
 
 def parse_title(req):
