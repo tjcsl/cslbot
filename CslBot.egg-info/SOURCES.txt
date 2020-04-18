@@ -6,8 +6,6 @@
 .style.yapf
 .travis.yml
 COPYING
-Pipfile
-Pipfile.lock
 README.rst
 bot.py
 deploy
