@@ -6,7 +6,7 @@ set -e
 git pull --ff-only
 
 # run tests
-./setup.py test
+pytest
 ./scripts/build_docs.sh
 ./scripts/mypy.sh
 ./scripts/migrate.py

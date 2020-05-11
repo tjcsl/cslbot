@@ -34,7 +34,6 @@ setup(
     license="GPL",
     zip_safe=False,
     packages=find_packages(exclude=["cslbot.tjhsst"]),
-    test_suite="test.test",
     package_data={
         "": [
             "alembic/env.py",

@@ -134,6 +134,7 @@ cslbot/commands/tumblr.py
 cslbot/commands/twitter.py
 cslbot/commands/uptime.py
 cslbot/commands/urban.py
+cslbot/commands/urbit.py
 cslbot/commands/version.py
 cslbot/commands/vote.py
 cslbot/commands/wai.py
