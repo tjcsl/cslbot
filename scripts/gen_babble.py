@@ -31,7 +31,7 @@ flags.DEFINE_bool('incremental', False, 'Whether to build the cache from scratch
 flags.DEFINE_string('confdir', '/etc/cslbot', 'Where to read the configuration from.')
 
 
-def main(argv) -> None:
+def real_main(argv) -> None:
     if len(argv) > 1:
         raise app.UsageError("Unexpected argument(s) received: %s" % argv)
     # If we're running from a git checkout, override paths.
@@ -60,5 +60,9 @@ def main(argv) -> None:
     print('Finished markov in %f' % (time.time() - t))
 
 
+def main():
+    app.run(real_main)
+
+
 if __name__ == '__main__':
-    app.run(main)
+    main()

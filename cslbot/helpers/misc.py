@@ -143,10 +143,10 @@ def get_channels(chanlist, nick):
 
 
 def get_cmdchar(
-        config: configparser.ConfigParser,
-        connection: client.ServerConnection,
-        msg: str,
-        msgtype: str,
+    config: configparser.ConfigParser,
+    connection: client.ServerConnection,
+    msg: str,
+    msgtype: str,
 ) -> str:
     cmdchar = config["core"]["cmdchar"]
     botnick = "%s: " % connection.real_nickname
