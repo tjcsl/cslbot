@@ -61,7 +61,6 @@ setup(
         "python-dateutil",
         "requests_oauthlib",
         "sphinx>=1.4.8",  # search index fix
-        "mypy",
         "TwitterSearch",
         "python-twitter",
     ],

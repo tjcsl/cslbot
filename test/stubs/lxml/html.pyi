@@ -1,6 +1,0 @@
-def document_fromstring(text: str):
-    ...
-
-
-def fromstring(text: str):
-    ...

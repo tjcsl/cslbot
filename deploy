@@ -8,7 +8,6 @@ git pull --ff-only
 # run tests
 pytest
 ./scripts/build_docs.sh
-./scripts/mypy.sh
 ./scripts/migrate.py
 ./scripts/reload.py
 
