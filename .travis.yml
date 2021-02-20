@@ -28,7 +28,6 @@ install:
     - pip install flake8 sphinx psycopg2 coveralls codacy-coverage .
       # We need to install this separately since it will pull in CslBot from pypi otherwise
     - pip install git+git://github.com/tjcsl/cslbot-tjhsst
-    - pip install git+git://github.com/JukkaL/mypy.git
 
 before_script:
     - psql -U postgres -c 'create database ircbot'
@@ -44,7 +43,6 @@ script:
     - coverage run -a ./scripts/gen_babble.py
     - coverage run -a ./scripts/parselogs.py /tmp/ircbot
     - coverage run -a ./scripts/parsedata.py /tmp/ircbot
-    - ./scripts/mypy.sh
     - ./scripts/build_docs.sh
 
 after_success:
