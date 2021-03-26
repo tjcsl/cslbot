@@ -20,6 +20,7 @@
 from alembic import command, config
 from importlib import resources
 
+from sqlalchemy import inspect
 from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
@@ -37,7 +38,7 @@ def setup_db(session, botconfig, confdir):
     """Sets up the database."""
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.
-    if not session.get_bind().has_table('alembic_version'):
+    if not inspect(session.get_bind()).has_table('alembic_version'):
         conf_obj = config.Config()
         conf_obj.set_main_option('bot_config_path', confdir)
         with resources.path('cslbot', botconfig['alembic']['script_location']) as script_location:

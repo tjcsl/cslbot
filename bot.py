@@ -21,7 +21,6 @@ from os.path import abspath, dirname
 import sys
 
 warnings.simplefilter('default')
-warnings.filterwarnings('ignore', category=DeprecationWarning, module='alembic.*')
 
 sys.path.insert(0, dirname(abspath(__file__)))
 
