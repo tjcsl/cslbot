@@ -17,7 +17,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import configparser
-from importlib import resources
 from os.path import dirname, exists, join
 from sys import path
 
@@ -34,9 +33,8 @@ def main(confdir: str = "/etc/cslbot") -> None:
         botconfig.read_file(f)
     conf_obj = config.Config()
     conf_obj.set_main_option('bot_config_path', confdir)
-    with resources.path('cslbot', botconfig['alembic']['script_location']) as script_location:
-        conf_obj.set_main_option('script_location', str(script_location))
-        command.upgrade(conf_obj, 'head')
+    conf_obj.set_main_option('script_location', join('cslbot', botconfig['alembic']['script_location']))
+    command.upgrade(conf_obj, 'head')
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@
 # USA.
 
 from alembic import command, config
-from importlib import resources
+from os.path import join
 
 from sqlalchemy import inspect
 from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
@@ -41,9 +41,8 @@ def setup_db(session, botconfig, confdir):
     if not inspect(session.get_bind()).has_table('alembic_version'):
         conf_obj = config.Config()
         conf_obj.set_main_option('bot_config_path', confdir)
-        with resources.path('cslbot', botconfig['alembic']['script_location']) as script_location:
-            conf_obj.set_main_option('script_location', str(script_location))
-            command.stamp(conf_obj, 'head')
+        conf_obj.set_main_option('script_location', join('cslbot', botconfig['alembic']['script_location']))
+        command.stamp(conf_obj, 'head')
 
     # Populate permissions table with owner.
     owner_nick = botconfig['auth']['owner']
