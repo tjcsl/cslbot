@@ -23,7 +23,7 @@ git push
 
 sudo /etc/cslbot/fixperms.sh
 rm -rf build/lib build/bdist.* dist
-pip install -U --no-deps . ../cslbot-tjhsst
+pip --use-feature=in-tree-build install -U --no-deps . ../cslbot-tjhsst
 sudo /etc/cslbot/fixperms.sh
 cslbot-migrate
 if [ "$1" == "restart" ]; then
