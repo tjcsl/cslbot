@@ -15,9 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import multiprocessing
 import re
-import signal
 import threading
 from collections import namedtuple
 from datetime import datetime, timedelta
@@ -36,20 +34,14 @@ executor_lock = threading.Lock()
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
-def pool_init():
-    """We ignore Ctrl-C in the pool workers, so that we can clean things up properly."""
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
-
-
 class Workers(object):
 
     def __init__(self, handler) -> None:
         self.worker_lock = threading.Lock()
         with self.worker_lock:
-            self.pool = multiprocessing.Pool(initializer=pool_init)
             self.events: Dict[int, Event] = {}
         with executor_lock:
-            self.executor = concurrent.futures.ThreadPoolExecutor(4)
+            self.executor = concurrent.futures.ThreadPoolExecutor()
         self.handler = handler
 
         def send(msg, target=handler.config['core']['ctrlchan']):
@@ -62,18 +54,7 @@ class Workers(object):
 
     def start_thread(self, func, *args, **kwargs):
         with executor_lock:
-            self.executor.submit(func, *args, **kwargs)
-
-    def run_pool(self, func, args):
-        with self.worker_lock:
-            result = self.pool.apply_async(func, args)
-        return result
-
-    def restart_pool(self):
-        with self.worker_lock:
-            self.pool.terminate()
-            self.pool.join()
-            self.pool = multiprocessing.Pool(initializer=pool_init)
+            return self.executor.submit(func, *args, **kwargs)
 
     def run_action(self, func, args):
         try:
@@ -111,12 +92,6 @@ class Workers(object):
             self.executor.shutdown(clean)
             del self.executor
         with self.worker_lock:
-            if clean:
-                self.pool.close()
-            else:
-                self.pool.terminate()
-            self.pool.join()
-            del self.pool
             for x in self.events.values():
                 x.event.cancel()
             self.events.clear()

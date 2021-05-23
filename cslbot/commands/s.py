@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import multiprocessing
+import concurrent.futures
 import re
 
 import sre_constants
@@ -109,11 +109,10 @@ def cmd(send, msg, args):
         regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
         log = get_log(args['db'], args['target'], modifiers['nick'])
         workers = args['handler'].workers
-        result = workers.run_pool(do_replace, [log, args['config']['core'], char, regex, replacement])
+        result = workers.start_thread(do_replace, log, args['config']['core'], char, regex, replacement)
         try:
-            msg = result.get(5)
-        except multiprocessing.TimeoutError:
-            workers.restart_pool()
+            msg = result.result(5)
+        except concurrent.futures.TimeoutError:
             send("Sed regex timed out.")
             return
         if msg:

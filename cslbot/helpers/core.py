@@ -19,7 +19,6 @@ import argparse
 import functools
 import importlib
 import logging
-import multiprocessing
 import queue
 import signal
 import socket
@@ -213,8 +212,6 @@ def init(confdir="/etc/cslbot"):
     | Initialize the bot and start processing messages.
 
     """
-    multiprocessing.set_start_method('spawn')
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
     parser.add_argument('--validate', help='Initialize the db and perform other sanity checks.', action='store_true')
@@ -239,6 +236,7 @@ def init(confdir="/etc/cslbot"):
         cslbot.shutdown_mp()
         sys.exit(0)
     except Exception as ex:
+        cslbot.disconnect('Bot died.')
         cslbot.shutdown_mp(False)
         logging.error("The bot died! %s", ex)
         output = "".join(traceback.format_exc()).strip()

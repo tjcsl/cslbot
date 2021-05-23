@@ -36,9 +36,6 @@ def cmd(send, *_):
             # Handle the main server thread (permanently listed as _worker)
             if x._target.__name__ == '_worker':
                 thread_names.append((tid, "%s running server thread" % x.name))
-            # Handle the multiprocessing pool worker threads (they don't have names beyond Thread-x)
-            elif x._target.__module__ == 'multiprocessing.pool':
-                thread_names.append((tid, "%s running multiprocessing pool worker thread" % x.name))
         # Handle everything else including MainThread and deferred threads
         else:
             res = re.match(r'Thread-(\d+)', x.name)

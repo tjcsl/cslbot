@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import multiprocessing
+import concurrent.futures
 import re
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
@@ -42,11 +42,10 @@ def handle(send, msg, args):
 
     """
     worker = args["handler"].workers
-    result = worker.run_pool(get_urls, [msg])
+    result = worker.start_thread(get_urls, msg)
     try:
-        urls = result.get(5)
-    except multiprocessing.TimeoutError:
-        worker.restart_pool()
+        urls = result.result(5)
+    except concurrent.futures.TimeoutError:
         send("Url regex timed out.", target=args["config"]["core"]["ctrlchan"])
         return
     for url in urls:
