@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
+import concurrent.futures
 import logging
 import random
 import re
@@ -38,7 +39,9 @@ def start_thread(self, func, *args, **kwargs):
         with self.worker_lock:
             self.executor.submit(func, *args, **kwargs)
     else:
-        func(*args, **kwargs)
+        f = concurrent.futures.Future()
+        f.set_result(func(*args, **kwargs))
+        return f
 
 
 def rate_limited_send(self, mtype, target, msg=None):
@@ -121,8 +124,7 @@ class BotTest(unittest.TestCase):
         self.bot = core.IrcBot(self.confdir.name)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
-        with mock.patch.object(irc.client.Reactor, 'process_forever'):
-            self.bot.start()
+        self.bot._connect()
         self.do_welcome()
 
     def tearDown(self):
@@ -139,9 +141,9 @@ class BotTest(unittest.TestCase):
 
     def join_channel(self, nick, channel):
         calls = self.send_msg('join', nick, channel)
-        expected_calls = [(nick, channel, 0, '', 'join')]
+        expected_calls = [(nick, channel, 0, '', 'join', self.server)]
         if nick == self.nick:
-            expected_calls.append((nick, self.ctrlchan, 0, 'Joined channel %s' % channel, 'privmsg'))
+            expected_calls.append((nick, self.ctrlchan, 0, 'Joined channel %s' % channel, 'privmsg', self.server))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
@@ -170,9 +172,9 @@ class BotTest(unittest.TestCase):
         # We support WHOX!
         self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
         self.assertTrue(self.bot.handler.features['whox'])
-        expected_calls = [(self.nick, self.channel, 0, '', 'join'), (self.nick, self.ctrlchan, 0, '', 'join'),
-                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg'),
-                          (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg')]
+        expected_calls = [(self.nick, self.channel, 0, '', 'join', self.server), (self.nick, self.ctrlchan, 0, '', 'join', self.server),
+                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg', self.server),
+                          (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg', self.server)]
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
             sorted([x[0] for x in self.raw_mock.call_args_list]),
