@@ -68,7 +68,7 @@ class LogProcesser(object):
 
     def process_line(self, row: Log) -> None:
         self.check_day(row)
-        self.write_log(row.target, gen_log(row))
+        self.write_log('{}.{}'.format(row.server, row.target), gen_log(row))
 
 
 def get_id(outdir: str) -> int:
