@@ -21,6 +21,7 @@ cslbot/__init__.py
 cslbot/alembic/env.py
 cslbot/alembic/script.py.mako
 cslbot/alembic/versions/243c9cf0eb7d_use_datetime_not_float.py
+cslbot/alembic/versions/2b048b055f82_server.py
 cslbot/alembic/versions/2ee084539c59_no_timezones.py
 cslbot/alembic/versions/3614b38ddf9_kick_logging_change.py
 cslbot/alembic/versions/385c29e42d9_remove_nicks.py
