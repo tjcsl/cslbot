@@ -89,7 +89,8 @@ class Workers(object):
     def stop_workers(self, clean):
         """Stop workers and deferred events."""
         with executor_lock:
-            self.executor.shutdown(clean)
+            if hasattr(self, 'executor'):
+                self.executor.shutdown(clean)
             del self.executor
         with self.worker_lock:
             for x in self.events.values():

@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 class BotHandler(object):
 
-    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: List[str], confdir: str):
+    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: List[str], confdir: str, idx: int):
         """Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -50,6 +50,7 @@ class BotHandler(object):
         self.connection = connection
         self.channels = channels
         self.config = config
+        self.idx = idx
         self.db = sql.Sql(config, confdir)
         # FIXME: don't pass in self
         self.workers = workers.Workers(self)
@@ -472,11 +473,14 @@ class BotHandler(object):
         elif e.type == 'welcome':
             self.handle_welcome()
 
+    @property
+    def serverpass(self):
+        return self.config['auth']['serverpass'].split(',')[self.idx].strip()
+
     def handle_authenticate(self, e):
-        passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
         if e.target == '+':
-            token = base64.b64encode('\0'.join([user, user, passwd]).encode())
+            token = base64.b64encode('\0'.join([user, user, self.serverpass]).encode())
             self.connection.send_raw('AUTHENTICATE %s' % token.decode())
             self.connection.cap('END')
 
@@ -491,11 +495,10 @@ class BotHandler(object):
                     admin.time = datetime.now()
 
     def handle_welcome(self):
-        passwd = self.config['auth']['serverpass']
         user = self.config['core']['nick']
-        logger.info("Connected to server %s", self.config['core']['host'])
+        logger.info("Connected to server %s", self.connection.server)
         if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
-            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, passwd))
+            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, self.serverpass))
         self.do_welcome()
 
     def handle_who(self, e):

@@ -76,6 +76,7 @@ class BotTest(unittest.TestCase):
         config_obj['core']['ctrlchan'] = '#test-control'
         config_obj['core']['sasl'] = 'True'
         config_obj['auth']['serverpass'] = 'dankmemes'
+        cls.config_obj = config_obj
 
         with open(config_file, 'w') as f:
             config_obj.write(f)
@@ -121,7 +122,7 @@ class BotTest(unittest.TestCase):
         mock.patch.object(irc.client.ServerConnection, 'who', self.who_mock).start()
         mock.patch.object(irc.client.ServerConnection, 'cap', self.cap_mock).start()
         mock.patch.object(irc.client.ServerConnection, 'user', self.user_mock).start()
-        self.bot = core.IrcBot(self.confdir.name)
+        self.bot = core.IrcBot(self.confdir.name, self.config_obj, ['irc.does.not.exist'], 0)
         self.setup_handler()
         # We don't actually connect to an irc server, so fake the event loop
         self.bot._connect()

@@ -39,7 +39,8 @@ quit\t\t\tquit the console session
 
 
 def init_server(bot):
-    port = bot.config.getint('core', 'serverport')
+    ports = bot.config['core']['serverport'].split(',')
+    port = int(ports[bot.idx].strip())
     try:
         server = BotNetServer(('localhost', port), BotNetHandler)
     except OSError as ex:

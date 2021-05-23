@@ -41,25 +41,19 @@ shutdown = threading.Event()
 
 class IrcBot(bot.SingleServerIRCBot):
 
-    def __init__(self, confdir):
+    def __init__(self, confdir, config, spec, idx):
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)
         self.confdir = confdir
-        config_file = path.join(confdir, 'config.cfg')
-        if not path.exists(config_file):
-            logging.info("Setting up config file")
-            config.do_setup(config_file)
-            sys.exit(0)
-        self.config = config.load_config(config_file, logging.info)
+        self.config = config
+        self.idx = idx
         if self.config.getboolean('core', 'ssl'):
             factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
         else:
             factory = connection.Factory(ipv6=self.config.getboolean('core', 'ipv6'))
-        passwd = None if self.config.getboolean('core', 'sasl') else self.config['auth']['serverpass']
-        serverinfo = bot.ServerSpec(self.config['core']['host'], self.config.getint('core', 'ircport'), passwd)
         nick = self.config['core']['nick']
         self.reactor_class = functools.partial(client.Reactor, on_connect=self.do_cap)
-        super().__init__([serverinfo], nick, nick, connect_factory=factory)
+        super().__init__([spec], nick, nick, connect_factory=factory)
         # These allow reload events to be processed when a reload has failed.
         self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
         self.connection.add_global_handler("privmsg", self.reload_handler, -30)
@@ -75,7 +69,7 @@ class IrcBot(bot.SingleServerIRCBot):
         if not reloader.load_modules(self.config, confdir):
             raise Exception("Failed to load modules.")
 
-        self.handler = handler.BotHandler(self.config, self.connection, self.channels, confdir)
+        self.handler = handler.BotHandler(self.config, self.connection, self.channels, confdir, self.idx)
         if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
 
@@ -117,6 +111,8 @@ class IrcBot(bot.SingleServerIRCBot):
         self._connect()
         while not shutdown.is_set():
             self.reactor.process_once(timeout=0.2)
+        self.shutdown_mp()
+        self.connection.close()
 
     @staticmethod
     def get_target(e):
@@ -128,8 +124,7 @@ class IrcBot(bot.SingleServerIRCBot):
     def shutdown(self, *_):
         if hasattr(self, 'connection'):
             self.connection.disconnect("Bot received SIGTERM")
-        self.shutdown_mp(False)
-        sys.exit(0)
+        shutdown.set()
 
     def shutdown_mp(self, clean=True):
         """Shutdown all the multiprocessing.
@@ -157,9 +152,8 @@ class IrcBot(bot.SingleServerIRCBot):
         # If we're the one quiting, shut things down cleanly.
         # If it's an Excess Flood or other server-side quit we want to reconnect.
         if e.source.nick == self.connection.real_nickname and e.arguments[0] in ['Client Quit', 'Quit: Goodbye, Cruel World!']:
-            self.connection.close()
-            self.shutdown_mp()
-            sys.exit(0)
+            print("shutdown")
+            shutdown.set()
 
     def handle_msg(self, c, e):
         """Handles all messages.
@@ -208,7 +202,7 @@ class IrcBot(bot.SingleServerIRCBot):
                     if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
-                logging.info("Successfully reloaded")
+                logging.info("Successfully reloaded %s", self.connection.server)
             except Exception as ex:
                 backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
@@ -228,23 +222,43 @@ def init(confdir="/etc/cslbot"):
     # We don't need a bunch of output from the requests module.
     logging.getLogger("requests").setLevel(logging.WARNING)
 
-    cslbot = IrcBot(confdir)
+    config_file = path.join(confdir, 'config.cfg')
+    if not path.exists(config_file):
+        logging.info("Setting up config file")
+        config.do_setup(config_file)
+        sys.exit(0)
+
+    cfg = config.load_config(config_file, logging.info)
+    bots = []
+    for idx, host in enumerate(cfg['core']['host'].split(',')):
+        if cfg.getboolean('core', 'sasl'):
+            passwd = None
+        else:
+            passwd = cfg['auth']['serverpass'].split(',')[idx].strip()
+        spec = bot.ServerSpec(host.strip(), cfg.getint('core', 'ircport'), passwd)
+        cslbot = IrcBot(confdir, cfg, spec, idx)
+        bots.append(cslbot)
 
     if args.validate:
-        cslbot.shutdown_mp()
+        for cslbot in bots:
+            cslbot.shutdown_mp()
         print("Everything is ready to go!")
         return
 
-    t = threading.Thread(target=cslbot.start)
+    threads = []
     try:
-        t.start()
-        t.join()
+        for cslbot in bots:
+            t = threading.Thread(target=cslbot.start)
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
     except KeyboardInterrupt:
         # KeyboardInterrupt means someone tried to ^C, so shut down the bot
         cslbot.disconnect('Bot received a Ctrl-C')
-        cslbot.shutdown_mp()
         shutdown.set()
-        t.join()
+        for t in threads:
+            t.join()
         sys.exit(0)
     except Exception as ex:
         cslbot.disconnect('Bot died.')
@@ -254,5 +268,6 @@ def init(confdir="/etc/cslbot"):
         for line in output.split('\n'):
             logging.error(line)
         shutdown.set()
-        t.join()
+        for t in threads:
+            t.join()
         sys.exit(1)

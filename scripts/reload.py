@@ -21,14 +21,9 @@ import sys
 from os.path import dirname, join
 
 
-def main(confdir="/etc/cslbot") -> None:
-    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
-        config.read_file(f)
-    passwd = config['auth']['ctrlpass']
-    port = config['core']['serverport']
-    msg = '%s\nreload' % passwd
+def reload_server(port: int, msg: str):
     try:
+        print("Reloading localhost:%s" % port)
         proc = subprocess.run(['nc', 'localhost', port],
                               input=msg,
                               stdout=subprocess.PIPE,
@@ -42,6 +37,17 @@ def main(confdir="/etc/cslbot") -> None:
             sys.exit(1)
     except subprocess.CalledProcessError:
         raise Exception("Could not connect to server, is bot running?")
+
+
+def main(confdir="/etc/cslbot") -> None:
+    config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+    with open(join(confdir, 'config.cfg')) as f:
+        config.read_file(f)
+    passwd = config['auth']['ctrlpass']
+    ports = config['core']['serverport'].split(',')
+    msg = '%s\nreload' % passwd
+    for port in ports:
+        reload_server(port.strip(), msg)
 
 
 if __name__ == '__main__':
