@@ -50,7 +50,7 @@ class LogProcesser(object):
 
     def check_day(self, row: Log) -> None:
         # FIXME: print out new day messages for each day, not just the most recent one.
-        channel = row.target
+        channel = '{}.{}'.format(row.server, row.target)
         rowday = row.time.strftime('%d')
         if channel not in self.day:
             self.day[channel] = rowday
