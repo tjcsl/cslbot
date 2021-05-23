@@ -36,6 +36,8 @@ if sys.version_info < (3, 7):
 
 from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
+shutdown = threading.Event()
+
 
 class IrcBot(bot.SingleServerIRCBot):
 
@@ -110,6 +112,11 @@ class IrcBot(bot.SingleServerIRCBot):
             self.connection.cap('REQ', 'sasl')
         else:
             self.connection.cap('END')
+
+    def start(self):
+        self._connect()
+        while not shutdown.is_set():
+            self.reactor.process_once(timeout=0.2)
 
     @staticmethod
     def get_target(e):
@@ -228,12 +235,16 @@ def init(confdir="/etc/cslbot"):
         print("Everything is ready to go!")
         return
 
+    t = threading.Thread(target=cslbot.start)
     try:
-        cslbot.start()
+        t.start()
+        t.join()
     except KeyboardInterrupt:
         # KeyboardInterrupt means someone tried to ^C, so shut down the bot
         cslbot.disconnect('Bot received a Ctrl-C')
         cslbot.shutdown_mp()
+        shutdown.set()
+        t.join()
         sys.exit(0)
     except Exception as ex:
         cslbot.disconnect('Bot died.')
@@ -242,4 +253,6 @@ def init(confdir="/etc/cslbot"):
         output = "".join(traceback.format_exc()).strip()
         for line in output.split('\n'):
             logging.error(line)
+        shutdown.set()
+        t.join()
         sys.exit(1)
