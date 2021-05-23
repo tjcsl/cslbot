@@ -52,6 +52,7 @@ def setup_db(session, botconfig, confdir):
 
 class Log(Base):
     source = Column(UnicodeText)
+    server = Column(UnicodeText)
     target = Column(Unicode(length=512), index=True)
     flags = Column(Integer)
     msg = Column(UnicodeText)

@@ -247,7 +247,7 @@ class BotHandler(object):
         # FIXME: should we special-case this?
         # strip ctrl chars from !creffett
         msg = msg.replace('\x02\x038,4', '<rage>')
-        self.db.log(nick, target, flags, msg, msgtype)
+        self.db.log(nick, target, flags, msg, msgtype, self.connection.server)
 
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']

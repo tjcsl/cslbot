@@ -59,7 +59,7 @@ class Sql():
         finally:
             session.close()
 
-    def log(self, source: str, target: str, flags: int, msg: str, mtype: str) -> None:
+    def log(self, source: str, target: str, flags: int, msg: str, mtype: str, server: str) -> None:
         """Logs a message to the database.
 
         | source: The source of the message.
@@ -70,7 +70,7 @@ class Sql():
         | time: The current time (Unix Epoch).
 
         """
-        entry = Log(source=str(source), target=target, flags=flags, msg=msg, type=mtype, time=datetime.now())
+        entry = Log(source=str(source), target=target, server=server, flags=flags, msg=msg, type=mtype, time=datetime.now())
         with self.session_scope() as session:
             session.add(entry)
             session.flush()
