@@ -80,8 +80,9 @@ def main() -> None:
         factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
     else:
         factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
-    ircclient.connect(config['core']['host'], config.getint('core', 'ircport'), ctrl_nick, config['auth']['serverpass'], connect_factory=factory)
-    ircclient.start()
+    for host in config['core']['host'].split(','):
+        ircclient.connect(host.strip(), config.getint('core', 'ircport'), ctrl_nick, config['auth']['serverpass'], connect_factory=factory)
+        ircclient.start()
 
 
 if __name__ == '__main__':
