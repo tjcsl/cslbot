@@ -109,6 +109,8 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def start(self):
         self._connect()
+        # Set our name.
+        threading.current_thread().name = '%s message loop' % self.connection.server
         while not shutdown.is_set():
             self.reactor.process_once(timeout=0.2)
         self.shutdown_mp()

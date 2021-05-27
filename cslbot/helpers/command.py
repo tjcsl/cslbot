@@ -62,7 +62,7 @@ class Command(object):
         def wrapper(send, msg: str, args: Dict[str, str]) -> None:
             try:
                 thread = threading.current_thread()
-                match = re.match(r'Thread-\d+', thread.name)
+                match = re.match(r'ThreadPool_\d+', thread.name)
                 thread_id = "Unknown" if match is None else match.group(0)
                 thread.name = "%s running command.%s" % (thread_id, self.names[0])
                 with self.handler.db.session_scope() as args['db']:

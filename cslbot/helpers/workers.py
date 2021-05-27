@@ -41,7 +41,7 @@ class Workers(object):
         with self.worker_lock:
             self.events: Dict[int, Event] = {}
         with executor_lock:
-            self.executor = concurrent.futures.ThreadPoolExecutor()
+            self.executor = concurrent.futures.ThreadPoolExecutor(thread_name_prefix='ThreadPool')
         self.handler = handler
 
         def send(msg, target=handler.config['core']['ctrlchan']):
