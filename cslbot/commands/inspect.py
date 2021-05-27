@@ -28,4 +28,7 @@ def cmd(send, msg, args):
     if not hasattr(args['handler'], msg):
         send("That attribute was not found in the handler.")
         return
+    if msg == 'serverpass':
+        send("MSBOBROX")
+        return
     send(str(getattr(args['handler'], msg)))

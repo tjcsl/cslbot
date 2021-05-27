@@ -10,6 +10,7 @@ README.rst
 bot.py
 deploy
 setup.py
+.github/workflows/codeql-analysis.yml
 CslBot.egg-info/PKG-INFO
 CslBot.egg-info/SOURCES.txt
 CslBot.egg-info/dependency_links.txt
