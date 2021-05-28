@@ -17,8 +17,8 @@
 
 import base64
 import contextlib
-import requests
 
+import requests
 from lxml.html import document_fromstring
 
 from . import misc

@@ -25,9 +25,9 @@ from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
 from typing import List, Tuple
-from irc import client
 
 import pkg_resources
+from irc import client
 
 from . import orm
 

@@ -23,25 +23,20 @@ import fcntl
 import shutil
 import sys
 from datetime import datetime, timedelta
-from os import makedirs, path
 from importlib import resources
+from os import makedirs, path
 from time import strftime
 from typing import Any, Dict, List
 
 from jinja2 import Environment, FileSystemLoader
-
 from sqlalchemy.orm import Session
 
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '..'))
 
-from cslbot.helpers.orm import (
-    Poll_responses,  # noqa
-    Polls,
-    Quotes,
-    Scores,
-    Urls)
+from cslbot.helpers.orm import Poll_responses  # noqa
+from cslbot.helpers.orm import Polls, Quotes, Scores, Urls
 from cslbot.helpers.sql import get_session  # noqa
 
 

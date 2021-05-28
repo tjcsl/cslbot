@@ -25,7 +25,6 @@ from random import choice, randint, random, randrange
 from typing import List
 
 from lxml import html
-
 from requests import get, post
 
 from . import config

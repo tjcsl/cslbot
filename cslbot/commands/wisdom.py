@@ -18,7 +18,6 @@
 from random import choice
 
 from lxml import etree
-
 from requests import get
 
 from ..helpers import arguments

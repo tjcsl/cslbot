@@ -1,6 +1,6 @@
 import socketserver
-from . import core
 
+from . import core
 
 def init_server(bot: core.IrcBot) -> BotNetServer:
     ...

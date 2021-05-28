@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-import configparser
 import concurrent.futures
+import configparser
 import logging
 import random
 import re
@@ -25,9 +25,9 @@ import unittest
 from os.path import dirname, join
 from unittest import mock
 
-from cslbot.helpers import core, handler, workers
-
 import irc.client
+
+from cslbot.helpers import core, handler, workers
 
 # We don't need the alembic output.
 logging.getLogger("alembic").setLevel(logging.WARNING)

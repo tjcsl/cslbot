@@ -1,7 +1,7 @@
 import configparser
-from irc import client
 from typing import Tuple
 
+from irc import client
 
 def output_traceback(ex: Exception) -> Tuple[str, str]:
     ...

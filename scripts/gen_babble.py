@@ -17,12 +17,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import configparser
-import time
 import os
 import sys
+import time
 
-from absl import app
-from absl import flags
+from absl import app, flags
 
 FLAGS = flags.FLAGS
 

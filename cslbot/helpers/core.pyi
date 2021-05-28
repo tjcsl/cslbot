@@ -1,6 +1,6 @@
 from irc import bot
-from .handler import BotHandler
 
+from .handler import BotHandler
 
 class IrcBot(bot.SingleServerIRCBot):
 

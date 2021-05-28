@@ -22,7 +22,6 @@ import socket
 from importlib import resources
 
 import geoip2
-
 from requests import get
 
 from .. import static

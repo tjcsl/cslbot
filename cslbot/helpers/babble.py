@@ -24,8 +24,8 @@ import time
 from sqlalchemy import Index, or_
 from sqlalchemy.exc import OperationalError
 
-from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 from .misc import escape
+from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):

@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple, Union
+
 from .command import Command
 from .hook import Hook
-
 
 class Registry(object):
 

@@ -17,15 +17,14 @@
 
 import concurrent.futures
 import re
-
 import sre_constants
 
 from sqlalchemy import or_
 
 from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException
-from ..helpers.orm import Log
 from ..helpers.misc import escape
+from ..helpers.orm import Log
 
 
 def get_log(conn, target, user):

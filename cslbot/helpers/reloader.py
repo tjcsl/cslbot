@@ -16,10 +16,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import configparser
 import importlib
-import irc
 import logging
 from os.path import exists, join
 from typing import Callable
+
+import irc
 
 from . import config, handler, misc, modutils, registry
 

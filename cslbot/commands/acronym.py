@@ -16,9 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import string
+from importlib import resources
 from itertools import groupby
 from random import choice
-from importlib import resources
 
 from ..helpers.command import Command
 

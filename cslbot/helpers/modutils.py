@@ -21,7 +21,6 @@ import importlib
 import logging
 import sys
 import types
-
 from importlib import resources
 from os.path import basename, join
 from typing import Dict, List, Mapping, Set, Tuple, Union

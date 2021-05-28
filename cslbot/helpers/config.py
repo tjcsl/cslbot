@@ -18,10 +18,9 @@
 
 import configparser
 import re
+from importlib import resources
 from os import mkdir
 from os.path import dirname, exists, join
-from importlib import resources
-
 from typing import Callable, Union
 
 try:

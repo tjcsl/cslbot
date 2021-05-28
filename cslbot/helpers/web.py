@@ -21,7 +21,6 @@ from urllib import parse
 
 from requests import get, post
 from requests.exceptions import ReadTimeout
-
 from requests_oauthlib import OAuth1Session
 
 from . import urlutils

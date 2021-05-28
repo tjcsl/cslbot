@@ -17,11 +17,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 # USA.
 
-from alembic import command, config
 from os.path import join
 
-from sqlalchemy import inspect
-from sqlalchemy import Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText
+from alembic import command, config
+from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
+                        Integer, Unicode, UnicodeText, inspect)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 

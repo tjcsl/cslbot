@@ -19,7 +19,6 @@
 import functools
 import re
 import threading
-
 from typing import Callable, List, Union
 
 from . import backtrace, registry

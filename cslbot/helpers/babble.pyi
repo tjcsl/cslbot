@@ -1,6 +1,6 @@
-from sqlalchemy import orm
 from typing import Optional
 
+from sqlalchemy import orm
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     ...

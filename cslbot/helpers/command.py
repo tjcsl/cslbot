@@ -21,10 +21,9 @@ import re
 import threading
 from datetime import datetime, timedelta
 from inspect import getdoc
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from sqlalchemy.orm import Session
-
-from typing import Any, Callable, Dict, List, Optional, Union
 
 from . import backtrace, registry
 from .orm import Commands, Log

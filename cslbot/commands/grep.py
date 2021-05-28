@@ -17,8 +17,8 @@
 
 from ..helpers import arguments
 from ..helpers.command import Command
-from ..helpers.orm import Log
 from ..helpers.misc import escape
+from ..helpers.orm import Log
 
 
 @Command(['grep', 'loggrep'], ['config', 'db'], limit=5)

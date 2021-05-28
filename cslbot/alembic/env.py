@@ -21,7 +21,6 @@ from os.path import dirname, exists, join
 from sys import path
 
 from alembic import context
-
 from sqlalchemy import create_engine
 
 # Make this work from git.

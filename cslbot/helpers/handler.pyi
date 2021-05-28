@@ -1,5 +1,6 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple
 import configparser
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 from irc import client
 
 send_type = Callable[..., None]
