@@ -1,5 +1,5 @@
 [core]
-host: irc.freenode.net
+host: irc.libera.chat
 serverport: 2688
 ircport: 6667
 ssl: False
