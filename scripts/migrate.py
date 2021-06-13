@@ -16,7 +16,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import configparser
 from os.path import dirname, exists, join
 from sys import path
 
@@ -28,12 +27,7 @@ from alembic import command, config  # noqa
 
 
 def main(confdir: str = "/etc/cslbot") -> None:
-    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    with open(join(confdir, 'config.cfg')) as f:
-        botconfig.read_file(f)
-    conf_obj = config.Config()
-    conf_obj.set_main_option('bot_config_path', confdir)
-    conf_obj.set_main_option('script_location', join('cslbot', botconfig['alembic']['script_location']))
+    conf_obj = config.Config(join(confdir, 'config.cfg'))
     command.upgrade(conf_obj, 'head')
 
 

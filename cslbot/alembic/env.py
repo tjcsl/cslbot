@@ -15,13 +15,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import configparser
 import logging
 from os.path import dirname, exists, join
 from sys import path
 
 from alembic import context
-from sqlalchemy import create_engine
+from sqlalchemy import engine_from_config, pool
 
 # Make this work from git.
 if exists(join(dirname(__file__), '../../.git')):
@@ -33,6 +32,7 @@ from cslbot.helpers import orm  # noqa
 # access to the values within the .ini file in use.
 config = context.config
 
+# Interpret the config file for Python logging.
 # This line sets up loggers basically.
 logging.basicConfig(level=logging.INFO)
 
@@ -41,6 +41,11 @@ logging.basicConfig(level=logging.INFO)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = orm.Base.metadata
+
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
 
 
 def run_migrations_offline():
@@ -55,13 +60,13 @@ def run_migrations_offline():
     script output.
 
     """
-    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
-    with open(join(config_path, 'config.cfg')) as f:
-        botconfig.read_file(f)
-    url = botconfig['db']['engine']
-
-    context.configure(url=url, target_metadata=target_metadata)
+    url = config.get_section_option("db", "sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
 
     with context.begin_transaction():
         context.run_migrations()
@@ -70,19 +75,18 @@ def run_migrations_offline():
 def run_migrations_online():
     """Run migrations in 'online' mode.
 
-    In this scenario we need to create an Engine and associate a
-    connection with the context.
+    In this scenario we need to create an Engine
+    and associate a connection with the context.
 
     """
-    botconfig = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    config_path = config.get_main_option('bot_config_path', join(dirname(__file__), '../..'))
-    with open(join(config_path, 'config.cfg')) as f:
-        botconfig.read_file(f)
-    url = botconfig['db']['engine']
+    connectable = engine_from_config(
+        config.get_section('db'),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
 
-    connectable = create_engine(url)
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata, render_as_batch=True)
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

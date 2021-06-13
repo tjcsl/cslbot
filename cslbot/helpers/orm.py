@@ -20,8 +20,7 @@
 from os.path import join
 
 from alembic import command, config
-from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
-                        Integer, Unicode, UnicodeText, inspect)
+from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText, inspect)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -39,9 +38,7 @@ def setup_db(session, botconfig, confdir):
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.
     if not inspect(session.get_bind()).has_table('alembic_version'):
-        conf_obj = config.Config()
-        conf_obj.set_main_option('bot_config_path', confdir)
-        conf_obj.set_main_option('script_location', join('cslbot', botconfig['alembic']['script_location']))
+        conf_obj = config.Config(join(confdir, 'config.cfg'))
         command.stamp(conf_obj, 'head')
 
     # Populate permissions table with owner.

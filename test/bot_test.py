@@ -29,9 +29,6 @@ import irc.client
 
 from cslbot.helpers import core, handler, workers
 
-# We don't need the alembic output.
-logging.getLogger("alembic").setLevel(logging.WARNING)
-
 
 def start_thread(self, func, *args, **kwargs):
     # We need to actually run the server thread to avoid blocking.
@@ -67,7 +64,7 @@ class BotTest(unittest.TestCase):
         # Prevent server port conflicts
         config_obj['core']['serverport'] = str(config_obj.getint('core', 'serverport') + random.randint(1000, 2000))
         # Use an in-memory sqlite db for testing
-        config_obj['db']['engine'] = 'sqlite://'
+        config_obj['db']['sqlalchemy.url'] = 'sqlite://'
 
         # Setup some default values.
         config_obj['core']['nick'] = 'testBot'

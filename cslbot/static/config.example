@@ -26,10 +26,10 @@ serverpass:
 ctrlkey:
 owner:
 [db]
-engine:
+sqlalchemy.url:
 geoip: geoip.db
 [alembic]
-script_location: alembic
+script_location: cslbot/alembic
 [feature]
 nickserv: True
 server: True

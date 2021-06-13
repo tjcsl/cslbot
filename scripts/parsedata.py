@@ -23,7 +23,6 @@ import fcntl
 import shutil
 import sys
 from datetime import datetime, timedelta
-from importlib import resources
 from os import makedirs, path
 from time import strftime
 from typing import Any, Dict, List
@@ -140,15 +139,15 @@ def main(confdir="/etc/cslbot") -> None:
     lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
-    with resources.path('cslbot', 'templates') as template_path:
-        # Copy the js
-        shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
+    template_path = path.join('cslbot', 'templates')
+    # Copy the js
+    shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
 
-        env = Environment(loader=FileSystemLoader(str(template_path)))
-        output_quotes(env, session, cmdargs.outdir, time)
-        output_scores(env, session, cmdargs.outdir, time)
-        output_polls(env, session, cmdargs.outdir, time)
-        output_urls(env, session, cmdargs.outdir, time)
+    env = Environment(loader=FileSystemLoader(template_path))
+    output_quotes(env, session, cmdargs.outdir, time)
+    output_scores(env, session, cmdargs.outdir, time)
+    output_polls(env, session, cmdargs.outdir, time)
+    output_urls(env, session, cmdargs.outdir, time)
 
     fcntl.lockf(lockfile, fcntl.LOCK_UN)
     lockfile.close()

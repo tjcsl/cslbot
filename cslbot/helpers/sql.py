@@ -20,22 +20,16 @@ import configparser
 from contextlib import contextmanager
 from datetime import datetime
 
-from sqlalchemy import create_engine
+from sqlalchemy import engine_from_config
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
 
 from .orm import Log, setup_db
 
 
 def get_session(config: configparser.ConfigParser) -> sessionmaker:
-    if not config['db']['engine']:
-        raise Exception("You must specify a valid sqlalchemy url in the db.engine config option.")
-    # In-memory sqlite db, only really useful for testing.
-    if config['db']['engine'] == 'sqlite://':
-        engine = create_engine(config['db']['engine'], connect_args={'check_same_thread': False}, poolclass=StaticPool)
-    else:
-        engine = create_engine(config['db']['engine'])
-    return sessionmaker(bind=engine)
+    if not config['db']['sqlalchemy.url']:
+        raise Exception("You must specify a valid url in the sqlalchemy.url option.")
+    return sessionmaker(bind=engine_from_config(config['db']))
 
 
 class Sql():
