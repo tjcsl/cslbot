@@ -45,7 +45,7 @@ class LogProcesser(object):
 
     def get_path(self, channel: str) -> str:
         if not path.abspath(path.join(self.outdir, channel)).startswith(self.outdir):
-            raise Exception("Bailing out due to possible path traversal attack.")
+            raise Exception("Bailing out due to possible path traversal attack from %s." % channel)
         return path.join(self.outdir, "%s.log" % re.sub(r'[^\w#\-_\. ]', '_', channel))
 
     def check_day(self, row: Log) -> None:
