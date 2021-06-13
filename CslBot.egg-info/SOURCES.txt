@@ -221,6 +221,7 @@ doc/cslbot.commands.rst
 doc/cslbot.helpers.rst
 doc/cslbot.hooks.rst
 doc/cslbot.rst
+doc/cslbot.static.rst
 doc/index.rst
 doc/modules.rst
 scripts/__init__.py
