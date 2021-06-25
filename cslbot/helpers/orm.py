@@ -20,7 +20,8 @@
 from os.path import join
 
 from alembic import command, config
-from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey, Integer, Unicode, UnicodeText, inspect)
+from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
+                        Integer, Unicode, UnicodeText, inspect)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 

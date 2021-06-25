@@ -30,7 +30,8 @@ from typing import Callable, Dict, List
 
 import irc
 
-from . import (acl, arguments, control, identity, misc, orm, registry, sql, textutils, workers)
+from . import (acl, arguments, control, identity, misc, orm, registry, sql,
+               textutils, workers)
 
 logger = logging.getLogger(__name__)
 
