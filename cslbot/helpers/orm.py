@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -19,9 +18,10 @@
 
 from os.path import join
 
+import sqlalchemy
 from alembic import command, config
 from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
-                        Integer, Unicode, UnicodeText, inspect)
+                        Integer, Unicode, UnicodeText)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
@@ -38,7 +38,7 @@ def setup_db(session, botconfig, confdir):
     """Sets up the database."""
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.
-    if not inspect(session.get_bind()).has_table('alembic_version'):
+    if not sqlalchemy.inspect(session.get_bind()).has_table('alembic_version'):
         conf_obj = config.Config(join(confdir, 'config.cfg'))
         command.stamp(conf_obj, 'head')
 

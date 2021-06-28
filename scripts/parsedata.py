@@ -23,6 +23,7 @@ import fcntl
 import shutil
 import sys
 from datetime import datetime, timedelta
+from importlib import resources
 from os import makedirs, path
 from time import strftime
 from typing import Any, Dict, List
@@ -139,7 +140,8 @@ def main(confdir="/etc/cslbot") -> None:
     lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
-    template_path = path.join('cslbot', 'templates')
+    template_path = resources.files('cslbot') / 'templates'
+
     # Copy the js
     shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
 
