@@ -9,7 +9,8 @@ git pull --ff-only
 pytest
 ./scripts/build_docs.sh
 ./scripts/migrate.py
-./scripts/reload.py
+# for msbobBot
+# ./scripts/reload.py
 
 if ! [ -z "`git status --porcelain -uno`" ]; then
     echo "Modified files found, did you forget to commit something?"
