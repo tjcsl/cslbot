@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -32,6 +31,6 @@ def handle(send, msg, args):
     if random() > 0.005:
         return
     if args['type'] == 'pubmsg':
-        send("%s actually meant: %s" % (args['nick'], msg))
+        send("{} actually meant: {}".format(args['nick'], msg))
     else:
-        send("correction: * %s %s" % (args['nick'], msg))
+        send("correction: * {} {}".format(args['nick'], msg))

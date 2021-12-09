@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -37,7 +36,7 @@ def cmd(send, msg, args):
         return
     try:
         nick, note = msg.split(maxsplit=1)
-        nicks = set(x for x in nick.split(',') if x)
+        nicks = {x for x in nick.split(',') if x}
     except ValueError:
         send("Not enough arguments.")
         return

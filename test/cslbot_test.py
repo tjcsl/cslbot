@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -71,7 +70,7 @@ class CoreTest(BotTest):
         sock.connect(('localhost', port))
         msg = '%s\nreload' % passwd
         sock.send(msg.encode())
-        output = "".encode()
+        output = b""
         while len(output) < 20:
             output += sock.recv(4096)
         sock.close()

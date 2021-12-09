@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -32,11 +31,11 @@ from cslbot.helpers.orm import Log  # noqa
 from cslbot.helpers.sql import get_session  # noqa
 
 
-class LogProcesser(object):
+class LogProcesser:
 
     def __init__(self, outdir: str) -> None:
-        self.day: Dict[str, str] = {}
-        self.logs: Dict[str, IO] = {}
+        self.day: dict[str, str] = {}
+        self.logs: dict[str, IO] = {}
         self.outdir = outdir
 
     def __del__(self):
@@ -50,7 +49,7 @@ class LogProcesser(object):
 
     def check_day(self, row: Log) -> None:
         # FIXME: print out new day messages for each day, not just the most recent one.
-        channel = '{}.{}'.format(row.server, row.target)
+        channel = f'{row.server}.{row.target}'
         rowday = row.time.strftime('%d')
         if channel not in self.day:
             self.day[channel] = rowday
@@ -68,7 +67,7 @@ class LogProcesser(object):
 
     def process_line(self, row: Log) -> None:
         self.check_day(row)
-        self.write_log('{}.{}'.format(row.server, row.target), gen_log(row))
+        self.write_log(f'{row.server}.{row.target}', gen_log(row))
 
 
 def get_id(outdir: str) -> int:
@@ -88,33 +87,33 @@ def gen_log(row: Log) -> str:
     logtime = row.time.strftime('%Y-%m-%d %H:%M:%S')
     nick = row.source.split('!')[0]
     if row.type == 'join':
-        log = '%s --> %s (%s) has joined %s' % (logtime, nick, row.source, row.target)
+        log = f'{logtime} --> {nick} ({row.source}) has joined {row.target}'
     elif row.type == 'part':
-        log = '%s <-- %s (%s) has left %s' % (logtime, nick, row.source, row.target)
+        log = f'{logtime} <-- {nick} ({row.source}) has left {row.target}'
         if row.msg:
-            log = "%s (%s)" % (log, row.msg)
+            log = f"{log} ({row.msg})"
     elif row.type == 'quit':
-        log = '%s <-- %s (%s) has quit (%s)' % (logtime, nick, row.source, row.msg)
+        log = f'{logtime} <-- {nick} ({row.source}) has quit ({row.msg})'
     elif row.type == 'kick':
         args = row.msg.split()
-        log = '%s <-- %s has kicked %s (%s)' % (logtime, nick, args[0], " ".join(args[1:]))
+        log = '{} <-- {} has kicked {} ({})'.format(logtime, nick, args[0], " ".join(args[1:]))
     elif row.type == 'action':
-        log = '%s * %s %s' % (logtime, nick, row.msg)
+        log = f'{logtime} * {nick} {row.msg}'
     elif row.type == 'mode':
-        log = '%s Mode %s [%s] by %s' % (logtime, row.target, row.msg, nick)
+        log = f'{logtime} Mode {row.target} [{row.msg}] by {nick}'
     elif row.type == 'nick':
-        log = '%s -- %s is now known as %s' % (logtime, nick, row.msg)
+        log = f'{logtime} -- {nick} is now known as {row.msg}'
     elif row.type == 'topic':
         # FIXME: keep track of the old topic
-        log = '%s %s has changed topic for %s to "%s"' % (logtime, nick, row.target, row.msg)
+        log = f'{logtime} {nick} has changed topic for {row.target} to "{row.msg}"'
     elif row.type in ['pubnotice', 'privnotice']:
-        log = '%s Notice(%s): %s' % (logtime, nick, row.msg)
+        log = f'{logtime} Notice({nick}): {row.msg}'
     elif row.type in ['privmsg', 'pubmsg']:
         if bool(row.flags & 1):
             nick = '@' + nick
         if bool(row.flags & 2):
             nick = '+' + nick
-        log = '%s <%s> %s' % (logtime, nick, row.msg)
+        log = f'{logtime} <{nick}> {row.msg}'
     else:
         raise Exception("Invalid type %s." % row.type)
     return log

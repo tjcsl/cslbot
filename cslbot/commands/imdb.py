@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -34,4 +33,4 @@ def cmd(send, msg, args):
     html = fromstring(req.text)
     name = html.find('head/title').text.split('-')[0].strip()
     key = args['config']['api']['bitlykey']
-    send("%s -- %s" % (name, get_short(req.url, key)))
+    send(f"{name} -- {get_short(req.url, key)}")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -73,4 +72,4 @@ def cmd(send, msg, args):
     entry = choice(xml)
     quote = entry.find('quote').text
     author = entry.find('author').text
-    send("%s -- %s" % (quote, author))
+    send(f"{quote} -- {author}")

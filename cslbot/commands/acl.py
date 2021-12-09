@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -41,12 +40,12 @@ def cmd(send, msg, args):
     if cmdargs.add:
         if admin is None:
             session.add(Permissions(nick=cmdargs.nick, role=cmdargs.role))
-            send("%s is now an %s." % (cmdargs.nick, cmdargs.role))
+            send(f"{cmdargs.nick} is now an {cmdargs.role}.")
         else:
-            send("%s is already an %s." % (admin.nick, admin.role))
+            send(f"{admin.nick} is already an {admin.role}.")
     else:
         if admin is None:
-            send("%s was not an %s." % (cmdargs.nick, cmdargs.role))
+            send(f"{cmdargs.nick} was not an {cmdargs.role}.")
         else:
             session.delete(admin)
-            send("%s is no longer an %s." % (admin.nick, admin.role))
+            send(f"{admin.nick} is no longer an {admin.role}.")

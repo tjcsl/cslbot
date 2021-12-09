@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """no timezones.
 
 Revision ID: 2ee084539c59

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -44,5 +43,5 @@ def cmd(send, msg, args):
     else:
         modules = sorted(command_registry.get_enabled_commands())
         cmdlist = (' %s' % cmdchar).join(modules)
-        send('Commands: %s%s' % (cmdchar, cmdlist), target=args['nick'], ignore_length=True)
+        send(f'Commands: {cmdchar}{cmdlist}', target=args['nick'], ignore_length=True)
         send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])

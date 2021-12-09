@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -24,12 +23,7 @@ from os.path import dirname, join
 def reload_server(port: int, msg: str):
     try:
         print("Reloading localhost:%s" % port)
-        proc = subprocess.run(['nc', 'localhost', port],
-                              input=msg,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.STDOUT,
-                              universal_newlines=True,
-                              check=True)
+        proc = subprocess.run(['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
         output = proc.stdout.splitlines()
         for line in output:
             print(line)

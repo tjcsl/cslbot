@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -44,7 +43,7 @@ def get_default(nick, session, send, config, source):
                 try:
                     socket.inet_pton(socket.AF_INET6, hostmask)
                     hostip = hostmask
-                except socket.error:
+                except OSError:
                     pass
             else:
                 hostip = hostip.group()
@@ -53,7 +52,7 @@ def get_default(nick, session, send, config, source):
                 with resources.path(static, config['db']['geoip']) as db_file:
                     location = get_zipcode(str(db_file), hostip)
                 if location is not None:
-                    send("No default location for %s, GeoIP guesses that your zip code is %s." % (nick, location))
+                    send(f"No default location for {nick}, GeoIP guesses that your zip code is {location}.")
                     return location
         except (FileNotFoundError, geoip2.errors.AddressNotFoundError):
             pass
@@ -65,7 +64,7 @@ def get_default(nick, session, send, config, source):
 
 
 def valid_location(location, apikey):
-    data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, location)).json()
+    data = get(f'http://api.wunderground.com/api/{apikey}/conditions/q/{location}.json').json()
     return 'current_observation' in data
 
 
@@ -85,7 +84,7 @@ def set_default(nick, location, session, send, apikey):
 
 def get_weather(cmdargs, send, apikey):
     if cmdargs.string.startswith("-"):
-        data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string[1:])).json()
+        data = get(f'http://api.wunderground.com/api/{apikey}/conditions/q/{cmdargs.string[1:]}.json').json()
         if 'current_observation' in data:
             data = {
                 'display_location': {
@@ -116,9 +115,9 @@ def get_weather(cmdargs, send, apikey):
             return False
     else:
         try:
-            data = get('http://api.wunderground.com/api/%s/conditions/q/%s.json' % (apikey, cmdargs.string)).json()
-            forecastdata = get('http://api.wunderground.com/api/%s/forecast/q/%s.json' % (apikey, cmdargs.string)).json()
-            alertdata = get('http://api.wunderground.com/api/%s/alerts/q/%s.json' % (apikey, cmdargs.string)).json()
+            data = get(f'http://api.wunderground.com/api/{apikey}/conditions/q/{cmdargs.string}.json').json()
+            forecastdata = get(f'http://api.wunderground.com/api/{apikey}/forecast/q/{cmdargs.string}.json').json()
+            alertdata = get(f'http://api.wunderground.com/api/{apikey}/alerts/q/{cmdargs.string}.json').json()
         except json.JSONDecodeError as e:
             raise exception.CommandFailedException(e)
         if 'current_observation' in data:
@@ -138,22 +137,23 @@ def get_weather(cmdargs, send, apikey):
             forecastdata = None
     send("Current weather for %s:" % data['display_location']['full'])
     weather = '%s, ' % data['weather'] if data['weather'] else ''
-    current = '%sTemp: %s (Feels like %s), Humidity: %s, Pressure: %s", Wind: %s' % (
-        weather, data['temp_f'], data['feelslike_f'], data['relative_humidity'], data['pressure_in'], data['wind_string'])
+    current = '{}Temp: {} (Feels like {}), Humidity: {}, Pressure: {}", Wind: {}'.format(weather, data['temp_f'], data['feelslike_f'],
+                                                                                         data['relative_humidity'], data['pressure_in'],
+                                                                                         data['wind_string'])
     send(current)
     if forecastdata is not None:
-        forecast = '%s, High: %s, Low: %s' % (forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
+        forecast = '{}, High: {}, Low: {}'.format(forecastdata['conditions'], forecastdata['high']['fahrenheit'], forecastdata['low']['fahrenheit'])
         send("Forecast: %s" % forecast)
     alertlist = []
     for alert in alertdata.get('alerts', []):
-        alertlist.append("%s, expires %s" % (alert['description'], alert['expires']))
+        alertlist.append("{}, expires {}".format(alert['description'], alert['expires']))
     if alertlist:
         send("Weather Alerts: %s" % ', '.join(alertlist))
     return True
 
 
 def get_forecast(cmdargs, send, apikey):
-    forecastdata = get('http://api.wunderground.com/api/%s/forecast10day/q/%s.json' % (apikey, cmdargs.string)).json()
+    forecastdata = get(f'http://api.wunderground.com/api/{apikey}/forecast10day/q/{cmdargs.string}.json').json()
     if 'forecast' in forecastdata:
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
     elif 'results' in forecastdata['response']:
@@ -164,14 +164,14 @@ def get_forecast(cmdargs, send, apikey):
         return False
     for day in forecastdata:
         if (day['date']['day'], day['date']['month'], day['date']['year']) == (cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
-            forecast = '%s, High: %s, Low: %s' % (day['conditions'], day['high']['fahrenheit'], day['low']['fahrenheit'])
-            send("Forecast for %s on %s: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), forecast))
+            forecast = '{}, High: {}, Low: {}'.format(day['conditions'], day['high']['fahrenheit'], day['low']['fahrenheit'])
+            send("Forecast for {} on {}: {}".format(cmdargs.string, cmdargs.date.strftime("%x"), forecast))
             return
     send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime("%x")))
 
 
 def get_hourly(cmdargs, send, apikey):
-    forecastdata = get('http://api.wunderground.com/api/%s/hourly10day/q/%s.json' % (apikey, cmdargs.string)).json()
+    forecastdata = get(f'http://api.wunderground.com/api/{apikey}/hourly10day/q/{cmdargs.string}.json').json()
     if 'hourly_forecast' in forecastdata:
         forecastdata = forecastdata['hourly_forecast']
     elif 'results' in forecastdata['response']:
@@ -186,10 +186,10 @@ def get_hourly(cmdargs, send, apikey):
         # wunderground's API returns strings rather than ints for the date for some reason, so casting is needed here
         date = (int(hour['FCTIME'][x]) for x in ['hour', 'mday', 'mon', 'year'])
         if date == (cmdargs.hour, cmdargs.date.day, cmdargs.date.month, cmdargs.date.year):
-            forecast = '%s, Temperature: %s' % (hour['condition'], hour['temp']['english'])
-            send("Forecast for %s on %s at %s00: %s" % (cmdargs.string, cmdargs.date.strftime("%x"), cmdargs.hour, forecast))
+            forecast = '{}, Temperature: {}'.format(hour['condition'], hour['temp']['english'])
+            send("Forecast for {} on {} at {}00: {}".format(cmdargs.string, cmdargs.date.strftime("%x"), cmdargs.hour, forecast))
             return
-    send("Couldn't find data for %s hour %s in the 10-day hourly forecast" % (cmdargs.date.strftime("%x"), cmdargs.hour))
+    send("Couldn't find data for {} hour {} in the 10-day hourly forecast".format(cmdargs.date.strftime("%x"), cmdargs.hour))
 
 
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])

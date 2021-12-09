@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -60,19 +59,19 @@ def do_replace(log, config, char, regex, replacement):
     startchars = [config['cmdchar']]
     startchars.extend(config['altcmdchars'].split(','))
     # pre-generate the possible start strings
-    starttuple = tuple(['%ss%s' % (startchar.strip(), char) for startchar in startchars])
+    starttuple = tuple(f'{startchar.strip()}s{char}' for startchar in startchars)
     for line in log:
         # ignore previous !s calls.
         if line.msg.startswith(starttuple):
             continue
-        if line.msg.startswith('%s: s%s' % (config['nick'], char)):
+        if line.msg.startswith('{}: s{}'.format(config['nick'], char)):
             continue
         if regex.search(line.msg):
             output = regex.sub(replacement, line.msg)
             if line.type == 'action':
-                return "correction: * %s %s" % (line.source, output)
+                return f"correction: * {line.source} {output}"
             elif line.type != 'mode':
-                return "%s actually meant: %s" % (line.source, output)
+                return f"{line.source} actually meant: {output}"
 
 
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])

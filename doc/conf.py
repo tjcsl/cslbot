@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # IrcBot documentation build configuration file, created by
 # sphinx-quickstart on Thu Mar 19 09:59:14 2015.

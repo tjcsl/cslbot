@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -26,7 +25,7 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
 @as_declarative()
-class Base(object):
+class Base:
     id = Column(Integer, primary_key=True)
 
     @declared_attr

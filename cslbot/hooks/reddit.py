@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -44,7 +43,7 @@ def handle(send, msg, args):
         output = html.unescape(output)
         key = args['config']['api']['bitlykey']
         if subreddit == 'random':
-            output = "%s -- %s (/r/%s)" % (output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
+            output = "{} -- {} (/r/{})".format(output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
         else:
-            output = "%s -- %s" % (output, get_short('http://reddit.com/r/%s' % subreddit, key))
+            output = "{} -- {}".format(output, get_short('http://reddit.com/r/%s' % subreddit, key))
         send(output)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -24,7 +23,6 @@ import subprocess
 from datetime import datetime, timedelta
 from os.path import exists, join
 from random import choice, random
-from typing import List, Tuple
 
 import pkg_resources
 from irc import client
@@ -66,7 +64,7 @@ def do_pull(srcdir=None, repo=None):
                 ["sudo", "-u", "peter", "/etc/cslbot/pull.sh"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                universal_newlines=True,
+                text=True,
                 check=True,
             )
             return proc.stdout.splitlines()[-1]
@@ -82,7 +80,7 @@ def do_pull(srcdir=None, repo=None):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 env=os.environ.copy(),
-                universal_newlines=True,
+                text=True,
                 check=True,
             )
             output = proc.stdout.splitlines()[-1]
@@ -120,18 +118,18 @@ def ping(ping_map, c, e, pongtime):
         if nick not in ping_map:
             return
         target = ping_map.pop(nick)
-        c.privmsg(target, "%s: %s" % (e.arguments[1], e.arguments[0]))
+        c.privmsg(target, f"{e.arguments[1]}: {e.arguments[0]}")
         return
     nick = e.source.split("!")[0]
     response = e.arguments[1].replace(" ", ".")
     try:
         pingtime = float(response)
         delta = pongtime - datetime.fromtimestamp(pingtime)
-        elapsed = "%s.%s seconds" % (delta.seconds, delta.microseconds)
+        elapsed = f"{delta.seconds}.{delta.microseconds} seconds"
     except (ValueError, OverflowError):
         elapsed = response
     target = ping_map.pop(nick) if nick in ping_map else nick
-    c.privmsg(target, "CTCP reply from %s: %s" % (nick, elapsed))
+    c.privmsg(target, f"CTCP reply from {nick}: {elapsed}")
 
 
 def get_channels(chanlist, nick):
@@ -176,25 +174,25 @@ def parse_header(header, msg):
             "/dev/null",
         ],
         stdout=subprocess.PIPE,
-        universal_newlines=True,
+        text=True,
         check=True,
     )
     if header == "errno":
         defines = re.findall("^#define (E[A-Z]*) ([0-9]+)", proc.stdout, re.MULTILINE)
     else:
         defines = re.findall("^#define (SIG[A-Z]*) ([0-9]+)", proc.stdout, re.MULTILINE)
-    deftoval = dict((x, y) for x, y in defines)
-    valtodef = dict((y, x) for x, y in defines)
+    deftoval = {x: y for x, y in defines}
+    valtodef = {y: x for x, y in defines}
     if not msg:
         msg = choice(list(valtodef.keys()))
     if msg == "list":
         return ", ".join(sorted(deftoval.keys()))
     elif msg in deftoval:
-        return "#define %s %s" % (msg, deftoval[msg])
+        return f"#define {msg} {deftoval[msg]}"
     elif msg in valtodef:
-        return "#define %s %s" % (valtodef[msg], msg)
+        return f"#define {valtodef[msg]} {msg}"
     else:
-        return "%s not found in %s.h" % (msg, header)
+        return f"{msg} not found in {header}.h"
 
 
 def list_fortunes(offensive=False):
@@ -205,7 +203,7 @@ def list_fortunes(offensive=False):
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        universal_newlines=True,
+        text=True,
         check=True,
     )
     output = re.sub(r"[0-9]{1,2}\.[0-9]{2}%", "", proc.stdout)
@@ -255,7 +253,7 @@ def get_version(srcdir):
         return None, None
 
 
-def split_msg(msgs: List[bytes], max_len: int) -> Tuple[str, List[bytes]]:
+def split_msg(msgs: list[bytes], max_len: int) -> tuple[str, list[bytes]]:
     """Splits as close to the end as possible."""
     msg = ""
     while len(msg.encode()) < max_len:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -42,7 +41,7 @@ def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send
             modified = True
         for option in example_obj.options(section):
             if not config_obj.has_option(section, option):
-                send("Adding default value for config option %s.%s" % (section, option))
+                send(f"Adding default value for config option {section}.{option}")
                 config_obj[section][option] = example_obj[section][option]
                 modified = True
     # Check for removed sections/options
@@ -50,7 +49,7 @@ def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send
         if example_obj.has_section(section):
             for option in config_obj.options(section):
                 if not example_obj.has_option(section, option):
-                    send("Obsolete config option %s.%s, consider removing." % (section, option))
+                    send(f"Obsolete config option {section}.{option}, consider removing.")
         else:
             send("Obsolete config section %s, consider removing." % section)
     if modified:

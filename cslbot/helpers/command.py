@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -21,7 +20,7 @@ import re
 import threading
 from datetime import datetime, timedelta
 from inspect import getdoc
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 from sqlalchemy.orm import Session
 
@@ -45,31 +44,31 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
         return False
 
 
-class Command(object):
+class Command:
 
-    def __init__(self, names: Union[str, list], args: List[str] = [], limit: int = 0, role: Optional[str] = None) -> None:
-        self.names: List[str] = [names] if isinstance(names, str) else names
+    def __init__(self, names: Union[str, list], args: list[str] = [], limit: int = 0, role: Optional[str] = None) -> None:
+        self.names: list[str] = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
         self.required_role = role
         for name in self.names:
             registry.command_registry.register(self, name)
 
-    def __call__(self, func: Callable[[Callable[[str], None], str, Dict[str, str]], None]) -> Callable[[str], None]:
+    def __call__(self, func: Callable[[Callable[[str], None], str, dict[str, str]], None]) -> Callable[[str], None]:
 
         @functools.wraps(func)
-        def wrapper(send, msg: str, args: Dict[str, str]) -> None:
+        def wrapper(send, msg: str, args: dict[str, str]) -> None:
             try:
                 thread = threading.current_thread()
                 match = re.match(r'ThreadPool_\d+', thread.name)
                 thread_id = "Unknown" if match is None else match.group(0)
-                thread.name = "%s running command.%s" % (thread_id, self.names[0])
+                thread.name = f"{thread_id} running command.{self.names[0]}"
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
             except Exception as ex:
                 backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
             finally:
-                thread.name = "%s idle, last ran command.%s" % (thread_id, self.names[0])
+                thread.name = f"{thread_id} idle, last ran command.{self.names[0]}"
 
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
@@ -83,7 +82,7 @@ class Command(object):
     def __repr__(self) -> str:
         return self.names[0]
 
-    def run(self, send: Callable[[str], None], msg: str, args: Dict[str, Any], command: str, nick: str, target: str, handler) -> None:
+    def run(self, send: Callable[[str], None], msg: str, args: dict[str, Any], command: str, nick: str, target: str, handler) -> None:
         if [x for x in self.names if registry.command_registry.is_disabled(x)]:
             send("Sorry, that command is disabled.")
         else:

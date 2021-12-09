@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -37,7 +36,7 @@ def do_get_quote(session, qid=None):
         if quote.accepted == 0:
             return "That quote hasn't been accepted yet."
         else:
-            return "%s -- %s" % (quote.quote, quote.nick)
+            return f"{quote.quote} -- {quote.nick}"
 
 
 def get_quotes_nick(session, nick):

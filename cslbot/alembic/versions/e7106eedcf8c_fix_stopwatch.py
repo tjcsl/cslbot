@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """fix stopwatch.
 
 Revision ID: e7106eedcf8c

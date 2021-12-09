@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -26,4 +25,4 @@ def handle(send, msg, _):
     if len(msg) < 2:
         return
     if msg[0] == 'make' and random.random() < 0.1:
-        send("make: *** No rule to make target '{}'.  Stop.".format(msg[1]))
+        send(f"make: *** No rule to make target '{msg[1]}'.  Stop.")

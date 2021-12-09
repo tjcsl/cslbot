@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -31,8 +30,8 @@ def gen_stock(msg):
         changepercent = "%.3f%%" % quote['ChangePercent']
         if quote['ChangePercent'] >= 0:
             changepercent = '+' + changepercent
-        return "%s (%s) as of %s: %s %s High: %s Low: %s" % (quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent, quote['High'],
-                                                             quote['Low'])
+        return "{} ({}) as of {}: {} {} High: {} Low: {}".format(quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent,
+                                                                 quote['High'], quote['Low'])
 
 
 def random_stock():

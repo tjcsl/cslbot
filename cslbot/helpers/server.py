@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -62,7 +61,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def get_data(self):
         size = 4096
-        msg = "".encode()
+        msg = b""
         while True:
             data = self.request.recv(size)
             msg += data

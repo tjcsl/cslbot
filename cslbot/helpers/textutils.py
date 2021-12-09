@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -22,14 +21,13 @@ import string
 from html import escape, unescape
 from importlib import resources
 from random import choice, randint, random, randrange
-from typing import List
 
 from lxml import html
 from requests import get, post
 
 from . import config
 
-slogan_cache: List[str] = []
+slogan_cache: list[str] = []
 
 
 def gen_removevowels(msg):
@@ -78,7 +76,7 @@ def gen_praise(msg):
     praise = get_praise()
     while not praise:
         praise = get_praise()
-    return '%s: %s' % (msg, praise)
+    return f'{msg}: {praise}'
 
 
 def get_praise():
@@ -92,7 +90,7 @@ def gen_fwilson(x, mode=None):
     if mode is None:
         mode = 'w' if random() < 0.5 else 'f'
     if mode == 'w':
-        output = "wh%s %s" % ('e' * randrange(3, 20), x)
+        output = "wh{} {}".format('e' * randrange(3, 20), x)
         return output.upper()
     else:
         output = ['fwil%s' % q for q in x.split()]
@@ -213,7 +211,7 @@ def gen_insult(user):
         "armadillo snouts", "entrails", "snake snot", "eel ooze", "slurpee-backwash", "toxic waste", "Stimpy-drool", "poopy", "poop",
         "craptacular carpet droppings", "jizzum", "cold sores", "anal warts"
     ]
-    msg = '%s is a %s %s of %s.' % (user, choice(adj), choice(amt), choice(noun))
+    msg = f'{user} is a {choice(adj)} {choice(amt)} of {choice(noun)}.'
     return msg
 
 
@@ -285,7 +283,7 @@ def gen_shibe(msg):
     reaction = 'wow'
     adverbs = ['so', 'such', 'very', 'much', 'many']
     for i in topics:
-        reaction += ' %s %s' % (choice(adverbs), i)
+        reaction += f' {choice(adverbs)} {i}'
 
     quotes = ['omg', 'amaze', 'nice', 'clap', 'cool', 'doge', 'shibe', 'ooh']
     for i in range(randint(1, 2)):
@@ -324,7 +322,7 @@ def gen_random_translate(msg):
         raise Exception('Invalid translate api key')
     language = choice(get_languages(key))
     msg = gen_translate(msg, fromlang=None, tolang=language)
-    return "%s (%s)" % (msg, language)
+    return f"{msg} ({language})"
 
 
 def gen_multi_translate(msg):

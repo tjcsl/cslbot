@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -35,7 +34,7 @@ def output_traceback(ex):
     trace = [basename(trace_obj[0]), trace_obj[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
-    msg = "%s in %s on line %s: %s" % (name, trace[0], trace[1], output)
+    msg = f"{name} in {trace[0]} on line {trace[1]}: {output}"
     return (msg, output)
 
 
@@ -54,10 +53,10 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors and target != ctrlchan:
         if name == 'CommandFailedException':
-            send(target, "%s -- %s" % (source, output))
+            send(target, f"{source} -- {output}")
         else:
-            send(target, "%s occured in %s. See the control channel for details." % (name, source))
-    msg = 'Error in channel %s -- %s -- %s' % (target, source, msg)
+            send(target, f"{name} occured in {source}. See the control channel for details.")
+    msg = f'Error in channel {target} -- {source} -- {msg}'
     # Handle over-long exceptions.
     max_len = misc.get_max_length(errtarget, 'privmsg')
     msg = misc.truncate_msg(msg, max_len)

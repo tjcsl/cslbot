@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -167,12 +166,12 @@ def vote(session, nick, pid, response):
     old_vote = get_response(session, pid, nick)
     if old_vote is None:
         session.add(Poll_responses(pid=pid, response=response, voter=nick))
-        return "%s voted %s." % (nick, response)
+        return f"{nick} voted {response}."
     else:
         if response == old_vote.response:
             return "You've already voted %s." % response
         else:
-            msg = "%s changed their vote from %s to %s." % (nick, old_vote.response, response)
+            msg = f"{nick} changed their vote from {old_vote.response} to {response}."
             old_vote.response = response
             return msg
 

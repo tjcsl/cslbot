@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -39,7 +38,7 @@ def get_urban(msg, session, key):
     if not msg:
         msg = get_rand_word(session)
         defn, url = get_urban_definition(msg, key)
-        defn = "%s: %s" % (msg, defn)
+        defn = f"{msg}: {defn}"
     else:
         defn, url = get_urban_definition(msg, key)
     return defn, url
@@ -73,7 +72,7 @@ def get_urban_definition(msg, key):
 
 
 def create_issue(title, desc, nick, repo, apikey):
-    body = {"title": title, "body": "%s\nIssue created by %s" % (desc, nick), "labels": ["bot"]}
+    body = {"title": title, "body": f"{desc}\nIssue created by {nick}", "labels": ["bot"]}
     headers = {'Authorization': 'token %s' % apikey}
     req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
     data = req.json()

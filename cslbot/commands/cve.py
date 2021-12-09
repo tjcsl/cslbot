@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -43,7 +42,7 @@ def cmd(send, msg, args):
     if not re.search(r"^[\d]{4}$", elements[0]) or not re.search(r"^[\d]{4,}$", elements[1]):
         send("Invalid CVE format")
         return
-    search = "%s-%s" % (elements[0], elements[1])
+    search = f"{elements[0]}-{elements[1]}"
     url = 'http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search
     html = fromstring(get(url).text)
     title = html.find(".//title").text.splitlines()[2]
@@ -51,5 +50,5 @@ def cmd(send, msg, args):
         output = 'Invalid CVE Number'
     else:
         key = args['config']['api']['bitlykey']
-        output = "%s -- %s" % (title, get_short(url, key))
+        output = f"{title} -- {get_short(url, key)}"
     send(output)

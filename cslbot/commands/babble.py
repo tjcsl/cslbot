@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -66,19 +65,19 @@ def build_msg(cursor, speaker, length, start):
             return "Please specify one word for --start"
         prev = markov.filter(getattr(table, location) == escaped_speaker).order_by(func.random()).limit(1).scalar()
         if prev is None:
-            return "%s hasn't said %s" % (speaker, " ".join(start))
+            return "{} hasn't said {}".format(speaker, " ".join(start))
     msg = prev
     while len(msg) < 400:
         data = cursor.query(table.freq, table.word).filter(table.key == prev, getattr(table, location) == escaped_speaker).all()
         if not data:
             break
         next_word = weighted_next(data)
-        msg = "%s %s" % (msg, next_word)
+        msg = f"{msg} {next_word}"
         if length == 2:
-            prev = "%s %s" % (prev.split()[1], next_word)
+            prev = f"{prev.split()[1]} {next_word}"
         else:
             prev = next_word
-    return "%s says: %s" % (speaker, msg)
+    return f"{speaker} says: {msg}"
 
 
 @Command('babble', ['db', 'config', 'handler'])

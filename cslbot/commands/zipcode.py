@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -42,4 +41,4 @@ def cmd(send, msg, args):
 
     xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     location = xml.find('location').text
-    send("%s: %s" % (cmdargs.zipcode, location))
+    send(f"{cmdargs.zipcode}: {location}")

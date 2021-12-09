@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -62,7 +61,7 @@ class DateParser(argparse.Action):
         try:
             namespace.date = dateutil.parser.parse(value)
         except (ValueError, OverflowError) as e:
-            raise ArgumentException("Couldn't parse a date from %s: %s" % (value, e))
+            raise ArgumentException(f"Couldn't parse a date from {value}: {e}")
 
 
 class TumblrParser(argparse.Action):
@@ -74,7 +73,7 @@ class TumblrParser(argparse.Action):
             value += ".tumblr.com"
         response = get('http://api.tumblr.com/v2/blog/%s/info' % value, params={'api_key': namespace.config['api']['tumblrconsumerkey']}).json()
         if response['meta']['status'] != 200:
-            raise ArgumentException("Error in checking status of blog %s: %s" % (value, response['meta']['msg']))
+            raise ArgumentException("Error in checking status of blog {}: {}".format(value, response['meta']['msg']))
         namespace.blogname = value
 
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -42,7 +41,7 @@ def get_search_api(config):
 
 
 def tweet_url(user, tid):
-    return 'https://twitter.com/{}/status/{}'.format(user, tid)
+    return f'https://twitter.com/{user}/status/{tid}'
 
 
 def tweet_text(obj):
@@ -79,7 +78,7 @@ def cmd(send, msg, args):
     query = TwitterSearchOrder()
     keywords = [' '.join(cmdargs.query)]
     if cmdargs.user:
-        keywords += ['from:{}'.format(cmdargs.user)]
+        keywords += [f'from:{cmdargs.user}']
     query.set_keywords(keywords)
     query.set_language('en')
     query.set_result_type('recent')
@@ -97,11 +96,11 @@ def cmd(send, msg, args):
     max_chan_tweets = 5
     max_pm_tweets = 25
     if cmdargs.count > max_pm_tweets:
-        send("That's too many tweets! The maximum allowed through PM is {}".format(max_pm_tweets))
+        send(f"That's too many tweets! The maximum allowed through PM is {max_pm_tweets}")
         return
 
     if cmdargs.count > max_chan_tweets:
-        send("That's a lot of tweets! The maximum allowed in a channel is {}".format(max_chan_tweets))
+        send(f"That's a lot of tweets! The maximum allowed in a channel is {max_chan_tweets}")
 
     for i in range(0, min(cmdargs.count, max_pm_tweets)):
         if cmdargs.count <= max_chan_tweets:

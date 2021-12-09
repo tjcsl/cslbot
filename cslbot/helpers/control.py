@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -22,7 +21,7 @@ from . import arguments, orm, registry, web
 
 
 def handle_chanserv(args):
-    args.send("%s %s" % (args.cmd, " ".join(args.args)), target="ChanServ")
+    args.send("{} {}".format(args.cmd, " ".join(args.args)), target="ChanServ")
 
 
 def toggle_logging(level):
@@ -215,7 +214,7 @@ def get_accept_msg(handler, pending, type):
         apikey = handler.config['api']['githubapikey']
         msg, success = web.create_issue(pending.title, pending.description, pending.source, repo, apikey)
         if success:
-            msg = "Issue Created -- %s -- %s" % (msg, pending.title)
+            msg = f"Issue Created -- {msg} -- {pending.title}"
     elif type == 'tumblr':
         msg, success = web.post_tumblr(handler.config, pending.blog, pending.post)
         if success:
@@ -245,7 +244,7 @@ def handle_reject(args):
 def get_reject_msg(pending, type):
     if type == 'issue':
         nick = pending.source.split('!')[0]
-        return "Issue Rejected -- %s, Submitted by %s" % (pending.title, nick)
+        return f"Issue Rejected -- {pending.title}, Submitted by {nick}"
     elif type == 'quote':
         return "Quote #%d Rejected: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
     elif type == 'poll':

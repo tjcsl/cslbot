@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -53,7 +52,7 @@ def cmd(send, msg, args):
             setmode(channel, " +b ~q:%s!*@*" % user)
             defer_args = [channel, " -b ~q:%s!*@*" % user]
         elif args['config']['feature']['networktype'] == 'atheme':
-            setmode(channel, " +q-v %s!*@* %s" % (user, user))
+            setmode(channel, f" +q-v {user}!*@* {user}")
             defer_args = [channel, " -q %s!*@*" % user]
         else:
             raise Exception("networktype undefined or unknown in config.cfg")

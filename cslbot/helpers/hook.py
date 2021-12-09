@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -19,20 +18,20 @@
 import functools
 import re
 import threading
-from typing import Callable, List, Union
+from typing import Callable, Union
 
 from . import backtrace, registry
 
 
-class Hook(object):
+class Hook:
 
-    def __init__(self, name: str, types: Union[str, List[str]], args: List[str] = []) -> None:
+    def __init__(self, name: str, types: Union[str, list[str]], args: list[str] = []) -> None:
         self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args
         registry.hook_registry.register(self)
 
-    def __call__(self, func: Callable[[Callable[[str], None], str, List[str]], None]) -> Callable[[str], None]:
+    def __call__(self, func: Callable[[Callable[[str], None], str, list[str]], None]) -> Callable[[str], None]:
 
         @functools.wraps(func)
         def wrapper(send, msg, msgtype, args):
@@ -41,13 +40,13 @@ class Hook(object):
                     thread = threading.current_thread()
                     thread_id = re.match(r'ThreadPool_\d+', thread.name)
                     thread_id = "Unknown" if thread_id is None else thread_id.group(0)
-                    thread.name = "%s running %s" % (thread_id, func.__module__)
+                    thread.name = f"{thread_id} running {func.__module__}"
                     with self.handler.db.session_scope() as args['db']:
                         func(send, msg, args)
                 except Exception as ex:
                     backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
                 finally:
-                    thread.name = "%s idle, last ran %s" % (thread_id, func.__module__)
+                    thread.name = f"{thread_id} idle, last ran {func.__module__}"
 
         self.exe = wrapper
         return wrapper
@@ -58,7 +57,7 @@ class Hook(object):
     def __repr__(self) -> str:
         return self.name
 
-    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler, target: str, args: List[str]) -> None:
+    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler, target: str, args: list[str]) -> None:
         if registry.hook_registry.is_disabled(self.name):
             return
         self.handler = handler

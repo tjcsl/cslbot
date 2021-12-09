@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -43,11 +42,7 @@ def cmd(send, msg, args):
         line = line + '\n'
         tmpfile.write(line.encode())
     tmpfile.flush()
-    process = subprocess.run(['gcc', '-o', '/dev/null', '-xc', tmpfile.name],
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             timeout=5,
-                             universal_newlines=True)
+    process = subprocess.run(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5, text=True)
     tmpfile.close()
     # Take the last 3 lines to prevent Excess Flood on long error messages
     output = process.stdout.splitlines()[:3]

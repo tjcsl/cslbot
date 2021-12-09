@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -57,7 +56,7 @@ def cmd(send, msg, args):
                 session.delete(row)
                 send("%s is no longer ignored." % cmdargs.nick)
     elif cmdargs.nick:
-        send("%s ignored %s" % (args['nick'], cmdargs.nick), target=args['config']['core']['ctrlchan'])
+        send("{} ignored {}".format(args['nick'], cmdargs.nick), target=args['config']['core']['ctrlchan'])
         send(misc.ignore(session, cmdargs.nick))
     else:
         send("Ignore who?")

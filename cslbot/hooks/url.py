@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -59,7 +58,7 @@ def handle(send, msg, args):
             if tid.isdigit():
                 status = twitter_api.GetStatus(tid)
                 text = status.text.replace("\n", " / ")
-                send("** {} (@{}) on Twitter: {}".format(status.user.name, status.user.screen_name, text))
+                send(f"** {status.user.name} (@{status.user.screen_name}) on Twitter: {text}")
                 return
 
         imgkey = args["config"]["api"]["googleapikey"]
@@ -72,7 +71,7 @@ def handle(send, msg, args):
         if args["config"]["feature"].getboolean("linkread"):
             if last is not None:
                 lasttime = last.time.strftime("%H:%M:%S on %Y-%m-%d")
-                send("Url %s previously posted at %s by %s -- %s" % (short, lasttime, last.nick, title))
+                send(f"Url {short} previously posted at {lasttime} by {last.nick} -- {title}")
             else:
-                send("** %s - %s" % (title, short))
+                send(f"** {title} - {short}")
         args["db"].add(Urls(url=url, title=title, nick=args["nick"], time=datetime.now()))

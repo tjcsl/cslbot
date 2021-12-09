@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """remove nicks.
 
 Revision ID: 385c29e42d9

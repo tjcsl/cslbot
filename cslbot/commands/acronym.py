@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -46,6 +45,6 @@ def cmd(send, msg, _):
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]
     output = " ".join([choice(words[c]) for c in letters])
     if output:
-        send('%s: %s' % (msg, output.title()))
+        send(f'{msg}: {output.title()}')
     else:
         send("No acronym found for %s" % msg)

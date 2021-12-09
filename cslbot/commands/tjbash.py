@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -59,4 +58,4 @@ def cmd(send, msg, _):
         tags = [x.text for x in tags[0].findall('.//a')]
         send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if (len(lines) > 3) else "", postid))
     else:
-        send(" -- http://tjbash.org/{}".format(postid))
+        send(f" -- http://tjbash.org/{postid}")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -47,12 +46,12 @@ def cmd(send, msg, args):
         data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
         send('High Scores:')
         for x in data:
-            send("%s: %s" % (x.nick, x.score))
+            send(f"{x.nick}: {x.score}")
     elif cmdargs.low:
         data = session.query(Scores).order_by(Scores.score).limit(3).all()
         send('Low Scores:')
         for x in data:
-            send("%s: %s" % (x.nick, x.score))
+            send(f"{x.nick}: {x.score}")
     elif cmdargs.nick:
         name = cmdargs.nick.lower()
         if name == 'c':
@@ -63,7 +62,7 @@ def cmd(send, msg, args):
             plural = '' if abs(score.score) == 1 else 's'
             if name == args['botnick'].lower():
                 emote = ':)' if score.score > 0 else ':(' if score.score < 0 else ':|'
-                output = 'has %s point%s! %s' % (score.score, plural, emote)
+                output = f'has {score.score} point{plural}! {emote}'
                 send(output, 'action')
             else:
                 send("%s has %i point%s!" % (name, score.score, plural))

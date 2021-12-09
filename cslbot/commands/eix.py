@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -30,14 +29,14 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        result = subprocess.run(['eix', '-c'], env={'EIX_LIMIT': '0', 'HOME': os.environ['HOME']}, stdout=subprocess.PIPE, universal_newlines=True)
+        result = subprocess.run(['eix', '-c'], env={'EIX_LIMIT': '0', 'HOME': os.environ['HOME']}, stdout=subprocess.PIPE, text=True)
         if result.returncode:
             send("eix what?")
             return
         send(choice(result.stdout.splitlines()))
         return
     args = ['eix', '-c'] + msg.split()
-    result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     if result.returncode:
         send("%s isn't important enough for Gentoo." % msg)
     else:

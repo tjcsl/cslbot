@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -35,4 +34,4 @@ def cmd(send, msg, args):
         'draws a slip of paper from a hat and gets...', 'says eenie, menie, miney, moe and chooses...', 'picks a random number and gets...',
         'rolls dice and gets...', 'asks a random person and gets...', 'plays rock, paper, scissors, lizard, spock and gets...'
     ]
-    send("%s %s" % (choice(action), choice(choices)), 'action')
+    send(f"{choice(action)} {choice(choices)}", 'action')

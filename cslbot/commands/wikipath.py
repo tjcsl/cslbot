@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -83,4 +82,5 @@ def cmd(send, msg, args):
     if path:
         send(path.replace('_', ' '))
     else:
-        send("No path found between %s and %s. Do you need to add more links?" % (cmdargs.first.replace('_', ' '), cmdargs.second.replace('_', ' ')))
+        send("No path found between {} and {}. Do you need to add more links?".format(cmdargs.first.replace('_', ' '),
+                                                                                      cmdargs.second.replace('_', ' ')))

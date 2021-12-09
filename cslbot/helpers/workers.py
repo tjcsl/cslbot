@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,12 +32,12 @@ executor_lock = threading.Lock()
 Event = namedtuple('Event', ['event', 'run_on_cancel'])
 
 
-class Workers(object):
+class Workers:
 
     def __init__(self, handler) -> None:
         self.worker_lock = threading.Lock()
         with self.worker_lock:
-            self.events: Dict[int, Event] = {}
+            self.events: dict[int, Event] = {}
         with executor_lock:
             self.executor = concurrent.futures.ThreadPoolExecutor(thread_name_prefix='ThreadPool')
         self.handler = handler
@@ -60,9 +59,9 @@ class Workers(object):
             thread = threading.current_thread()
             thread_id = re.match(r'Thread-\d+', thread.name)
             if thread_id is None:
-                raise Exception("Invalid thread name {}".format(thread.name))
+                raise Exception(f"Invalid thread name {thread.name}")
             thread_id = thread_id.group(0)
-            thread.name = '%s running %s' % (thread_id, func.__name__)
+            thread.name = f'{thread_id} running {func.__name__}'
             func(*args)
         except Exception as ex:
             ctrlchan = self.handler.config['core']['ctrlchan']
@@ -70,7 +69,7 @@ class Workers(object):
 
     def defer(self, t: int, run_on_cancel: bool, func: Callable[[Any, Any], None], *args: Any) -> int:
         event = threading.Timer(t, self.run_action, kwargs={'func': func, 'args': args})
-        event.name = '%s deferring %s' % (event.name, func.__name__)
+        event.name = f'{event.name} deferring {func.__name__}'
         event.start()
         if not event.ident:
             raise Exception('No ident for you!')
@@ -108,7 +107,7 @@ class Workers(object):
         self.defer(3600 * 24, False, self.send_quotes, handler, send)
         with handler.db.session_scope() as session:
             channel = self.handler.config['core']['channel']
-            send('QOTD: {}'.format(quote.do_get_quote(session)), target=channel)
+            send(f'QOTD: {quote.do_get_quote(session)}', target=channel)
 
     def check_active(self, handler, send):
         # Re-schedule check_active

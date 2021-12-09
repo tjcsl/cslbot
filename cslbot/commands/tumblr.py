@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -77,7 +76,7 @@ def cmd(send, msg, args):
             row = Tumblrs(post=cmdargs.submit, submitter=args['nick'], nick=args['nick'], blogname=cmdargs.blogname)
             args['db'].add(row)
             args['db'].flush()
-            send("New Tumblr Post: %s -- %s, Submitted by %s" % (cmdargs.submit, cmdargs.blogname, args['nick']),
+            send("New Tumblr Post: {} -- {}, Submitted by {}".format(cmdargs.submit, cmdargs.blogname, args['nick']),
                  target=args['config']['core']['ctrlchan'])
             send("Issue submitted for approval.", target=args['nick'])
     else:

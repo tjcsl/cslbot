@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -86,13 +85,13 @@ def cmd(send, msg, args):
         high = list(reversed(sortedtotals))
         for x in range(3):
             if x < len(high):
-                send("%s: %s" % (high[x], totals[high[x]]))
+                send(f"{high[x]}: {totals[high[x]]}")
     elif cmdargs.low:
         send('Least Used Commands:')
         low = sortedtotals
         for x in range(3):
             if x < len(low):
-                send("%s: %s" % (low[x], totals[low[x]]))
+                send(f"{low[x]}: {totals[low[x]]}")
     elif cmdargs.userhigh:
         totals = get_nick_totals(session)
         sortedtotals = sorted(totals, key=totals.get)
@@ -100,9 +99,9 @@ def cmd(send, msg, args):
         send('Most active bot users:')
         for x in range(3):
             if x < len(high):
-                send("%s: %s" % (high[x], totals[high[x]]))
+                send(f"{high[x]}: {totals[high[x]]}")
     elif cmdargs.nick:
         send(get_nick(session, cmdargs.nick))
     else:
         command = choice(list(totals.keys()))
-        send("%s has been used %s times." % (command, totals[command]))
+        send(f"{command} has been used {totals[command]} times.")

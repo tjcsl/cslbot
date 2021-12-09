@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -104,7 +103,7 @@ def parse_mime(req, key):
             labels = identify_image(req, key)
             return 'Image: {}'.format(', '.join(labels))
         except ImageException as ex:
-            return "Image: {}".format(ex)
+            return f"Image: {ex}"
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':

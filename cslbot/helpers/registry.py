@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -19,7 +18,7 @@
 from . import modutils
 
 
-class Registry(object):
+class Registry:
 
     def __init__(self):
         self.known_objects = {}
@@ -43,10 +42,10 @@ class Registry(object):
 
     def disable_object(self, obj_type, obj):
         if obj not in self.known_objects:
-            return "%s is not a loaded %s" % (obj, obj_type)
+            return f"{obj} is not a loaded {obj_type}"
         if obj not in self.disabled_objects:
             self.disabled_objects.add(obj)
-            return "Disabled %s %s" % (obj_type, obj)
+            return f"Disabled {obj_type} {obj}"
         else:
             return "That %s is already disabled!" % obj_type
 
@@ -56,11 +55,11 @@ class Registry(object):
             return "Enabled all %ss." % obj_type
         elif obj in self.disabled_objects:
             self.disabled_objects.remove(obj)
-            return "Enabled %s %s" % (obj_type, obj)
+            return f"Enabled {obj_type} {obj}"
         elif obj in self.known_objects:
             return "That %s isn't disabled!" % obj_type
         else:
-            return "%s is not a loaded %s" % (obj, obj_type)
+            return f"{obj} is not a loaded {obj_type}"
 
 
 class HookRegistry(Registry):

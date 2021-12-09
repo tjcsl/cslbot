@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -17,11 +16,10 @@
 
 import string
 from threading import Lock
-from typing import List
 
 from ..helpers.hook import Hook
 
-_caps: List[str] = []
+_caps: list[str] = []
 _caps_lock = Lock()
 
 

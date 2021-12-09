@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -95,14 +94,14 @@ class BotTest(unittest.TestCase):
         if cmd == 'END':
             self.cap_done = True
         elif self.cap_done:
-            raise Exception('%s %s sent after CAP END' % (cmd, arg))
+            raise Exception(f'{cmd} {arg} sent after CAP END')
         elif cmd == 'REQ' and arg is not None:
             self.cap_list.append(arg)
         else:
-            raise Exception("Unhandled CAP %s %s" % (cmd, arg))
+            raise Exception(f"Unhandled CAP {cmd} {arg}")
 
     def user_mock(self, username, realname):
-        self.bot.connection.send_raw("USER %s 0 * :%s" % (username, realname))
+        self.bot.connection.send_raw(f"USER {username} 0 * :{realname}")
         for cap in self.cap_list:
             self.send_msg('cap', self.server, '*', ['ACK', cap])
         self.cap_list.clear()
@@ -175,14 +174,14 @@ class BotTest(unittest.TestCase):
                           (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg', self.server)]
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
-            sorted([x[0] for x in self.raw_mock.call_args_list]),
+            sorted(x[0] for x in self.raw_mock.call_args_list),
             [
                 ('AUTHENTICATE PLAIN',),
                 ('AUTHENTICATE dGVzdEJvdAB0ZXN0Qm90AGRhbmttZW1lcw==',),  # nick=testBot, password=dankmemes
                 ('NICK %s' % self.nick,),
-                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.channel),),
-                ('PRIVMSG %s :Joined channel %s' % (self.ctrlchan, self.ctrlchan),),
-                ('USER %s 0 * :%s' % (self.nick, self.nick),)
+                (f'PRIVMSG {self.ctrlchan} :Joined channel {self.channel}',),
+                (f'PRIVMSG {self.ctrlchan} :Joined channel {self.ctrlchan}',),
+                (f'USER {self.nick} 0 * :{self.nick}',)
             ])
         self.log_mock.reset_mock()
 
@@ -192,4 +191,4 @@ class BotTest(unittest.TestCase):
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         # Make hermetic
-        return sorted([x[0] for x in self.log_mock.call_args_list])
+        return sorted(x[0] for x in self.log_mock.call_args_list)

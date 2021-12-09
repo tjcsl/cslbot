@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -38,13 +37,13 @@ def cmd(send, msg, args):
         send(str(e))
         return
     if cmdargs.section:
-        html = get('http://linux.die.net/man/%s/%s' % (cmdargs.section, cmdargs.command))
+        html = get(f'http://linux.die.net/man/{cmdargs.section}/{cmdargs.command}')
         short = fromstring(html.text).find('.//meta[@name="description"]')
         if short is not None:
             short = short.get('content')
-            send("%s -- http://linux.die.net/man/%s/%s" % (short, cmdargs.section, cmdargs.command))
+            send(f"{short} -- http://linux.die.net/man/{cmdargs.section}/{cmdargs.command}")
         else:
-            send("No manual entry for %s in section %s" % (cmdargs.command, cmdargs.section))
+            send(f"No manual entry for {cmdargs.command} in section {cmdargs.section}")
     else:
         for section in range(0, 8):
             html = get('http://linux.die.net/man/%d/%s' % (section, cmdargs.command))

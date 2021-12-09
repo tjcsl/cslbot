@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -23,20 +22,20 @@ import sys
 import types
 from importlib import resources
 from os.path import basename, join
-from typing import Dict, List, Mapping, Set, Tuple, Union
+from typing import Mapping, Union
 
 from . import backtrace
 
 
-class ModuleData(object):
+class ModuleData:
 
     def __init__(self) -> None:
         self.reset()
 
     def reset(self) -> None:
-        self.groups: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
-        self.disabled: Dict[str, Set[str]] = {'commands': set(), 'hooks': set()}
-        self.aux: List[str] = []
+        self.groups: dict[str, set[str]] = {'commands': set(), 'hooks': set()}
+        self.disabled: dict[str, set[str]] = {'commands': set(), 'hooks': set()}
+        self.aux: list[str] = []
 
 
 registry = ModuleData()
@@ -81,7 +80,7 @@ def loaded(mod_type: str, name: str) -> bool:
     return name in registry.groups[mod_type] or name in registry.disabled[mod_type]
 
 
-def parse_group(cfg: Mapping[str, str]) -> Dict[str, List[str]]:
+def parse_group(cfg: Mapping[str, str]) -> dict[str, list[str]]:
     groups = {}
     for group in cfg.keys():
         groups[group] = [x.strip() for x in cfg[group].split(',')]
@@ -98,17 +97,17 @@ def group_disabled(mod_type: str, name: str) -> bool:
     return name in registry.disabled[mod_type]
 
 
-def get_disabled(mod_type: str) -> Set[str]:
+def get_disabled(mod_type: str) -> set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package='cslbot') -> Tuple[List[str], List[str]]:
+def get_enabled(mod_type: str, package='cslbot') -> tuple[list[str], list[str]]:
     enabled, disabled = [], []
-    for f in resources.contents("%s.%s" % (package, mod_type)):
+    for f in resources.contents(f"{package}.{mod_type}"):
         if not f.endswith('.py'):
             continue
         name = basename(f).split('.')[0]
-        mod_name = "%s.%s.%s" % (package.lower(), mod_type, name)
+        mod_name = f"{package.lower()}.{mod_type}.{name}"
         if group_enabled(mod_type, name):
             enabled.append(mod_name)
         elif group_disabled(mod_type, name):
@@ -120,7 +119,7 @@ def get_enabled(mod_type: str, package='cslbot') -> Tuple[List[str], List[str]]:
     return enabled, disabled
 
 
-def get_modules(mod_type: str) -> Tuple[List[str], List[str]]:
+def get_modules(mod_type: str) -> tuple[list[str], list[str]]:
     core_enabled, core_disabled = get_enabled(mod_type)
     for package in registry.aux:
         if not package:
@@ -165,7 +164,7 @@ def safe_load(modname: str) -> Union[None, str]:
         return msg
 
 
-def scan_and_reimport(mod_type: str) -> List[Tuple[str, str]]:
+def scan_and_reimport(mod_type: str) -> list[tuple[str, str]]:
     """Scans folder for modules."""
     mod_enabled, mod_disabled = get_modules(mod_type)
     errors = []

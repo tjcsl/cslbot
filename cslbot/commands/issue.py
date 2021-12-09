@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -47,7 +46,7 @@ def cmd(send, msg, args):
     if isinstance(cmdargs.description, list):
         cmdargs.description = ' '.join(cmdargs.description)
     if remainder:
-        cmdargs.title = "%s %s" % (cmdargs.title, ' '.join(remainder))
+        cmdargs.title = "{} {}".format(cmdargs.title, ' '.join(remainder))
     if args['type'] == 'privmsg':
         send('You want to let everybody know about your problems, right?')
     elif cmdargs.get or cmdargs.title.isdigit():
@@ -55,7 +54,7 @@ def cmd(send, msg, args):
         if 'message' in issue:
             send("Invalid Issue Number")
         else:
-            send("%s (%s) -- %s" % (issue['title'], issue['state'], issue['html_url']))
+            send("{} ({}) -- {}".format(issue['title'], issue['state'], issue['html_url']))
     elif not cmdargs.title:
         issues = []
         n = 1
@@ -77,7 +76,7 @@ def cmd(send, msg, args):
     elif cmdargs.title and args['is_admin'](args['nick']):
         url, success = create_issue(cmdargs.title, cmdargs.description, args['source'], repo, apikey)
         if success:
-            send("Issue created -- %s -- %s -- %s" % (url, cmdargs.title, cmdargs.description))
+            send(f"Issue created -- {url} -- {cmdargs.title} -- {cmdargs.description}")
         else:
             send("Error creating issue: %s" % url)
     elif cmdargs.title:

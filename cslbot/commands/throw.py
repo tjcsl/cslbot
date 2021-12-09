@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,19 +32,19 @@ def cmd(send, msg, args):
     if " into " in msg and msg != "into":
         match = re.match('(.*) into (.*)', msg)
         if match:
-            msg = 'throws %s into %s' % (match.group(1), match.group(2))
+            msg = f'throws {match.group(1)} into {match.group(2)}'
             send(msg, 'action')
         else:
             return
     elif " at " in msg and msg != "at":
         match = re.match('(.*) at (.*)', msg)
         if match:
-            msg = 'throws %s at %s' % (match.group(1), match.group(2))
+            msg = f'throws {match.group(1)} at {match.group(2)}'
             send(msg, 'action')
         else:
             return
     elif msg:
-        msg = 'throws %s at %s' % (msg, choice(users))
+        msg = f'throws {msg} at {choice(users)}'
         send(msg, 'action')
     else:
         send("Throw what?")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -26,7 +25,7 @@ import re
 import threading
 import time
 from datetime import datetime, timedelta
-from typing import Callable, Dict, List
+from typing import Callable
 
 import irc
 
@@ -36,9 +35,9 @@ from . import (acl, arguments, control, identity, misc, orm, registry, sql,
 logger = logging.getLogger(__name__)
 
 
-class BotHandler(object):
+class BotHandler:
 
-    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: List[str], confdir: str, idx: int):
+    def __init__(self, config: configparser.ConfigParser, connection: irc.client.ServerConnection, channels: list[str], confdir: str, idx: int):
         """Set everything up.
 
         | kick_enabled controls whether the bot will kick people or not.
@@ -56,17 +55,17 @@ class BotHandler(object):
         self.db = sql.Sql(config, confdir)
         # FIXME: don't pass in self
         self.workers = workers.Workers(self)
-        self.guarded: List[str] = []
-        self.voiced: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
-        self.opers: Dict[str, Dict[str, bool]] = collections.defaultdict(dict)
+        self.guarded: list[str] = []
+        self.voiced: dict[str, dict[str, bool]] = collections.defaultdict(dict)
+        self.opers: dict[str, dict[str, bool]] = collections.defaultdict(dict)
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
-        self.abuselist: Dict[str, Dict[str, datetime]] = {}
-        self.ping_map: Dict[str, str] = {}
-        self.outputfilter: Dict[str, List[Callable[[str], str]]] = collections.defaultdict(list)
+        self.abuselist: dict[str, dict[str, datetime]] = {}
+        self.ping_map: dict[str, str] = {}
+        self.outputfilter: dict[str, list[Callable[[str], str]]] = collections.defaultdict(list)
         self.kick_enabled = True
-        self.who_map: Dict[int, str] = {}
+        self.who_map: dict[int, str] = {}
         self.flood_lock = threading.Lock()
         self.data_lock = threading.RLock()
         self.last_msg_time = datetime.now()
@@ -104,7 +103,7 @@ class BotHandler(object):
     def send_who(self, target, tag):
         # http://faerion.sourceforge.net/doc/irc/whox.var
         # n(show nicknames), a(show nickserv status), f(show channel status/modes), t(show tag)
-        self.rate_limited_send('who', '{} %naft,{}'.format(target, tag))
+        self.rate_limited_send('who', f'{target} %naft,{tag}')
 
     def is_admin(self, send, nick, required_role='admin'):
         """Checks if a nick is a admin.
@@ -255,7 +254,7 @@ class BotHandler(object):
         if self.log_to_ctrlchan:
             ctrlchan = self.config['core']['ctrlchan']
             if target != ctrlchan:
-                ctrlmsg = "%s:%s:%s:%s" % (target, msgtype, nick, msg)
+                ctrlmsg = f"{target}:{msgtype}:{nick}:{msg}"
                 # If we call self.send, we'll get a infinite loop.
                 self.connection.privmsg(ctrlchan, ctrlmsg.strip())
 
@@ -304,7 +303,7 @@ class BotHandler(object):
         cmd = cmdargs.split()
         # FIXME: use argparse
         if cmd[0] in self.channels and not (len(cmd) > 1 and cmd[1] == "force"):
-            send("%s is already a member of %s" % (self.config['core']['nick'], cmd[0]))
+            send("{} is already a member of {}".format(self.config['core']['nick'], cmd[0]))
             return
         c.join(cmd[0])
         self.send(cmd[0], nick, "Joined at the request of " + nick, msgtype)
@@ -343,7 +342,7 @@ class BotHandler(object):
             if match and nick not in [match.group(3), self.connection.real_nickname]:
                 modestring = "+voe-qb %s" % (" ".join([match.group(3)] * 5))
                 self.connection.mode(target, modestring)
-                send('Mode %s on %s by the guard system' % (modestring, target), target=self.config['core']['ctrlchan'])
+                send(f'Mode {modestring} on {target} by the guard system', target=self.config['core']['ctrlchan'])
 
     def do_kick(self, send, target, nick, msg, slogan=True):
         """Kick users.
@@ -372,7 +371,7 @@ class BotHandler(object):
         else:
             msg = textutils.gen_slogan(msg).upper() if slogan else msg
             if nick in ops:
-                send("%s: %s" % (nick, msg), target=target)
+                send(f"{nick}: {msg}", target=target)
             else:
                 self.connection.kick(target, nick, msg)
 
@@ -500,7 +499,7 @@ class BotHandler(object):
         user = self.config['core']['nick']
         logger.info("Connected to server %s", self.connection.server)
         if self.config.getboolean('feature', 'nickserv') and self.connection.real_nickname != self.config['core']['nick']:
-            self.connection.privmsg('NickServ', 'REGAIN %s %s' % (user, self.serverpass))
+            self.connection.privmsg('NickServ', f'REGAIN {user} {self.serverpass}')
         self.do_welcome()
 
     def handle_who(self, e):

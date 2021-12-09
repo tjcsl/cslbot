@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -18,7 +17,7 @@
 
 from setuptools import find_packages, setup
 
-with open("README.rst", "r") as f:
+with open("README.rst") as f:
     long_description = f.read()
 
 setup_requires = ["setuptools", "setuptools_git"]

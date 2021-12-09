@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,6 +32,6 @@ def cmd(send, msg, args):
     match = re.match('(%s+) (.*)' % args['config']['core']['nickregex'], msg)
     if match:
         message = match.group(2) + " "
-        send('%s: %s' % (match.group(1), message * 3))
+        send(f'{match.group(1)}: {message * 3}')
     else:
         send("Invalid Syntax.")

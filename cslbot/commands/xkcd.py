@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,7 +32,7 @@ def do_search(msg, key, searchid):
         output = "No Results found."
     else:
         data = data['items'][0]
-        output = "%s -- %s" % (data['title'], data['link'])
+        output = "{} -- {}".format(data['title'], data['link'])
     return output
 
 

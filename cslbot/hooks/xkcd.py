@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -26,6 +25,6 @@ def handle(send, msg, args):
     if output is None:
         return
     if args['type'] == 'action':
-        send("correction: * %s %s" % (args['nick'], output))
+        send("correction: * {} {}".format(args['nick'], output))
     else:
-        send("%s actually meant: %s" % (args['nick'], output))
+        send("{} actually meant: {}".format(args['nick'], output))

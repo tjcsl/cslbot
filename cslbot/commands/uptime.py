@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,5 +32,5 @@ def cmd(send, _, args):
     load_avg = ', '.join([str(x) for x in os.getloadavg()])
     starttime = curr - uptime['start']
     reloaded = curr - uptime['reloaded']
-    send("Time since start: %s, load average: %s" % (starttime, load_avg))
+    send(f"Time since start: {starttime}, load average: {load_avg}")
     send("Time since reload: %s" % reloaded)

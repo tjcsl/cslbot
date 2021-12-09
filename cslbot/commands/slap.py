@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -78,7 +77,7 @@ def cmd(send, msg, args):
         if not implement:
             implement = choice(implements)
         if reason:
-            slap = 'slaps %s %s with %s for %s' % (slapee, method, implement, reason)
+            slap = f'slaps {slapee} {method} with {implement} for {reason}'
         else:
-            slap = 'slaps %s %s with %s' % (slapee, method, implement)
+            slap = f'slaps {slapee} {method} with {implement}'
         send(slap, 'action')

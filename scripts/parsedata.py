@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett,
 # and Tris Wilson
 #
@@ -26,7 +25,7 @@ from datetime import datetime, timedelta
 from importlib import resources
 from os import makedirs, path
 from time import strftime
-from typing import Any, Dict, List
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.orm import Session
@@ -40,15 +39,15 @@ from cslbot.helpers.orm import Polls, Quotes, Scores, Urls
 from cslbot.helpers.sql import get_session  # noqa
 
 
-def get_quotes(session: Session) -> List[Quotes]:
+def get_quotes(session: Session) -> list[Quotes]:
     return session.query(Quotes).filter(Quotes.accepted == 1).order_by(Quotes.id).all()
 
 
-def get_scores(session: Session) -> List[Scores]:
+def get_scores(session: Session) -> list[Scores]:
     return session.query(Scores).order_by(Scores.score.desc()).all()
 
 
-def get_urls(session: Session) -> List[Dict[str, Any]]:
+def get_urls(session: Session) -> list[dict[str, Any]]:
     # FIXME: support stuff older than one week
     limit = datetime.now() - timedelta(weeks=1)
     rows = session.query(Urls).filter(Urls.time > limit).order_by(Urls.time.desc()).all()
@@ -58,16 +57,16 @@ def get_urls(session: Session) -> List[Dict[str, Any]]:
     return urls
 
 
-def get_polls(session: Session) -> Dict[int, str]:
+def get_polls(session: Session) -> dict[int, str]:
     rows = session.query(Polls).filter(Polls.deleted == 0, Polls.active == 1).order_by(Polls.id).all()
-    polls: Dict[int, str] = collections.OrderedDict()
+    polls: dict[int, str] = collections.OrderedDict()
     for row in rows:
         polls[row.id] = row.question
     return polls
 
 
-def get_responses(session: Session, polls: Dict[int, str]) -> Dict[int, Dict[str, List[str]]]:
-    responses: Dict[int, Dict[str, List[str]]] = {}
+def get_responses(session: Session, polls: dict[int, str]) -> dict[int, dict[str, list[str]]]:
+    responses: dict[int, dict[str, list[str]]] = {}
     for pid in polls.keys():
         responses[pid] = collections.OrderedDict()
         rows = session.query(Poll_responses).filter(Poll_responses.pid == pid).order_by(Poll_responses.response).all()
@@ -76,10 +75,10 @@ def get_responses(session: Session, polls: Dict[int, str]) -> Dict[int, Dict[str
     return responses
 
 
-def get_winners(polls: Dict[int, str], responses: Dict[int, Dict[str, List[str]]]) -> Dict[int, str]:
+def get_winners(polls: dict[int, str], responses: dict[int, dict[str, list[str]]]) -> dict[int, str]:
     winners = {}
     for pid in polls.keys():
-        ranking: Dict[int, List[str]] = collections.defaultdict(list)
+        ranking: dict[int, list[str]] = collections.defaultdict(list)
         for response, voters in responses[pid].items():
             num = len(voters)
             ranking[num].append(response)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -89,7 +88,7 @@ def get_stopwatch(args):
     if stopwatch is None:
         return "Invalid ID!"
     status = "Active" if stopwatch.active == 1 else "Paused"
-    return "%s %s" % (status, get_elapsed(args.session, args.id))
+    return f"{status} {get_elapsed(args.session, args.id)}"
 
 
 @Command(['stopwatch', 'sw'], ['config', 'db', 'is_admin', 'nick'])

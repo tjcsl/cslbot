@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -34,4 +33,4 @@ def cmd(send, msg, args):
         return
     cmdargs.message = ' '.join(cmdargs.message)
     send(cmdargs.message, target=cmdargs.channels[0])
-    send("%s sent message %s to %s" % (args['nick'], cmdargs.message, cmdargs.channels[0]), target=args['config']['core']['ctrlchan'])
+    send("{} sent message {} to {}".format(args['nick'], cmdargs.message, cmdargs.channels[0]), target=args['config']['core']['ctrlchan'])

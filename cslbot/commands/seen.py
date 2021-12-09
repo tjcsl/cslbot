@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -22,7 +21,7 @@ from ..helpers.orm import Log
 
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
-    command = '%sseen %s' % (cmdchar, nick)
+    command = f'{cmdchar}seen {nick}'
     return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command,
                                     Log.type != 'join').order_by(Log.time.desc()).first()
 
@@ -45,7 +44,7 @@ def cmd(send, msg, args):
     delta = datetime.now() - last.time
     # We only need second-level precision.
     delta -= delta % timedelta(seconds=1)
-    output = "%s was last seen %s ago " % (msg, delta)
+    output = f"{msg} was last seen {delta} ago "
     if last.type == 'pubmsg' or last.type == 'privmsg':
         output += 'saying "%s"' % last.msg
     elif last.type == 'action':

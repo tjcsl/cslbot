@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -25,7 +24,7 @@ def handle(send, _, args):
     notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
     for note in notes:
         time = note.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s: Note from %s: <%s> %s" % (nick, note.submitter, time, note.note))
+        send(f"{nick}: Note from {note.submitter}: <{time}> {note.note}")
         note.pending = 0
     if notes:
         args['db'].commit()

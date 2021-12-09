@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -33,8 +32,8 @@ def cmd(send, msg, args):
     nick = args['nick']
     isup = get("http://isup.me/%s" % msg).text
     if "looks down from here" in isup:
-        send("%s: %s is down" % (nick, msg))
+        send(f"{nick}: {msg} is down")
     elif "like a site on the interwho" in isup:
-        send("%s: %s is not a valid url" % (nick, msg))
+        send(f"{nick}: {msg} is not a valid url")
     else:
-        send("%s: %s is up" % (nick, msg))
+        send(f"{nick}: {msg} is up")

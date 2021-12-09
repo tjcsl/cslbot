@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -57,6 +56,6 @@ def cmd(send, msg, args):
         logtime = result.time.strftime('%Y-%m-%d %H:%M:%S')
         send("%s was last said by %s at %s (%d occurrences)" % (result.msg, result.source, logtime, count))
     elif cmdargs.nick:
-        send('%s has never said %s.' % (cmdargs.nick, term))
+        send(f'{cmdargs.nick} has never said {term}.')
     else:
         send('%s has never been said.' % term)

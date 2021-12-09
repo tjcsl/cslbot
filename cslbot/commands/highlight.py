@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -46,4 +45,4 @@ def cmd(send, msg, args):
         send("%s has never been pinged." % cmdargs.nick)
     else:
         time = row.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s <%s> %s" % (time, row.source, row.msg))
+        send(f"{time} <{row.source}> {row.msg}")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2013-2018 Samuel Damashek, Peter Foley, James Forcier, Srijay Kasturi, Reed Koser, Christopher Reffett, and Tris Wilson
 #
 # This program is free software; you can redistribute it and/or
@@ -34,6 +33,6 @@ def check_exists(subreddit):
 def random_post(subreddit, apikey):
     """Gets a random post from a subreddit and returns a title and shortlink to it."""
     subreddit = '/r/random' if subreddit is None else '/r/%s' % subreddit
-    urlstr = 'http://reddit.com%s/random?%s' % (subreddit, time.time())
+    urlstr = f'http://reddit.com{subreddit}/random?{time.time()}'
     url = get(urlstr, headers={'User-Agent': 'CslBot/1.0'}).url
-    return '** %s - %s' % (get_title(url, apikey), get_short(url, apikey))
+    return f'** {get_title(url, apikey)} - {get_short(url, apikey)}'
