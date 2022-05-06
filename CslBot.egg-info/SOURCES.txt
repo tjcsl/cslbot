@@ -1,7 +1,7 @@
 .codeclimate.yml
 .coveragerc
+.flake8
 .gitignore
-.pep8
 .pylintrc
 .style.yapf
 .travis.yml
@@ -9,6 +9,7 @@ COPYING
 README.rst
 bot.py
 deploy
+pyproject.toml
 setup.py
 .github/dependabot.yml
 .github/workflows/codeql-analysis.yml
