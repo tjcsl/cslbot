@@ -33,7 +33,7 @@ cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 autopep8 = "^1.6.0"
 yapf = "^0.32.0"
 isort = "^5.10.1"
-Sphinx = "^4.5.0"
+Sphinx = "^5.1.1"
 pytest = "^7.1.2"
 
 [build-system]
