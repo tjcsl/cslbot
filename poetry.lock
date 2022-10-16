@@ -94,7 +94,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "autocommand"
@@ -117,7 +117,7 @@ pycodestyle = ">=2.9.1"
 toml = "*"
 
 [[package]]
-name = "Babel"
+name = "babel"
 version = "2.10.3"
 description = "Internationalization utilities"
 category = "dev"
@@ -152,7 +152,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "colorama"
@@ -164,7 +164,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "cslbot-tjhsst"
-version = "0.1.0"
+version = "0.4"
 description = "TJHSST-Specific modifications for cslbot."
 category = "main"
 optional = false
@@ -178,15 +178,15 @@ tensorflow = "^2.8.0"
 type = "git"
 url = "https://github.com/tjcsl/cslbot-tjhsst"
 reference = "HEAD"
-resolved_reference = "4f98f3484355d58b7057803287682100556ed682"
+resolved_reference = "39e1fd4f7ba588026f43a257a3d0ba3c52346d74"
 
 [[package]]
 name = "docutils"
-version = "0.17.1"
+version = "0.19"
 description = "Docutils -- Python Documentation Utilities"
 category = "dev"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.7"
 
 [[package]]
 name = "flatbuffers"
@@ -250,7 +250,7 @@ six = ">=1.9.0"
 
 [package.extras]
 aiohttp = ["aiohttp (>=3.6.2,<4.0.0dev)", "requests (>=2.20.0,<3.0.0dev)"]
-enterprise_cert = ["cryptography (==36.0.2)", "pyopenssl (==22.0.0)"]
+enterprise-cert = ["cryptography (==36.0.2)", "pyopenssl (==22.0.0)"]
 pyopenssl = ["pyopenssl (>=20.0.0)"]
 reauth = ["pyu2f (>=0.1.5)"]
 
@@ -418,12 +418,12 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements_deprecated_finder = ["pip-api", "pipreqs"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
-name = "jaraco.classes"
+name = "jaraco-classes"
 version = "3.2.3"
 description = "Utility functions for Python class constructs"
 category = "main"
@@ -438,7 +438,7 @@ docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)
 testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [[package]]
-name = "jaraco.collections"
+name = "jaraco-collections"
 version = "3.5.2"
 description = "Collection objects similar to those in stdlib by jaraco"
 category = "main"
@@ -454,7 +454,7 @@ docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)
 testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [[package]]
-name = "jaraco.context"
+name = "jaraco-context"
 version = "4.1.2"
 description = "Context managers by jaraco"
 category = "main"
@@ -466,7 +466,7 @@ docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)
 testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [[package]]
-name = "jaraco.functools"
+name = "jaraco-functools"
 version = "3.5.2"
 description = "Functools like those found in stdlib"
 category = "main"
@@ -481,7 +481,7 @@ docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)
 testing = ["flake8 (<5)", "jaraco.classes", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [[package]]
-name = "jaraco.logging"
+name = "jaraco-logging"
 version = "3.1.2"
 description = "Support for Python logging facility"
 category = "main"
@@ -496,7 +496,7 @@ docs = ["jaraco.packaging (>=9)", "rst.linker (>=1.9)", "sphinx"]
 testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8"]
 
 [[package]]
-name = "jaraco.stream"
+name = "jaraco-stream"
 version = "3.0.3"
 description = "routines for dealing with data streams"
 category = "main"
@@ -508,7 +508,7 @@ docs = ["jaraco.packaging (>=8.2)", "rst.linker (>=1.9)", "sphinx"]
 testing = ["more-itertools", "pytest (>=4.6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.0.1)", "pytest-flake8", "pytest-mypy"]
 
 [[package]]
-name = "jaraco.text"
+name = "jaraco-text"
 version = "3.9.1"
 description = "Module for text manipulation"
 category = "main"
@@ -528,7 +528,7 @@ docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)
 testing = ["flake8 (<5)", "pathlib2", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [[package]]
-name = "Jinja2"
+name = "jinja2"
 version = "3.1.2"
 description = "A very fast and expressive template engine."
 category = "dev"
@@ -550,7 +550,7 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "Keras-Preprocessing"
+name = "keras-preprocessing"
 version = "1.1.2"
 description = "Easy data preprocessing and data augmentation for deep learning models"
 category = "main"
@@ -589,7 +589,7 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=0.29.7)"]
 
 [[package]]
-name = "Mako"
+name = "mako"
 version = "1.2.3"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
 category = "main"
@@ -605,7 +605,7 @@ lingua = ["lingua"]
 testing = ["pytest"]
 
 [[package]]
-name = "Markdown"
+name = "markdown"
 version = "3.4.1"
 description = "Python implementation of Markdown."
 category = "main"
@@ -619,7 +619,7 @@ importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
 testing = ["coverage", "pyyaml"]
 
 [[package]]
-name = "MarkupSafe"
+name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
 category = "main"
@@ -776,7 +776,7 @@ dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
 
 [[package]]
-name = "Pygments"
+name = "pygments"
 version = "2.13.0"
 description = "Pygments is a syntax highlighting package written in Python."
 category = "dev"
@@ -865,7 +865,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -923,8 +923,8 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "Sphinx"
-version = "4.5.0"
+name = "sphinx"
+version = "5.2.3"
 description = "Python documentation generator"
 category = "dev"
 optional = false
@@ -932,16 +932,16 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
-babel = ">=1.3"
-colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
-docutils = ">=0.14,<0.18"
-imagesize = "*"
-importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
-Jinja2 = ">=2.3"
-packaging = "*"
-Pygments = ">=2.0"
+babel = ">=2.9"
+colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
+docutils = ">=0.14,<0.20"
+imagesize = ">=1.3"
+importlib-metadata = {version = ">=4.8", markers = "python_version < \"3.10\""}
+Jinja2 = ">=3.0"
+packaging = ">=21.0"
+Pygments = ">=2.12"
 requests = ">=2.5.0"
-snowballstemmer = ">=1.1"
+snowballstemmer = ">=2.0"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
 sphinxcontrib-htmlhelp = ">=2.0.0"
@@ -951,8 +951,8 @@ sphinxcontrib-serializinghtml = ">=1.1.5"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["docutils-stubs", "flake8 (>=3.5.0)", "isort", "mypy (>=0.931)", "types-requests", "types-typed-ast"]
-test = ["cython", "html5lib", "pytest", "pytest-cov", "typed-ast"]
+lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-bugbear", "flake8-comprehensions", "flake8-simplify", "isort", "mypy (>=0.981)", "sphinx-lint", "types-requests", "types-typed-ast"]
+test = ["cython", "html5lib", "pytest (>=4.6)", "typed_ast"]
 
 [[package]]
 name = "sphinxcontrib-applehelp"
@@ -1026,7 +1026,7 @@ lint = ["docutils-stubs", "flake8", "mypy"]
 test = ["pytest"]
 
 [[package]]
-name = "SQLAlchemy"
+name = "sqlalchemy"
 version = "1.4.41"
 description = "Database Abstraction Library"
 category = "main"
@@ -1041,19 +1041,19 @@ aiomysql = ["aiomysql", "greenlet (!=0.4.17)"]
 aiosqlite = ["aiosqlite", "greenlet (!=0.4.17)", "typing_extensions (!=3.10.0.1)"]
 asyncio = ["greenlet (!=0.4.17)"]
 asyncmy = ["asyncmy (>=0.2.3,!=0.2.4)", "greenlet (!=0.4.17)"]
-mariadb_connector = ["mariadb (>=1.0.1,!=1.1.2)"]
+mariadb-connector = ["mariadb (>=1.0.1,!=1.1.2)"]
 mssql = ["pyodbc"]
-mssql_pymssql = ["pymssql"]
-mssql_pyodbc = ["pyodbc"]
+mssql-pymssql = ["pymssql"]
+mssql-pyodbc = ["pyodbc"]
 mypy = ["mypy (>=0.910)", "sqlalchemy2-stubs"]
 mysql = ["mysqlclient (>=1.4.0)", "mysqlclient (>=1.4.0,<2)"]
-mysql_connector = ["mysql-connector-python"]
+mysql-connector = ["mysql-connector-python"]
 oracle = ["cx_oracle (>=7)", "cx_oracle (>=7,<8)"]
 postgresql = ["psycopg2 (>=2.7)"]
-postgresql_asyncpg = ["asyncpg", "greenlet (!=0.4.17)"]
-postgresql_pg8000 = ["pg8000 (>=1.16.6,!=1.29.0)"]
-postgresql_psycopg2binary = ["psycopg2-binary"]
-postgresql_psycopg2cffi = ["psycopg2cffi"]
+postgresql-asyncpg = ["asyncpg", "greenlet (!=0.4.17)"]
+postgresql-pg8000 = ["pg8000 (>=1.16.6,!=1.29.0)"]
+postgresql-psycopg2binary = ["psycopg2-binary"]
+postgresql-psycopg2cffi = ["psycopg2cffi"]
 pymysql = ["pymysql", "pymysql (<1)"]
 sqlcipher = ["sqlcipher3_binary"]
 
@@ -1195,7 +1195,7 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
-name = "TwitterSearch"
+name = "twittersearch"
 version = "1.0.2"
 description = "A library to easily iterate tweets found by the Twitter API"
 category = "main"
@@ -1228,7 +1228,7 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
-name = "Werkzeug"
+name = "werkzeug"
 version = "2.2.2"
 description = "The comprehensive WSGI web application library."
 category = "main"
@@ -1295,7 +1295,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "6a00bcc9c18861736948fe7c507e11760a9d90efb9396d5fe5848d707cc8ca72"
+content-hash = "880918aee48a25c89084f4fb5589fe71a7f3497a6834916641b861cc9c609be9"
 
 [metadata.files]
 absl-py = [
@@ -1423,7 +1423,7 @@ autopep8 = [
     {file = "autopep8-1.7.0-py2.py3-none-any.whl", hash = "sha256:6f09e90a2be784317e84dc1add17ebfc7abe3924239957a37e5040e27d812087"},
     {file = "autopep8-1.7.0.tar.gz", hash = "sha256:ca9b1a83e53a7fad65d731dc7a2a2d50aa48f43850407c59f6a1a306c4201142"},
 ]
-Babel = [
+babel = [
     {file = "Babel-2.10.3-py3-none-any.whl", hash = "sha256:ff56f4892c1c4bf0d814575ea23471c230d544203c7748e8c68f0089478d48eb"},
     {file = "Babel-2.10.3.tar.gz", hash = "sha256:7614553711ee97490f732126dc077f8d0ae084ebc6a96e23db1482afabdb2c51"},
 ]
@@ -1445,8 +1445,8 @@ colorama = [
 ]
 cslbot-tjhsst = []
 docutils = [
-    {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},
-    {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
+    {file = "docutils-0.19-py3-none-any.whl", hash = "sha256:5e1de4d849fee02c63b040a4a3fd567f4ab104defd8a5511fbbc24a8a017efbc"},
+    {file = "docutils-0.19.tar.gz", hash = "sha256:33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6"},
 ]
 flatbuffers = [
     {file = "flatbuffers-22.9.24-py2.py3-none-any.whl", hash = "sha256:fc30f024e2eee55922d610f4d68626002fcd3c8f87d8058ec5ae9edd86993bcb"},
@@ -1705,42 +1705,42 @@ isort = [
     {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
     {file = "isort-5.10.1.tar.gz", hash = "sha256:e8443a5e7a020e9d7f97f1d7d9cd17c88bcb3bc7e218bf9cf5095fe550be2951"},
 ]
-"jaraco.classes" = [
+jaraco-classes = [
     {file = "jaraco.classes-3.2.3-py3-none-any.whl", hash = "sha256:2353de3288bc6b82120752201c6b1c1a14b058267fa424ed5ce5984e3b922158"},
     {file = "jaraco.classes-3.2.3.tar.gz", hash = "sha256:89559fa5c1d3c34eff6f631ad80bb21f378dbcbb35dd161fd2c6b93f5be2f98a"},
 ]
-"jaraco.collections" = [
+jaraco-collections = [
     {file = "jaraco.collections-3.5.2-py3-none-any.whl", hash = "sha256:1ca12fa4b7067dfc8d7f791c1a8660d970a2bf2f80536ba0aa5cbb71fe1261f1"},
     {file = "jaraco.collections-3.5.2.tar.gz", hash = "sha256:072b93eb35f9e48508485755534e66a34ef1cc84af291fd27f39b44d4c0dd2c3"},
 ]
-"jaraco.context" = [
+jaraco-context = [
     {file = "jaraco.context-4.1.2-py3-none-any.whl", hash = "sha256:9327d3e6901923e5a7097aa2df4b9c2bc13f845c7672692e3827ebd1b3d67606"},
     {file = "jaraco.context-4.1.2.tar.gz", hash = "sha256:a58e94dd67871639abc091b57d32842449b230777570ef2bcec3dc16b912613e"},
 ]
-"jaraco.functools" = [
+jaraco-functools = [
     {file = "jaraco.functools-3.5.2-py3-none-any.whl", hash = "sha256:163d6369dd2fc6590712677cbf83b06ee0e4a1a0c720f4b377eae04175ce458e"},
     {file = "jaraco.functools-3.5.2.tar.gz", hash = "sha256:45b05c158f3ad28731075556ffd4749bd254ec67f91e1eb367dcfebff1151db4"},
 ]
-"jaraco.logging" = [
+jaraco-logging = [
     {file = "jaraco.logging-3.1.2-py3-none-any.whl", hash = "sha256:1dd1c01faba569d976ae9cad5b009c7ae132786dc58c5e9edd0efa069d9e0410"},
     {file = "jaraco.logging-3.1.2.tar.gz", hash = "sha256:93a70b8b3767779ad6c7b56ee98579ced77b69f16abbcae749f62c2c59e67931"},
 ]
-"jaraco.stream" = [
+jaraco-stream = [
     {file = "jaraco.stream-3.0.3-py3-none-any.whl", hash = "sha256:7fe38f25767b717afcf3ca79ec8fff06e85ae166fb5e42da58cc2a581bc9db39"},
     {file = "jaraco.stream-3.0.3.tar.gz", hash = "sha256:3af4b0441090ee65bd6dde930d29f93f50c4a2fe6048e2a9d288285f5e4dc441"},
 ]
-"jaraco.text" = [
+jaraco-text = [
     {file = "jaraco.text-3.9.1-py3-none-any.whl", hash = "sha256:3ca615c4135e151d21206075ec4aface8a2fbc3e68437fe709a6541428a635f9"},
     {file = "jaraco.text-3.9.1.tar.gz", hash = "sha256:d57cd4448a588020318425e04194e897f96fc23b92b82ff9308a24d5cbf2b3fb"},
 ]
-Jinja2 = [
+jinja2 = [
     {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
 ]
 keras = [
     {file = "keras-2.10.0-py2.py3-none-any.whl", hash = "sha256:26a6e2c2522e7468ddea22710a99b3290493768fc08a39e75d1173a0e3452fdf"},
 ]
-Keras-Preprocessing = [
+keras-preprocessing = [
     {file = "Keras_Preprocessing-1.1.2-py2.py3-none-any.whl", hash = "sha256:7b82029b130ff61cc99b55f3bd27427df4838576838c5b2f65940e4fcec99a7b"},
     {file = "Keras_Preprocessing-1.1.2.tar.gz", hash = "sha256:add82567c50c8bc648c14195bf544a5ce7c1f76761536956c3d2978970179ef3"},
 ]
@@ -1828,15 +1828,15 @@ lxml = [
     {file = "lxml-4.9.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:287605bede6bd36e930577c5925fcea17cb30453d96a7b4c63c14a257118dbb9"},
     {file = "lxml-4.9.1.tar.gz", hash = "sha256:fe749b052bb7233fe5d072fcb549221a8cb1a16725c47c37e42b0b9cb3ff2c3f"},
 ]
-Mako = [
+mako = [
     {file = "Mako-1.2.3-py3-none-any.whl", hash = "sha256:c413a086e38cd885088d5e165305ee8eed04e8b3f8f62df343480da0a385735f"},
     {file = "Mako-1.2.3.tar.gz", hash = "sha256:7fde96466fcfeedb0eed94f187f20b23d85e4cb41444be0e542e2c8c65c396cd"},
 ]
-Markdown = [
+markdown = [
     {file = "Markdown-3.4.1-py3-none-any.whl", hash = "sha256:08fb8465cffd03d10b9dd34a5c3fea908e20391a2a90b88d66362cb05beed186"},
     {file = "Markdown-3.4.1.tar.gz", hash = "sha256:3b809086bb6efad416156e00a0da66fe47618a5d6918dd688f53f40c8e4cfeff"},
 ]
-MarkupSafe = [
+markupsafe = [
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812"},
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f121a1420d4e173a5d96e47e9a0c0dcff965afdf1626d28de1460815f7c4ee7a"},
     {file = "MarkupSafe-2.1.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a49907dd8420c5685cfa064a1335b6754b74541bbb3706c259c02ed65b644b3e"},
@@ -2108,7 +2108,7 @@ pydantic = [
     {file = "pydantic-1.10.2-py3-none-any.whl", hash = "sha256:1b6ee725bd6e83ec78b1aa32c5b1fa67a3a65badddde3976bca5fe4568f27709"},
     {file = "pydantic-1.10.2.tar.gz", hash = "sha256:91b8e218852ef6007c2b98cd861601c6a09f1aa32bbbb74fab5b1c33d4a1e410"},
 ]
-Pygments = [
+pygments = [
     {file = "Pygments-2.13.0-py3-none-any.whl", hash = "sha256:f643f331ab57ba3c9d89212ee4a2dabc6e94f117cf4eefde99a0574720d14c42"},
     {file = "Pygments-2.13.0.tar.gz", hash = "sha256:56a8508ae95f98e2b9bdf93a6be5ae3f7d8af858b43e02c5a2ff083726be40c1"},
 ]
@@ -2156,9 +2156,9 @@ snowballstemmer = [
     {file = "snowballstemmer-2.2.0-py2.py3-none-any.whl", hash = "sha256:c8e1716e83cc398ae16824e5572ae04e0d9fc2c6b985fb0f900f5f0c96ecba1a"},
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
 ]
-Sphinx = [
-    {file = "Sphinx-4.5.0-py3-none-any.whl", hash = "sha256:ebf612653238bcc8f4359627a9b7ce44ede6fdd75d9d30f68255c7383d3a6226"},
-    {file = "Sphinx-4.5.0.tar.gz", hash = "sha256:7bf8ca9637a4ee15af412d1a1d9689fec70523a68ca9bb9127c2f3eeb344e2e6"},
+sphinx = [
+    {file = "Sphinx-5.2.3.tar.gz", hash = "sha256:5b10cb1022dac8c035f75767799c39217a05fc0fe2d6fe5597560d38e44f0363"},
+    {file = "sphinx-5.2.3-py3-none-any.whl", hash = "sha256:7abf6fabd7b58d0727b7317d5e2650ef68765bbe0ccb63c8795fa8683477eaa2"},
 ]
 sphinxcontrib-applehelp = [
     {file = "sphinxcontrib-applehelp-1.0.2.tar.gz", hash = "sha256:a072735ec80e7675e3f432fcae8610ecf509c5f1869d17e2eecff44389cdbc58"},
@@ -2184,7 +2184,7 @@ sphinxcontrib-serializinghtml = [
     {file = "sphinxcontrib-serializinghtml-1.1.5.tar.gz", hash = "sha256:aa5f6de5dfdf809ef505c4895e51ef5c9eac17d0f287933eb49ec495280b6952"},
     {file = "sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl", hash = "sha256:352a9a00ae864471d3a7ead8d7d79f5fc0b57e8b3f95e9867eb9eb28999b92fd"},
 ]
-SQLAlchemy = [
+sqlalchemy = [
     {file = "SQLAlchemy-1.4.41-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:13e397a9371ecd25573a7b90bd037db604331cf403f5318038c46ee44908c44d"},
     {file = "SQLAlchemy-1.4.41-cp27-cp27m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:2d6495f84c4fd11584f34e62f9feec81bf373787b3942270487074e35cbe5330"},
     {file = "SQLAlchemy-1.4.41-cp27-cp27m-win32.whl", hash = "sha256:e570cfc40a29d6ad46c9aeaddbdcee687880940a3a327f2c668dd0e4ef0a441d"},
@@ -2293,7 +2293,7 @@ tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
-TwitterSearch = [
+twittersearch = [
     {file = "TwitterSearch-1.0.2.tar.gz", hash = "sha256:5a21c707fa54fb9b014d3583d0878e3b432071eb8df4e64245aea5a676c39a6f"},
 ]
 typing-extensions = [
@@ -2304,7 +2304,7 @@ urllib3 = [
     {file = "urllib3-1.26.12-py2.py3-none-any.whl", hash = "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"},
     {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
 ]
-Werkzeug = [
+werkzeug = [
     {file = "Werkzeug-2.2.2-py3-none-any.whl", hash = "sha256:f979ab81f58d7318e064e99c4506445d60135ac5cd2e177a2de0089bfd4c9bd5"},
     {file = "Werkzeug-2.2.2.tar.gz", hash = "sha256:7ea2d48322cc7c0f8b3a215ed73eabd7b5d75d0b50e31ab006286ccff9e00b8f"},
 ]
