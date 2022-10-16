@@ -46,4 +46,4 @@ def main(confdir="/etc/cslbot") -> None:
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(join(dirname(__file__), '../..'))

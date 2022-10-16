@@ -33,7 +33,7 @@ def real_main(argv) -> None:
     if len(argv) > 1:
         raise app.UsageError("Unexpected argument(s) received: %s" % argv)
     # If we're running from a git checkout, override paths.
-    parent_directory = os.path.join(os.path.dirname(__file__), '..')
+    parent_directory = os.path.join(os.path.dirname(__file__), '../..')
     if os.path.exists(os.path.join(parent_directory, '.git')):
         sys.path.insert(0, parent_directory)
         FLAGS.set_default('confdir', parent_directory)

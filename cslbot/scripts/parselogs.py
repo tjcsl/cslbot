@@ -24,8 +24,8 @@ from os import makedirs, path
 from typing import IO, Dict  # noqa
 
 # Make this work from git.
-if path.exists(path.join(path.dirname(__file__), '..', '.git')):
-    sys.path.insert(0, path.join(path.dirname(__file__), '..'))
+if path.exists(path.join(path.dirname(__file__), '../..', '.git')):
+    sys.path.insert(0, path.join(path.dirname(__file__), '../..'))
 
 from cslbot.helpers.orm import Log  # noqa
 from cslbot.helpers.sql import get_session  # noqa
@@ -147,4 +147,4 @@ def main(confdir: str = "/etc/cslbot") -> None:
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(path.join(path.dirname(__file__), '..'))
+    main(path.join(path.dirname(__file__), '../..'))

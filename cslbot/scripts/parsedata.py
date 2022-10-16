@@ -31,8 +31,8 @@ from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.orm import Session
 
 # Make this work from git.
-if path.exists(path.join(path.dirname(__file__), '..', '.git')):
-    sys.path.insert(0, path.join(path.dirname(__file__), '..'))
+if path.exists(path.join(path.dirname(__file__), '../..', '.git')):
+    sys.path.insert(0, path.join(path.dirname(__file__), '../..'))
 
 from cslbot.helpers.orm import Poll_responses  # noqa
 from cslbot.helpers.orm import Polls, Quotes, Scores, Urls
@@ -156,4 +156,4 @@ def main(confdir="/etc/cslbot") -> None:
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(path.join(path.dirname(__file__), '..'))
+    main(path.join(path.dirname(__file__), '../..'))
