@@ -19,8 +19,8 @@ from os.path import dirname, exists, join
 from sys import path
 
 # Make this work from git.
-if exists(join(dirname(__file__), '../.git')):
-    path.insert(0, join(dirname(__file__), '..'))
+if exists(join(dirname(__file__), '../../.git')):
+    path.insert(0, join(dirname(__file__), '../..'))
 
 from alembic import command, config  # noqa
 
@@ -32,4 +32,4 @@ def main(confdir: str = "/etc/cslbot") -> None:
 
 if __name__ == '__main__':
     # If we're running from a git checkout, override the config path.
-    main(join(dirname(__file__), '..'))
+    main(join(dirname(__file__), '../..'))

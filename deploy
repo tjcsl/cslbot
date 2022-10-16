@@ -8,7 +8,7 @@ git pull --ff-only
 # run tests
 pytest
 ./scripts/build_docs.sh
-./scripts/migrate.py
+./cslbot/scripts/migrate.py
 # for msbobBot
 # ./scripts/reload.py
 
