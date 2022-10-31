@@ -106,7 +106,7 @@ python-versions = "*"
 
 [[package]]
 name = "autopep8"
-version = "1.7.1"
+version = "2.0.0"
 description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
 category = "dev"
 optional = false
@@ -1760,7 +1760,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "198b4e78d07a33a08ab7215b51108fa6774203670d0eb502ed4a915cc2c5d363"
+content-hash = "1dbf9fe23ec36e89fbb36f8800d1af023d99de643adcbe785257e0b4f34a3cf0"
 
 [metadata.files]
 absl-py = [
@@ -1885,8 +1885,8 @@ autocommand = [
     {file = "autocommand-2.2.1.tar.gz", hash = "sha256:fed420e9d02745821a782971b583c6970259ee0b229be2a0a401e1467a4f170f"},
 ]
 autopep8 = [
-    {file = "autopep8-1.7.1-py2.py3-none-any.whl", hash = "sha256:99afd5a60d30c6d426319e15db2ed7833d2da38f7f94a8753a1953509cc78e5d"},
-    {file = "autopep8-1.7.1.tar.gz", hash = "sha256:f0058220e4cc0ef6121996fc8ec1c32f0735e446be23c4e1f692de0bf23174dd"},
+    {file = "autopep8-2.0.0-py2.py3-none-any.whl", hash = "sha256:ad924b42c2e27a1ac58e432166cc4588f5b80747de02d0d35b1ecbd3e7d57207"},
+    {file = "autopep8-2.0.0.tar.gz", hash = "sha256:8b1659c7f003e693199f52caffdc06585bb0716900bbc6a7442fd931d658c077"},
 ]
 babel = [
     {file = "Babel-2.10.3-py3-none-any.whl", hash = "sha256:ff56f4892c1c4bf0d814575ea23471c230d544203c7748e8c68f0089478d48eb"},
