@@ -36,7 +36,7 @@ isort = "^5.10.1"
 Sphinx = "^5.3.0"
 pytest = "^7.2.0"
 poetry = "^1.2.2"
-poetryup = "^0.12.3"
+poetryup = "^0.12.5"
 
 [tool.poetry.scripts]
 cslbot = "cslbot.helpers.core:init"
