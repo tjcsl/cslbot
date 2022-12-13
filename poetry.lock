@@ -270,7 +270,7 @@ tensorflow = "^2.10.1"
 type = "git"
 url = "https://github.com/tjcsl/cslbot-tjhsst"
 reference = "HEAD"
-resolved_reference = "a2982bc7682252af3cf6d27863c9021c19e0d153"
+resolved_reference = "91c3f2b64df6e3c269b18a319dead6c18bf4b5f0"
 
 [[package]]
 name = "distlib"
@@ -577,11 +577,11 @@ testing = ["pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdo
 
 [[package]]
 name = "isort"
-version = "5.10.1"
+version = "5.11.2"
 description = "A Python utility / library to sort Python imports."
 category = "dev"
 optional = false
-python-versions = ">=3.6.1,<4.0"
+python-versions = ">=3.7.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
@@ -1740,7 +1740,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "7359dc26a5d89853054b175425badf5eeb26bd6f7da5e77e4a0cd5cb34352648"
+content-hash = "6a4a9bf09f11fdfcc666750f4fb679ff610ab3e6ad07967a54e183e5b614fd02"
 
 [metadata.files]
 absl-py = [
@@ -2356,8 +2356,8 @@ irc = [
     {file = "irc-20.1.0.tar.gz", hash = "sha256:b6f737932dd4791f3b18e319de7b7daf02d2285a6bea263d101f4d8e553807ec"},
 ]
 isort = [
-    {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
-    {file = "isort-5.10.1.tar.gz", hash = "sha256:e8443a5e7a020e9d7f97f1d7d9cd17c88bcb3bc7e218bf9cf5095fe550be2951"},
+    {file = "isort-5.11.2-py3-none-any.whl", hash = "sha256:e486966fba83f25b8045f8dd7455b0a0d1e4de481e1d7ce4669902d9fb85e622"},
+    {file = "isort-5.11.2.tar.gz", hash = "sha256:dd8bbc5c0990f2a095d754e50360915f73b4c26fc82733eb5bfc6b48396af4d2"},
 ]
 jaraco-classes = [
     {file = "jaraco.classes-3.2.3-py3-none-any.whl", hash = "sha256:2353de3288bc6b82120752201c6b1c1a14b058267fa424ed5ce5984e3b922158"},
