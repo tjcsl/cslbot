@@ -33,7 +33,7 @@ cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 autopep8 = "^2.0.1"
 yapf = "^0.32.0"
 isort = "^5.11.4"
-Sphinx = "^6.0.0"
+Sphinx = "^6.1.1"
 pytest = "^7.2.0"
 poetry = "^1.3.1"
 poetryup = "^0.12.7"
