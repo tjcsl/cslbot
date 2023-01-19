@@ -27,7 +27,7 @@ def cmd(send, *_):
 
     """
     try:
-        output = subprocess.check_output(['ddate'], universal_newlines=True)
+        output = subprocess.check_output(['ddate'], text=True)
     except subprocess.CalledProcessError:
         output = 'Today is the day you install ddate!'
     for line in output.splitlines():

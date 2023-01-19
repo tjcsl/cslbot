@@ -16,8 +16,8 @@
 import configparser
 import importlib
 import logging
+from collections.abc import Callable
 from os.path import exists, join
-from typing import Callable
 
 import irc
 

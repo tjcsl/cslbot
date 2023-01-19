@@ -20,9 +20,9 @@ import importlib
 import logging
 import sys
 import types
+from collections.abc import Mapping
 from importlib import resources
 from os.path import basename, join
-from typing import Mapping, Union
 
 from . import backtrace
 
@@ -134,7 +134,7 @@ def get_modules(mod_type: str) -> tuple[list[str], list[str]]:
     return core_enabled, core_disabled
 
 
-def safe_reload(modname: types.ModuleType) -> Union[None, str]:
+def safe_reload(modname: types.ModuleType) -> None | str:
     """Catch and log any errors that arise from reimporting a module, but do not die.
 
     :return: None when import was successful. String is the first line of the error message
@@ -149,7 +149,7 @@ def safe_reload(modname: types.ModuleType) -> Union[None, str]:
         return msg
 
 
-def safe_load(modname: str) -> Union[None, str]:
+def safe_load(modname: str) -> None | str:
     """Load a module, logging errors instead of dying if it fails to load.
 
     :return: None when import was successful. String is the first line of the error message

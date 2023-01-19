@@ -18,9 +18,10 @@
 import functools
 import re
 import threading
+from collections.abc import Callable
 from datetime import datetime, timedelta
 from inspect import getdoc
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -46,7 +47,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 class Command:
 
-    def __init__(self, names: Union[str, list], args: list[str] = [], limit: int = 0, role: Optional[str] = None) -> None:
+    def __init__(self, names: str | list, args: list[str] = [], limit: int = 0, role: str | None = None) -> None:
         self.names: list[str] = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -92,7 +93,7 @@ class Command:
                 record_command(session, nick, command, target)
             handler.workers.start_thread(self.exe, send, msg, args)
 
-    def get_doc(self) -> Optional[str]:
+    def get_doc(self) -> str | None:
         return self.doc
 
     def is_limited(self) -> bool:

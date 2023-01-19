@@ -18,8 +18,9 @@ import concurrent.futures
 import re
 import threading
 from collections import namedtuple
+from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict  # noqa
+from typing import Any, Dict  # noqa
 
 from sqlalchemy import or_
 

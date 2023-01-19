@@ -18,14 +18,14 @@
 import functools
 import re
 import threading
-from typing import Callable, Union
+from collections.abc import Callable
 
 from . import backtrace, registry
 
 
 class Hook:
 
-    def __init__(self, name: str, types: Union[str, list[str]], args: list[str] = []) -> None:
+    def __init__(self, name: str, types: str | list[str], args: list[str] = []) -> None:
         self.name = name
         self.types = [types] if isinstance(types, str) else types
         self.args = args

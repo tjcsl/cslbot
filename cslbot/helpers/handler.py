@@ -24,8 +24,8 @@ import random
 import re
 import threading
 import time
+from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import Callable
 
 import irc
 

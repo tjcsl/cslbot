@@ -49,7 +49,7 @@ def main(confdir="/etc/cslbot") -> None:
         try:
             output = subprocess.check_output(['zpaq', 'add', 'foo.zpaq', '/tmp/foo', '-test', '-summary', '1', '-method', '5'],
                                              stderr=subprocess.STDOUT,
-                                             universal_newlines=True)
+                                             text=True)
             sizes = output.splitlines()[-2]
             match = re.match(r'.*\((.*) -> .* -> (.*)\).*', sizes)
             if not match:
