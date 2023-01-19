@@ -21,7 +21,7 @@ import sqlalchemy
 from alembic import command, config
 from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
                         Integer, Unicode, UnicodeText)
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy.orm import as_declarative, declared_attr
 
 
 @as_declarative()

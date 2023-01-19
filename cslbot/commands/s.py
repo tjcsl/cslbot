@@ -16,7 +16,6 @@
 
 import concurrent.futures
 import re
-import sre_constants
 
 from sqlalchemy import or_
 
@@ -117,5 +116,5 @@ def cmd(send, msg, args):
             send(msg)
         else:
             send("No match found.")
-    except sre_constants.error as ex:
+    except re.error as ex:
         raise CommandFailedException(ex)

@@ -51,7 +51,7 @@ def load_groups(confdir: str) -> configparser.ConfigParser:
     with open(join(confdir, 'groups.cfg')) as cfgfile:
         config_obj.read_file(cfgfile)
     example_obj = configparser.ConfigParser()
-    example_obj.read_string(importlib.resources.read_text('cslbot.static', 'groups.example'))
+    example_obj.read_string(resources.files('cslbot.static').joinpath('groups.example').read_text())
     if config_obj.sections() != example_obj.sections():
         raise Exception("Invalid or missing section in groups.cfg, only valid sections are %s" % ",".join(example_obj.sections()))
     return config_obj
@@ -103,8 +103,8 @@ def get_disabled(mod_type: str) -> set[str]:
 
 def get_enabled(mod_type: str, package='cslbot') -> tuple[list[str], list[str]]:
     enabled, disabled = [], []
-    for f in resources.contents(f"{package}.{mod_type}"):
-        if not f.endswith('.py'):
+    for f in resources.files(f"{package}.{mod_type}").iterdir():
+        if not f.name.endswith('.py'):
             continue
         name = basename(f).split('.')[0]
         mod_name = f"{package.lower()}.{mod_type}.{name}"

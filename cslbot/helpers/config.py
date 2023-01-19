@@ -30,7 +30,7 @@ except NameError:
 
 def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:
     example_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    example_obj.read_string(resources.read_text('cslbot.static', 'config.example'))
+    example_obj.read_string(resources.files('cslbot.static').joinpath('config.example').read_text())
     modified = False
 
     # Check for new sections/options
