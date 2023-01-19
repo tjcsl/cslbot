@@ -13,7 +13,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<4.0"
 irc = "^20.1.0"
 SQLAlchemy = "^1.4.46"
 alembic = "^1.9.2"
@@ -26,7 +26,6 @@ TwitterSearch = "^1.0.2"
 python-twitter = "^3.5"
 psycopg2 = "^2.9.5"
 absl-py = "^1.4.0"
-tensorflow = {version = "^2.11.0", python = ">=3.9,<3.11"}
 cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 
 [tool.poetry.dev-dependencies]
