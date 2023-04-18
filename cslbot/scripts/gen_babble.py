@@ -21,6 +21,7 @@ import sys
 import time
 
 from absl import app, flags
+from sqlalchemy import text
 
 FLAGS = flags.FLAGS
 
@@ -49,10 +50,10 @@ def real_main(argv) -> None:
     print('Generating markov.')
     # FIXME: support locking for other dialects?
     if session.bind.dialect.name == 'postgresql':
-        session.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-        session.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+        session.execute(text('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT'))
+        session.execute(text('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT'))
+        session.execute(text('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT'))
+        session.execute(text('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT'))
     t = time.time()
     babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=not FLAGS.incremental, debug=True)
     print('Finished markov in %f' % (time.time() - t))

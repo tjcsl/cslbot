@@ -20,7 +20,7 @@ import re
 import string
 import time
 
-from sqlalchemy import Index, or_
+from sqlalchemy import Index, or_, text
 from sqlalchemy.exc import OperationalError
 
 from .misc import escape
@@ -211,10 +211,10 @@ def update_markov(cursor, config):
     try:
         # FIXME: support locking for other dialects?
         if cursor.bind.dialect.name == 'postgresql':
-            cursor.execute('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT')
-            cursor.execute('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT')
+            cursor.execute(text('LOCK TABLE babble IN EXCLUSIVE MODE NOWAIT'))
+            cursor.execute(text('LOCK TABLE babble2 IN EXCLUSIVE MODE NOWAIT'))
+            cursor.execute(text('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT'))
+            cursor.execute(text('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT'))
         build_markov(cursor, cmdchar, ctrlchan)
         return True
     except OperationalError as ex:
