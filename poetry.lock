@@ -1176,13 +1176,13 @@ files = [
 
 [[package]]
 name = "irc"
-version = "20.1.0"
+version = "20.3.0"
 description = "IRC (Internet Relay Chat) protocol library for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "irc-20.1.0-py3-none-any.whl", hash = "sha256:5114aee1247ff634abed80f3349d75ccab35616a4b76be2a25add7ef189db0e5"},
-    {file = "irc-20.1.0.tar.gz", hash = "sha256:b6f737932dd4791f3b18e319de7b7daf02d2285a6bea263d101f4d8e553807ec"},
+    {file = "irc-20.3.0-py3-none-any.whl", hash = "sha256:88e31235ed0cff96ebf6a21fe54d967a5d91754797737f9e9d60353a937b3829"},
+    {file = "irc-20.3.0.tar.gz", hash = "sha256:245b5ea98ab0025667631e776a55e31917e60ef708c60102f2198bc9f5113236"},
 ]
 
 [package.dependencies]
@@ -1190,14 +1190,14 @@ files = [
 "jaraco.functools" = ">=1.20"
 "jaraco.logging" = "*"
 "jaraco.stream" = "*"
-"jaraco.text" = "*"
+"jaraco.text" = ">=3.10"
 more-itertools = "*"
 pytz = "*"
 tempora = ">=1.6"
 
 [package.extras]
-docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.1)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [[package]]
 name = "isort"
@@ -1453,6 +1453,8 @@ description = "Clang Python Bindings, mirrored from the official LLVM repo: http
 optional = false
 python-versions = "*"
 files = [
+    {file = "libclang-16.0.6-1-py2.py3-none-manylinux2014_aarch64.whl", hash = "sha256:88bc7e7b393c32e41e03ba77ef02fdd647da1f764c2cd028e69e0837080b79f6"},
+    {file = "libclang-16.0.6-1-py2.py3-none-manylinux2014_armv7l.whl", hash = "sha256:d80ed5827736ed5ec2bcedf536720476fd9d4fa4c79ef0cb24aea4c59332f361"},
     {file = "libclang-16.0.6-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:da9e47ebc3f0a6d90fb169ef25f9fbcd29b4a4ef97a8b0e3e3a17800af1423f4"},
     {file = "libclang-16.0.6-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:e1a5ad1e895e5443e205568c85c04b4608e4e973dae42f4dfd9cb46c81d1486b"},
     {file = "libclang-16.0.6-py2.py3-none-manylinux2010_x86_64.whl", hash = "sha256:9dcdc730939788b8b69ffd6d5d75fe5366e3ee007f1e36a99799ec0b0c001492"},
