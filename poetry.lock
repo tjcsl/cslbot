@@ -1176,13 +1176,13 @@ files = [
 
 [[package]]
 name = "irc"
-version = "20.1.0"
+version = "20.3.0"
 description = "IRC (Internet Relay Chat) protocol library for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "irc-20.1.0-py3-none-any.whl", hash = "sha256:5114aee1247ff634abed80f3349d75ccab35616a4b76be2a25add7ef189db0e5"},
-    {file = "irc-20.1.0.tar.gz", hash = "sha256:b6f737932dd4791f3b18e319de7b7daf02d2285a6bea263d101f4d8e553807ec"},
+    {file = "irc-20.3.0-py3-none-any.whl", hash = "sha256:88e31235ed0cff96ebf6a21fe54d967a5d91754797737f9e9d60353a937b3829"},
+    {file = "irc-20.3.0.tar.gz", hash = "sha256:245b5ea98ab0025667631e776a55e31917e60ef708c60102f2198bc9f5113236"},
 ]
 
 [package.dependencies]
@@ -1190,14 +1190,14 @@ files = [
 "jaraco.functools" = ">=1.20"
 "jaraco.logging" = "*"
 "jaraco.stream" = "*"
-"jaraco.text" = "*"
+"jaraco.text" = ">=3.10"
 more-itertools = "*"
 pytz = "*"
 tempora = ">=1.6"
 
 [package.extras]
-docs = ["jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.1)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [[package]]
 name = "isort"
