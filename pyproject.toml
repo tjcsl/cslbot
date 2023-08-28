@@ -34,7 +34,7 @@ yapf = "^0.40.1"
 isort = "^5.12.0"
 Sphinx = "^7.1.2"
 pytest = "^7.4.0"
-poetry = "^1.5.1"
+poetry = "^1.6.1"
 
 [tool.poetry.scripts]
 cslbot = "cslbot.helpers.core:init"
