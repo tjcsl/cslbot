@@ -21,10 +21,10 @@ import os
 import re
 import subprocess
 from datetime import datetime, timedelta
+from importlib import metadata
 from os.path import exists, join
 from random import choice, random
 
-import pkg_resources
 from irc import client
 
 from . import orm
@@ -244,7 +244,7 @@ def ignore(session, nick):
 def get_version(srcdir):
     gitdir = join(srcdir, ".git")
     if not exists(gitdir):
-        return None, pkg_resources.get_distribution("CslBot").version
+        return None, metadata.version("CslBot")
     try:
         commit = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "rev-parse", "HEAD"]).decode().splitlines()[0]
         version = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "describe", "--tags"]).decode().splitlines()[0]
