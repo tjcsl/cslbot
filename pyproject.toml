@@ -25,7 +25,7 @@ geoip2 = "^4.7.0"
 TwitterSearch = "^1.0.2"
 python-twitter = "^3.5"
 psycopg2 = "^2.9.7"
-absl-py = "^1.4.0"
+absl-py = ">=1.4,<3.0"
 cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 
 [tool.poetry.dev-dependencies]
