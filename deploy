@@ -5,6 +5,9 @@ set -e
 (cd ../cslbot-tjhsst; git pull --ff-only)
 git pull --ff-only
 
+# run pytype
+pytype -j auto
+
 # run tests
 pytest
 ./scripts/build_docs.sh
