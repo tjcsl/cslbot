@@ -28,13 +28,14 @@ psycopg2 = "^2.9.9"
 absl-py = ">=1.4,<3.0"
 cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.4"
 yapf = "^0.40.2"
 isort = "^5.13.2"
 Sphinx = "^7.2.6"
 pytest = "^7.4.3"
 poetry = "^1.7.1"
+pytype = "^2024.1.5"
 
 [tool.poetry.scripts]
 cslbot = "cslbot.helpers.core:init"
@@ -43,6 +44,10 @@ cslbot-parsedata = "cslbot.scripts.parsedata:main"
 cslbot-genbabble = "cslbot.scripts.gen_babble:main"
 cslbot-reload = "cslbot.scripts.reload:main"
 cslbot-migrate = "cslbot.scripts.migrate:main"
+
+
+[tool.pytype]
+inputs = ['cslbot']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
