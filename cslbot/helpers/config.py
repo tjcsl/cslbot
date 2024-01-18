@@ -22,10 +22,7 @@ from importlib import resources
 from os import mkdir
 from os.path import dirname, exists, join
 
-try:
-    _config_file
-except NameError:
-    _config_file: None | str = None
+_config_file: None | str = None
 
 
 def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send: Callable[[str], None]) -> None:

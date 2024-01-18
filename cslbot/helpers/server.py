@@ -18,7 +18,7 @@ import socketserver
 
 from irc import client
 
-from . import backtrace, reloader
+from . import backtrace, core, reloader
 
 WELCOME = """
 Welcome to the IRCbot console.
@@ -55,9 +55,11 @@ def init_server(bot):
 
 class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
+    bot: core.IrcBot
 
 
 class BotNetHandler(socketserver.BaseRequestHandler):
+    server: BotNetServer
 
     def get_data(self):
         size = 4096

@@ -17,6 +17,7 @@
 from random import choice
 
 from lxml import etree
+from lxml.etree import XMLParser
 from requests import get
 
 from ..helpers import arguments
@@ -65,7 +66,7 @@ def cmd(send, msg, args):
                   'query': cmdargs.query,
                   'searchtype': searchtype
               })
-    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
+    xml = etree.fromstring(req.content, parser=XMLParser(recover=True))
     if len(xml) == 0:
         send("No words of wisdom found")
         return

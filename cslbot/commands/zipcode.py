@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from lxml import etree
+import lxml.etree
 from requests import get
 
 from ..helpers import arguments
@@ -39,6 +39,6 @@ def cmd(send, msg, args):
 
     req = get("http://www.stands4.com/services/v2/zip.php", params={'uid': uid, 'tokenid': token, 'zip': cmdargs.zipcode})
 
-    xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
+    xml = lxml.etree.fromstring(req.content, parser=lxml.etree.XMLParser(recover=True))
     location = xml.find('location').text
     send(f"{cmdargs.zipcode}: {location}")

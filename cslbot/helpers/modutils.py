@@ -106,7 +106,7 @@ def get_enabled(mod_type: str, package='cslbot') -> tuple[list[str], list[str]]:
     for f in resources.files(f"{package}.{mod_type}").iterdir():
         if not f.name.endswith('.py'):
             continue
-        name = basename(f).split('.')[0]
+        name = basename(f.name).split('.')[0]
         mod_name = f"{package.lower()}.{mod_type}.{name}"
         if group_enabled(mod_type, name):
             enabled.append(mod_name)

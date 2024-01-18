@@ -61,4 +61,8 @@ def cmd(send, msg, args):
         send('No results found.')
     else:
         for station in data:
-            send(station.find('raw_text').text)
+            raw = station.find('raw_text')
+            if raw:
+                send(raw.text)
+            else:
+                send('No text found.')

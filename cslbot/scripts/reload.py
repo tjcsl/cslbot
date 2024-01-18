@@ -20,7 +20,7 @@ import sys
 from os.path import dirname, join
 
 
-def reload_server(port: int, msg: str):
+def reload_server(port: str, msg: str):
     try:
         print("Reloading localhost:%s" % port)
         proc = subprocess.run(['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)

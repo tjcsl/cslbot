@@ -27,7 +27,7 @@ class ArgumentException(Exception):
 
 class NickParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings):
+    def __call__(self, parser, namespace, value, option_strings=None):
         if value is None:
             return
         if re.match(namespace.config['core']['nickregex'], value):
@@ -38,7 +38,7 @@ class NickParser(argparse.Action):
 
 class ChanParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings):
+    def __call__(self, parser, namespace, value, option_strings=None):
         if value is None:
             return
         if isinstance(value, str):
@@ -53,7 +53,7 @@ class ChanParser(argparse.Action):
 
 class DateParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings):
+    def __call__(self, parser, namespace, value, option_strings=None):
         if value is None:
             return
         if isinstance(value, list):
@@ -66,7 +66,7 @@ class DateParser(argparse.Action):
 
 class TumblrParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings):
+    def __call__(self, parser, namespace, value, option_strings=None):
         if value is None:
             return
         if '.' not in value:
@@ -79,7 +79,7 @@ class TumblrParser(argparse.Action):
 
 class ZipParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings):
+    def __call__(self, parser, namespace, value, option_strings=None):
         if value is None:
             return
         zipcode = re.search(r'\d{5}', value)
@@ -103,7 +103,7 @@ class ArgParser(argparse.ArgumentParser):
             message = "argparse exited with status %d." % status
         raise ArgumentException(message)
 
-    def parse_args(self, msg):
+    def parse_args(self, msg=None):
         return super().parse_args(msg.split(), namespace=self.namespace)
 
     def parse_known_args(self, msg=None, namespace=None):

@@ -22,8 +22,8 @@ from ..helpers.orm import Log
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
     command = f'{cmdchar}seen {nick}'
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command,
-                                    Log.type != 'join').order_by(Log.time.desc()).first()
+    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command, Log.type
+                                    != 'join').order_by(Log.time.desc()).first()
 
 
 @Command('seen', ['db', 'config'])

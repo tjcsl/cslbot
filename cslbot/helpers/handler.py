@@ -61,7 +61,7 @@ class BotHandler:
         self.features = {'account-notify': False, 'extended-join': False, 'whox': False}
         start = datetime.now()
         self.uptime = {'start': start, 'reloaded': start}
-        self.abuselist: dict[str, dict[str, datetime]] = {}
+        self.abuselist: dict[str, dict[str, list[datetime]]] = {}
         self.ping_map: dict[str, str] = {}
         self.outputfilter: dict[str, list[Callable[[str], str]]] = collections.defaultdict(list)
         self.kick_enabled = True
@@ -139,7 +139,7 @@ class BotHandler:
                         self.update_authstatus(nick)
                 return True
 
-    def get_admins(self):
+    def get_admins(self, handler, send):
         """Check verification for all admins."""
         # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
