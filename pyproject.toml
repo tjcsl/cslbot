@@ -14,8 +14,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
-irc = "^20.3.1"
-SQLAlchemy = "^2.0.27"
+irc = "^20.4.0"
+SQLAlchemy = "^2.0.29"
 alembic = "^1.13.1"
 python-dateutil = "^2.9.0.post0"
 requests = "^2.31.0"
@@ -29,13 +29,13 @@ absl-py = ">=1.4,<3.0"
 cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 
 [tool.poetry.group.dev.dependencies]
-autopep8 = "^2.0.4"
+autopep8 = "^2.1.0"
 yapf = "^0.40.2"
 isort = "^5.13.2"
-Sphinx = "^7.2.6"
+Sphinx = "^7.3.7"
 pytest = ">=7.4.3,<9.0.0"
-poetry = "^1.8.1"
-pytype = "^2024.2.27"
+poetry = "^1.8.2"
+pytype = "^2024.4.11"
 
 [tool.poetry.scripts]
 cslbot = "cslbot.helpers.core:init"
