@@ -142,7 +142,7 @@ def main(confdir="/etc/cslbot") -> None:
     template_path = resources.files('cslbot') / 'templates'
 
     # Copy the js
-    shutil.copy(path.join(template_path.name, 'sorttable.js'), cmdargs.outdir)
+    shutil.copy(path.join(template_path, 'sorttable.js'), cmdargs.outdir)
 
     env = Environment(loader=FileSystemLoader(template_path))
     output_quotes(env, session, cmdargs.outdir, time)
