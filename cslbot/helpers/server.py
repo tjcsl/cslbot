@@ -15,9 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
+from typing import Any
 
 from irc import client
-from typing import Any
 
 from . import backtrace, reloader
 
