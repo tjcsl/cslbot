@@ -17,5 +17,5 @@ Module contents
 
 .. automodule:: cslbot
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -6,5 +6,5 @@ Module contents
 
 .. automodule:: cslbot.static
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

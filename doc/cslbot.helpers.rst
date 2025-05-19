@@ -9,213 +9,213 @@ cslbot.helpers.acl module
 
 .. automodule:: cslbot.helpers.acl
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.arguments module
 -------------------------------
 
 .. automodule:: cslbot.helpers.arguments
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.babble module
 ----------------------------
 
 .. automodule:: cslbot.helpers.babble
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.backtrace module
 -------------------------------
 
 .. automodule:: cslbot.helpers.backtrace
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.command module
 -----------------------------
 
 .. automodule:: cslbot.helpers.command
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.config module
 ----------------------------
 
 .. automodule:: cslbot.helpers.config
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.control module
 -----------------------------
 
 .. automodule:: cslbot.helpers.control
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.core module
 --------------------------
 
 .. automodule:: cslbot.helpers.core
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.exception module
 -------------------------------
 
 .. automodule:: cslbot.helpers.exception
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.geoip module
 ---------------------------
 
 .. automodule:: cslbot.helpers.geoip
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.handler module
 -----------------------------
 
 .. automodule:: cslbot.helpers.handler
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.hook module
 --------------------------
 
 .. automodule:: cslbot.helpers.hook
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.identity module
 ------------------------------
 
 .. automodule:: cslbot.helpers.identity
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.misc module
 --------------------------
 
 .. automodule:: cslbot.helpers.misc
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.modutils module
 ------------------------------
 
 .. automodule:: cslbot.helpers.modutils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.orm module
 -------------------------
 
 .. automodule:: cslbot.helpers.orm
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.reddit module
 ----------------------------
 
 .. automodule:: cslbot.helpers.reddit
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.registry module
 ------------------------------
 
 .. automodule:: cslbot.helpers.registry
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.reloader module
 ------------------------------
 
 .. automodule:: cslbot.helpers.reloader
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.server module
 ----------------------------
 
 .. automodule:: cslbot.helpers.server
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.sql module
 -------------------------
 
 .. automodule:: cslbot.helpers.sql
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.textutils module
 -------------------------------
 
 .. automodule:: cslbot.helpers.textutils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.twitter module
 -----------------------------
 
 .. automodule:: cslbot.helpers.twitter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.urlutils module
 ------------------------------
 
 .. automodule:: cslbot.helpers.urlutils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.web module
 -------------------------
 
 .. automodule:: cslbot.helpers.web
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 cslbot.helpers.workers module
 -----------------------------
 
 .. automodule:: cslbot.helpers.workers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: cslbot.helpers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
