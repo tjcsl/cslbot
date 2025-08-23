@@ -1,3 +1,19 @@
+[project]
+name = "CslBot"
+version = "0.21"
+requires-python = ">=3.11"
+dependencies = [
+    "absl-py>=2.3.1",
+    "alembic>=1.16.4",
+    "autopep8>=2.3.2",
+    "irc>=20.5.0",
+    "lxml>=6.0.1",
+    "psycopg2>=2.9.10",
+    "sphinx>=8.2.3",
+    "sqlalchemy>=2.0.43",
+    "yapf>=0.43.0",
+]
+
 [tool.poetry]
 name = "CslBot"
 version = "0.21"
