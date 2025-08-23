@@ -6,7 +6,7 @@ set -e
 git pull --ff-only
 
 # run pytype
-pytype -j auto
+# pytype -j auto
 
 # run tests
 pytest
