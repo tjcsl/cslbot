@@ -139,7 +139,7 @@ class BotHandler:
                         self.update_authstatus(nick)
                 return True
 
-    def get_admins(self, handler, send):
+    def get_admins(self):
         """Check verification for all admins."""
         # no nickserv support, assume people are who they say they are.
         if not self.config['feature'].getboolean('nickserv'):
