@@ -47,7 +47,7 @@ cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.3.2"
 yapf = "^0.43.0"
-isort = ">=5.13.2,<7.0.0"
+isort = ">=5.13.2,<8.0.0"
 Sphinx = "^8.2.3"
 pytest = ">=7.4.3,<9.0.0"
 poetry = "^2.1.4"
