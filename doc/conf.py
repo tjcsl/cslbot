@@ -14,12 +14,12 @@
 
 import os
 import sys
+from importlib import metadata
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-import pkg_resources  # noqa
 
 # -- General configuration ------------------------------------------------
 
@@ -57,7 +57,7 @@ author = 'Tris Wilson, Peter Foley, Srijay Kasturi, Samuel Damashek, James Forci
 # built documents.
 #
 # The short X.Y version.
-version = next(pkg_resources.find_distributions('..')).version
+version = metadata.version(project)
 # The full version, including alpha/beta/rc tags.
 release = version
 
