@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('sha512')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """SHA512 hashes something.
 
     Syntax: {command} <msg>

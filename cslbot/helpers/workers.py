@@ -43,7 +43,7 @@ class Workers:
             self.executor = concurrent.futures.ThreadPoolExecutor(thread_name_prefix='ThreadPool')
         self.handler = handler
 
-        def send(msg, target=handler.config['core']['ctrlchan']):
+        def send(msg, target=handler.config['core']['ctrlchan']) -> None:
             handler.send(target, handler.config['core']['nick'], msg, 'privmsg')
 
         self.defer(3600, False, self.handle_pending, handler, send)
@@ -55,7 +55,7 @@ class Workers:
         with executor_lock:
             return self.executor.submit(func, *args, **kwargs)
 
-    def run_action(self, func, args):
+    def run_action(self, func, args) -> None:
         try:
             thread = threading.current_thread()
             thread_id = re.match(r'Thread-\d+', thread.name)
@@ -78,14 +78,14 @@ class Workers:
             self.events[event.ident] = Event(event, run_on_cancel)
         return event.ident
 
-    def cancel(self, eventid):
+    def cancel(self, eventid) -> None:
         with self.worker_lock:
             self.events[eventid].event.cancel()
             if self.events[eventid].run_on_cancel:
                 self.events[eventid].event.function(**self.events[eventid].event.kwargs)
             del self.events[eventid]
 
-    def stop_workers(self, clean):
+    def stop_workers(self, clean) -> None:
         """Stop workers and deferred events."""
         with executor_lock:
             if hasattr(self, 'executor'):
@@ -96,13 +96,13 @@ class Workers:
                 x.event.cancel()
             self.events.clear()
 
-    def handle_pending(self, handler, send):
+    def handle_pending(self, handler, send) -> None:
         # Re-schedule handle_pending
         self.defer(3600, False, self.handle_pending, handler, send)
         with handler.db.session_scope() as session:
             control.show_pending(session, send, True)
 
-    def send_quotes(self, handler, send):
+    def send_quotes(self, handler, send) -> None:
         # Re-schedule send_quotes
         # THE MASSES MUST BE APPEASED
         self.defer(3600 * 24, False, self.send_quotes, handler, send)
@@ -110,7 +110,7 @@ class Workers:
             channel = self.handler.config['core']['channel']
             send(f'QOTD: {quote.do_get_quote(session)}', target=channel)
 
-    def check_active(self, handler, send):
+    def check_active(self, handler, send) -> None:
         # Re-schedule check_active
         self.defer(3600, False, self.check_active, handler, send)
         if not self.handler.config.getboolean('feature', 'voiceactive'):
@@ -129,7 +129,7 @@ class Workers:
                                 )) == 0):
                             handler.rate_limited_send('mode', name, '-v %s' % nick)
 
-    def update_babble(self, handler, send):
+    def update_babble(self, handler, send) -> None:
         # Re-schedule update_babble
         self.defer(3600, False, self.update_babble, handler, send)
         with handler.db.session_scope() as session:

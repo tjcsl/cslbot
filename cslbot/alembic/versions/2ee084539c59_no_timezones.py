@@ -15,7 +15,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     if op.get_bind().dialect.name != 'postgresql':
         raise Exception('Currently only tested with postgres, alter and run manually if using other db')
     op.get_bind().execute('alter table urls alter time set data type timestamp')
@@ -26,7 +26,7 @@ def upgrade():
     op.get_bind().execute('alter table ignore alter expire set data type timestamp')
 
 
-def downgrade():
+def downgrade() -> None:
     if op.get_bind().dialect.name != 'postgresql':
         raise Exception('Currently only tested with postgres, alter and run manually if using other db')
     op.get_bind().execute('alter table urls alter time set data type timestamptz')

@@ -19,7 +19,7 @@ from ..helpers.command import Command
 
 
 @Command('msg', ['nick', 'config'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Sends a message to a channel
     Syntax: {command} <channel> <message>
     """

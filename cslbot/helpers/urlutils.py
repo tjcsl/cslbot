@@ -19,6 +19,7 @@ import contextlib
 
 import requests
 from lxml.html import document_fromstring
+from requests.models import Response
 
 from . import misc
 from .exception import CommandFailedException
@@ -28,7 +29,7 @@ class ImageException(Exception):
     pass
 
 
-def get_short(msg, key):
+def get_short(msg: str, key):
     if len(msg) < 20:
         return msg
     resp = requests.post(
@@ -49,7 +50,7 @@ def get_short(msg, key):
     return 'Could not shorten url: %s' % resp
 
 
-def parse_title(req):
+def parse_title(req: Response):
     max_size = 1024 * 256  # 256KB
     req.raw.decode_content = True
     content = req.raw.read(max_size + 1)
@@ -70,7 +71,7 @@ def parse_title(req):
     return ctype
 
 
-def identify_image(req, key):
+def identify_image(req: Response, key):
     img = requests.get(req.url)
     encoded_data = base64.b64encode(img.content)
     req = requests.post(
@@ -101,7 +102,7 @@ def identify_image(req, key):
     return labels
 
 
-def parse_mime(req, key):
+def parse_mime(req: Response, key):
     ctype = req.headers.get('Content-Type')
     if ctype is None:
         return ctype

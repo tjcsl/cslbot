@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('wtf')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Tells you what acronyms mean.
 
     Syntax: {command} <term>

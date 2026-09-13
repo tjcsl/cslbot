@@ -40,14 +40,14 @@ def start_thread(self, func, *args, **kwargs):
         return f
 
 
-def rate_limited_send(self, mtype, target, msg=None):
+def rate_limited_send(self, mtype, target, msg=None) -> None:
     getattr(self.connection, mtype)(target, msg)
 
 
 class BotTest(unittest.TestCase):
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.cap_done = False
         cls.user_done = False
         cls.cap_list = []
@@ -78,19 +78,19 @@ class BotTest(unittest.TestCase):
             config_obj.write(f)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         cls.confdir.cleanup()
 
-    def join_mock(self, channel, key=None):
+    def join_mock(self, channel, key=None) -> None:
         # Since we don't have a real server on the other end, we need to fake a JOIN reply.
         self.send_msg('join', self.nick, channel)
 
-    def who_mock(self, target, op=None):
+    def who_mock(self, target, op=None) -> None:
         # Since we don't have a real server on the other end, we need to fake a WHOSPCRPL.
         nick, tag = re.match(r'(#?[\w-]+) %naft,(\d+)', target).groups()
         self.send_msg('whospcrpl', self.server, self.nick, [tag, nick, 'H', nick])
 
-    def cap_mock(self, cmd, arg=None):
+    def cap_mock(self, cmd, arg=None) -> None:
         if cmd == 'END':
             self.cap_done = True
         elif self.cap_done:
@@ -100,19 +100,19 @@ class BotTest(unittest.TestCase):
         else:
             raise Exception(f'Unhandled CAP {cmd} {arg}')
 
-    def user_mock(self, username, realname):
+    def user_mock(self, username, realname) -> None:
         self.bot.connection.send_raw(f'USER {username} 0 * :{realname}')
         for cap in self.cap_list:
             self.send_msg('cap', self.server, '*', ['ACK', cap])
         self.cap_list.clear()
 
-    def raw_handler(self, msg):
+    def raw_handler(self, msg) -> None:
         logging.debug('TO SERVER: %s', msg)
         msg = msg.split()
         if msg == ['AUTHENTICATE', 'PLAIN']:
             self.send_msg('authenticate', None, '+')
 
-    def setUp(self):
+    def setUp(self) -> None:
         mock.patch('irc.connection.Factory').start()
         mock.patch.object(irc.client.ServerConnection, 'join', self.join_mock).start()
         mock.patch.object(irc.client.ServerConnection, 'who', self.who_mock).start()
@@ -124,10 +124,10 @@ class BotTest(unittest.TestCase):
         self.bot._connect()
         self.do_welcome()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self.bot.shutdown_mp()
 
-    def setup_handler(self):
+    def setup_handler(self) -> None:
         # We don't need to rate-limit sending.
         mock.patch.object(handler.BotHandler, 'rate_limited_send', rate_limited_send).start()
         # Setup the mock to record log calls.
@@ -136,7 +136,7 @@ class BotTest(unittest.TestCase):
         # Force normally-threaded operations to execute synchronously
         mock.patch.object(workers.Workers, 'start_thread', start_thread).start()
 
-    def join_channel(self, nick, channel):
+    def join_channel(self, nick, channel) -> None:
         calls = self.send_msg('join', nick, channel)
         expected_calls = [(nick, channel, 0, '', 'join', self.server)]
         if nick == self.nick:
@@ -167,7 +167,7 @@ class BotTest(unittest.TestCase):
     def server(self):
         return self.bot.config['core']['host']
 
-    def do_welcome(self):
+    def do_welcome(self) -> None:
         with self.assertLogs('cslbot.helpers.handler') as mock_log:
             calls = self.send_msg(
                 'welcome',
@@ -218,7 +218,7 @@ class BotTest(unittest.TestCase):
         )
         self.log_mock.reset_mock()
 
-    def send_msg(self, mtype, source, target, arguments=None):
+    def send_msg(self, mtype: str, source, target, arguments=None):
         e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments or [])
         logging.debug(
             'type: %s, source: %s, target: %s, arguments: %s, tags: %s',

@@ -15,13 +15,13 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     if op.get_bind().dialect.name != 'postgresql':
         raise Exception('Currently only tested with postgres, alter and run manually if using other db')
     op.get_bind().execute('alter table stopwatches alter elapsed set data type double precision using extract(epoch from elapsed)')
 
 
-def downgrade():
+def downgrade() -> None:
     if op.get_bind().dialect.name != 'postgresql':
         raise Exception('Currently only tested with postgres, alter and run manually if using other db')
     op.get_bind().execute('alter table stopwatches alter elapsed set data type timestamptz using to_timestamp(elapsed)')

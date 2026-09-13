@@ -31,10 +31,10 @@ class IrcClient(client.SimpleIRCClient):
         self.loading = False
         super().__init__()
 
-    def on_welcome(self, c, _):
+    def on_welcome(self, c, _) -> None:
         c.join(self.config['core']['ctrlchan'], self.config['auth']['ctrlkey'])
 
-    def on_mode(self, c, e):
+    def on_mode(self, c, e) -> None:
         if self.loading:
             return
         if e.arguments[0] == '+o' and e.arguments[1] == self.nick:
@@ -42,10 +42,10 @@ class IrcClient(client.SimpleIRCClient):
             c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
-    def on_join(self, c, _):
+    def on_join(self, c, _) -> None:
         c.mode(self.config['core']['ctrlchan'], '')
 
-    def on_channelmodeis(self, c, e):
+    def on_channelmodeis(self, c, e) -> None:
         if self.loading:
             return
         if 'm' not in e.arguments[1]:
@@ -53,7 +53,7 @@ class IrcClient(client.SimpleIRCClient):
             c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
-    def on_pubmsg(self, c, e):
+    def on_pubmsg(self, c, e) -> None:
         ctrlchan = self.config['core']['ctrlchan']
         if e.source.nick == self.config['core']['nick']:
             if e.arguments[0] == "Aye Aye Capt'n":

@@ -20,7 +20,7 @@ import sys
 from os.path import dirname, join
 
 
-def reload_server(port: str, msg: str):
+def reload_server(port: str, msg: str) -> None:
     try:
         print('Reloading localhost:%s' % port)
         proc = subprocess.run(
@@ -40,7 +40,7 @@ def reload_server(port: str, msg: str):
         raise Exception('Could not connect to server, is bot running?')
 
 
-def main(confdir='/etc/cslbot') -> None:
+def main(confdir: str = '/etc/cslbot') -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)

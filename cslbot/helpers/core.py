@@ -25,9 +25,11 @@ import ssl
 import sys
 import threading
 import traceback
+from configparser import ConfigParser
 from os import path
 
 from irc import bot, client, connection
+from irc.bot import ServerSpec
 from sqlalchemy import select
 
 if sys.version_info < (3, 7):
@@ -41,7 +43,7 @@ shutdown = threading.Event()
 
 class IrcBot(bot.SingleServerIRCBot):
 
-    def __init__(self, confdir, config, spec, idx):
+    def __init__(self, confdir: str, config: ConfigParser, spec: ServerSpec, idx: int) -> None:
         """Setup everything."""
         signal.signal(signal.SIGTERM, self.shutdown)
         self.confdir = confdir
@@ -75,7 +77,7 @@ class IrcBot(bot.SingleServerIRCBot):
         if self.config['feature'].getboolean('server'):
             self.server = server.init_server(self)
 
-    def handle_event(self, c, e):
+    def handle_event(self, c, e) -> None:
         handled_types = [
             'account',
             'action',
@@ -113,7 +115,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 self.handle_msg(c, self.event_queue.get_nowait())
             self.handle_msg(c, e)
 
-    def get_version(self):
+    def get_version(self) -> str:
         """Get the version."""
         _, version = misc.get_version(self.confdir)
         if version is None:
@@ -121,7 +123,7 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return 'cslbot - %s' % version
 
-    def do_cap(self, _):
+    def do_cap(self, _) -> None:
         self.connection.cap('REQ', 'account-notify')
         self.connection.cap('REQ', 'extended-join')
         if self.config.getboolean('core', 'sasl'):
@@ -129,7 +131,7 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             self.connection.cap('END')
 
-    def start(self):
+    def start(self) -> None:
         self._connect()
         # Set our name.
         threading.current_thread().name = '%s message loop' % self.connection.server
@@ -145,12 +147,12 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return e.source.nick
 
-    def shutdown(self, *_):
+    def shutdown(self, *_) -> None:
         if hasattr(self, 'connection'):
             self.connection.disconnect('Bot received SIGTERM')
         shutdown.set()
 
-    def shutdown_mp(self, clean=True):
+    def shutdown_mp(self, clean: bool = True) -> None:
         """Shutdown all the multiprocessing.
 
         :param bool clean: Whether to shutdown things cleanly, or force a quick and dirty shutdown.
@@ -169,7 +171,7 @@ class IrcBot(bot.SingleServerIRCBot):
         if hasattr(self, 'handler'):
             self.handler.workers.stop_workers(clean)
 
-    def handle_quit(self, _, e):
+    def handle_quit(self, _, e) -> None:
         # Log quits.
         for channel in misc.get_channels(self.channels, e.source.nick):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
@@ -182,7 +184,7 @@ class IrcBot(bot.SingleServerIRCBot):
             print('shutdown')
             shutdown.set()
 
-    def handle_msg(self, c, e):
+    def handle_msg(self, c, e) -> None:
         """Handles all messages.
 
         - If a exception is thrown, catch it and display a nice traceback instead of crashing.
@@ -194,7 +196,7 @@ class IrcBot(bot.SingleServerIRCBot):
         except Exception as ex:
             backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
-    def is_reload(self, e):
+    def is_reload(self, e) -> str | None:
         if not e.arguments:
             return None
         cmd = e.arguments[0].strip()
@@ -207,7 +209,7 @@ class IrcBot(bot.SingleServerIRCBot):
         else:
             return None
 
-    def reload_handler(self, c, e):
+    def reload_handler(self, c, e) -> None:
         """This handles reloads."""
         cmd = self.is_reload(e)
         cmdchar = self.config['core']['cmdchar']
@@ -234,7 +236,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
 
-def init(confdir='/etc/cslbot'):
+def init(confdir: str = '/etc/cslbot') -> None:
     """The bot's main entry point.
 
     | Initialize the bot and start processing messages.

@@ -51,7 +51,7 @@ def random_stock():
 
 
 @Command('stock', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a stock quote.
 
     Syntax: {command} [symbol]

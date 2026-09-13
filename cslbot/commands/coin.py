@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('coin')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Flips a coin a number of times.
 
     Syntax: {command} [number]

@@ -22,12 +22,12 @@ from ..helpers.textutils import gen_lenny
 from ..helpers.web import get_urban
 
 
-def gen_fortune(send):
+def gen_fortune(send) -> None:
     for line in get_fortune('-o').splitlines():
         send(line)
 
 
-def gen_urban(send, session, key):
+def gen_urban(send, session, key) -> None:
     defn, url = get_urban('', session, key)
     send(defn)
     if url:
@@ -35,14 +35,14 @@ def gen_urban(send, session, key):
 
 
 @Command('botspam', ['config', 'db'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Abuses the bot.
 
     Syntax: {command}
 
     """
 
-    def lenny_send(msg):
+    def lenny_send(msg) -> None:
         send(gen_lenny(msg))
 
     key = args['config']['api']['bitlykey']

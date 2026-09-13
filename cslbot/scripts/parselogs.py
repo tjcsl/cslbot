@@ -40,7 +40,7 @@ class LogProcesser:
         self.logs: dict[str, IO] = {}
         self.outdir = outdir
 
-    def __del__(self):
+    def __del__(self) -> None:
         for log in self.logs.values():
             log.close()
 

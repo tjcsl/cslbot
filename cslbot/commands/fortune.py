@@ -19,7 +19,7 @@ from ..helpers.misc import get_fortune, list_fortunes
 
 
 @Command(['fortune', 'bofh', 'excuse'], ['name'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Returns a fortune.
 
     Syntax: {command} <list|[-a|-o] [module]>

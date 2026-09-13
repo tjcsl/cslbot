@@ -24,7 +24,7 @@ from ..helpers.command import Command
 
 
 @Command(['timeuntil', 'timetill'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Reports the difference between now and some specified time.
 
     Syntax: {command} <time>

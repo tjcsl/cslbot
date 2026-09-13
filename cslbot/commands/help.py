@@ -19,7 +19,7 @@ from ..helpers.registry import command_registry
 
 
 @Command('help', ['nick', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gives help.
 
     Syntax: {command} [command]

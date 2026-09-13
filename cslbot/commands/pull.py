@@ -23,7 +23,7 @@ from ..helpers.misc import do_pull
 
 
 @Command('pull', ['config', 'handler'], role='owner')
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Pull changes.
 
     Syntax: {command} <branch>

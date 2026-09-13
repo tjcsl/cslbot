@@ -54,7 +54,7 @@ def get_modifiers(msg, nick, nickregex):
     return mods
 
 
-def do_replace(log, config, char, regex, replacement):
+def do_replace(log, config, char, regex, replacement) -> str | None:
     startchars = [config['cmdchar']]
     startchars.extend(config['altcmdchars'].split(','))
     # pre-generate the possible start strings
@@ -74,7 +74,7 @@ def do_replace(log, config, char, regex, replacement):
 
 
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Corrects a previous message.
 
     Syntax: {command}/<msg>/<replacement>/<ig|nick>

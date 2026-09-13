@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_shibe
 
 
 @Command('shibe')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Generates a shibe reaction.
 
     Syntax: {command} [topic1]...[topicn]

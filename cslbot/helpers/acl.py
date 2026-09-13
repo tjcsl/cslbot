@@ -22,7 +22,7 @@ from sqlalchemy import select
 from .orm import Permissions
 
 
-def set_admin(msg, handler):
+def set_admin(msg, handler) -> None:
     """Handle admin verification responses from NickServ.
 
     | If NickServ tells us that the nick is authed, mark it as verified.

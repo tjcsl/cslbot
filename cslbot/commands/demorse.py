@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('demorse')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Converts morse to ascii.
 
     Syntax: {command} <text>

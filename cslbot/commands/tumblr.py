@@ -25,7 +25,7 @@ from ..helpers.web import post_tumblr
 
 
 @Command('tumblr', ['config', 'is_admin', 'db', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Searches tumblr
     Syntax: {command} <blogname> <--submit content|--random>
     """

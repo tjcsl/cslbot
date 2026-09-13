@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_fullwidth, gen_word
 
 
 @Command('fullwidth')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Converts text to fullwidth characters.
 
     Syntax: {command} [text]

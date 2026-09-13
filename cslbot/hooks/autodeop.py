@@ -20,7 +20,7 @@ from ..helpers.hook import Hook
 
 
 @Hook('autodeop', ['pubmsg', 'action', 'mode'], ['config', 'target', 'type', 'handler'])
-def handle(_, msg, args):
+def handle(_, msg, args) -> None:
     if 'autodeop' not in args['config']['core']:
         return
 

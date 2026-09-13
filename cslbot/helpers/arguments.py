@@ -16,6 +16,7 @@
 
 import argparse
 import re
+from argparse import Namespace
 
 import dateutil.parser
 from requests import get
@@ -27,7 +28,7 @@ class ArgumentException(Exception):
 
 class NickParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings=None):
+    def __call__(self, parser, namespace, value, option_strings=None) -> None:
         if value is None:
             return
         if re.match(namespace.config['core']['nickregex'], value):
@@ -38,7 +39,7 @@ class NickParser(argparse.Action):
 
 class ChanParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings=None):
+    def __call__(self, parser, namespace, value, option_strings=None) -> None:
         if value is None:
             return
         if isinstance(value, str):
@@ -53,7 +54,7 @@ class ChanParser(argparse.Action):
 
 class DateParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings=None):
+    def __call__(self, parser, namespace, value, option_strings=None) -> None:
         if value is None:
             return
         if isinstance(value, list):
@@ -66,7 +67,7 @@ class DateParser(argparse.Action):
 
 class TumblrParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings=None):
+    def __call__(self, parser, namespace, value, option_strings=None) -> None:
         if value is None:
             return
         if '.' not in value:
@@ -84,7 +85,7 @@ class TumblrParser(argparse.Action):
 
 class ZipParser(argparse.Action):
 
-    def __call__(self, parser, namespace, value, option_strings=None):
+    def __call__(self, parser, namespace, value, option_strings=None) -> None:
         if value is None:
             return
         zipcode = re.search(r'\d{5}', value)
@@ -95,7 +96,7 @@ class ZipParser(argparse.Action):
 
 class ArgParser(argparse.ArgumentParser):
 
-    def __init__(self, config=None, **kwargs):
+    def __init__(self, config=None, **kwargs) -> None:
         super().__init__(add_help=False, **kwargs)
         self.namespace = argparse.Namespace()
         self.namespace.config = config
@@ -103,12 +104,12 @@ class ArgParser(argparse.ArgumentParser):
     def error(self, message):
         raise ArgumentException(message)
 
-    def exit(self, status=0, message=None):
+    def exit(self, status: int = 0, message=None):
         if message is None:
             message = 'argparse exited with status %d.' % status
         raise ArgumentException(message)
 
-    def parse_args(self, msg=None):
+    def parse_args(self, msg=None) -> Namespace:
         return super().parse_args(msg.split(), namespace=self.namespace)
 
     def parse_known_args(self, msg=None, namespace=None):

@@ -21,7 +21,7 @@ from sqlalchemy import select
 from .orm import Log
 
 
-def handle_nick(handler, e):
+def handle_nick(handler, e) -> bool:
     with handler.db.session_scope() as session:
         if handler.config['feature'].getboolean('nickkick'):
             return do_kick(session, e.target)
@@ -29,7 +29,7 @@ def handle_nick(handler, e):
             return False
 
 
-def get_chain(session, nick, limit=datetime.min):
+def get_chain(session, nick, limit: datetime = datetime.min):
     # Search backwards, getting previous nicks for a (optionally) limited amount of time.
     chain = []
     curr_time = datetime.now()
@@ -54,7 +54,7 @@ def get_chain(session, nick, limit=datetime.min):
     return list(reversed(chain))
 
 
-def do_kick(session, nick):
+def do_kick(session, nick) -> bool:
     # only go 5 minutes back for identity crisis detection.
     limit = datetime.now() - timedelta(minutes=5)
     chain = get_chain(session, nick, limit)

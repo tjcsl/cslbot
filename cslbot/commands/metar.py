@@ -23,7 +23,7 @@ from ..helpers.command import Command
 
 
 @Command(['metar'], ['nick', 'config', 'db', 'name', 'source', 'handler'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets the weather.
 
     Syntax: {command} <station> [station2...]

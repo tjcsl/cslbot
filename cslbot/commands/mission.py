@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('mission')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Announces the mission.
 
     Syntax: {command}

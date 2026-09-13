@@ -36,7 +36,7 @@ def get_urls(msg):
 
 
 @Hook('url', ['pubmsg', 'action'], ['config', 'db', 'nick', 'handler'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     """Get titles for urls.
 
     Generate a short url. Get the page title.

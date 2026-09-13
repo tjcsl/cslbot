@@ -22,7 +22,7 @@ from ..helpers.orm import Babble
 
 
 @Hook('babble', ['pubmsg', 'privmsg'], ['db', 'config'])
-def hook(send, msg, args):
+def hook(send, msg, args) -> None:
     # No babble cache, so nothing to update
     if not args['db'].scalar(select(func.count()).select_from(Babble)):
         return

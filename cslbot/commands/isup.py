@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('isup', ['nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Checks if a website is up.
 
     Syntax: {command} <website>

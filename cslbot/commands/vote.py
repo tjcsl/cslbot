@@ -64,7 +64,7 @@ def delete_poll(args):
     return 'Poll deleted.'
 
 
-def get_open_poll(session, pid):
+def get_open_poll(session, pid: int):
     return session.scalars(select(Polls).where(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid)).first()
 
 
@@ -85,7 +85,7 @@ def edit_poll(args):
     return 'Poll updated!'
 
 
-def reopen(args):
+def reopen(args) -> str:
     """reopens a closed poll."""
     if not args.isadmin:
         return 'Nope, not gonna do it.'
@@ -119,7 +119,7 @@ def end_poll(args):
     return 'Poll ended!'
 
 
-def tally_poll(args):
+def tally_poll(args) -> str:
     """Shows the results of poll."""
     if not args.msg:
         return 'Syntax: !vote tally <pollnum>'
@@ -156,11 +156,11 @@ def tally_poll(args):
         return 'Tie between %s with %d votes.' % winners
 
 
-def get_response(session, pid, nick):
+def get_response(session, pid: int, nick):
     return session.scalars(select(Poll_responses).where(Poll_responses.pid == pid, Poll_responses.voter == nick)).first()
 
 
-def vote(session, nick, pid, response):
+def vote(session, nick, pid: int, response):
     """Votes on a poll."""
     if not response:
         return 'You have to vote something!'
@@ -206,7 +206,7 @@ def list_polls(args):
 
 
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Handles voting.
 
     Syntax: {command} <start|end|list|tally|edit|delete|retract|reopen|(num) vote>

@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('choose')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Chooses between multiple choices.
 
     Syntax: {command} <object> or <object> (or <object>...)

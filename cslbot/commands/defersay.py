@@ -20,7 +20,7 @@ from ..helpers.misc import parse_time
 
 
 @Command('defersay', ['nick', 'handler', 'config'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Says something at a later time.
 
     Syntax: {command} <delay> <msg>

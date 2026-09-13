@@ -24,7 +24,7 @@ from ..helpers.urlutils import get_short
 
 
 @Command('wolf', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Queries WolframAlpha.
 
     Syntax: {command} <expression>

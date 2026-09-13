@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('8ball', ['nick', 'handler'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Asks the Magic 8-Ball a question.
     Syntax: {command} <question>
     """

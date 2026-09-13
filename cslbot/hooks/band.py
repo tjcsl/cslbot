@@ -20,7 +20,7 @@ from ..helpers.hook import Hook
 
 
 @Hook('band', 'pubmsg', ['config'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     if not msg.startswith(args['config']['core']['cmdchar']):
         if ':' in msg:
             msg = msg.split(':')[1]

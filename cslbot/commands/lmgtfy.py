@@ -19,7 +19,7 @@ from ..helpers.urlutils import get_short
 
 
 @Command(['lmgtfy', 'explain'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Explain things.
 
     Syntax: {command} <text>

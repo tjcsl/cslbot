@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command('fweather')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Gets the F***ING weather!
     Syntax: {command} <location>
     """

@@ -21,7 +21,7 @@ from ..helpers.command import Command
 
 
 @Command('version', ['config', 'handler'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Check the git revison.
 
     Syntax: {command} [check|master]

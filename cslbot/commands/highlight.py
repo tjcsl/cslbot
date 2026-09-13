@@ -22,7 +22,7 @@ from ..helpers.orm import Log
 
 
 @Command('highlight', ['db', 'nick', 'config', 'target', 'botnick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """When a nick was last pinged.
 
     Syntax: {command} [--channel #channel] [nick]

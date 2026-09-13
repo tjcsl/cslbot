@@ -33,7 +33,7 @@ class Base:
         return self.__name__.lower()
 
 
-def setup_db(session, botconfig, confdir):
+def setup_db(session, botconfig, confdir) -> None:
     """Sets up the database."""
     Base.metadata.create_all(session.connection())
     # If we're creating a fresh db, we don't need to worry about migrations.

@@ -24,7 +24,7 @@ from irc import client
 from . import misc
 
 
-def output_traceback(ex):
+def output_traceback(ex) -> tuple[str, str]:
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
     output = ''.join(traceback.format_exc()).strip()
@@ -38,7 +38,7 @@ def output_traceback(ex):
     return (msg, output)
 
 
-def handle_traceback(ex, c, target, config, source='the bot'):
+def handle_traceback(ex, c, target, config, source: str = 'the bot') -> None:
     msg, output = output_traceback(ex)
     name = type(ex).__name__
     ctrlchan = config['core']['ctrlchan']
@@ -46,7 +46,7 @@ def handle_traceback(ex, c, target, config, source='the bot'):
     # If we've disconnected, there isn't much point sending errors to the network.
     if isinstance(ex, client.ServerNotConnectedError):
 
-        def send(_, msg):
+        def send(_, msg: str) -> None:
             logging.error(msg)
     else:
         send = c.privmsg

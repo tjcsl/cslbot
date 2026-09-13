@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     log = sa.table('log', sa.column('type', sa.String), sa.column('msg', sa.String))
     rows = (op.get_bind().execute(log.select().where(log.c.type == 'kick').where(log.c.msg.like('%,%'))).fetchall())
     rows = [x for x in rows if ',' in x.msg and x.msg.find(',') < x.msg.find(' ')]

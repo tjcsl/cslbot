@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('slap', ['handler', 'target', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Slap somebody.
 
     Syntax: {command} <nick> [for <reason>]

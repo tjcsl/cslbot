@@ -22,7 +22,7 @@ from random import choice
 from ..helpers.command import Command
 
 
-def get_list():
+def get_list() -> dict[str, list[str]]:
     # wordlist (COMMON.TXT) from http://www.gutenberg.org/ebooks/3201
     rawlist = sorted(resources.read_text('cslbot.static', 'wordlist').splitlines())
     words = {}
@@ -32,7 +32,7 @@ def get_list():
 
 
 @Command('acronym')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Generates a meaning for the specified acronym.
 
     Syntax: {command} <acronym>

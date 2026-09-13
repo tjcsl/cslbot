@@ -19,7 +19,7 @@ from ..helpers.command import Command
 
 
 @Command('slogan')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Gets a slogan.
 
     Syntax: {command} [text]

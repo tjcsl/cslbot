@@ -19,7 +19,7 @@ from random import randrange
 from ..helpers.command import Command
 
 
-def gen_roman(num):
+def gen_roman(num: int) -> str:
     mapping = {
         1: 'I',
         4: 'IV',
@@ -51,7 +51,7 @@ def gen_roman(num):
 
 
 @Command('roman')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Convert a number to the roman numeral equivalent.
 
     Syntax: {command} [number]

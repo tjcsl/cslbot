@@ -49,7 +49,7 @@ def clean_msg(msg):
     return [x for x in msg.split() if not exclude_re.match(x)]
 
 
-def get_markov(cursor, length, node, initial_run):
+def get_markov(cursor, length: int, node, initial_run):
     ret = collections.defaultdict(int)
     if initial_run:
         return ret
@@ -60,7 +60,7 @@ def get_markov(cursor, length, node, initial_run):
     return ret
 
 
-def update_count(cursor, length, source, target):
+def update_count(cursor, length: int, source, target) -> None:
     rows = cursor.scalars(select(Babble_count).where(Babble_count.length == length)).all()
     try:
         count_source = next(r for r in rows if r.type == 'source' and r.key == source)
@@ -74,7 +74,7 @@ def update_count(cursor, length, source, target):
         cursor.add(Babble_count(type='target', length=length, key=target, count=1))
 
 
-def generate_markov(cursor, length, messages, initial_run):
+def generate_markov(cursor, length: int, messages, initial_run):
     markov = {}
     for row in messages:
         msg = clean_msg(row.msg)
@@ -90,7 +90,7 @@ def generate_markov(cursor, length, messages, initial_run):
     return markov
 
 
-def build_rows(cursor, length, markov, initial_run):
+def build_rows(cursor, length: int, markov, initial_run):
     table = Babble if length == 1 else Babble2
     data = []
     count_source = collections.defaultdict(int)
@@ -123,7 +123,7 @@ def build_rows(cursor, length, markov, initial_run):
     return data, count_data
 
 
-def postgres_hack(cursor, length, data):
+def postgres_hack(cursor, length: int, data) -> None:
     table = 'babble' if length == 1 else 'babble2'
     # Crazy magic to insert a ton of data really fast, drops runtime in half on large datasets.
     raw_cursor = cursor.connection().connection.cursor()
@@ -141,7 +141,7 @@ def postgres_hack(cursor, length, data):
         raw_cursor.execute(args_str)
 
 
-def delete_tables(cursor):
+def delete_tables(cursor) -> None:
     if cursor.bind.dialect.name == 'mysql':
         cursor.execute('DROP INDEX ix_babble_key ON babble')
         cursor.execute('DROP INDEX ix_babble2_key ON babble2')
@@ -153,7 +153,7 @@ def delete_tables(cursor):
     cursor.execute(Babble_count.__table__.delete())
 
 
-def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False):
+def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False) -> None:
     """Builds a markov dictionary."""
     if initial_run:
         cursor.execute(delete(Babble_last))
@@ -209,7 +209,7 @@ def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, deb
         print('Commited in %f' % (time.time() - t))
 
 
-def update_markov(cursor, config):
+def update_markov(cursor, config) -> bool:
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
     try:

@@ -17,7 +17,7 @@
 import geoip2.database
 
 
-def get_zipcode(db, ip):
+def get_zipcode(db, ip) -> str | None:
     reader = geoip2.database.Reader(db)
     response = reader.city(ip)
     reader.close()

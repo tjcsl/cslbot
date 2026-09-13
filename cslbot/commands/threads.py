@@ -21,7 +21,7 @@ from ..helpers.command import Command
 
 
 @Command('threads')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Enumerate threads.
 
     Syntax: {command}

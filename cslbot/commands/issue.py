@@ -25,7 +25,7 @@ from ..helpers.web import create_issue
 
 
 @Command(['issue', 'bug'], ['source', 'db', 'config', 'type', 'is_admin', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Files a github issue or gets a open one.
 
     Syntax: {command} <title [--desc description]|--get <number>>

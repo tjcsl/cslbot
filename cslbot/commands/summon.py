@@ -21,7 +21,7 @@ from ..helpers.orm import Notes
 
 
 @Command('summon', ['db', 'nick', 'type'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Summons a user
     Syntax: {command} <nick>
     """

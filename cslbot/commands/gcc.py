@@ -22,7 +22,7 @@ from ..helpers.textutils import gen_slogan
 
 
 @Command('gcc', ['type', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Compiles stuff.
 
     Syntax: {command} <code>

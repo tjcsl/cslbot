@@ -18,7 +18,7 @@ from ..helpers.hook import Hook
 
 
 @Hook('voice', ['pubmsg', 'action'], ['nick', 'target', 'handler', 'config'])
-def handle(send, _, args):
+def handle(send, _, args) -> None:
     if not args['config'].getboolean('feature', 'voiceactive'):
         return
     with args['handler'].data_lock:

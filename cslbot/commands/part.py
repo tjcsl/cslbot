@@ -19,7 +19,7 @@ from ..helpers.command import Command
 
 
 @Command('part', ['handler', 'config', 'nick', 'type', 'target'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Orders the bot to leave a channel
     Syntax: {command} <channel>
     """

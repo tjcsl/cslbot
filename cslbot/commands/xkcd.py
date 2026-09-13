@@ -37,7 +37,7 @@ def do_search(msg, key, searchid):
 
 
 @Command('xkcd', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a xkcd comic.
 
     Syntax: {command} [num|latest|term]

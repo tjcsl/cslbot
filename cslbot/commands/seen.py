@@ -34,7 +34,7 @@ def get_last(cursor, cmdchar, ctrlchan, nick):
 
 
 @Command('seen', ['db', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """When a nick was last seen.
 
     Syntax: {command} <nick>

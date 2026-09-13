@@ -22,7 +22,7 @@ from ..helpers.orm import Ignore
 
 
 @Command('abuse', ['config', 'db', 'handler'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Shows or clears the abuse list
     Syntax: {command} <--clear|--show>
     """

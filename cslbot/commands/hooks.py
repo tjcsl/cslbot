@@ -19,7 +19,7 @@ from ..helpers.registry import hook_registry
 
 
 @Command('hooks')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Lists loaded hooks
     Syntax: {command}
     """

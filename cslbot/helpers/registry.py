@@ -20,27 +20,27 @@ from . import modutils
 
 class Registry:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.known_objects = {}
         self.disabled_objects = set()
 
-    def is_disabled(self, obj):
+    def is_disabled(self, obj) -> bool:
         return obj in self.disabled_objects
 
-    def register(self, obj, name=None):
+    def register(self, obj, name=None) -> None:
         if name is None:
             name = obj.name
         if name in self.known_objects:
             raise ValueError('There is already a object registered with the name %s' % obj)
         self.known_objects[name] = obj
 
-    def scan_for_objects(self, obj_type):
+    def scan_for_objects(self, obj_type: str) -> list[tuple[str, str]]:
         self.known_objects.clear()
         self.disabled_objects = modutils.get_disabled(obj_type)
         errors = modutils.scan_and_reimport(obj_type)
         return errors
 
-    def disable_object(self, obj_type, obj):
+    def disable_object(self, obj_type: str, obj) -> str:
         if obj not in self.known_objects:
             return f'{obj} is not a loaded {obj_type}'
         if obj not in self.disabled_objects:
@@ -49,7 +49,7 @@ class Registry:
         else:
             return 'That %s is already disabled!' % obj_type
 
-    def enable_object(self, obj_type, obj):
+    def enable_object(self, obj_type: str, obj) -> str:
         if obj == 'all':
             self.disabled_objects.clear()
             return 'Enabled all %ss.' % obj_type
@@ -64,7 +64,7 @@ class Registry:
 
 class HookRegistry(Registry):
 
-    def scan_for_hooks(self):
+    def scan_for_hooks(self) -> list[tuple[str, str]]:
         """Scans for hooks.
 
         :rtype: list
@@ -86,11 +86,11 @@ class HookRegistry(Registry):
     def get_disabled_hooks(self):
         return [x for x in self.known_objects if x in self.disabled_objects]
 
-    def disable_hook(self, hook):
+    def disable_hook(self, hook) -> str:
         """Adds a hook to the disabled hooks list."""
         return self.disable_object('hook', hook)
 
-    def enable_hook(self, hook):
+    def enable_hook(self, hook) -> str:
         """Removes a command from the disabled hooks list."""
         return self.enable_object('hook', hook)
 
@@ -100,7 +100,7 @@ hook_registry = HookRegistry()
 
 class CommandRegistry(Registry):
 
-    def scan_for_commands(self):
+    def scan_for_commands(self) -> list[tuple[str, str]]:
         """Scans for commands.
 
         :rtype: list
@@ -118,17 +118,17 @@ class CommandRegistry(Registry):
     def get_disabled_commands(self):
         return [x for x in self.known_objects if x in self.disabled_objects]
 
-    def is_registered(self, command_name):
+    def is_registered(self, command_name) -> bool:
         return command_name in self.known_objects
 
     def get_command(self, command_name):
         return self.known_objects[command_name]
 
-    def disable_command(self, command):
+    def disable_command(self, command) -> None:
         """Adds a command to the disabled commands list."""
         self.disable_object('command', command)
 
-    def enable_command(self, command):
+    def enable_command(self, command) -> str:
         """Removes a command from the disabled commands list."""
         return self.enable_object('command', command)
 

@@ -35,7 +35,7 @@ _BITS = (
 
 
 @Command('urbit')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """An operating function.
 
     Syntax: {command}

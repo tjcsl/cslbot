@@ -21,7 +21,7 @@ from ..helpers.identity import get_chain
 
 
 @Command('nicks', ['db', 'handler', 'target', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets previous nicks.
 
     Syntax: {command} <nick>

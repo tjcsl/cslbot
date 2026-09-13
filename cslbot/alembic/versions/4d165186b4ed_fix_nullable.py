@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     if op.get_bind().dialect.name == 'sqlite':
         with op.batch_alter_table('babble') as batch_op:
             batch_op.alter_column('key', existing_type=sa.VARCHAR(length=512), nullable=True)
@@ -30,7 +30,7 @@ def upgrade():
         op.alter_column('babble', 'word', existing_type=sa.TEXT(), nullable=True)
 
 
-def downgrade():
+def downgrade() -> None:
     if op.get_bind().dialect.name == 'sqlite':
         with op.batch_alter_table('babble') as batch_op:
             batch_op.alter_column('word', existing_type=sa.TEXT(), nullable=False)

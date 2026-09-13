@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from argparse import Namespace
 from datetime import datetime
 
 from lxml.html import fromstring
@@ -23,7 +24,7 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-def gen_path(cmdargs):
+def gen_path(cmdargs: Namespace):
     epoch = datetime.now().timestamp()
     params = {
         'a1': cmdargs.first,
@@ -69,7 +70,7 @@ def check_article(name):
 
 
 @Command('wikipath', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Find a path between two wikipedia articles.
 
     Syntax: {command} [article] [article]

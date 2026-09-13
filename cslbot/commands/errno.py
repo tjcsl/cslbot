@@ -19,7 +19,7 @@ from ..helpers.misc import parse_header
 
 
 @Command('errno')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Return either a random value or the specified one from errno.h.
 
     Syntax: {command} <errorcode|list>

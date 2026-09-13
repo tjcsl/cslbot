@@ -16,13 +16,13 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     # FIXME: make sure this works everywhere.
     op.get_bind().execute('DROP TABLE IF EXISTS nicks')
     # op.drop_table('nicks')
 
 
-def downgrade():
+def downgrade() -> None:
     op.create_table(
         'nicks',
         sa.Column('old', sa.TEXT(), autoincrement=False, nullable=True),

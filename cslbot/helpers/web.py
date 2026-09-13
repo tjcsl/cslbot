@@ -22,12 +22,13 @@ from requests import get, post
 from requests.exceptions import ReadTimeout
 from requests_oauthlib import OAuth1Session
 from sqlalchemy import func, select
+from sqlalchemy.sql.selectable import Select
 
 from . import urlutils
 from .orm import UrbanBlacklist
 
 
-def get_rand_word(session):
+def get_rand_word(session) -> str:
     term = None
     while term is None or session.scalar(select(func.count()).select_from(UrbanBlacklist).where(UrbanBlacklist.word == term)):
         url = get('http://www.urbandictionary.com/random.php?page').url
@@ -35,7 +36,7 @@ def get_rand_word(session):
     return term
 
 
-def get_urban(msg, session, key):
+def get_urban(msg: Select[tuple[int]], session, key):
     if not msg:
         msg = get_rand_word(session)
         defn, url = get_urban_definition(msg, key)
@@ -45,7 +46,7 @@ def get_urban(msg, session, key):
     return defn, url
 
 
-def get_urban_definition(msg, key):
+def get_urban_definition(msg: str, key):
     msg = msg.split()
     index = msg[0][1:] if msg[0].startswith('#') else None
     term = ' '.join(msg[1:]) if index is not None else ' '.join(msg)

@@ -22,7 +22,7 @@ from ..helpers.urlutils import get_short
 
 
 @Command(['movie', 'imdb'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a random movie.
 
     Syntax: {command}

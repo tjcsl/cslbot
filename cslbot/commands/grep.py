@@ -23,7 +23,7 @@ from ..helpers.orm import Log
 
 
 @Command(['grep', 'loggrep'], ['config', 'db'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Greps the log for a string.
 
     Syntax: {command} [--nick <nick>] [--ignore-case/-i] <string>

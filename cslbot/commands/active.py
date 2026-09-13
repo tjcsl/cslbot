@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('active', ['handler', 'target'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Returns stats on the active users.
 
     Syntax: {command}

@@ -21,7 +21,7 @@ from ..helpers.misc import parse_time
 
 
 @Command('timeout', ['nick', 'handler', 'target', 'botnick', 'config'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Quiets a user, then unquiets them after the specified period of time.
 
     Syntax: {command} <timespec> <nickname>

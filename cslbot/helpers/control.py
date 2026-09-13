@@ -19,14 +19,16 @@ import re
 
 from sqlalchemy import select
 
+from cslbot.helpers.arguments import ArgParser
+
 from . import arguments, orm, registry, web
 
 
-def handle_chanserv(args):
+def handle_chanserv(args) -> None:
     args.send('{} {}'.format(args.cmd, ' '.join(args.args)), target='ChanServ')
 
 
-def toggle_logging(level):
+def toggle_logging(level: int) -> bool:
     if logging.getLogger().getEffectiveLevel() == level:
         return False
     else:
@@ -34,14 +36,14 @@ def toggle_logging(level):
         return True
 
 
-def toggle_module(type, name, enable=True):
+def toggle_module(type: str, name, enable: bool = True):
     if not name:
         return 'Missing argument.'
     reg = getattr(registry, '%s_registry' % type)
     return (reg.enable_object(type, name[0]) if enable else reg.disable_object(type, name[0]))
 
 
-def handle_disable(args):
+def handle_disable(args) -> None:
     if args.cmd == 'kick':
         if not args.handler.kick_enabled:
             args.send('Kick already disabled.')
@@ -63,7 +65,7 @@ def handle_disable(args):
             args.send('Control channel logging is already disabled.')
 
 
-def handle_enable(args):
+def handle_enable(args) -> None:
     if args.cmd == 'kick':
         if args.handler.kick_enabled:
             args.send('Kick already enabled.')
@@ -94,7 +96,7 @@ def handle_enable(args):
             args.send('Control channel logging is already enabled.')
 
 
-def handle_guard(args):
+def handle_guard(args) -> None:
     if args.nick in args.handler.guarded:
         args.send('Already guarding %s' % args.nick)
     else:
@@ -102,7 +104,7 @@ def handle_guard(args):
         args.send('Guarding %s' % args.nick)
 
 
-def handle_unguard(args):
+def handle_unguard(args) -> None:
     if args.nick not in args.handler.guarded:
         args.send('%s is not being guarded' % args.nick)
     else:
@@ -110,7 +112,7 @@ def handle_unguard(args):
         args.send('No longer guarding %s' % args.nick)
 
 
-def handle_show_pending(args):
+def handle_show_pending(args) -> None:
     table = getattr(orm, args.cmd.capitalize())
     pending = args.db.scalars(select(table).where(table.accepted == 0)).all()
     if pending:
@@ -119,7 +121,7 @@ def handle_show_pending(args):
         args.send('No pending %s.' % args.cmd)
 
 
-def handle_show(args):
+def handle_show(args) -> None:
     if args.cmd == 'guarded':
         if args.handler.guarded:
             args.send(', '.join(args.handler.guarded))
@@ -156,7 +158,7 @@ def handle_show(args):
             args.send('Invalid argument.')
 
 
-def show_pending_items(type, items, send):
+def show_pending_items(type: str, items, send) -> None:
     for x in items:
         if type == 'quotes':
             send('#%d %s -- %s, Submitted by %s' % (x.id, x.quote, x.nick, x.submitter))
@@ -169,7 +171,7 @@ def show_pending_items(type, items, send):
             send('#%d -- %s for %s, Submitted by %s' % (x.id, x.post, x.blogname, x.submitter))
 
 
-def show_pending(db, send, ping=False):
+def show_pending(db, send, ping=False) -> None:
     admins = ': '.join([x.nick for x in db.scalars(select(orm.Permissions)).all()])
     pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
     for name in pending:
@@ -186,7 +188,7 @@ def show_pending(db, send, ping=False):
             show_pending_items(type, items, send)
 
 
-def handle_accept(args):
+def handle_accept(args) -> None:
     table = getattr(orm, args.cmd.capitalize() + 's')
     pending = args.db.scalars(select(table).where(table.accepted == 0, table.id == args.num)).first()
     if pending is None:
@@ -237,7 +239,7 @@ def get_accept_msg(handler, pending, type):
     return msg, success
 
 
-def handle_reject(args):
+def handle_reject(args) -> None:
     table = getattr(orm, args.cmd.capitalize() + 's')
     pending = args.db.get(table, args.num)
     if pending is None:
@@ -281,7 +283,7 @@ def get_reject_msg(pending, type):
         )
 
 
-def handle_quote(args):
+def handle_quote(args) -> None:
     if not args.handler.is_admin(None, args.nick, 'owner'):
         args.send('Only owner can use quote.')
     elif args.cmd[0] == 'join':
@@ -290,7 +292,7 @@ def handle_quote(args):
         args.handler.connection.send_raw(' '.join(args.cmd))
 
 
-def handle_help(args):
+def handle_help(args) -> None:
     args.send('quote <raw command>')
     args.send('cs|chanserv <chanserv command>')
     args.send('disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>')
@@ -299,7 +301,7 @@ def handle_help(args):
     args.send('guard|unguard <nick>')
 
 
-def init_parser(send, handler, nick, db):
+def init_parser(send, handler, nick, db) -> ArgParser:
     parser = arguments.ArgParser(handler.config)
     parser.set_defaults(send=send, handler=handler, nick=nick, db=db)
     subparser = parser.add_subparsers()
@@ -369,7 +371,7 @@ def init_parser(send, handler, nick, db):
     return parser
 
 
-def handle_ctrlchan(handler, msg, nick, send):
+def handle_ctrlchan(handler, msg, nick, send) -> None:
     """Handle the control channel."""
     with handler.db.session_scope() as db:
         parser = init_parser(send, handler, nick, db)

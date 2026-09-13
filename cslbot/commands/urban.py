@@ -38,7 +38,7 @@ def unblacklist_word(session, msg):
 
 
 @Command('urban', ['config', 'db', 'is_admin', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a definition from urban dictionary.
 
     Syntax: {command} <[#<num>] <term>|--blacklist (word)|--unblacklist (word)>

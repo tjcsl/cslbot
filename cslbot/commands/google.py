@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command(['google', 'g'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Googles something.
 
     Syntax: {command} <term>

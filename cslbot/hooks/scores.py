@@ -23,7 +23,7 @@ from ..helpers.orm import Scores
 
 
 @Hook('scores', ['pubmsg', 'privmsg', 'action'], ['nick', 'config', 'type', 'db', 'abuse'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     """Handles scores.
 
     If it's a ++ add one point unless the user is trying to promote

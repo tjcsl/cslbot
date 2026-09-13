@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('botsnack', ['botnick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Causes the bot to snack on something.
 
     Syntax: {command} [object]

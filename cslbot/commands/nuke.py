@@ -19,7 +19,7 @@ from ..helpers.misc import do_nuke
 
 
 @Command('nuke', ['nick', 'handler', 'target', 'config', 'botnick'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Nukes somebody.
 
     Syntax: {command} <target>

@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command(['wai', 'why'])
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Gives a reason for something.
 
     Syntax: {command}

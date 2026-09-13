@@ -29,7 +29,7 @@ def get_log(conn, user, target):
         return conn.scalar(stmt.where(Log.source == user).limit(1))
 
 
-def translate(msg, encode=True):
+def translate(msg, encode: bool = True):
     dv_orig = (
         r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'  # noqa
     )
@@ -42,7 +42,7 @@ def translate(msg, encode=True):
 
 
 @Command(['dvorak', 'sdamashek'], ['db', 'config', 'target'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Converts a message to/from dvorak.
 
     Syntax: {command} <--nick <nick>|msg>

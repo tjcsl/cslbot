@@ -21,7 +21,7 @@ from ..helpers.command import Command
 
 
 @Command('uptime', ['handler'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Shows the bot's uptime.
 
     Syntax: {command}

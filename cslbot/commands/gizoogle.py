@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_gizoogle
 
 
 @Command('gizoogle')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Translates something into gangsta.
 
     Syntax: {command} <something>

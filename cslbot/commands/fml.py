@@ -21,7 +21,7 @@ from ..helpers.command import Command
 
 
 @Command('fml', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a random FML post.
 
     Syntax: {command}

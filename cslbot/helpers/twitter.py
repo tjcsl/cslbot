@@ -15,9 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import twitter
+from twitter.api import Api
 
 
-def get_api(config):
+def get_api(config) -> Api:
     api = config['api']
     return twitter.Api(
         consumer_key=api['twitterconsumerkey'],

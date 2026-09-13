@@ -18,6 +18,7 @@ import datetime
 import json
 import re
 import socket
+from argparse import Namespace
 from importlib import resources
 
 import geoip2
@@ -69,7 +70,7 @@ def valid_location(location, apikey):
     return 'current_observation' in data
 
 
-def set_default(nick, location, session, send, apikey):
+def set_default(nick, location, session, send, apikey) -> None:
     """Sets nick's default location to location."""
     if valid_location(location, apikey):
         send('Setting default location')
@@ -83,7 +84,7 @@ def set_default(nick, location, session, send, apikey):
         send('Invalid or Ambiguous Location')
 
 
-def get_weather(cmdargs, send, apikey):
+def get_weather(cmdargs: Namespace, send, apikey) -> bool:
     if cmdargs.string.startswith('-'):
         data = get(f'http://api.wunderground.com/api/{apikey}/conditions/q/{cmdargs.string[1:]}.json').json()
         if 'current_observation' in data:
@@ -162,7 +163,7 @@ def get_weather(cmdargs, send, apikey):
     return True
 
 
-def get_forecast(cmdargs, send, apikey):
+def get_forecast(cmdargs: Namespace, send, apikey) -> bool | None:
     forecastdata = get(f'http://api.wunderground.com/api/{apikey}/forecast10day/q/{cmdargs.string}.json').json()
     if 'forecast' in forecastdata:
         forecastdata = forecastdata['forecast']['simpleforecast']['forecastday']
@@ -184,7 +185,7 @@ def get_forecast(cmdargs, send, apikey):
     send("Couldn't find data for %s in the 10-day forecast" % (cmdargs.date.strftime('%x')))
 
 
-def get_hourly(cmdargs, send, apikey):
+def get_hourly(cmdargs: Namespace, send, apikey) -> bool | None:
     forecastdata = get(f'http://api.wunderground.com/api/{apikey}/hourly10day/q/{cmdargs.string}.json').json()
     if 'hourly_forecast' in forecastdata:
         forecastdata = forecastdata['hourly_forecast']
@@ -212,7 +213,7 @@ def get_hourly(cmdargs, send, apikey):
 
 
 @Command(['weather', 'bjones'], ['nick', 'config', 'db', 'name', 'source'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets the weather.
 
     Syntax: {command} <[--date (date)] [--hour (hour)] (location)|--set (default)>

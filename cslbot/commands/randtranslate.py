@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_random_translate
 
 
 @Command(['randtrans', 'randtranslate', 'randomtranslate'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Translate something into a random language
     Syntax: {command} <text>
     """

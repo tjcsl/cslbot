@@ -22,7 +22,7 @@ from ..helpers.orm import Permissions
 
 
 @Command('acl', ['config', 'db'], role='owner')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Handles permissions
     Syntax: {command} (--add|--remove) --nick (nick) --role (admin)
     """

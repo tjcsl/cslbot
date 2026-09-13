@@ -16,11 +16,11 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     with op.batch_alter_table('log', schema=None) as batch_op:
         batch_op.add_column(sa.Column('server', sa.UnicodeText(), nullable=True))
 
 
-def downgrade():
+def downgrade() -> None:
     with op.batch_alter_table('log', schema=None) as batch_op:
         batch_op.drop_column('server')

@@ -19,7 +19,7 @@ from ..helpers.command import Command
 
 
 @Command('join', ['handler', 'config', 'nick', 'type'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Orders the bot to join a channel
     Syntax: {command} <channel> [channel] ...
     """

@@ -85,7 +85,7 @@ def build_msg(cursor, speaker, length, start):
 
 
 @Command('babble', ['db', 'config', 'handler'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Babbles like a user
     Syntax: {command} [nick] [--length <1|2>] [--start <word>]
     """

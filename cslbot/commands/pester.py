@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('pester', ['config'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Pesters somebody.
 
     Syntax: {command} <nick> <message>

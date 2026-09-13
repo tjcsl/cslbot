@@ -24,7 +24,7 @@ import irc
 from . import config, handler, misc, modutils, registry
 
 
-def do_log(c, target, msg):
+def do_log(c, target, msg: str) -> None:
     logging.error(msg)
     c.privmsg(target, msg)
 
@@ -51,7 +51,7 @@ def load_modules(
     return True
 
 
-def do_reload(bot, target, cmdargs, server_send=None):
+def do_reload(bot, target, cmdargs, server_send=None) -> bool | None:
     """The reloading magic.
 
     - First, reload handler.py.
@@ -60,7 +60,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
 
     """
 
-    def send(msg):
+    def send(msg: str) -> None:
         if server_send is not None:
             server_send('%s\n' % msg)
         else:

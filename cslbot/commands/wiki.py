@@ -19,14 +19,14 @@ from requests import get
 from ..helpers.command import Command
 
 
-def get_rand(url):
+def get_rand(url: str):
     params = {'format': 'json', 'action': 'query', 'list': 'random', 'rnnamespace': '0'}
     data = get('%s/api.php' % url, params=params).json()
     return data['query']['random'][0]['title']
 
 
 @Command(['wiki', 'wikipedia', 'livedoc'], ['name'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Returns the first wikipedia result for the argument.
 
     Syntax: {command} [term]

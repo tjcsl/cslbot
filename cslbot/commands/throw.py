@@ -22,7 +22,7 @@ from ..helpers.misc import get_users
 
 
 @Command('throw', ['handler', 'target'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Throw something.
 
     Syntax: {command} <object> [at <target>]

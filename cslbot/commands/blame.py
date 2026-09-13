@@ -21,7 +21,7 @@ from ..helpers.misc import get_users
 
 
 @Command('blame', ['handler', 'target', 'nick', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Blames a random user for something.
 
     Syntax: {command} [reason]

@@ -24,7 +24,7 @@ from ..helpers.urlutils import get_short
 
 
 @Command(['cve', 'cveid'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets info on a CVE id from MITRE's CVE database
     Syntax: {command} <cveid>
     """

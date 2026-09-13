@@ -20,12 +20,12 @@ from importlib import resources
 from ..helpers.hook import Hook
 
 
-def get_list():
+def get_list() -> list[str]:
     return resources.read_text('cslbot.static', 'allstar.txt').splitlines()
 
 
 @Hook('shrek', 'pubmsg', ['nick'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     if random.random() > 0.001:
         return
     send('{}: {}'.format(args['nick'], random.choice(get_list())))

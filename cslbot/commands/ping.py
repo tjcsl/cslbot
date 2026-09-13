@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command(['ping', 'ping6'], ['handler', 'target', 'config', 'nick', 'name'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Ping something.
 
     Syntax: {command} <target>

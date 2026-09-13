@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('about', ['config'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Returns info about the bot.
 
     Syntax: {command}

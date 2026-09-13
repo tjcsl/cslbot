@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('bike')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """I've got a bike, you can ride it if you like.
 
     It's got a basket, a bell that rings and things to make it look good.

@@ -20,7 +20,7 @@ from ..helpers.hook import Hook
 
 
 @Hook('make', 'pubmsg')
-def handle(send, msg, _):
+def handle(send, msg, _) -> None:
     msg = msg.split()
     if len(msg) < 2:
         return

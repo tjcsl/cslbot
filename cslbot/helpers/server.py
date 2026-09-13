@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import socketserver
-from typing import Any
+from typing import Any, Callable
 
 from irc import client
 
@@ -38,7 +38,12 @@ quit\t\t\tquit the console session
 """
 
 
-def init_server(bot):
+class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    allow_reuse_address = True
+    bot: Any
+
+
+def init_server(bot) -> BotNetServer:
     ports = bot.config['core']['serverport'].split(',')
     port = int(ports[bot.idx].strip())
     try:
@@ -54,11 +59,6 @@ def init_server(bot):
     return server
 
 
-class BotNetServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    allow_reuse_address = True
-    bot: Any
-
-
 class BotNetHandler(socketserver.BaseRequestHandler):
     server: BotNetServer
 
@@ -72,7 +72,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 break
         return msg.decode()
 
-    def handle_cmd(self, cmd, bot, send):
+    def handle_cmd(self, cmd, bot, send: Callable[[str], None]) -> bool:
         if cmd[0] == 'help':
             send(HELP)
         elif cmd[0] == 'reload':
@@ -101,9 +101,9 @@ class BotNetHandler(socketserver.BaseRequestHandler):
             send('Unknown command. Type help for more info.\n')
         return True
 
-    def handle(self):
+    def handle(self) -> None:
 
-        def send(msg):
+        def send(msg: str) -> None:
             self.request.send(msg.encode())
 
         bot = self.server.bot

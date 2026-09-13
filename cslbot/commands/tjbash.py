@@ -24,7 +24,7 @@ from ..helpers.command import Command
 
 
 @Command('tjbash')
-def cmd(send, msg, _):
+def cmd(send, msg, _) -> None:
     """Finds a random quote from tjbash.org given search criteria.
 
     Syntax: {command} [searchstring]

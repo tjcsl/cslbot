@@ -56,7 +56,7 @@ class BotHandler(object):
         nick: str,
         msg: str,
         msgtype: str,
-        ignore_length=False,
+        ignore_length: bool = False,
         filters=None,
     ):
         ...
@@ -79,7 +79,7 @@ class BotHandler(object):
     def do_mode(self, target: str, msg: str, nick: str, send: send_type) -> None:
         ...
 
-    def do_kick(self, send, target, nick, msg, slogan=True):
+    def do_kick(self, send, target, nick, msg, slogan: bool = True):
         ...
 
     def do_welcome(self):

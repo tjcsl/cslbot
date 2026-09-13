@@ -24,7 +24,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Quotes
 
 
-def do_get_quote(session, qid=None):
+def do_get_quote(session, qid: int | None = None):
     if qid is None:
         quotes = session.scalars(select(Quotes).where(Quotes.accepted == 1)).all()
         if not quotes:
@@ -49,7 +49,7 @@ def get_quotes_nick(session, nick):
     return 'Quote #%d (out of %d): %s -- %s' % (row.id, len(rows), row.quote, nick)
 
 
-def do_add_quote(nick, quote, session, isadmin, approve, send, args):
+def do_add_quote(nick, quote, session, isadmin, approve, send, args) -> None:
     row = Quotes(quote=quote, nick=nick, submitter=args['nick'])
     session.add(row)
     session.flush()
@@ -66,7 +66,7 @@ def do_add_quote(nick, quote, session, isadmin, approve, send, args):
         )
 
 
-def do_update_quote(session, qid, nick, quote):
+def do_update_quote(session, qid, nick, quote) -> str:
     row = session.get(Quotes, qid)
     if row is None:
         return "That quote doesn't exist!"
@@ -102,7 +102,7 @@ def search_quote(session, offset, search):
 
 
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Handles quotes.
     Syntax: {command} <number|nick>, !quote --add <quote> --nick <nick> (--approve), !quote --list, !quote --delete <number>, !quote --edit <number> <quote> --nick <nick>
     !quote --search (--offset <num>) <number>

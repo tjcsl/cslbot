@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command(['dc', 'postfix'], ['do_kick', 'nick', 'target'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Evaluates mathmatical expressions.
 
     Syntax: {command} <expression>

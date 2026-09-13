@@ -25,7 +25,7 @@ from ..helpers.command import Command
 
 
 @Command('wisdom', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets words of wisdom
     Syntax: {command} (--author <author>|--search <topic>)
     Powered by STANDS4, www.stands4.com

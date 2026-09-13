@@ -34,7 +34,7 @@ class Hook:
     def __call__(self, func: Callable[[Callable[[str], None], str, list[str]], None]) -> Callable[[str], None]:
 
         @functools.wraps(func)
-        def wrapper(send, msg, msgtype, args):
+        def wrapper(send, msg, msgtype, args) -> None:
             if msgtype in self.types:
                 try:
                     thread = threading.current_thread()

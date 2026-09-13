@@ -25,7 +25,7 @@ from ..helpers.urlutils import get_short
 
 
 @Hook('reddit', ['pubmsg', 'action'], ['config'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     for match in re.finditer(r'(?:^|\s)/r/([\w|^/]*)\b', msg):
         subreddit = match.group(1)
         if not check_exists(subreddit):

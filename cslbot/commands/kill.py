@@ -18,7 +18,7 @@ from ..helpers.command import Command
 
 
 @Command('kill', ['botnick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Kills somebody.
 
     Syntax: {command} <victim>

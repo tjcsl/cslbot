@@ -34,7 +34,7 @@ squirrels = [
 
 
 @Command(['next', 'shipit'], ['name'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Ships a product.
 
     Syntax: {command}

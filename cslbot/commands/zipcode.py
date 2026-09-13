@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command(['zipcode', 'zip'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets the location of a ZIP code
     Syntax: {command} (zipcode)
     Powered by STANDS4, www.stands4.com

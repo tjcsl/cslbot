@@ -30,11 +30,11 @@ from . import config
 slogan_cache: list[str] = []
 
 
-def gen_removevowels(msg):
+def gen_removevowels(msg) -> str:
     return re.sub('[aeiouy]', '', msg, flags=re.I)
 
 
-def gen_word():
+def gen_word() -> str:
     r = random()
 
     if r < 0.8:
@@ -54,7 +54,7 @@ def gen_yoda(msg):
     return (html.fromstring(req.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip())
 
 
-def gen_gizoogle(msg):
+def gen_gizoogle(msg: str) -> str:
     req = post(
         'http://www.gizoogle.net/textilizer.php',
         data={'translatetext': escape(msg).encode('utf-7')},
@@ -75,7 +75,7 @@ def gen_shakespeare(msg):
     return result
 
 
-def gen_praise(msg):
+def gen_praise(msg) -> str:
     praise = get_praise()
     while not praise:
         praise = get_praise()
@@ -105,7 +105,7 @@ def gen_creffett(msg):
     return '\x02\x038,04%s!!!' % msg.upper()
 
 
-def gen_slogan(msg):
+def gen_slogan(msg) -> str:
     # Originally from sloganizer.com
     if not slogan_cache:
         slogan_cache.extend(resources.read_text('cslbot.static', 'slogans').splitlines())
@@ -120,7 +120,7 @@ def gen_jeffsessionstheyoungman(msg):
     return ' '.join(msg[:k] + ['Jeff Sessions, the young man.'] + msg[k:])
 
 
-def gen_morse(msg):
+def gen_morse(msg) -> str:
     morse_codes = {
         'a': '.-',
         'b': '-...',
@@ -187,7 +187,7 @@ def gen_morse(msg):
     return morse
 
 
-def gen_insult(user):
+def gen_insult(user) -> str:
     adj = [
         'acidic',
         'antique',
@@ -385,7 +385,7 @@ def gen_insult(user):
     return msg
 
 
-def char_to_bin(c):
+def char_to_bin(c) -> str:
     i = ord(c)
     n = 8
     # We need to be able to handle wchars
@@ -400,11 +400,11 @@ def char_to_bin(c):
     return ret[::-1]
 
 
-def gen_binary(text):
+def gen_binary(text) -> str:
     return ''.join(map(char_to_bin, text))
 
 
-def gen_xkcd_sub(msg, hook=False):
+def gen_xkcd_sub(msg, hook: bool = False):
     # http://xkcd.com/1288/
     substitutions = {
         'witnesses': 'these dudes I know',
@@ -447,7 +447,7 @@ def gen_lenny(msg):
     return '%s ( ͡° ͜ʖ ͡°)' % msg
 
 
-def gen_shibe(msg):
+def gen_shibe(msg) -> str:
     topics = msg.split() if msg else [gen_word()]
 
     reaction = 'wow'
@@ -466,7 +466,7 @@ def gen_underscore(msg):
     return msg.replace(' ', '_').lower()
 
 
-def gen_translate(msg, fromlang=None, tolang='en'):
+def gen_translate(msg: dict[int], fromlang=None, tolang='en') -> str:
     key = config.get_config()['api']['googleapikey']
     if not key:
         raise Exception('Invalid translate api key')
@@ -481,7 +481,7 @@ def gen_translate(msg, fromlang=None, tolang='en'):
     return unescape(data['data']['translations'][0]['translatedText'])
 
 
-def get_languages(key):
+def get_languages(key: str):
     data = get(
         'https://www.googleapis.com/language/translate/v2/languages',
         params={
@@ -491,7 +491,7 @@ def get_languages(key):
     return [x['language'] for x in data['data']['languages']]
 
 
-def gen_random_translate(msg):
+def gen_random_translate(msg) -> str:
     key = config.get_config()['api']['googleapikey']
     if not key:
         raise Exception('Invalid translate api key')

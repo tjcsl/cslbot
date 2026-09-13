@@ -18,7 +18,7 @@ from ..helpers import arguments, textutils
 from ..helpers.command import Command
 
 
-def get_filters(handler, target):
+def get_filters(handler, target) -> str:
     # Strip the gen_ from the names
     names = [x.__name__[4:] for x in handler.outputfilter[target]]
     if not names:
@@ -27,7 +27,7 @@ def get_filters(handler, target):
 
 
 @Command('filter', ['config', 'target', 'handler', 'is_admin', 'nick', 'type'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Changes the output filter.
 
     Syntax: {command} [--channel channel] <filter|--show|--list|--reset|--chain filter,[filter2,...]>

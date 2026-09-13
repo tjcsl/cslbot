@@ -24,7 +24,7 @@ from ..helpers.command import Command
 _API = None
 
 
-def get_search_api(config):
+def get_search_api(config) -> TwitterSearch:
     global _API
     if _API:
         return _API
@@ -42,18 +42,18 @@ def get_search_api(config):
     return _API
 
 
-def tweet_url(user, tid):
+def tweet_url(user, tid) -> str:
     return f'https://twitter.com/{user}/status/{tid}'
 
 
-def tweet_text(obj):
+def tweet_text(obj) -> str:
     user = obj['user']['screen_name']
     text = obj['text'].replace('\n', ' ')
     return '@{}: {} ({})'.format(user, text, tweet_url(user, obj['id_str']))
 
 
 @Command('twitter', ['config', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """
     Search the Twitter API.
     Syntax: {command} <query> <--user username> <--count 1>

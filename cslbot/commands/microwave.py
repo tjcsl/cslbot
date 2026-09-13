@@ -21,7 +21,7 @@ from ..helpers.misc import do_nuke
 
 
 @Command('microwave', ['nick', 'botnick', 'handler', 'is_admin', 'target', 'config'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Microwaves something.
 
     Syntax: {command} <level> <target>

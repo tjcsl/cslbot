@@ -30,7 +30,7 @@ def create_stopwatch(args):
     return 'Created new stopwatch with ID %d' % row.id
 
 
-def get_elapsed(session, sw):
+def get_elapsed(session, sw) -> str:
     stopwatch = session.get(Stopwatches, sw)
     if stopwatch is None:
         return 'No stopwatch exists with that ID!'
@@ -40,7 +40,7 @@ def get_elapsed(session, sw):
     return str(etime)
 
 
-def stop_stopwatch(args):
+def stop_stopwatch(args) -> str:
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return 'No stopwatch exists with that ID!'
@@ -64,7 +64,7 @@ def delete_stopwatch(args):
     return 'Stopwatch deleted!'
 
 
-def resume_stopwatch(args):
+def resume_stopwatch(args) -> str:
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return 'No stopwatch exists with that ID!'
@@ -75,7 +75,7 @@ def resume_stopwatch(args):
     return 'Stopwatch resumed!'
 
 
-def list_stopwatch(args):
+def list_stopwatch(args) -> str:
     active = args.session.scalars(select(Stopwatches).where(Stopwatches.active == 1).order_by(Stopwatches.id)).all()
     paused = args.session.scalars(select(Stopwatches).where(Stopwatches.active == 0).order_by(Stopwatches.id)).all()
     for x in active:
@@ -88,7 +88,7 @@ def list_stopwatch(args):
     return '%d active and %d paused stopwatches.' % (len(active), len(paused))
 
 
-def get_stopwatch(args):
+def get_stopwatch(args) -> str:
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return 'Invalid ID!'
@@ -97,7 +97,7 @@ def get_stopwatch(args):
 
 
 @Command(['stopwatch', 'sw'], ['config', 'db', 'is_admin', 'nick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Start/stops/resume/get stopwatch
     Syntax: {command} <start|stop|resume|delete|get|list>
     """

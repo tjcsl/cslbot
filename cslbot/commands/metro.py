@@ -40,7 +40,7 @@ def get_type(t):
 
 
 @Command(['metro', 'wmata'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Provides Metro Info.
 
     Syntax: {command}

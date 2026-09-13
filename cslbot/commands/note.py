@@ -22,7 +22,7 @@ from ..helpers.orm import Notes
 
 
 @Command('note', ['db', 'nick', 'type', 'config'], limit=5)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Leaves a note for a user or users.
 
     Syntax: {command} <nick>[,nick2,...] <note>

@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command('man', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a man page.
 
     Syntax: {command} [section] <command>

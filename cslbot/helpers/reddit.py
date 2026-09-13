@@ -21,7 +21,7 @@ from requests import get
 from .urlutils import get_short, get_title
 
 
-def check_exists(subreddit):
+def check_exists(subreddit) -> bool:
     """Make sure that a subreddit actually exists."""
     req = get(
         'http://www.reddit.com/r/%s/about.json' % subreddit,
@@ -33,7 +33,7 @@ def check_exists(subreddit):
     return req.status_code == 200
 
 
-def random_post(subreddit, apikey):
+def random_post(subreddit, apikey) -> str:
     """Gets a random post from a subreddit and returns a title and shortlink to it."""
     subreddit = '/r/random' if subreddit is None else '/r/%s' % subreddit
     urlstr = f'http://reddit.com{subreddit}/random?{time.time()}'

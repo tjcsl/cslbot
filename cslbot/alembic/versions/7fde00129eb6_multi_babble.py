@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.create_table(
         'babble2',
         sa.Column('id', sa.Integer(), nullable=False),
@@ -32,7 +32,7 @@ def upgrade():
     op.add_column('babble_count', sa.Column('length', sa.Integer(), nullable=True))
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column('babble_count', 'length')
     op.drop_index(op.f('ix_babble2_key'), table_name='babble2')
     op.drop_table('babble2')

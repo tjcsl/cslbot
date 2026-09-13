@@ -20,7 +20,7 @@ from ..helpers.hook import Hook
 
 
 @Hook('butt', 'pubmsg', ['type', 'nick'])
-def handle(send, msg, args):
+def handle(send, msg, args) -> None:
     if 'the cloud' in msg:
         msg = msg.replace('the cloud', 'my butt')
     elif 'cloud' in msg:

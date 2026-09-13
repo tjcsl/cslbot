@@ -128,7 +128,7 @@ def output_polls(env: Environment, session: Session, outdir: str, time: str) -> 
         f.write(output)
 
 
-def output_urls(env: Environment, session: Session, outdir: str, time: str):
+def output_urls(env: Environment, session: Session, outdir: str, time: str) -> None:
     urls = get_urls(session)
     args = {'urls': urls, 'time': time}
     output = env.get_template('urls.html').render(**args)
@@ -136,7 +136,7 @@ def output_urls(env: Environment, session: Session, outdir: str, time: str):
         f.write(output)
 
 
-def main(confdir='/etc/cslbot') -> None:
+def main(confdir: str = '/etc/cslbot') -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)

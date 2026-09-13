@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command('distro')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Gets a random distro.
 
     Syntax: {command}

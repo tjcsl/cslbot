@@ -21,7 +21,7 @@ from ..helpers.command import Command
 
 
 @Command('random')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """For when you don't have enough randomness in your life.
 
     Syntax: {command} [--int] [len]

@@ -20,7 +20,7 @@ from ..helpers.command import Command
 
 
 @Command('cidr', [])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a CIDR range.
 
     Syntax: {command} <range>

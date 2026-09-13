@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     if op.get_bind().dialect.name == 'sqlite':
         with op.batch_alter_table('quotes') as batch_op:
             batch_op.add_column(sa.Column('accepted', sa.Integer(), nullable=True))
@@ -25,7 +25,7 @@ def upgrade():
         op.alter_column('quotes', 'approved', new_column_name='accepted')
 
 
-def downgrade():
+def downgrade() -> None:
     if op.get_bind().dialect.name == 'sqlite':
         with op.batch_alter_table('quotes') as batch_op:
             batch_op.add_column(sa.Column('approved', sa.Integer(), nullable=True))

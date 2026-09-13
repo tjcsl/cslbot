@@ -21,7 +21,7 @@ from ..helpers.orm import Permissions
 
 
 @Command('admins', ['db', 'nick'])
-def cmd(send, _, args):
+def cmd(send, _, args) -> None:
     """Returns a list of admins.
 
     V = Verified (authed to NickServ), U = Unverified.

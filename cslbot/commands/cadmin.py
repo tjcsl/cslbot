@@ -21,7 +21,7 @@ from ..helpers.orm import Permissions
 
 
 @Command('cadmin', ['db', 'handler'], role='admin')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Clears the verified admin list
     Syntax: {command}
     """

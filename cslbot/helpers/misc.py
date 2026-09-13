@@ -37,7 +37,7 @@ def get_users(args):
     return users
 
 
-def parse_time(time):
+def parse_time(time) -> float | int | None:
     time, unit = time[:-1], time[-1].lower()
     if time.isdigit():
         time = int(time)
@@ -57,7 +57,7 @@ def parse_time(time):
         return None if unit else time
 
 
-def do_pull(srcdir=None, repo=None):
+def do_pull(srcdir=None, repo=None) -> str:
     try:
         if repo is None:
             # This is a god-awful hack to unbreak reload pull.
@@ -93,7 +93,7 @@ def do_pull(srcdir=None, repo=None):
         raise e
 
 
-def do_nuke(c, nick, target, channel):
+def do_nuke(c, nick, target, channel) -> None:
     c.privmsg(channel, 'Please Stand By, Nuking ' + target)
     c.privmsg_many([nick, target], '        ____________________         ')
     c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:      ")
@@ -113,7 +113,7 @@ def do_nuke(c, nick, target, channel):
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
-def ping(ping_map, c, e, pongtime):
+def ping(ping_map, c, e, pongtime) -> None:
     if e.arguments[1] == 'No such nick/channel':
         nick = e.arguments[0]
         if nick not in ping_map:
@@ -196,7 +196,7 @@ def parse_header(header, msg):
         return f'{msg} not found in {header}.h'
 
 
-def list_fortunes(offensive=False):
+def list_fortunes(offensive: bool = False) -> list[str]:
     cmd = ['fortune', '-f']
     if offensive:
         cmd.append('-o')
@@ -214,7 +214,7 @@ def list_fortunes(offensive=False):
     return sorted(fortunes)
 
 
-def get_fortune(msg, name='fortune'):
+def get_fortune(msg, name: str = 'fortune'):
     fortunes = list_fortunes() + list_fortunes(True)
     cmd = ['fortune', '-s']
     match = re.match('(-[ao])( .+|$)', msg)
@@ -242,7 +242,7 @@ def ignore(session, nick):
         return '%s is already ignored.' % nick
 
 
-def get_version(srcdir):
+def get_version(srcdir) -> tuple[str, str] | tuple[None, str] | tuple[None, None]:
     gitdir = join(srcdir, '.git')
     if not exists(gitdir):
         return None, metadata.version('CslBot')

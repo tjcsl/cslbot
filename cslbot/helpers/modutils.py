@@ -101,7 +101,7 @@ def get_disabled(mod_type: str) -> set[str]:
     return registry.disabled[mod_type]
 
 
-def get_enabled(mod_type: str, package='cslbot') -> tuple[list[str], list[str]]:
+def get_enabled(mod_type: str, package: str = 'cslbot') -> tuple[list[str], list[str]]:
     enabled, disabled = [], []
     for f in resources.files(f'{package}.{mod_type}').iterdir():
         if not f.name.endswith('.py'):

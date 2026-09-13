@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command('define', ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets the definition of a word
     Syntax: {command} (word)
     Powered by STANDS4, www.stands4.com

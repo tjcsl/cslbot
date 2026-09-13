@@ -21,7 +21,7 @@ from ..helpers.orm import Urls
 
 
 @Command(['repost'], ['db'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Reposts a url.
 
     Syntax: {command}

@@ -134,7 +134,7 @@ ingverb = [
 
 
 @Command('jargon')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Causes the bot to generate some jargon.
 
     Syntax: {command}

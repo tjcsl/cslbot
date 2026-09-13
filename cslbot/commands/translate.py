@@ -20,7 +20,7 @@ from ..helpers.textutils import gen_translate
 
 
 @Command(['translate', 'trans'], ['config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Translate something.
 
     Syntax: {command} [--from <language code>] [--to <language code>] <text>

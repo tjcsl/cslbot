@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_word
 
 
 @Command('word')
-def cmd(send, *_):
+def cmd(send, *_) -> None:
     """Gets a random word.
 
     Syntax: {command}

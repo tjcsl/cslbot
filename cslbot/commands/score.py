@@ -22,7 +22,7 @@ from ..helpers.orm import Scores
 
 
 @Command(['score', 'points'], ['config', 'db', 'botnick'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets scores.
 
     Syntax: {command} <--high|--low|nick>

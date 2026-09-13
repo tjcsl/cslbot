@@ -22,7 +22,7 @@ from ..helpers.command import Command
 
 
 @Command('eix', limit=10)
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Runs eix with the given arguments.
 
     Syntax: {command} <package>

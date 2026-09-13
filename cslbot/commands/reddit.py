@@ -19,7 +19,7 @@ from ..helpers.reddit import check_exists, random_post
 
 
 @Command(['reddit'], ['name', 'config'])
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Gets a random Reddit post.
 
     Syntax: {command} [subreddit]

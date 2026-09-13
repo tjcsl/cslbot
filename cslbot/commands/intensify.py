@@ -19,7 +19,7 @@ from ..helpers.textutils import gen_intensify, gen_word
 
 
 @Command('intensify')
-def cmd(send, msg, args):
+def cmd(send, msg, args) -> None:
     """Intensifies text.
 
     Syntax: {command} [text]
