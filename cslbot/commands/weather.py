@@ -22,6 +22,7 @@ from importlib import resources
 
 import geoip2
 from requests import get
+from sqlalchemy import select
 
 from .. import static
 from ..helpers import arguments, exception
@@ -31,7 +32,7 @@ from ..helpers.orm import Weather_prefs
 
 
 def get_default(nick, session, send, config, source):
-    location = session.query(Weather_prefs.location).filter(Weather_prefs.nick == nick).scalar()
+    location = session.scalar(select(Weather_prefs.location).where(Weather_prefs.nick == nick))
     if location is None:
         try:
             # attempt to get GeoIP location, can fail if the DB isn't available, hostmask doesn't have
@@ -72,7 +73,7 @@ def set_default(nick, location, session, send, apikey):
     """Sets nick's default location to location."""
     if valid_location(location, apikey):
         send("Setting default location")
-        default = session.query(Weather_prefs).filter(Weather_prefs.nick == nick).first()
+        default = session.scalars(select(Weather_prefs).where(Weather_prefs.nick == nick)).first()
         if default is None:
             default = Weather_prefs(nick=nick, location=location)
             session.add(default)

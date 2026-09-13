@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 from ..helpers.command import Command
 from ..helpers.orm import Urls
@@ -27,5 +27,5 @@ def cmd(send, msg, args):
     Syntax: {command}
 
     """
-    result = args['db'].query(Urls).order_by(func.random()).first()
+    result = args['db'].scalars(select(Urls).order_by(func.random())).first()
     send("%s" % result.url)

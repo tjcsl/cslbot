@@ -16,14 +16,21 @@
 
 from datetime import datetime, timedelta
 
+from sqlalchemy import select
+
 from ..helpers.command import Command
 from ..helpers.orm import Log
 
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
     command = f'{cmdchar}seen {nick}'
-    return cursor.query(Log).filter(Log.source.ilike(nick), Log.target != ctrlchan, Log.msg != command, Log.type
-                                    != 'join').order_by(Log.time.desc()).first()
+    stmt = select(Log).where(
+        Log.source.ilike(nick),
+        Log.target != ctrlchan,
+        Log.msg != command,
+        Log.type != 'join',
+    ).order_by(Log.time.desc())
+    return cursor.scalars(stmt).first()
 
 
 @Command('seen', ['db', 'config'])

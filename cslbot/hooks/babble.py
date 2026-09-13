@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import func, select
+
 from ..helpers.babble import update_markov
 from ..helpers.hook import Hook
 from ..helpers.orm import Babble
@@ -22,6 +24,6 @@ from ..helpers.orm import Babble
 @Hook('babble', ['pubmsg', 'privmsg'], ['db', 'config'])
 def hook(send, msg, args):
     # No babble cache, so nothing to update
-    if not args['db'].query(Babble).count():
+    if not args['db'].scalar(select(func.count()).select_from(Babble)):
         return
     update_markov(args['db'], args['config'])

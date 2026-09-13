@@ -17,6 +17,8 @@
 import re
 from datetime import datetime
 
+from sqlalchemy import select
+
 from .orm import Permissions
 
 
@@ -36,7 +38,7 @@ def set_admin(msg, handler):
         if status != 3:
             return
         with handler.db.session_scope() as session:
-            admin = session.query(Permissions).filter(Permissions.nick == nick).first()
+            admin = session.scalars(select(Permissions).where(Permissions.nick == nick)).first()
             if admin is None:
                 session.add(Permissions(nick=nick, role='admin', registered=True, time=datetime.now()))
             else:

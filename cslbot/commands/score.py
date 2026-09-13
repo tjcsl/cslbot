@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 from ..helpers import arguments
 from ..helpers.command import Command
@@ -43,12 +43,12 @@ def cmd(send, msg, args):
         send(str(e))
         return
     if cmdargs.high:
-        data = session.query(Scores).order_by(Scores.score.desc()).limit(3).all()
+        data = session.scalars(select(Scores).order_by(Scores.score.desc()).limit(3)).all()
         send('High Scores:')
         for x in data:
             send(f"{x.nick}: {x.score}")
     elif cmdargs.low:
-        data = session.query(Scores).order_by(Scores.score).limit(3).all()
+        data = session.scalars(select(Scores).order_by(Scores.score).limit(3)).all()
         send('Low Scores:')
         for x in data:
             send(f"{x.nick}: {x.score}")
@@ -57,7 +57,7 @@ def cmd(send, msg, args):
         if name == 'c':
             send("We all know you love C better than anything else, so why rub it in?")
             return
-        score = session.query(Scores).filter(Scores.nick == name).scalar()
+        score = session.scalars(select(Scores).where(Scores.nick == name)).first()
         if score is not None:
             plural = '' if abs(score.score) == 1 else 's'
             if name == args['botnick'].lower():
@@ -69,9 +69,9 @@ def cmd(send, msg, args):
         else:
             send("Nobody cares about %s" % name)
     else:
-        if session.query(Scores).count() == 0:
+        if session.scalar(select(func.count()).select_from(Scores)) == 0:
             send("Nobody cares about anything =(")
         else:
-            query = session.query(Scores).order_by(func.random()).first()
+            query = session.scalars(select(Scores).order_by(func.random())).first()
             plural = '' if abs(query.score) == 1 else 's'
             send("%s has %i point%s!" % (query.nick, query.score, plural))

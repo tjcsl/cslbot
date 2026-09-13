@@ -28,6 +28,7 @@ import traceback
 from os import path
 
 from irc import bot, client, connection
+from sqlalchemy import select
 
 if sys.version_info < (3, 7):
     # Dependency on importlib.resources
@@ -193,7 +194,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 admins = [self.config['auth']['owner']]
             else:
                 with self.handler.db.session_scope() as session:
-                    admins = [x.nick for x in session.query(orm.Permissions).all()]
+                    admins = [x.nick for x in session.scalars(select(orm.Permissions)).all()]
             if e.source.nick not in admins:
                 c.privmsg(self.get_target(e), "Nope, not gonna do it.")
                 return

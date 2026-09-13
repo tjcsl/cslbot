@@ -19,6 +19,8 @@ import re
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
+from sqlalchemy import func, select
+
 from ..helpers import urlutils
 from ..helpers.hook import Hook
 from ..helpers.orm import Urls
@@ -49,7 +51,7 @@ def handle(send, msg, args):
         return
     for url in urls:
         # Prevent botloops
-        if (args["db"].query(Urls).filter(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10)).count() > 1):
+        if (args["db"].scalar(select(func.count()).select_from(Urls).where(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10))) > 1):
             return
 
         if url.startswith("https://twitter.com"):
@@ -67,7 +69,7 @@ def handle(send, msg, args):
         shortkey = args["config"]["api"]["bitlykey"]
         short = urlutils.get_short(url, shortkey)
 
-        last = args["db"].query(Urls).filter(Urls.url == url).order_by(Urls.time.desc()).first()
+        last = args["db"].scalars(select(Urls).where(Urls.url == url).order_by(Urls.time.desc())).first()
         if args["config"]["feature"].getboolean("linkread"):
             if last is not None:
                 lasttime = last.time.strftime("%H:%M:%S on %Y-%m-%d")

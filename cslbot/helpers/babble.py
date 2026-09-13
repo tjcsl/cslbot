@@ -20,7 +20,7 @@ import re
 import string
 import time
 
-from sqlalchemy import Index, or_, text
+from sqlalchemy import Index, delete, or_, select, text
 from sqlalchemy.exc import OperationalError
 
 from .misc import escape
@@ -28,13 +28,13 @@ from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 
 
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
-    query = cursor.query(Log).filter(Log.id > newer_than_id)
+    stmt = select(Log).where(Log.id > newer_than_id)
     # Ignore commands, and messages addressed to the ctrlchan
-    query = query.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
+    stmt = stmt.where(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
     if speaker is not None:
         location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
-        query = query.filter(getattr(Log, location).ilike(speaker, escape='$'))
-    return query.order_by(Log.id).all()
+        stmt = stmt.where(getattr(Log, location).ilike(speaker, escape='$'))
+    return cursor.scalars(stmt.order_by(Log.id)).all()
 
 
 # Don't exclude (, because lenny.
@@ -51,13 +51,13 @@ def get_markov(cursor, length, node, initial_run):
         return ret
     table = Babble if length == 1 else Babble2
     key, source, target = node
-    old = cursor.query(table).filter(table.key == key, table.source == source, table.target == target).all()
+    old = cursor.scalars(select(table).where(table.key == key, table.source == source, table.target == target)).all()
     ret.update({x.word: x.freq for x in old})
     return ret
 
 
 def update_count(cursor, length, source, target):
-    rows = cursor.query(Babble_count).filter(Babble_count.length == length).all()
+    rows = cursor.scalars(select(Babble_count).where(Babble_count.length == length)).all()
     try:
         count_source = next(r for r in rows if r.type == 'source' and r.key == source)
         count_source.count = count_source.count + 1
@@ -95,7 +95,7 @@ def build_rows(cursor, length, markov, initial_run):
         key, source, target = node
         if not initial_run:
             row_dict = {}
-            for row in cursor.query(table).filter(table.key == key, table.source == source, table.target == target):
+            for row in cursor.scalars(select(table).where(table.key == key, table.source == source, table.target == target)):
                 row_dict[row.word] = row
         for word, freq in word_freqs.items():
             row = None
@@ -152,8 +152,8 @@ def delete_tables(cursor):
 def build_markov(cursor, cmdchar, ctrlchan, speaker=None, initial_run=False, debug=False):
     """Builds a markov dictionary."""
     if initial_run:
-        cursor.query(Babble_last).delete()
-    lastrow = cursor.query(Babble_last).first()
+        cursor.execute(delete(Babble_last))
+    lastrow = cursor.scalars(select(Babble_last)).first()
     if not lastrow:
         lastrow = Babble_last(last=0)
         cursor.add(lastrow)

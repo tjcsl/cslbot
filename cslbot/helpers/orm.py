@@ -20,7 +20,7 @@ from os.path import join
 import sqlalchemy
 from alembic import command, config
 from sqlalchemy import (Boolean, Column, DateTime, Enum, Float, ForeignKey,
-                        Integer, Unicode, UnicodeText)
+                        Integer, Unicode, UnicodeText, select)
 from sqlalchemy.orm import as_declarative, declared_attr
 
 
@@ -43,7 +43,7 @@ def setup_db(session, botconfig, confdir):
 
     # Populate permissions table with owner.
     owner_nick = botconfig['auth']['owner']
-    if not session.query(Permissions).filter(Permissions.nick == owner_nick).count():
+    if session.scalars(select(Permissions).where(Permissions.nick == owner_nick)).first() is None:
         session.add(Permissions(nick=owner_nick, role='owner'))
 
 

@@ -28,6 +28,7 @@ from collections.abc import Callable
 from datetime import datetime, timedelta
 
 import irc
+from sqlalchemy import func, select
 
 from . import (acl, arguments, control, identity, misc, orm, registry, sql,
                textutils, workers)
@@ -117,7 +118,7 @@ class BotHandler:
             return True
         # Current roles are admin and owner, which is a superset of admin.
         with self.db.session_scope() as session:
-            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == nick).first()
+            admin = session.scalars(select(orm.Permissions).where(orm.Permissions.nick == nick)).first()
             if admin is None:
                 return False
             # owner implies admin, but not the other way around.
@@ -145,7 +146,7 @@ class BotHandler:
         if not self.config['feature'].getboolean('nickserv'):
             return
         with self.db.session_scope() as session:
-            for a in session.query(orm.Permissions).all():
+            for a in session.scalars(select(orm.Permissions)).all():
                 if not a.registered:
                     self.update_authstatus(a.nick)
 
@@ -417,7 +418,7 @@ class BotHandler:
 
     def is_ignored(self, nick):
         with self.db.session_scope() as session:
-            return session.query(orm.Ignore).filter(orm.Ignore.nick == nick).count()
+            return session.scalar(select(func.count()).select_from(orm.Ignore).where(orm.Ignore.nick == nick))
 
     def get_filtered_send(self, cmdargs, send, target):
         """Parse out any filters."""
@@ -487,7 +488,7 @@ class BotHandler:
 
     def handle_account(self, e):
         with self.db.session_scope() as session:
-            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+            admin = session.scalars(select(orm.Permissions).where(orm.Permissions.nick == e.source.nick)).first()
             if admin is not None:
                 if e.target == '*':
                     admin.registered = False
@@ -512,7 +513,7 @@ class BotHandler:
         self.voiced[location][e.arguments[1]] = '+' in e.arguments[2]
         self.opers[location][e.arguments[1]] = '@' in e.arguments[2]
         with self.db.session_scope() as session:
-            admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.arguments[1]).first()
+            admin = session.scalars(select(orm.Permissions).where(orm.Permissions.nick == e.arguments[1])).first()
             if admin is not None:
                 if e.arguments[1] == e.arguments[3]:
                     admin.registered = True
@@ -553,7 +554,7 @@ class BotHandler:
             send("Joined channel %s" % target, target=self.config['core']['ctrlchan'])
         elif self.features['extended-join']:
             with self.db.session_scope() as session:
-                admin = session.query(orm.Permissions).filter(orm.Permissions.nick == e.source.nick).first()
+                admin = session.scalars(select(orm.Permissions).where(orm.Permissions.nick == e.source.nick)).first()
                 if admin is not None:
                     if e.arguments[0] == e.source.nick:
                         admin.registered = True
@@ -675,5 +676,5 @@ class BotHandler:
         # special commands
         elif cmd_name == 'reload':
             with self.db.session_scope() as session:
-                if session.query(orm.Permissions).filter(orm.Permissions.nick == nick).count():
+                if session.scalar(select(func.count()).select_from(orm.Permissions).where(orm.Permissions.nick == nick)):
                     send("Aye Aye Capt'n")

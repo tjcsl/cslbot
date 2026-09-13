@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import select
+
 from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
@@ -27,7 +29,7 @@ def cmd(send, _, args):
 
     """
     adminlist = []
-    for admin in args['db'].query(Permissions).order_by(Permissions.nick).all():
+    for admin in args['db'].scalars(select(Permissions).order_by(Permissions.nick)).all():
         if admin.registered:
             adminlist.append("%s (V)" % admin.nick)
         else:

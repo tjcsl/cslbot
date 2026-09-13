@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import update
+
 from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
@@ -23,6 +25,6 @@ def cmd(send, msg, args):
     """Clears the verified admin list
     Syntax: {command}
     """
-    args['db'].query(Permissions).update({"registered": False})
+    args['db'].execute(update(Permissions).values(registered=False))
     args['handler'].get_admins()
     send("Verified admins reset.")

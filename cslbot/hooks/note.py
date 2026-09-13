@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import select
+
 from ..helpers.hook import Hook
 from ..helpers.orm import Notes
 
@@ -21,7 +23,7 @@ from ..helpers.orm import Notes
 @Hook('note', ['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, _, args):
     nick = args['nick']
-    notes = args['db'].query(Notes).filter(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc()).all()
+    notes = args['db'].scalars(select(Notes).where(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc())).all()
     for note in notes:
         time = note.time.strftime('%Y-%m-%d %H:%M:%S')
         send(f"{nick}: Note from {note.submitter}: <{time}> {note.note}")

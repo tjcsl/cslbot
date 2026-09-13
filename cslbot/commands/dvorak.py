@@ -14,17 +14,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
 
 
 def get_log(conn, user, target):
-    query = conn.query(Log.msg).filter(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc())
+    stmt = select(Log.msg).where(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc())
     if user is None:
-        return query.offset(1).limit(1).scalar()
+        return conn.scalar(stmt.offset(1).limit(1))
     else:
-        return query.filter(Log.source == user).limit(1).scalar()
+        return conn.scalar(stmt.where(Log.source == user).limit(1))
 
 
 def translate(msg, encode=True):

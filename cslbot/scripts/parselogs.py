@@ -23,6 +23,8 @@ import sys
 from os import makedirs, path
 from typing import IO, Dict  # noqa
 
+from sqlalchemy import select
+
 # Make this work from git.
 if path.exists(path.join(path.dirname(__file__), '../..', '.git')):
     sys.path.insert(0, path.join(path.dirname(__file__), '../..'))
@@ -132,13 +134,13 @@ def main(confdir: str = "/etc/cslbot") -> None:
     lockfile = open(path.join(cmdargs.outdir, '.lock'), 'w')
     fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
     current_id = get_id(cmdargs.outdir)
-    new_id = session.query(Log.id).order_by(Log.id.desc()).limit(1).scalar()
+    new_id = session.scalar(select(Log.id).order_by(Log.id.desc()).limit(1))
     # Don't die on empty log table.
     if new_id is None:
         new_id = 0
     save_id(cmdargs.outdir, new_id)
     processer = LogProcesser(cmdargs.outdir)
-    for row in session.query(Log).filter(new_id >= Log.id).filter(Log.id > current_id).order_by(Log.time, Log.id).all():
+    for row in session.scalars(select(Log).where(new_id >= Log.id, Log.id > current_id).order_by(Log.time, Log.id)).all():
         processer.process_line(row)
     del processer
     fcntl.lockf(lockfile, fcntl.LOCK_UN)

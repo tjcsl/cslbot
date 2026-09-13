@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import func, select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import UrbanBlacklist
@@ -21,14 +23,14 @@ from ..helpers.web import get_urban
 
 
 def blacklist_word(session, msg):
-    if session.query(UrbanBlacklist).filter(UrbanBlacklist.word == msg).count():
+    if session.scalar(select(func.count()).select_from(UrbanBlacklist).where(UrbanBlacklist.word == msg)):
         return "Word %s already blacklisted" % msg
     session.add(UrbanBlacklist(word=msg))
     return "Blacklisted %s" % msg
 
 
 def unblacklist_word(session, msg):
-    term = session.query(UrbanBlacklist).filter(UrbanBlacklist.word == msg).first()
+    term = session.scalars(select(UrbanBlacklist).where(UrbanBlacklist.word == msg)).first()
     if term is None:
         return "Word %s is not blacklisted" % msg
     session.delete(term)

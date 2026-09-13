@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import delete, select
+
 from ..helpers import arguments, misc
 from ..helpers.command import Command
 from ..helpers.orm import Ignore
@@ -37,10 +39,10 @@ def cmd(send, msg, args):
         return
     session = args['db']
     if cmdargs.clear:
-        session.query(Ignore).delete()
+        session.execute(delete(Ignore))
         send("Ignore list cleared.")
     elif cmdargs.show:
-        ignored = session.query(Ignore).all()
+        ignored = session.scalars(select(Ignore)).all()
         if ignored:
             send(", ".join([x.nick for x in ignored]))
         else:
@@ -49,7 +51,7 @@ def cmd(send, msg, args):
         if not cmdargs.nick:
             send("Unignore who?")
         else:
-            row = session.query(Ignore).filter(Ignore.nick == cmdargs.nick).first()
+            row = session.scalars(select(Ignore).where(Ignore.nick == cmdargs.nick)).first()
             if row is None:
                 send("%s is not ignored." % cmdargs.nick)
             else:

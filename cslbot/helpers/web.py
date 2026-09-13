@@ -21,6 +21,7 @@ from urllib import parse
 from requests import get, post
 from requests.exceptions import ReadTimeout
 from requests_oauthlib import OAuth1Session
+from sqlalchemy import func, select
 
 from . import urlutils
 from .orm import UrbanBlacklist
@@ -28,7 +29,7 @@ from .orm import UrbanBlacklist
 
 def get_rand_word(session):
     term = None
-    while term is None or session.query(UrbanBlacklist).filter(UrbanBlacklist.word == term).count():
+    while term is None or session.scalar(select(func.count()).select_from(UrbanBlacklist).where(UrbanBlacklist.word == term)):
         url = get('http://www.urbandictionary.com/random.php?page').url
         term = parse.unquote_plus(url.split('=')[1])
     return term

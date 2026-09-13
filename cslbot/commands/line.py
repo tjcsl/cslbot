@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, select
 
 from ..helpers import arguments
 from ..helpers.command import Command
@@ -36,15 +36,16 @@ def cmd(send, msg, args):
     except arguments.ArgumentException as e:
         send(str(e))
         return
-    quote = args['db'].query(Log.msg, Log.source)
+    stmt = select(Log.msg, Log.source)
     nick = ' '.join(cmdargs.nick) if cmdargs.nick else ""
     if nick:
-        quote = quote.filter(Log.source == nick)
+        stmt = stmt.where(Log.source == nick)
     else:
-        quote = quote.filter(Log.source != args['botnick'])
+        stmt = stmt.where(Log.source != args['botnick'])
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
-    quote = quote.filter(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target,
-                         func.length(Log.msg) > 5).order_by(func.random()).first()
+    stmt = stmt.where(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target,
+                      func.length(Log.msg) > 5).order_by(func.random()).limit(1)
+    quote = args['db'].execute(stmt).first()
     if quote:
         send("%s -- %s" % quote)
     elif nick:

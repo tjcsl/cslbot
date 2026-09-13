@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import func, select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Ignore
@@ -39,7 +41,7 @@ def cmd(send, msg, args):
     elif cmdargs.show:
         abusers = []
         for x in args['handler'].abuselist.keys():
-            if args['db'].query(Ignore).filter(Ignore.nick == x).count():
+            if args['db'].scalar(select(func.count()).select_from(Ignore).where(Ignore.nick == x)):
                 abusers.append(x)
         if abusers:
             send(", ".join(abusers))

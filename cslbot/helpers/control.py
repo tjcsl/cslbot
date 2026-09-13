@@ -17,6 +17,8 @@
 import logging
 import re
 
+from sqlalchemy import select
+
 from . import arguments, orm, registry, web
 
 
@@ -110,7 +112,7 @@ def handle_unguard(args):
 
 def handle_show_pending(args):
     table = getattr(orm, args.cmd.capitalize())
-    pending = args.db.query(table).filter(table.accepted == 0).all()
+    pending = args.db.scalars(select(table).where(table.accepted == 0)).all()
     if pending:
         show_pending_items(args.cmd, pending, args.send)
     else:
@@ -168,11 +170,11 @@ def show_pending_items(type, items, send):
 
 
 def show_pending(db, send, ping=False):
-    admins = ": ".join([x.nick for x in db.query(orm.Permissions).all()])
+    admins = ": ".join([x.nick for x in db.scalars(select(orm.Permissions)).all()])
     pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
     for name in pending:
         table = getattr(orm, name.capitalize())
-        pending[name] = db.query(table).filter(table.accepted == 0).all()
+        pending[name] = db.scalars(select(table).where(table.accepted == 0)).all()
     if any(pending.values()):
         if ping:
             send("%s: Items are Pending Approval" % admins)
@@ -186,7 +188,7 @@ def show_pending(db, send, ping=False):
 
 def handle_accept(args):
     table = getattr(orm, args.cmd.capitalize() + "s")
-    pending = args.db.query(table).filter(table.accepted == 0, table.id == args.num).first()
+    pending = args.db.scalars(select(table).where(table.accepted == 0, table.id == args.num)).first()
     if pending is None:
         args.send("Not a valid %s" % args.cmd)
         return
@@ -224,7 +226,7 @@ def get_accept_msg(handler, pending, type):
 
 def handle_reject(args):
     table = getattr(orm, args.cmd.capitalize() + "s")
-    pending = args.db.query(table).get(args.num)
+    pending = args.db.get(table, args.num)
     if pending is None:
         args.send("Not a valid %s" % args.cmd)
         return

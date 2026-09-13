@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import func, select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.misc import escape
@@ -41,17 +43,15 @@ def cmd(send, msg, args):
         return
     cmdchar = args['config']['core']['cmdchar']
     term = ' '.join(cmdargs.string)
+    stmt = select(Log).where(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
     if cmdargs.nick:
-        query = args['db'].query(Log).filter(Log.type == 'pubmsg', Log.source == cmdargs.nick, ~Log.msg.startswith(cmdchar))
-    else:
-        query = args['db'].query(Log).filter(Log.type == 'pubmsg', ~Log.msg.startswith(cmdchar))
+        stmt = stmt.where(Log.source == cmdargs.nick)
     if cmdargs.ignore_case:
-        query = query.filter(Log.msg.ilike('%%%s%%' % escape(term)))
+        stmt = stmt.where(Log.msg.ilike('%%%s%%' % escape(term)))
     else:
-        query = query.filter(Log.msg.like('%%%s%%' % escape(term)))
-    query = query.order_by(Log.time.desc())
-    result = query.limit(1).first()
-    count = query.count()
+        stmt = stmt.where(Log.msg.like('%%%s%%' % escape(term)))
+    result = args['db'].scalars(stmt.order_by(Log.time.desc()).limit(1)).first()
+    count = args['db'].scalar(select(func.count()).select_from(stmt.subquery()))
     if result is not None:
         logtime = result.time.strftime('%Y-%m-%d %H:%M:%S')
         send("%s was last said by %s at %s (%d occurrences)" % (result.msg, result.source, logtime, count))

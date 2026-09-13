@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Log
@@ -38,9 +40,9 @@ def cmd(send, msg, args):
         send("You're always the highlight of your monologues!")
         return
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
-    row = args['db'].query(Log).filter(Log.msg.ilike("%%%s%%" % cmdargs.nick), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
-                                       Log.target == target, Log.source != args['botnick'], Log.source != cmdargs.nick,
-                                       (Log.type == 'pubmsg') | (Log.type == 'privmsg') | (Log.type == 'action')).order_by(Log.time.desc()).first()
+    row = args['db'].scalars(select(Log).where(Log.msg.ilike("%%%s%%" % cmdargs.nick), ~Log.msg.contains('%shighlight' % args['config']['core']['cmdchar']),
+                                               Log.target == target, Log.source != args['botnick'], Log.source != cmdargs.nick,
+                                               (Log.type == 'pubmsg') | (Log.type == 'privmsg') | (Log.type == 'action')).order_by(Log.time.desc())).first()
     if row is None:
         send("%s has never been pinged." % cmdargs.nick)
     else:

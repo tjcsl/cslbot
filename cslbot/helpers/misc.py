@@ -26,6 +26,7 @@ from os.path import exists, join
 from random import choice, random
 
 from irc import client
+from sqlalchemy import select
 
 from . import orm
 
@@ -232,7 +233,7 @@ def get_fortune(msg, name="fortune"):
 
 
 def ignore(session, nick):
-    row = session.query(orm.Ignore).filter(orm.Ignore.nick == nick).first()
+    row = session.scalars(select(orm.Ignore).where(orm.Ignore.nick == nick)).first()
     if row is None:
         # FIXME: support expiration times for ignores
         session.add(orm.Ignore(nick=nick, expire=datetime.min))

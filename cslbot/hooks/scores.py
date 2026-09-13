@@ -16,6 +16,8 @@
 
 import re
 
+from sqlalchemy import select
+
 from ..helpers.hook import Hook
 from ..helpers.orm import Scores
 
@@ -47,7 +49,7 @@ def handle(send, msg, args):
                 score = -10
         else:
             score = -1
-        row = session.query(Scores).filter(Scores.nick == name).first()
+        row = session.scalars(select(Scores).where(Scores.nick == name)).first()
         if row is None:
             session.add(Scores(score=score, nick=name))
             session.commit()

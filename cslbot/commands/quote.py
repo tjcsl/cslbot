@@ -17,6 +17,8 @@
 import re
 from random import choice
 
+from sqlalchemy import func, select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Quotes
@@ -24,13 +26,13 @@ from ..helpers.orm import Quotes
 
 def do_get_quote(session, qid=None):
     if qid is None:
-        quotes = session.query(Quotes).filter(Quotes.accepted == 1).all()
+        quotes = session.scalars(select(Quotes).where(Quotes.accepted == 1)).all()
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
         return "Quote #%d: %s -- %s" % (quote.id, quote.quote, quote.nick)
     else:
-        quote = session.query(Quotes).get(qid)
+        quote = session.get(Quotes, qid)
         if quote is None:
             return "That quote doesn't exist!"
         if quote.accepted == 0:
@@ -40,7 +42,7 @@ def do_get_quote(session, qid=None):
 
 
 def get_quotes_nick(session, nick):
-    rows = session.query(Quotes).filter(Quotes.nick == nick, Quotes.accepted == 1).all()
+    rows = session.scalars(select(Quotes).where(Quotes.nick == nick, Quotes.accepted == 1)).all()
     if not rows:
         return "No quotes for %s" % nick
     row = choice(rows)
@@ -62,7 +64,7 @@ def do_add_quote(nick, quote, session, isadmin, approve, send, args):
 
 
 def do_update_quote(session, qid, nick, quote):
-    row = session.query(Quotes).get(qid)
+    row = session.get(Quotes, qid)
     if row is None:
         return "That quote doesn't exist!"
     if quote:
@@ -73,14 +75,14 @@ def do_update_quote(session, qid, nick, quote):
 
 
 def do_list_quotes(session, quote_url):
-    num = session.query(Quotes).filter(Quotes.accepted == 1).count()
+    num = session.scalar(select(func.count()).select_from(Quotes).where(Quotes.accepted == 1))
     return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
 
 
 def do_delete_quote(args, session, qid):
     if not args['is_admin'](args['nick']):
         return "You aren't allowed to delete quotes. Please ask a bot admin to do it"
-    quote = session.query(Quotes).get(qid)
+    quote = session.get(Quotes, qid)
     if quote is None:
         return "That quote doesn't exist!"
     session.delete(quote)
@@ -89,7 +91,7 @@ def do_delete_quote(args, session, qid):
 
 def search_quote(session, offset, search):
     term = ' '.join(search)
-    quote = session.query(Quotes).filter(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).offset(offset).first()
+    quote = session.scalars(select(Quotes).where(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).offset(offset)).first()
     if quote is None:
         return "No matching quote found."
     else:

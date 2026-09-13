@@ -16,6 +16,8 @@
 
 import collections
 
+from sqlalchemy import func, select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Poll_responses, Polls
@@ -48,7 +50,7 @@ def delete_poll(args):
         return "Syntax: !poll delete <pollnum>"
     if not args.msg.isdigit():
         return "Not A Valid Positive Integer."
-    poll = args.session.query(Polls).filter(Polls.accepted == 1, Polls.id == int(args.msg)).first()
+    poll = args.session.scalars(select(Polls).where(Polls.accepted == 1, Polls.id == int(args.msg))).first()
     if poll is None:
         return "Poll does not exist."
     if poll.active == 1:
@@ -60,7 +62,7 @@ def delete_poll(args):
 
 
 def get_open_poll(session, pid):
-    return session.query(Polls).filter(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid).first()
+    return session.scalars(select(Polls).where(Polls.deleted == 0, Polls.accepted == 1, Polls.id == pid)).first()
 
 
 def edit_poll(args):
@@ -125,7 +127,7 @@ def tally_poll(args):
     if poll is None:
         return "That poll doesn't exist or was deleted. Use !poll list to see valid polls"
     state = "Active" if poll.active == 1 else "Closed"
-    votes = args.session.query(Poll_responses).filter(Poll_responses.pid == pid).all()
+    votes = args.session.scalars(select(Poll_responses).where(Poll_responses.pid == pid)).all()
     args.send("%s poll: %s, %d total votes" % (state, poll.question, len(votes)))
     votemap = collections.defaultdict(list)
     for v in votes:
@@ -149,7 +151,7 @@ def tally_poll(args):
 
 
 def get_response(session, pid, nick):
-    return session.query(Poll_responses).filter(Poll_responses.pid == pid, Poll_responses.voter == nick).first()
+    return session.scalars(select(Poll_responses).where(Poll_responses.pid == pid, Poll_responses.voter == nick)).first()
 
 
 def vote(session, nick, pid, response):
@@ -190,7 +192,7 @@ def retract(args):
 
 
 def list_polls(args):
-    num = args.session.query(Polls).filter(Polls.active == 1).count()
+    num = args.session.scalar(select(func.count()).select_from(Polls).where(Polls.active == 1))
     return "There are %d polls. Check them out at %spolls.html" % (num, args.config['core']['url'])
 
 

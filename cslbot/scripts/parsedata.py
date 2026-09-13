@@ -28,6 +28,7 @@ from time import strftime
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 # Make this work from git.
@@ -40,17 +41,17 @@ from cslbot.helpers.sql import get_session  # noqa
 
 
 def get_quotes(session: Session) -> list[Quotes]:
-    return session.query(Quotes).filter(Quotes.accepted == 1).order_by(Quotes.id).all()
+    return list(session.scalars(select(Quotes).where(Quotes.accepted == 1).order_by(Quotes.id)).all())
 
 
 def get_scores(session: Session) -> list[Scores]:
-    return session.query(Scores).order_by(Scores.score.desc()).all()
+    return list(session.scalars(select(Scores).order_by(Scores.score.desc())).all())
 
 
 def get_urls(session: Session) -> list[dict[str, Any]]:
     # FIXME: support stuff older than one week
     limit = datetime.now() - timedelta(weeks=1)
-    rows = session.query(Urls).filter(Urls.time > limit).order_by(Urls.time.desc()).all()
+    rows = session.scalars(select(Urls).where(Urls.time > limit).order_by(Urls.time.desc())).all()
     urls = []
     for row in rows:
         urls.append({'time': row.time, 'title': row.title, 'url': row.url})
@@ -58,7 +59,7 @@ def get_urls(session: Session) -> list[dict[str, Any]]:
 
 
 def get_polls(session: Session) -> dict[int, str]:
-    rows = session.query(Polls).filter(Polls.deleted == 0, Polls.active == 1).order_by(Polls.id).all()
+    rows = session.scalars(select(Polls).where(Polls.deleted == 0, Polls.active == 1).order_by(Polls.id)).all()
     polls: dict[int, str] = collections.OrderedDict()
     for row in rows:
         polls[row.id] = row.question
@@ -69,7 +70,7 @@ def get_responses(session: Session, polls: dict[int, str]) -> dict[int, dict[str
     responses: dict[int, dict[str, list[str]]] = {}
     for pid in polls.keys():
         responses[pid] = collections.OrderedDict()
-        rows = session.query(Poll_responses).filter(Poll_responses.pid == pid).order_by(Poll_responses.response).all()
+        rows = session.scalars(select(Poll_responses).where(Poll_responses.pid == pid).order_by(Poll_responses.response)).all()
         for row in rows:
             responses[pid].setdefault(row.response, []).append(row.voter)
     return responses

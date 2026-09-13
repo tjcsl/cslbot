@@ -16,7 +16,7 @@
 
 from random import choice
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 from ..helpers import arguments
 from ..helpers.command import Command
@@ -25,15 +25,15 @@ from ..helpers.registry import command_registry
 
 
 def get_command_totals(session):
-    rows = session.query(Commands.command, func.count(Commands.command)).group_by(Commands.command).all()
+    rows = session.execute(select(Commands.command, func.count(Commands.command)).group_by(Commands.command)).all()
     return {x[0]: x[1] for x in rows}
 
 
 def get_nick_totals(session, command=None):
-    query = session.query(Commands.nick, func.count(Commands.nick)).group_by(Commands.nick)
+    stmt = select(Commands.nick, func.count(Commands.nick)).group_by(Commands.nick)
     if command is not None:
-        query = query.filter(Commands.command == command)
-    return {x[0]: x[1] for x in query.all()}
+        stmt = stmt.where(Commands.command == command)
+    return {x[0]: x[1] for x in session.execute(stmt).all()}
 
 
 def get_nick(session, nick):

@@ -22,7 +22,7 @@ from collections.abc import Callable
 from datetime import datetime, timedelta
 from typing import Any, Dict  # noqa
 
-from sqlalchemy import or_
+from sqlalchemy import func, or_, select
 
 from ..commands import quote
 from . import babble, backtrace, control
@@ -121,8 +121,9 @@ class Workers:
             with handler.data_lock:
                 for name in handler.channels.keys():
                     for nick, voiced in handler.voiced[name].items():
-                        if voiced and session.query(Log).filter(Log.source == nick, Log.time >= active_time,
-                                                                or_(Log.type == 'pubmsg', Log.type == 'action')).count() == 0:
+                        if voiced and session.scalar(select(func.count()).select_from(Log).where(
+                                Log.source == nick, Log.time >= active_time,
+                                or_(Log.type == 'pubmsg', Log.type == 'action'))) == 0:
                             handler.rate_limited_send('mode', name, '-v %s' % nick)
 
     def update_babble(self, handler, send):

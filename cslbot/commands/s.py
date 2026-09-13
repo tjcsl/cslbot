@@ -17,7 +17,7 @@
 import concurrent.futures
 import re
 
-from sqlalchemy import or_
+from sqlalchemy import or_, select
 
 from ..helpers.command import Command
 from ..helpers.exception import CommandFailedException
@@ -27,11 +27,11 @@ from ..helpers.orm import Log
 
 def get_log(conn, target, user):
     type_filter = or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')
-    query = conn.query(Log).filter(type_filter, Log.target == target).order_by(Log.time.desc())
+    stmt = select(Log).where(type_filter, Log.target == target).order_by(Log.time.desc())
     if user is None:
-        return query.offset(1).limit(500).all()
+        return conn.scalars(stmt.offset(1).limit(500)).all()
     else:
-        return query.filter(Log.source.ilike(user)).limit(500).all()
+        return conn.scalars(stmt.where(Log.source.ilike(user)).limit(500)).all()
 
 
 def get_modifiers(msg, nick, nickregex):

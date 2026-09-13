@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 from inspect import getdoc
 from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import backtrace, registry
@@ -38,7 +39,7 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're currently executing, so get the penultimate one.
-    last = cursor.query(Log).filter(Log.target == target, Log.type == 'pubmsg', Log.time >= limit).order_by(Log.time.desc()).offset(1).first()
+    last = cursor.scalars(select(Log).where(Log.target == target, Log.type == 'pubmsg', Log.time >= limit).order_by(Log.time.desc()).offset(1)).first()
     if last:
         return bool(last.msg == msg and last.source != nick)
     else:

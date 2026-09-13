@@ -16,12 +16,14 @@
 
 import subprocess
 
+from sqlalchemy import select
+
 from ..helpers.command import Command
 from ..helpers.orm import Scores
 
 
 def get_scores(cursor):
-    rows = cursor.query(Scores).all()
+    rows = cursor.scalars(select(Scores)).all()
     return {row.nick: row.score for row in rows}
 
 

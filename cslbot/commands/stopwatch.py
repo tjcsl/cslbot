@@ -16,6 +16,8 @@
 
 from datetime import datetime
 
+from sqlalchemy import select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Stopwatches
@@ -29,7 +31,7 @@ def create_stopwatch(args):
 
 
 def get_elapsed(session, sw):
-    stopwatch = session.query(Stopwatches).get(sw)
+    stopwatch = session.get(Stopwatches, sw)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     etime = stopwatch.elapsed
@@ -39,7 +41,7 @@ def get_elapsed(session, sw):
 
 
 def stop_stopwatch(args):
-    stopwatch = args.session.query(Stopwatches).get(args.id)
+    stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 0:
@@ -53,7 +55,7 @@ def stop_stopwatch(args):
 def delete_stopwatch(args):
     if not args.isadmin:
         return "Nope, not gonna do it!"
-    stopwatch = args.session.query(Stopwatches).get(args.id)
+    stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 1:
@@ -63,7 +65,7 @@ def delete_stopwatch(args):
 
 
 def resume_stopwatch(args):
-    stopwatch = args.session.query(Stopwatches).get(args.id)
+    stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return "No stopwatch exists with that ID!"
     if stopwatch.active == 1:
@@ -74,8 +76,8 @@ def resume_stopwatch(args):
 
 
 def list_stopwatch(args):
-    active = args.session.query(Stopwatches).filter(Stopwatches.active == 1).order_by(Stopwatches.id).all()
-    paused = args.session.query(Stopwatches).filter(Stopwatches.active == 0).order_by(Stopwatches.id).all()
+    active = args.session.scalars(select(Stopwatches).where(Stopwatches.active == 1).order_by(Stopwatches.id)).all()
+    paused = args.session.scalars(select(Stopwatches).where(Stopwatches.active == 0).order_by(Stopwatches.id)).all()
     for x in active:
         args.send('Active stopwatch #%d started at %s' % (x.id, x.time), target=args.nick)
     for x in paused:
@@ -84,7 +86,7 @@ def list_stopwatch(args):
 
 
 def get_stopwatch(args):
-    stopwatch = args.session.query(Stopwatches).get(args.id)
+    stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
         return "Invalid ID!"
     status = "Active" if stopwatch.active == 1 else "Paused"

@@ -14,6 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from sqlalchemy import select
+
 from ..helpers import arguments
 from ..helpers.command import Command
 from ..helpers.orm import Permissions
@@ -36,7 +38,7 @@ def cmd(send, msg, args):
         send(str(e))
         return
     session = args['db']
-    admin = session.query(Permissions).filter(Permissions.nick == cmdargs.nick).first()
+    admin = session.scalars(select(Permissions).where(Permissions.nick == cmdargs.nick)).first()
     if cmdargs.add:
         if admin is None:
             session.add(Permissions(nick=cmdargs.nick, role=cmdargs.role))
