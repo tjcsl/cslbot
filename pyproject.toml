@@ -49,7 +49,6 @@ autopep8 = "^2.3.2"
 yapf = "^0.43.0"
 isort = "^9.0.1"
 Sphinx = "^9.1.0"
-pytest = "^9.1.1"
 poetry = "^2.4.3"
 pytype = "^2024.10.11"
 
@@ -68,3 +67,8 @@ inputs = ['cslbot']
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
