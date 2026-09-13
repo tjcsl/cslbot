@@ -23,7 +23,7 @@ def get_filters(handler, target):
     names = [x.__name__[4:] for x in handler.outputfilter[target]]
     if not names:
         names = ['passthrough']
-    return "Current filter(s): %s" % ", ".join(names)
+    return 'Current filter(s): %s' % ', '.join(names)
 
 
 @Command('filter', ['config', 'target', 'handler', 'is_admin', 'nick', 'type'])
@@ -54,13 +54,13 @@ def cmd(send, msg, args):
         send(str(e))
         return
     if cmdargs.list:
-        send("Available filters are %s" % ", ".join(textutils.output_filters.keys()))
+        send('Available filters are %s' % ', '.join(textutils.output_filters.keys()))
     elif cmdargs.reset and isadmin:
         args['handler'].outputfilter[cmdargs.channel].clear()
-        send("Okay!")
+        send('Okay!')
     elif cmdargs.chain and isadmin:
         if not args['handler'].outputfilter[cmdargs.channel]:
-            send("Must have a filter set in order to chain.")
+            send('Must have a filter set in order to chain.')
             return
         filter_list, output = textutils.append_filters(cmdargs.chain)
         if filter_list is not None:

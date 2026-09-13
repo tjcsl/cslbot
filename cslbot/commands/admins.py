@@ -29,9 +29,9 @@ def cmd(send, _, args):
 
     """
     adminlist = []
-    for admin in args['db'].scalars(select(Permissions).order_by(Permissions.nick)).all():
+    for admin in (args['db'].scalars(select(Permissions).order_by(Permissions.nick)).all()):
         if admin.registered:
-            adminlist.append("%s (V)" % admin.nick)
+            adminlist.append('%s (V)' % admin.nick)
         else:
-            adminlist.append("%s (U)" % admin.nick)
-    send(", ".join(adminlist), target=args['nick'])
+            adminlist.append('%s (U)' % admin.nick)
+    send(', '.join(adminlist), target=args['nick'])

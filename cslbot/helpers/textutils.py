@@ -41,24 +41,27 @@ def gen_word():
         wordlist = resources.read_text('cslbot.static', 'wordlist').strip().split()
         return choice(wordlist)
     else:
-        return "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable."
+        return 'The resource you are looking for has been removed, had its name changed, or is temporarily unavailable.'
 
 
 def gen_hashtag(msg):
-    msg = "".join([x.strip() for x in msg.split()])
+    msg = ''.join([x.strip() for x in msg.split()])
     return '#' + msg.translate(dict.fromkeys(map(ord, string.punctuation)))
 
 
 def gen_yoda(msg):
-    req = post("http://www.yodaspeak.co.uk/index.php", data={'YodaMe': msg})
-    return html.fromstring(req.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip()
+    req = post('http://www.yodaspeak.co.uk/index.php', data={'YodaMe': msg})
+    return (html.fromstring(req.content.decode(errors='ignore')).findtext('.//textarea[@readonly]').strip())
 
 
 def gen_gizoogle(msg):
-    req = post("http://www.gizoogle.net/textilizer.php", data={'translatetext': escape(msg).encode('utf-7')})
+    req = post(
+        'http://www.gizoogle.net/textilizer.php',
+        data={'translatetext': escape(msg).encode('utf-7')},
+    )
     # This mess is needed because gizoogle has a malformed textarea, so the text isn't within the tag
     response = unescape(html.tostring(html.fromstring(req.text).find('.//textarea')).decode('utf-7')).strip()
-    response = re.sub(".*</textarea>", '', response)
+    response = re.sub('.*</textarea>', '', response)
     return unescape(response)
 
 
@@ -90,7 +93,7 @@ def gen_fwilson(x, mode=None):
     if mode is None:
         mode = 'w' if random() < 0.5 else 'f'
     if mode == 'w':
-        output = "wh{} {}".format('e' * randrange(3, 20), x)
+        output = 'wh{} {}'.format('e' * randrange(3, 20), x)
         return output.upper()
     else:
         output = ['fwil%s' % q for q in x.split()]
@@ -112,104 +115,271 @@ def gen_slogan(msg):
 
 
 def gen_jeffsessionstheyoungman(msg):
-    msg = msg.split(" ")
+    msg = msg.split(' ')
     k = randrange(0, len(msg))
-    return " ".join(msg[:k] + ["Jeff Sessions, the young man."] + msg[k:])
+    return ' '.join(msg[:k] + ['Jeff Sessions, the young man.'] + msg[k:])
 
 
 def gen_morse(msg):
     morse_codes = {
-        "a": ".-",
-        "b": "-...",
-        "c": "-.-.",
-        "d": "-..",
-        "e": ".",
-        "f": "..-.",
-        "g": "--.",
-        "h": "....",
-        "i": "..",
-        "j": ".---",
-        "k": "-.-",
-        "l": ".-..",
-        "m": "--",
-        "n": "-.",
-        "o": "---",
-        "p": ".--.",
-        "q": "--.-",
-        "r": ".-.",
-        "s": "...",
-        "t": "-",
-        "u": "..-",
-        "v": "...-",
-        "w": ".--",
-        "x": "-..-",
-        "y": "-.--",
-        "z": "--..",
-        "1": ".----",
-        "2": "..---",
-        "3": "...--",
-        "4": "....-",
-        "5": ".....",
-        "6": "-....",
-        "7": "--...",
-        "8": "---..",
-        "9": "----.",
-        "0": "-----",
-        " ": "  ",
-        ".": ".-.-.-",
-        ",": "--..--",
-        "?": "..--..",
-        "'": ".----.",
-        "!": "-.-.--",
-        "/": "-..-.",
-        "(": "-.--.",
-        ")": "-.--.-",
-        "&": ".-...",
-        ":": "---...",
-        ";": "-.-.-.",
-        "=": "-...-",
-        "+": ".-.-.",
-        "-": "-....-",
-        "_": "..--.-",
-        '"': ".-..-.",
-        "$": "...-..-",
-        "@": ".--.-."
+        'a': '.-',
+        'b': '-...',
+        'c': '-.-.',
+        'd': '-..',
+        'e': '.',
+        'f': '..-.',
+        'g': '--.',
+        'h': '....',
+        'i': '..',
+        'j': '.---',
+        'k': '-.-',
+        'l': '.-..',
+        'm': '--',
+        'n': '-.',
+        'o': '---',
+        'p': '.--.',
+        'q': '--.-',
+        'r': '.-.',
+        's': '...',
+        't': '-',
+        'u': '..-',
+        'v': '...-',
+        'w': '.--',
+        'x': '-..-',
+        'y': '-.--',
+        'z': '--..',
+        '1': '.----',
+        '2': '..---',
+        '3': '...--',
+        '4': '....-',
+        '5': '.....',
+        '6': '-....',
+        '7': '--...',
+        '8': '---..',
+        '9': '----.',
+        '0': '-----',
+        ' ': '  ',
+        '.': '.-.-.-',
+        ',': '--..--',
+        '?': '..--..',
+        "'": '.----.',
+        '!': '-.-.--',
+        '/': '-..-.',
+        '(': '-.--.',
+        ')': '-.--.-',
+        '&': '.-...',
+        ':': '---...',
+        ';': '-.-.-.',
+        '=': '-...-',
+        '+': '.-.-.',
+        '-': '-....-',
+        '_': '..--.-',
+        '"': '.-..-.',
+        '$': '...-..-',
+        '@': '.--.-.',
     }
-    morse = ""
+    morse = ''
     for i in msg.lower():
         if i in morse_codes:
-            morse += morse_codes[i] + " "
+            morse += morse_codes[i] + ' '
         else:
-            morse += "? "
+            morse += '? '
     return morse
 
 
 def gen_insult(user):
     adj = [
-        "acidic", "antique", "contemptible", "culturally-unsound", "despicable", "evil", "fermented", "festering", "foul", "fulminating", "humid",
-        "impure", "inept", "inferior", "industrial", "left-over", "low-quality", "malodorous", "off-color", "penguin-molesting", "petrified",
-        "pointy-nosed", "salty", "sausage-snorfling", "tastless", "tempestuous", "tepid", "tofu-nibbling", "unintelligent", "unoriginal",
-        "uninspiring", "weasel-smelling", "wretched", "spam-sucking", "egg-sucking", "decayed", "halfbaked", "infected", "squishy", "porous",
-        "pickled", "coughed-up", "thick", "vapid", "hacked-up", "unmuzzleld", "bawdy", "vain", "lumpish", "churlish", "fobbing", "rank", "craven",
-        "puking", "jarring", "fly-bitten", "pox-marked", "fen-sucked", "spongy", "droning", "gleeking", "warped", "currish", "milk-livered", "surly",
-        "mammering", "ill-borne", "beef-witted", "tickle-brained", "half-faced", "headless", "wayward", "rump-fed", "onion-eyed", "beslubbering",
-        "villainous", "lewd-minded", "cockered", "full-gorged", "rude-snouted", "crook-pated", "pribbling", "dread-bolted", "fool-born", "puny",
-        "fawning", "sheep-biting", "dankish", "goatish", "weather-bitten", "knotty-pated", "malt-wormy", "saucyspleened", "motley-mind", "it-fowling",
-        "vassal-willed", "loggerheaded", "clapper-clawed", "frothy", "ruttish", "clouted", "common-kissing", "pignutted", "folly-fallen",
-        "plume-plucked", "flap-mouthed", "swag-bellied", "dizzy-eyed", "gorbellied", "weedy", "reeky", "measled", "spur-galled", "mangled",
-        "impertinent", "bootless", "toad-spotted", "hasty-witted", "horn-beat", "yeasty", "boil-brained", "tottering", "hedge-born",
-        "hugger-muggered", "elf-skinned"
+        'acidic',
+        'antique',
+        'contemptible',
+        'culturally-unsound',
+        'despicable',
+        'evil',
+        'fermented',
+        'festering',
+        'foul',
+        'fulminating',
+        'humid',
+        'impure',
+        'inept',
+        'inferior',
+        'industrial',
+        'left-over',
+        'low-quality',
+        'malodorous',
+        'off-color',
+        'penguin-molesting',
+        'petrified',
+        'pointy-nosed',
+        'salty',
+        'sausage-snorfling',
+        'tastless',
+        'tempestuous',
+        'tepid',
+        'tofu-nibbling',
+        'unintelligent',
+        'unoriginal',
+        'uninspiring',
+        'weasel-smelling',
+        'wretched',
+        'spam-sucking',
+        'egg-sucking',
+        'decayed',
+        'halfbaked',
+        'infected',
+        'squishy',
+        'porous',
+        'pickled',
+        'coughed-up',
+        'thick',
+        'vapid',
+        'hacked-up',
+        'unmuzzleld',
+        'bawdy',
+        'vain',
+        'lumpish',
+        'churlish',
+        'fobbing',
+        'rank',
+        'craven',
+        'puking',
+        'jarring',
+        'fly-bitten',
+        'pox-marked',
+        'fen-sucked',
+        'spongy',
+        'droning',
+        'gleeking',
+        'warped',
+        'currish',
+        'milk-livered',
+        'surly',
+        'mammering',
+        'ill-borne',
+        'beef-witted',
+        'tickle-brained',
+        'half-faced',
+        'headless',
+        'wayward',
+        'rump-fed',
+        'onion-eyed',
+        'beslubbering',
+        'villainous',
+        'lewd-minded',
+        'cockered',
+        'full-gorged',
+        'rude-snouted',
+        'crook-pated',
+        'pribbling',
+        'dread-bolted',
+        'fool-born',
+        'puny',
+        'fawning',
+        'sheep-biting',
+        'dankish',
+        'goatish',
+        'weather-bitten',
+        'knotty-pated',
+        'malt-wormy',
+        'saucyspleened',
+        'motley-mind',
+        'it-fowling',
+        'vassal-willed',
+        'loggerheaded',
+        'clapper-clawed',
+        'frothy',
+        'ruttish',
+        'clouted',
+        'common-kissing',
+        'pignutted',
+        'folly-fallen',
+        'plume-plucked',
+        'flap-mouthed',
+        'swag-bellied',
+        'dizzy-eyed',
+        'gorbellied',
+        'weedy',
+        'reeky',
+        'measled',
+        'spur-galled',
+        'mangled',
+        'impertinent',
+        'bootless',
+        'toad-spotted',
+        'hasty-witted',
+        'horn-beat',
+        'yeasty',
+        'boil-brained',
+        'tottering',
+        'hedge-born',
+        'hugger-muggered',
+        'elf-skinned',
     ]
     amt = [
-        "accumulation", "bucket", "coagulation", "enema-bucketful", "gob", "half-mouthful", "heap", "mass", "mound", "petrification", "pile",
-        "puddle", "stack", "thimbleful", "tongueful", "ooze", "quart", "bag", "plate", "ass-full", "assload"
+        'accumulation',
+        'bucket',
+        'coagulation',
+        'enema-bucketful',
+        'gob',
+        'half-mouthful',
+        'heap',
+        'mass',
+        'mound',
+        'petrification',
+        'pile',
+        'puddle',
+        'stack',
+        'thimbleful',
+        'tongueful',
+        'ooze',
+        'quart',
+        'bag',
+        'plate',
+        'ass-full',
+        'assload',
     ]
     noun = [
-        "bat toenails", "bug spit", "cat hair", "chicken piss", "dog vomit", "dung", "fat-woman's stomach-bile", "fish heads", "guano", "gunk",
-        "pond scum", "rat retch", "red dye number-9", "Sun IPC manuals", "waffle-house grits", "yoo-hoo", "dog balls", "seagull puke", "cat bladders",
-        "pus", "urine samples", "squirrel guts", "snake assholes", "snake bait", "buzzard gizzards", "cat-hair-balls", "rat-farts", "pods",
-        "armadillo snouts", "entrails", "snake snot", "eel ooze", "slurpee-backwash", "toxic waste", "Stimpy-drool", "poopy", "poop",
-        "craptacular carpet droppings", "jizzum", "cold sores", "anal warts"
+        'bat toenails',
+        'bug spit',
+        'cat hair',
+        'chicken piss',
+        'dog vomit',
+        'dung',
+        "fat-woman's stomach-bile",
+        'fish heads',
+        'guano',
+        'gunk',
+        'pond scum',
+        'rat retch',
+        'red dye number-9',
+        'Sun IPC manuals',
+        'waffle-house grits',
+        'yoo-hoo',
+        'dog balls',
+        'seagull puke',
+        'cat bladders',
+        'pus',
+        'urine samples',
+        'squirrel guts',
+        'snake assholes',
+        'snake bait',
+        'buzzard gizzards',
+        'cat-hair-balls',
+        'rat-farts',
+        'pods',
+        'armadillo snouts',
+        'entrails',
+        'snake snot',
+        'eel ooze',
+        'slurpee-backwash',
+        'toxic waste',
+        'Stimpy-drool',
+        'poopy',
+        'poop',
+        'craptacular carpet droppings',
+        'jizzum',
+        'cold sores',
+        'anal warts',
     ]
     msg = f'{user} is a {choice(adj)} {choice(amt)} of {choice(noun)}.'
     return msg
@@ -223,7 +393,7 @@ def char_to_bin(c):
         n = 16
     if i > 1 << 16:
         n = 32
-    ret = ""
+    ret = ''
     for _ in range(n):
         ret += str(i & 1)
         i >>= 1
@@ -231,7 +401,7 @@ def char_to_bin(c):
 
 
 def gen_binary(text):
-    return "".join(map(char_to_bin, text))
+    return ''.join(map(char_to_bin, text))
 
 
 def gen_xkcd_sub(msg, hook=False):
@@ -250,7 +420,7 @@ def gen_xkcd_sub(msg, hook=False):
         'election': 'eating contest',
         'congressional leaders': 'river spirits',
         'homeland security': 'homestar runner',
-        'could not be reached for comment': 'is guilty and everyone knows it'
+        'could not be reached for comment': 'is guilty and everyone knows it',
     }
     # http://xkcd.com/1031/
     substitutions['keyboard'] = 'leopard'
@@ -260,7 +430,7 @@ def gen_xkcd_sub(msg, hook=False):
     if not hook or random() < 0.001 or True:
         for text, replacement in substitutions.items():
             if text in output:
-                output = re.sub(r"\b%s\b" % text, replacement, output)
+                output = re.sub(r'\b%s\b' % text, replacement, output)
 
     output = re.sub(r'(.*)(?:-ass )(.*)', r'\1 ass-\2', output)
     if msg == output:
@@ -274,7 +444,7 @@ def reverse(msg):
 
 
 def gen_lenny(msg):
-    return "%s ( ͡° ͜ʖ ͡°)" % msg
+    return '%s ( ͡° ͜ʖ ͡°)' % msg
 
 
 def gen_shibe(msg):
@@ -301,18 +471,23 @@ def gen_translate(msg, fromlang=None, tolang='en'):
     if not key:
         raise Exception('Invalid translate api key')
     if tolang not in get_languages(key):
-        return "Invalid target language."
+        return 'Invalid target language.'
     params = {'key': key, 'q': msg, 'target': tolang}
     if fromlang is not None:
         if fromlang not in get_languages(key):
-            return "Invalid source language."
+            return 'Invalid source language.'
         params.update({'source': fromlang})
     data = get('https://www.googleapis.com/language/translate/v2', params=params).json()
     return unescape(data['data']['translations'][0]['translatedText'])
 
 
 def get_languages(key):
-    data = get('https://www.googleapis.com/language/translate/v2/languages', params={'key': key}).json()
+    data = get(
+        'https://www.googleapis.com/language/translate/v2/languages',
+        params={
+            'key': key
+        },
+    ).json()
     return [x['language'] for x in data['data']['languages']]
 
 
@@ -322,7 +497,7 @@ def gen_random_translate(msg):
         raise Exception('Invalid translate api key')
     language = choice(get_languages(key))
     msg = gen_translate(msg, fromlang=None, tolang=language)
-    return f"{msg} ({language})"
+    return f'{msg} ({language})'
 
 
 def gen_multi_translate(msg):
@@ -332,10 +507,10 @@ def gen_multi_translate(msg):
 
 
 def gen_spacing(msg):
-    result = ""
+    result = ''
     for char in msg:
         result += char
-        result += " "
+        result += ' '
     return result
 
 
@@ -353,8 +528,8 @@ def append_filters(filters):
         if next_filter in output_filters.keys():
             filter_list.append(output_filters[next_filter])
         else:
-            return None, "Invalid filter %s." % next_filter
-    return filter_list, "Okay!"
+            return None, 'Invalid filter %s.' % next_filter
+    return filter_list, 'Okay!'
 
 
 def gen_randfilter(msg):
@@ -364,11 +539,11 @@ def gen_randfilter(msg):
 
 def gen_sanitize(msg):
     to_sanitize = choice(string.ascii_lowercase)
-    return msg.replace(to_sanitize, "").replace(to_sanitize.upper(), "")
+    return msg.replace(to_sanitize, '').replace(to_sanitize.upper(), '')
 
 
 def gen_intensify(msg):
-    return "[%s INTENSIFIES]" % msg.upper()
+    return '[%s INTENSIFIES]' % msg.upper()
 
 
 def gen_djones(msg):
@@ -380,11 +555,11 @@ def gen_djones(msg):
     filter_output = ''
     for letter in msg:
         if random() < 0.15 and letter in ''.join(keyboard):
-            row = (0 if letter in keyboard[0] else (1 if letter in keyboard[1] else 2))
+            row = 0 if letter in keyboard[0] else (1 if letter in keyboard[1] else 2)
             col = keyboard[row].find(letter)
             new_row = row + randint(-1, 1)
             new_col = col + randint(-1, 1)
-            while new_row < 0 or new_row >= len(keyboard) or new_col < 0 or new_col >= len(keyboard[0]) or keyboard[new_row][new_col] == '\0':
+            while (new_row < 0 or new_row >= len(keyboard) or new_col < 0 or new_col >= len(keyboard[0]) or keyboard[new_row][new_col] == '\0'):
                 new_row = row + randint(-1, 1)
                 new_col = col + randint(-1, 1)
             filter_output += keyboard[new_row][new_col]
@@ -394,32 +569,32 @@ def gen_djones(msg):
 
 
 output_filters = {
-    "passthrough": lambda x: x,
-    "bard": gen_shakespeare,
-    "binary": gen_binary,
-    "creffett": gen_creffett,
-    "djones": gen_djones,
-    "fullwidth": gen_fullwidth,
-    "fwilson": gen_fwilson,
-    "gizoogle": gen_gizoogle,
-    "hashtag": gen_hashtag,
-    "insult": gen_insult,
-    "jeffsessionstheyoungman": gen_jeffsessionstheyoungman,
-    "lenny": gen_lenny,
-    "morse": gen_morse,
-    "multitrans": gen_multi_translate,
-    "praise": gen_praise,
-    "randfilter": gen_randfilter,
-    "randtrans": gen_random_translate,
-    "removevowels": gen_removevowels,
-    "reverse": reverse,
-    "sanitize": gen_sanitize,
-    "shakespeare": gen_shakespeare,
-    "shibe": gen_shibe,
-    "slogan": gen_slogan,
-    "spacing": gen_spacing,
-    "translate": gen_translate,
-    "underscore": gen_underscore,
-    "xkcd": gen_xkcd_sub,
-    "yoda": gen_yoda
+    'passthrough': lambda x: x,
+    'bard': gen_shakespeare,
+    'binary': gen_binary,
+    'creffett': gen_creffett,
+    'djones': gen_djones,
+    'fullwidth': gen_fullwidth,
+    'fwilson': gen_fwilson,
+    'gizoogle': gen_gizoogle,
+    'hashtag': gen_hashtag,
+    'insult': gen_insult,
+    'jeffsessionstheyoungman': gen_jeffsessionstheyoungman,
+    'lenny': gen_lenny,
+    'morse': gen_morse,
+    'multitrans': gen_multi_translate,
+    'praise': gen_praise,
+    'randfilter': gen_randfilter,
+    'randtrans': gen_random_translate,
+    'removevowels': gen_removevowels,
+    'reverse': reverse,
+    'sanitize': gen_sanitize,
+    'shakespeare': gen_shakespeare,
+    'shibe': gen_shibe,
+    'slogan': gen_slogan,
+    'spacing': gen_spacing,
+    'translate': gen_translate,
+    'underscore': gen_underscore,
+    'xkcd': gen_xkcd_sub,
+    'yoda': gen_yoda,
 }

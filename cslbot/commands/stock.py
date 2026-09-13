@@ -23,15 +23,22 @@ from ..helpers.command import Command
 
 
 def gen_stock(msg):
-    quote = get("http://dev.markitondemand.com/Api/v2/Quote/json", params={'symbol': msg}).json()
+    quote = get('http://dev.markitondemand.com/Api/v2/Quote/json', params={'symbol': msg}).json()
     if 'Message' in quote.keys():
         return quote['Message']
     else:
-        changepercent = "%.3f%%" % quote['ChangePercent']
+        changepercent = '%.3f%%' % quote['ChangePercent']
         if quote['ChangePercent'] >= 0:
             changepercent = '+' + changepercent
-        return "{} ({}) as of {}: {} {} High: {} Low: {}".format(quote['Name'], msg, quote['Timestamp'], quote['LastPrice'], changepercent,
-                                                                 quote['High'], quote['Low'])
+        return '{} ({}) as of {}: {} {} High: {} Low: {}'.format(
+            quote['Name'],
+            msg,
+            quote['Timestamp'],
+            quote['LastPrice'],
+            changepercent,
+            quote['High'],
+            quote['Low'],
+        )
 
 
 def random_stock():

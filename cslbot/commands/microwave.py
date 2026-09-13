@@ -28,7 +28,7 @@ def cmd(send, msg, args):
 
     """
     nick = args['nick']
-    channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
+    channel = (args['target'] if args['target'] != 'private' else args['config']['core']['channel'])
     levels = {
         1: 'Whirr...',
         2: 'Vrrm...',
@@ -39,7 +39,7 @@ def cmd(send, msg, args):
         7: 'KKKRRRAAKKKAAKRAKKGGARGHGIZZZZ...',
         8: 'Nuke',
         9: 'nneeeaaaooowwwwww..... BOOOOOSH BLAM KABOOM',
-        10: 'ssh root@remote.tjhsst.edu rm -rf ~%s'
+        10: 'ssh root@remote.tjhsst.edu rm -rf ~%s',
     }
     if not msg:
         send('What to microwave?')
@@ -61,7 +61,7 @@ def cmd(send, msg, args):
                 send("I'm sorry. Nukes are a admin-only feature")
                 return
             elif msg == args['botnick']:
-                send("Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.")
+                send('Sorry, Self-Nuking is disabled pending aquisition of a Lead-Lined Fridge.')
             else:
                 with args['handler'].data_lock:
                     if target not in args['handler'].channels[channel].users():

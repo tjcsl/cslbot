@@ -25,8 +25,8 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("This tastes yummy!")
+        send('This tastes yummy!')
     elif msg == args['botnick']:
-        send("wyang says Cannibalism is generally frowned upon.")
+        send('wyang says Cannibalism is generally frowned upon.')
     else:
-        send("%s tastes yummy!" % msg.capitalize())
+        send('%s tastes yummy!' % msg.capitalize())

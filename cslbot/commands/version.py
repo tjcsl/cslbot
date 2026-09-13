@@ -44,12 +44,12 @@ def cmd(send, msg, args):
         send(api_output['commit']['sha'])
     elif cmdargs.action == 'check':
         if commit is None:
-            send("Not running from git, version %s" % version)
+            send('Not running from git, version %s' % version)
         else:
             check = 'Same' if api_output['commit']['sha'] == commit else 'Different'
             send(check)
     elif cmdargs.action == 'commit':
         if commit is None:
-            send("Not running from git, version %s" % version)
+            send('Not running from git, version %s' % version)
         else:
             send(commit)

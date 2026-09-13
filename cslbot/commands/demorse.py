@@ -79,17 +79,17 @@ def cmd(send, msg, _):
         '--.': 'g',
         '--..': 'z',
         '--.-': 'q',
-        '---': 'o'
+        '---': 'o',
     }
-    demorse = ""
+    demorse = ''
     if not msg:
-        send("demorse what?")
+        send('demorse what?')
         return
-    for word in msg.lower().split("   "):
+    for word in msg.lower().split('   '):
         for c in word.split():
             if c in demorse_codes:
                 demorse += demorse_codes[c]
             else:
-                demorse += "?"
-        demorse += " "
+                demorse += '?'
+        demorse += ' '
     send(demorse)

@@ -29,9 +29,17 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        result = subprocess.run(['eix', '-c'], env={'EIX_LIMIT': '0', 'HOME': os.environ['HOME']}, stdout=subprocess.PIPE, text=True)
+        result = subprocess.run(
+            ['eix', '-c'],
+            env={
+                'EIX_LIMIT': '0',
+                'HOME': os.environ['HOME']
+            },
+            stdout=subprocess.PIPE,
+            text=True,
+        )
         if result.returncode:
-            send("eix what?")
+            send('eix what?')
             return
         send(choice(result.stdout.splitlines()))
         return

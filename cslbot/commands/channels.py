@@ -25,5 +25,5 @@ def cmd(send, _, args):
 
     """
     with args['handler'].data_lock:
-        channels = ", ".join(sorted(args['handler'].channels))
+        channels = ', '.join(sorted(args['handler'].channels))
     send(channels)

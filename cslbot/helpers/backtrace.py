@@ -27,18 +27,18 @@ from . import misc
 def output_traceback(ex):
     """Returns a tuple of a prettyprinted error message and string representation of the error."""
     # Dump full traceback to console.
-    output = "".join(traceback.format_exc()).strip()
+    output = ''.join(traceback.format_exc()).strip()
     for line in output.split('\n'):
         logging.error(line)
     trace_obj = traceback.extract_tb(ex.__traceback__)[-1]
     trace = [basename(trace_obj[0]), trace_obj[1]]
     name = type(ex).__name__
     output = str(ex).replace('\n', ' ')
-    msg = f"{name} in {trace[0]} on line {trace[1]}: {output}"
+    msg = f'{name} in {trace[0]} on line {trace[1]}: {output}'
     return (msg, output)
 
 
-def handle_traceback(ex, c, target, config, source="the bot"):
+def handle_traceback(ex, c, target, config, source='the bot'):
     msg, output = output_traceback(ex)
     name = type(ex).__name__
     ctrlchan = config['core']['ctrlchan']
@@ -53,9 +53,12 @@ def handle_traceback(ex, c, target, config, source="the bot"):
     errtarget = ctrlchan if prettyerrors else target
     if prettyerrors and target != ctrlchan:
         if name == 'CommandFailedException':
-            send(target, f"{source} -- {output}")
+            send(target, f'{source} -- {output}')
         else:
-            send(target, f"{name} occured in {source}. See the control channel for details.")
+            send(
+                target,
+                f'{name} occured in {source}. See the control channel for details.',
+            )
     msg = f'Error in channel {target} -- {source} -- {msg}'
     # Handle over-long exceptions.
     max_len = misc.get_max_length(errtarget, 'privmsg')

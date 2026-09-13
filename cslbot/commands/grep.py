@@ -54,7 +54,7 @@ def cmd(send, msg, args):
     count = args['db'].scalar(select(func.count()).select_from(stmt.subquery()))
     if result is not None:
         logtime = result.time.strftime('%Y-%m-%d %H:%M:%S')
-        send("%s was last said by %s at %s (%d occurrences)" % (result.msg, result.source, logtime, count))
+        send('%s was last said by %s at %s (%d occurrences)' % (result.msg, result.source, logtime, count))
     elif cmdargs.nick:
         send(f'{cmdargs.nick} has never said {term}.')
     else:

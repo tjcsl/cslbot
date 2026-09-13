@@ -22,18 +22,25 @@ from os.path import dirname, join
 
 def reload_server(port: str, msg: str):
     try:
-        print("Reloading localhost:%s" % port)
-        proc = subprocess.run(['nc', 'localhost', port], input=msg, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=True)
+        print('Reloading localhost:%s' % port)
+        proc = subprocess.run(
+            ['nc', 'localhost', port],
+            input=msg,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=True,
+        )
         output = proc.stdout.splitlines()
         for line in output:
             print(line)
         if output[-1] != "Aye Aye Capt'n":
             sys.exit(1)
     except subprocess.CalledProcessError:
-        raise Exception("Could not connect to server, is bot running?")
+        raise Exception('Could not connect to server, is bot running?')
 
 
-def main(confdir="/etc/cslbot") -> None:
+def main(confdir='/etc/cslbot') -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(join(confdir, 'config.cfg')) as f:
         config.read_file(f)

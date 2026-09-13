@@ -33,7 +33,7 @@ class NickParser(argparse.Action):
         if re.match(namespace.config['core']['nickregex'], value):
             namespace.nick = value
         else:
-            raise ArgumentException("Invalid nick %s." % value)
+            raise ArgumentException('Invalid nick %s.' % value)
 
 
 class ChanParser(argparse.Action):
@@ -48,7 +48,7 @@ class ChanParser(argparse.Action):
             if re.match('{}$'.format(namespace.config['core']['chanregex']), v):
                 namespace.channels.append(v)
             else:
-                raise ArgumentException("Invalid chan %s." % v)
+                raise ArgumentException('Invalid chan %s.' % v)
 
 
 class DateParser(argparse.Action):
@@ -70,10 +70,15 @@ class TumblrParser(argparse.Action):
         if value is None:
             return
         if '.' not in value:
-            value += ".tumblr.com"
-        response = get('http://api.tumblr.com/v2/blog/%s/info' % value, params={'api_key': namespace.config['api']['tumblrconsumerkey']}).json()
+            value += '.tumblr.com'
+        response = get(
+            'http://api.tumblr.com/v2/blog/%s/info' % value,
+            params={
+                'api_key': namespace.config['api']['tumblrconsumerkey']
+            },
+        ).json()
         if response['meta']['status'] != 200:
-            raise ArgumentException("Error in checking status of blog {}: {}".format(value, response['meta']['msg']))
+            raise ArgumentException('Error in checking status of blog {}: {}'.format(value, response['meta']['msg']))
         namespace.blogname = value
 
 
@@ -100,7 +105,7 @@ class ArgParser(argparse.ArgumentParser):
 
     def exit(self, status=0, message=None):
         if message is None:
-            message = "argparse exited with status %d." % status
+            message = 'argparse exited with status %d.' % status
         raise ArgumentException(message)
 
     def parse_args(self, msg=None):

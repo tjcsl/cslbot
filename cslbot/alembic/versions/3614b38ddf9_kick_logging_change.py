@@ -18,12 +18,15 @@ depends_on = None
 
 def upgrade():
     log = sa.table('log', sa.column('type', sa.String), sa.column('msg', sa.String))
-    rows = op.get_bind().execute(log.select().where(log.c.type == 'kick').where(log.c.msg.like('%,%'))).fetchall()
+    rows = (op.get_bind().execute(log.select().where(log.c.type == 'kick').where(log.c.msg.like('%,%'))).fetchall())
     rows = [x for x in rows if ',' in x.msg and x.msg.find(',') < x.msg.find(' ')]
     if not rows:
         return
     values = [{'old_msg': x.msg, 'msg': x.msg.replace(',', ' ', 1)} for x in rows]
-    op.get_bind().execute(log.update().where(log.c.msg == sa.bindparam('old_msg')).values(msg=sa.bindparam('msg')), values)
+    op.get_bind().execute(
+        log.update().where(log.c.msg == sa.bindparam('old_msg')).values(msg=sa.bindparam('msg')),
+        values,
+    )
 
 
 def downgrade():
@@ -35,4 +38,7 @@ def downgrade():
     if not rows:
         return
     values = [{'old_msg': x.msg, 'msg': x.msg.replace(' ', ',', 1)} for x in rows]
-    op.get_bind().execute(log.update().where(log.c.msg == sa.bindparam('old_msg')).values(msg=sa.bindparam('msg')), values)
+    op.get_bind().execute(
+        log.update().where(log.c.msg == sa.bindparam('old_msg')).values(msg=sa.bindparam('msg')),
+        values,
+    )

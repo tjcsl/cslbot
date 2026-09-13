@@ -40,7 +40,13 @@ def cmd(send, msg, args):
         name = 'wikipedia'
     if not msg:
         msg = get_rand(url)
-    params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': msg}
+    params = {
+        'format': 'json',
+        'action': 'query',
+        'list': 'search',
+        'srlimit': '1',
+        'srsearch': msg,
+    }
     data = get('%s/api.php' % url, params=params).json()
     try:
         article = data['query']['search'][0]['title']

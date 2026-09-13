@@ -26,6 +26,6 @@ def cmd(send, msg, _):
 
     """
     if not msg:
-        send("Praise what?")
+        send('Praise what?')
         return
     send(gen_praise(msg))

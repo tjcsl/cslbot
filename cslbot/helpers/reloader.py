@@ -29,20 +29,24 @@ def do_log(c, target, msg):
     c.privmsg(target, msg)
 
 
-def load_modules(cfg: configparser.ConfigParser, confdir: str, send: Callable[[str], None] = logging.error) -> bool:
+def load_modules(
+    cfg: configparser.ConfigParser,
+    confdir: str,
+    send: Callable[[str], None] = logging.error,
+) -> bool:
     modutils.init_aux(cfg['core'])
     modutils.init_groups(cfg['groups'], confdir)
     errored_commands = registry.command_registry.scan_for_commands()
     if errored_commands:
-        logging.error("Failed to load some commands.")
+        logging.error('Failed to load some commands.')
         for error in errored_commands:
-            send("%s: %s" % error)
+            send('%s: %s' % error)
         return False
     errored_hooks = registry.hook_registry.scan_for_hooks()
     if errored_hooks:
-        logging.error("Failed to reload some hooks.")
+        logging.error('Failed to reload some hooks.')
         for error in errored_hooks:
-            send("%s: %s" % error)
+            send('%s: %s' % error)
         return False
     return True
 
@@ -58,7 +62,7 @@ def do_reload(bot, target, cmdargs, server_send=None):
 
     def send(msg):
         if server_send is not None:
-            server_send("%s\n" % msg)
+            server_send('%s\n' % msg)
         else:
             do_log(bot.connection, bot.get_target(target), msg)
 
@@ -66,8 +70,8 @@ def do_reload(bot, target, cmdargs, server_send=None):
 
     if cmdargs == 'pull':
         # Permission checks.
-        if isinstance(target, irc.client.Event) and target.source.nick != bot.config['auth']['owner']:
-            bot.connection.privmsg(bot.get_target(target), "Nope, not gonna do it.")
+        if (isinstance(target, irc.client.Event) and target.source.nick != bot.config['auth']['owner']):
+            bot.connection.privmsg(bot.get_target(target), 'Nope, not gonna do it.')
             return
         if exists(join(confdir, '.git')):
             send(misc.do_pull(srcdir=confdir))
@@ -79,9 +83,9 @@ def do_reload(bot, target, cmdargs, server_send=None):
     # Reimport helpers
     errored_helpers = modutils.scan_and_reimport('helpers')
     if errored_helpers:
-        send("Failed to load some helpers.")
+        send('Failed to load some helpers.')
         for error in errored_helpers:
-            send("%s: %s" % error)
+            send('%s: %s' % error)
         return False
     if not load_modules(bot.config, confdir, send):
         return False

@@ -26,7 +26,7 @@ def cmd(send, msg, args):
 
     """
     if msg and not check_exists(msg):
-        send("Non-existant subreddit.")
+        send('Non-existant subreddit.')
         return
     subreddit = msg if msg else None
     send(random_post(subreddit, args['config']['api']['bitlykey']))

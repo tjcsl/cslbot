@@ -39,7 +39,8 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
     # only care about the last 10 seconds.
     limit = datetime.now() - timedelta(seconds=10)
     # the last one is the command we're currently executing, so get the penultimate one.
-    last = cursor.scalars(select(Log).where(Log.target == target, Log.type == 'pubmsg', Log.time >= limit).order_by(Log.time.desc()).offset(1)).first()
+    last = cursor.scalars(select(Log).where(Log.target == target, Log.type == 'pubmsg', Log.time
+                                            >= limit).order_by(Log.time.desc()).offset(1)).first()
     if last:
         return bool(last.msg == msg and last.source != nick)
     else:
@@ -48,7 +49,13 @@ def check_command(cursor: Session, nick: str, msg: str, target: str) -> bool:
 
 class Command:
 
-    def __init__(self, names: str | list, args: list[str] = [], limit: int = 0, role: str | None = None) -> None:
+    def __init__(
+        self,
+        names: str | list,
+        args: list[str] = [],
+        limit: int = 0,
+        role: str | None = None,
+    ) -> None:
         self.names: list[str] = [names] if isinstance(names, str) else names
         self.args = args
         self.limit = limit
@@ -63,18 +70,24 @@ class Command:
             try:
                 thread = threading.current_thread()
                 match = re.match(r'ThreadPool_\d+', thread.name)
-                thread_id = "Unknown" if match is None else match.group(0)
-                thread.name = f"{thread_id} running command.{self.names[0]}"
+                thread_id = 'Unknown' if match is None else match.group(0)
+                thread.name = f'{thread_id} running command.{self.names[0]}'
                 with self.handler.db.session_scope() as args['db']:
                     func(send, msg, args)
             except Exception as ex:
-                backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, "commands.%s" % self.names[0])
+                backtrace.handle_traceback(
+                    ex,
+                    self.handler.connection,
+                    self.target,
+                    self.handler.config,
+                    'commands.%s' % self.names[0],
+                )
             finally:
-                thread.name = f"{thread_id} idle, last ran command.{self.names[0]}"
+                thread.name = f'{thread_id} idle, last ran command.{self.names[0]}'
 
         self.doc = getdoc(func)
         if self.doc is None or len(self.doc) < 5:
-            print("Warning:", self.names[0], "has no or very little documentation")
+            print('Warning:', self.names[0], 'has no or very little documentation')
         self.exe = wrapper
         return wrapper
 
@@ -84,9 +97,18 @@ class Command:
     def __repr__(self) -> str:
         return self.names[0]
 
-    def run(self, send: Callable[[str], None], msg: str, args: dict[str, Any], command: str, nick: str, target: str, handler) -> None:
+    def run(
+        self,
+        send: Callable[[str], None],
+        msg: str,
+        args: dict[str, Any],
+        command: str,
+        nick: str,
+        target: str,
+        handler,
+    ) -> None:
         if [x for x in self.names if registry.command_registry.is_disabled(x)]:
-            send("Sorry, that command is disabled.")
+            send('Sorry, that command is disabled.')
         else:
             self.target = target
             self.handler = handler

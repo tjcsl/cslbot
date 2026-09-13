@@ -24,17 +24,17 @@ from ..helpers.web import get_urban
 
 def blacklist_word(session, msg):
     if session.scalar(select(func.count()).select_from(UrbanBlacklist).where(UrbanBlacklist.word == msg)):
-        return "Word %s already blacklisted" % msg
+        return 'Word %s already blacklisted' % msg
     session.add(UrbanBlacklist(word=msg))
-    return "Blacklisted %s" % msg
+    return 'Blacklisted %s' % msg
 
 
 def unblacklist_word(session, msg):
     term = session.scalars(select(UrbanBlacklist).where(UrbanBlacklist.word == msg)).first()
     if term is None:
-        return "Word %s is not blacklisted" % msg
+        return 'Word %s is not blacklisted' % msg
     session.delete(term)
-    return "Removed blacklisting of %s" % msg
+    return 'Removed blacklisting of %s' % msg
 
 
 @Command('urban', ['config', 'db', 'is_admin', 'nick'])
@@ -59,14 +59,14 @@ def cmd(send, msg, args):
         if args['is_admin'](args['nick']):
             send(blacklist_word(args['db'], cmdargs.blacklist))
         else:
-            send("Blacklisting is admin-only")
+            send('Blacklisting is admin-only')
     elif cmdargs.unblacklist:
         if args['is_admin'](args['nick']):
             send(unblacklist_word(args['db'], cmdargs.unblacklist))
         else:
-            send("Unblacklisting is admin-only")
+            send('Unblacklisting is admin-only')
     else:
         defn, url = get_urban(msg, args['db'], key)
         send(defn)
         if url:
-            send("See full definition at %s" % url)
+            send('See full definition at %s' % url)

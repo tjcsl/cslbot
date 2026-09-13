@@ -29,7 +29,7 @@ def cmd(send, msg, args):
 
     """
     if not args['config']['feature'].getboolean('hooks'):
-        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+        send('Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).')
         return
     session = args['db']
     parser = arguments.ArgParser(args['config'])
@@ -46,16 +46,16 @@ def cmd(send, msg, args):
         data = session.scalars(select(Scores).order_by(Scores.score.desc()).limit(3)).all()
         send('High Scores:')
         for x in data:
-            send(f"{x.nick}: {x.score}")
+            send(f'{x.nick}: {x.score}')
     elif cmdargs.low:
         data = session.scalars(select(Scores).order_by(Scores.score).limit(3)).all()
         send('Low Scores:')
         for x in data:
-            send(f"{x.nick}: {x.score}")
+            send(f'{x.nick}: {x.score}')
     elif cmdargs.nick:
         name = cmdargs.nick.lower()
         if name == 'c':
-            send("We all know you love C better than anything else, so why rub it in?")
+            send('We all know you love C better than anything else, so why rub it in?')
             return
         score = session.scalars(select(Scores).where(Scores.nick == name)).first()
         if score is not None:
@@ -65,13 +65,13 @@ def cmd(send, msg, args):
                 output = f'has {score.score} point{plural}! {emote}'
                 send(output, 'action')
             else:
-                send("%s has %i point%s!" % (name, score.score, plural))
+                send('%s has %i point%s!' % (name, score.score, plural))
         else:
-            send("Nobody cares about %s" % name)
+            send('Nobody cares about %s' % name)
     else:
         if session.scalar(select(func.count()).select_from(Scores)) == 0:
-            send("Nobody cares about anything =(")
+            send('Nobody cares about anything =(')
         else:
             query = session.scalars(select(Scores).order_by(func.random())).first()
             plural = '' if abs(query.score) == 1 else 's'
-            send("%s has %i point%s!" % (query.nick, query.score, plural))
+            send('%s has %i point%s!' % (query.nick, query.score, plural))

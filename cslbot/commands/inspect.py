@@ -17,7 +17,7 @@
 from ..helpers.command import Command
 
 
-@Command('inspect', ['handler'], role="admin")
+@Command('inspect', ['handler'], role='admin')
 def cmd(send, msg, args):
     """'Inspects a bot attribute.
 
@@ -25,9 +25,9 @@ def cmd(send, msg, args):
 
     """
     if not hasattr(args['handler'], msg):
-        send("That attribute was not found in the handler.")
+        send('That attribute was not found in the handler.')
         return
     if msg == 'serverpass':
-        send("MSBOBROX")
+        send('MSBOBROX')
         return
     send(str(getattr(args['handler'], msg)))

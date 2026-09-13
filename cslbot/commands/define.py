@@ -39,15 +39,22 @@ def cmd(send, msg, args):
         return
     cmdargs.word = ' '.join(cmdargs.word)
 
-    req = get("http://www.stands4.com/services/v2/defs.php", params={'uid': uid, 'tokenid': token, 'word': cmdargs.word})
+    req = get(
+        'http://www.stands4.com/services/v2/defs.php',
+        params={
+            'uid': uid,
+            'tokenid': token,
+            'word': cmdargs.word
+        },
+    )
     xml = etree.fromstring(req.content, parser=etree.XMLParser(recover=True))
     if len(xml) == 0:
-        send("No results found for %s" % cmdargs.word)
+        send('No results found for %s' % cmdargs.word)
         return
     if cmdargs.entry >= len(xml):
-        send("Invalid index %d for term %s" % (cmdargs.entry, cmdargs.word))
+        send('Invalid index %d for term %s' % (cmdargs.entry, cmdargs.word))
         return
     term = xml[cmdargs.entry].find('term').text
     definition = xml[cmdargs.entry].find('definition').text
     definition = ' '.join(definition.splitlines()).strip()
-    send(f"{term}: {definition}")
+    send(f'{term}: {definition}')

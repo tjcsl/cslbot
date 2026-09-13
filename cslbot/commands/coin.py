@@ -30,11 +30,11 @@ def cmd(send, msg, _):
     if not msg:
         send('The coin lands on... %s' % choice(coin))
     elif not msg.lstrip('-').isdigit():
-        send("Not A Valid Positive Integer.")
+        send('Not A Valid Positive Integer.')
     else:
         msg = int(msg)
         if msg < 0:
-            send("Negative Flipping requires the (optional) quantum coprocessor.")
+            send('Negative Flipping requires the (optional) quantum coprocessor.')
             return
         headflips = randint(0, msg)
         tailflips = msg - headflips

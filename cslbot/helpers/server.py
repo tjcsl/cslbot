@@ -46,7 +46,7 @@ def init_server(bot):
     except OSError as ex:
         bot.shutdown_mp()
         if ex.errno == 98:
-            raise Exception("Please make sure that there is no other service running on port %d" % port)
+            raise Exception('Please make sure that there is no other service running on port %d' % port)
         else:
             raise ex
     server.bot = bot
@@ -64,7 +64,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
     def get_data(self):
         size = 4096
-        msg = b""
+        msg = b''
         while True:
             data = self.request.recv(size)
             msg += data
@@ -73,9 +73,9 @@ class BotNetHandler(socketserver.BaseRequestHandler):
         return msg.decode()
 
     def handle_cmd(self, cmd, bot, send):
-        if cmd[0] == "help":
+        if cmd[0] == 'help':
             send(HELP)
-        elif cmd[0] == "reload":
+        elif cmd[0] == 'reload':
             cmdargs = cmd[1] if len(cmd) > 1 else ''
             ctrlchan = bot.config['core']['ctrlchan']
             bot.reload_event.set()
@@ -86,19 +86,19 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                 bot.connection.privmsg(ctrlchan, "Aye Aye Capt'n (triggered from server)")
             self.request.close()
             return False
-        elif cmd[0] == "raw":
-            while cmd[0] != "endraw":
-                send("ircbot-raw> ")
+        elif cmd[0] == 'raw':
+            while cmd[0] != 'endraw':
+                send('ircbot-raw> ')
                 cmd = self.get_data().strip()
-                if cmd == "endraw":
+                if cmd == 'endraw':
                     return False
                 bot.handler.connection.send_raw(cmd)
-        elif cmd[0] == "quit":
-            send("Goodbye.\n")
+        elif cmd[0] == 'quit':
+            send('Goodbye.\n')
             self.request.close()
             return False
         else:
-            send("Unknown command. Type help for more info.\n")
+            send('Unknown command. Type help for more info.\n')
         return True
 
     def handle(self):
@@ -108,17 +108,17 @@ class BotNetHandler(socketserver.BaseRequestHandler):
 
         bot = self.server.bot
         try:
-            send("Password: ")
+            send('Password: ')
             msg = self.get_data().splitlines()
             ctrlpass = bot.config['auth']['ctrlpass']
             if not msg or msg[0].strip() != ctrlpass:
-                send("Incorrect password.\n")
+                send('Incorrect password.\n')
                 self.request.close()
                 return
             if len(msg) > 1:
                 msg = list(reversed(msg[1:]))
                 end = len(msg)
-                send("\n")
+                send('\n')
             else:
                 send(WELCOME)
                 end = 0
@@ -128,7 +128,7 @@ class BotNetHandler(socketserver.BaseRequestHandler):
                     end -= 1
                 else:
                     try:
-                        send("ircbot> ")
+                        send('ircbot> ')
                         cmd = self.get_data().strip().split()
                     except BrokenPipeError:
                         # connection has been closed

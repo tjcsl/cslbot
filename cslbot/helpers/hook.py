@@ -39,14 +39,20 @@ class Hook:
                 try:
                     thread = threading.current_thread()
                     thread_id = re.match(r'ThreadPool_\d+', thread.name)
-                    thread_id = "Unknown" if thread_id is None else thread_id.group(0)
-                    thread.name = f"{thread_id} running {func.__module__}"
+                    thread_id = 'Unknown' if thread_id is None else thread_id.group(0)
+                    thread.name = f'{thread_id} running {func.__module__}'
                     with self.handler.db.session_scope() as args['db']:
                         func(send, msg, args)
                 except Exception as ex:
-                    backtrace.handle_traceback(ex, self.handler.connection, self.target, self.handler.config, func.__module__)
+                    backtrace.handle_traceback(
+                        ex,
+                        self.handler.connection,
+                        self.target,
+                        self.handler.config,
+                        func.__module__,
+                    )
                 finally:
-                    thread.name = f"{thread_id} idle, last ran {func.__module__}"
+                    thread.name = f'{thread_id} idle, last ran {func.__module__}'
 
         self.exe = wrapper
         return wrapper
@@ -57,7 +63,15 @@ class Hook:
     def __repr__(self) -> str:
         return self.name
 
-    def run(self, send: Callable[[str], None], msg: str, msgtype: str, handler, target: str, args: list[str]) -> None:
+    def run(
+        self,
+        send: Callable[[str], None],
+        msg: str,
+        msgtype: str,
+        handler,
+        target: str,
+        args: list[str],
+    ) -> None:
         if registry.hook_registry.is_disabled(self.name):
             return
         self.handler = handler

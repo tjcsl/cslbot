@@ -23,7 +23,10 @@ from .urlutils import get_short, get_title
 
 def check_exists(subreddit):
     """Make sure that a subreddit actually exists."""
-    req = get('http://www.reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'})
+    req = get(
+        'http://www.reddit.com/r/%s/about.json' % subreddit,
+        headers={'User-Agent': 'CslBot/1.0'},
+    )
     if req.json().get('kind') == 'Listing':
         # no subreddit exists, search results page is shown
         return False

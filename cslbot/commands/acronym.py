@@ -31,7 +31,7 @@ def get_list():
     return words
 
 
-@Command("acronym")
+@Command('acronym')
 def cmd(send, msg, _):
     """Generates a meaning for the specified acronym.
 
@@ -39,12 +39,12 @@ def cmd(send, msg, _):
 
     """
     if not msg:
-        send("What acronym?")
+        send('What acronym?')
         return
     words = get_list()
     letters = [c for c in msg.lower() if c in string.ascii_lowercase]
-    output = " ".join([choice(words[c]) for c in letters])
+    output = ' '.join([choice(words[c]) for c in letters])
     if output:
         send(f'{msg}: {output.title()}')
     else:
-        send("No acronym found for %s" % msg)
+        send('No acronym found for %s' % msg)

@@ -27,13 +27,20 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Google what?")
+        send('Google what?')
         return
     key = args['config']['api']['googleapikey']
     cx = args['config']['api']['googlesearchid']
-    data = get('https://www.googleapis.com/customsearch/v1', params={'key': key, 'cx': cx, 'q': msg}).json()
+    data = get(
+        'https://www.googleapis.com/customsearch/v1',
+        params={
+            'key': key,
+            'cx': cx,
+            'q': msg
+        },
+    ).json()
     if 'items' not in data:
         send("Google didn't say much.")
     else:
         url = data['items'][0]['link']
-        send("Google says %s" % url)
+        send('Google says %s' % url)

@@ -48,9 +48,9 @@ def cmd(send, msg, args):
     """
     incidents = get_incidents(args['config']['api']['wmatakey'])
     if not incidents:
-        send("No incidents found. Sure you picked the right metro system?")
+        send('No incidents found. Sure you picked the right metro system?')
         return
     for t, i in incidents.items():
-        send("%s:" % get_type(t))
+        send('%s:' % get_type(t))
         for desc in i:
             send(desc)

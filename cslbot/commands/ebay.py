@@ -22,8 +22,16 @@ from ..helpers.command import Command
 
 
 def get_categories(apikey):
-    params = {'callname': 'GetCategoryInfo', 'CategoryID': -1, 'IncludeSelector': 'ChildCategories'}
-    headers = {'X-EBAY-API-RESPONSE-ENCODING': 'JSON', 'X-EBAY-API-VERSION': '733', 'X-EBAY-API-APP-ID': apikey}
+    params = {
+        'callname': 'GetCategoryInfo',
+        'CategoryID': -1,
+        'IncludeSelector': 'ChildCategories',
+    }
+    headers = {
+        'X-EBAY-API-RESPONSE-ENCODING': 'JSON',
+        'X-EBAY-API-VERSION': '733',
+        'X-EBAY-API-APP-ID': apikey,
+    }
     req = get('http://open.api.ebay.com/shopping', params=params, headers=headers)
     data = req.json()
     categories = [category['CategoryID'] for category in data['CategoryArray']['Category']]
@@ -44,11 +52,15 @@ def get_item(category, apikey):
         'itemFilter(2).value(0)': 'StoreInventory',
         'itemFilter(2).value(1)': 'FixedPrice',
         'itemFilter(2).value(2)': 'AuctionWithBIN',
-        'categoryId': category
+        'categoryId': category,
     }
     # If we use params=, requests will urlencode the (), making ebay very sad.
-    url += "&".join("%s=%s" % x for x in params.items())
-    headers = {'X-EBAY-SOA-RESPONSE-DATA-FORMAT': 'json', 'X-EBAY-SOA-OPERATION-NAME': 'findItemsAdvanced', 'X-EBAY-SOA-SECURITY-APPNAME': apikey}
+    url += '&'.join('%s=%s' % x for x in params.items())
+    headers = {
+        'X-EBAY-SOA-RESPONSE-DATA-FORMAT': 'json',
+        'X-EBAY-SOA-OPERATION-NAME': 'findItemsAdvanced',
+        'X-EBAY-SOA-SECURITY-APPNAME': apikey,
+    }
     data = get(url, headers=headers).json()
     item = data['findItemsAdvancedResponse'][0]['searchResult'][0]
     if int(item['@count']) == 0:

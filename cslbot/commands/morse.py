@@ -29,6 +29,6 @@ def cmd(send, msg, args):
         msg = gen_word()
     morse = gen_morse(msg)
     if len(morse) > 100:
-        send("Your morse is too long. Have you considered Western Union?")
+        send('Your morse is too long. Have you considered Western Union?')
     else:
         send(morse)

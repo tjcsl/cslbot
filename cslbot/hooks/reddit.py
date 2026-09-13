@@ -30,11 +30,16 @@ def handle(send, msg, args):
         subreddit = match.group(1)
         if not check_exists(subreddit):
             return
-        data = get('http://reddit.com/r/%s/about.json' % subreddit, headers={'User-Agent': 'CslBot/1.0'}).json()['data']
+        data = get(
+            'http://reddit.com/r/%s/about.json' % subreddit,
+            headers={
+                'User-Agent': 'CslBot/1.0'
+            },
+        ).json()['data']
         output = ''
         if data['public_description']:
             for line in data['public_description'].splitlines():
-                output += line + " "
+                output += line + ' '
         elif data['description']:
             output += data['description'].splitlines()[0]
         else:
@@ -43,7 +48,11 @@ def handle(send, msg, args):
         output = html.unescape(output)
         key = args['config']['api']['bitlykey']
         if subreddit == 'random':
-            output = "{} -- {} (/r/{})".format(output, get_short('http://reddit.com%s' % data['url'], key), data['display_name'])
+            output = '{} -- {} (/r/{})'.format(
+                output,
+                get_short('http://reddit.com%s' % data['url'], key),
+                data['display_name'],
+            )
         else:
-            output = "{} -- {}".format(output, get_short('http://reddit.com/r/%s' % subreddit, key))
+            output = '{} -- {}'.format(output, get_short('http://reddit.com/r/%s' % subreddit, key))
         send(output)

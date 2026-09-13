@@ -31,14 +31,22 @@ class ImageException(Exception):
 def get_short(msg, key):
     if len(msg) < 20:
         return msg
-    resp = requests.post('https://api-ssl.bitly.com/v4/shorten', json={'long_url': msg}, headers={'Authorization': 'Bearer %s' % key}).json()
+    resp = requests.post(
+        'https://api-ssl.bitly.com/v4/shorten',
+        json={
+            'long_url': msg
+        },
+        headers={
+            'Authorization': 'Bearer %s' % key
+        },
+    ).json()
     if 'link' in resp:
         return resp['link']
     if resp['message'] == 'ALREADY_A_BITLY_LINK':
         return msg
     if resp['message'] == 'INVALID_ARG_LONG_URL' and not msg.startswith('http://'):
         return get_short('http://%s' % msg, key)
-    return "Could not shorten url: %s" % resp
+    return 'Could not shorten url: %s' % resp
 
 
 def parse_title(req):
@@ -65,29 +73,31 @@ def parse_title(req):
 def identify_image(req, key):
     img = requests.get(req.url)
     encoded_data = base64.b64encode(img.content)
-    req = requests.post("https://vision.googleapis.com/v1/images:annotate",
-                        params={'key': key},
-                        json=({
-                            'requests': [{
-                                'image': {
-                                    'content': encoded_data.decode(),
-                                },
-                                'features': {
-                                    'type': 'LABEL_DETECTION',
-                                    'maxResults': 5,
-                                }
-                            }]
-                        }),
-                        headers={'Content-Type': 'application/json'})
+    req = requests.post(
+        'https://vision.googleapis.com/v1/images:annotate',
+        params={'key': key},
+        json=({
+            'requests': [{
+                'image': {
+                    'content': encoded_data.decode(),
+                },
+                'features': {
+                    'type': 'LABEL_DETECTION',
+                    'maxResults': 5,
+                },
+            }]
+        }),
+        headers={'Content-Type': 'application/json'},
+    )
     data = req.json()
     if 'error' in data:
         raise ImageException(data['error'])
     response = data['responses'][0]
     labels = []
     for label in response.get('labelAnnotations', []):
-        labels.append("{}: {:.2%}".format(label['description'], label['score']))
+        labels.append('{}: {:.2%}'.format(label['description'], label['score']))
     if not labels:
-        raise ImageException("No labels found")
+        raise ImageException('No labels found')
     return labels
 
 
@@ -103,7 +113,7 @@ def parse_mime(req, key):
             labels = identify_image(req, key)
             return 'Image: {}'.format(', '.join(labels))
         except ImageException as ex:
-            return f"Image: {ex}"
+            return f'Image: {ex}'
     if ctype[0] == 'video':
         return 'Video'
     if ctype[0] == 'application':
@@ -127,7 +137,11 @@ def get_title(url, key):
             if req.status_code == requests.codes.ok:
                 title = parse_mime(req, key)
             # 405/409/501 mean this site doesn't support HEAD
-            elif req.status_code not in [requests.codes.not_allowed, requests.codes.conflict, requests.codes.not_implemented]:
+            elif req.status_code not in [
+                    requests.codes.not_allowed,
+                    requests.codes.conflict,
+                    requests.codes.not_implemented,
+            ]:
                 title = 'HTTP Error %d: %s' % (req.status_code, req.reason)
         except requests.exceptions.InvalidSchema:
             raise CommandFailedException('%s is not a supported url.' % url)

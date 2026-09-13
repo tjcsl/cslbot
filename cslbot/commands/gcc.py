@@ -42,13 +42,19 @@ def cmd(send, msg, args):
         line = line + '\n'
         tmpfile.write(line.encode())
     tmpfile.flush()
-    process = subprocess.run(['gcc', '-o', '/dev/null', '-xc', tmpfile.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5, text=True)
+    process = subprocess.run(
+        ['gcc', '-o', '/dev/null', '-xc', tmpfile.name],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        timeout=5,
+        text=True,
+    )
     tmpfile.close()
     # Take the last 3 lines to prevent Excess Flood on long error messages
     output = process.stdout.splitlines()[:3]
     for line in output:
         send(line, target=args['nick'])
     if process.returncode == 0:
-        send(gen_slogan("gcc victory"))
+        send(gen_slogan('gcc victory'))
     else:
-        send(gen_slogan("gcc failed"))
+        send(gen_slogan('gcc failed'))

@@ -26,10 +26,19 @@ def cmd(send, msg, args):
     Syntax: {command} <nick> [for <reason>]
 
     """
-    implements = ['the golden gate bridge', 'a large trout', 'a clue-by-four', 'a fresh haddock', 'moon', 'an Itanium', 'fwilson', 'a wombat']
+    implements = [
+        'the golden gate bridge',
+        'a large trout',
+        'a clue-by-four',
+        'a fresh haddock',
+        'moon',
+        'an Itanium',
+        'fwilson',
+        'a wombat',
+    ]
     methods = ['around a bit', 'upside the head']
     if not msg:
-        channel = args['target'] if args['target'] != 'private' else args['config']['core']['channel']
+        channel = (args['target'] if args['target'] != 'private' else args['config']['core']['channel'])
         with args['handler'].data_lock:
             users = list(args['handler'].channels[channel].users())
         slap = 'slaps %s %s with %s'
@@ -47,20 +56,20 @@ def cmd(send, msg, args):
             if msg[i] == 'for':
                 args = True
                 if reason:
-                    send("Invalid Syntax: You can only have one for clause!")
+                    send('Invalid Syntax: You can only have one for clause!')
                     return
                 i += 1
                 while i < len(msg):
                     if msg[i] == 'with':
                         break
-                    reason += " "
+                    reason += ' '
                     reason += msg[i]
                     i += 1
                 reason = reason.strip()
             elif msg[i] == 'with':
                 args = True
                 if implement:
-                    send("Invalid Synatx: You can only have one with clause!")
+                    send('Invalid Synatx: You can only have one with clause!')
                     return
                 i += 1
                 while i < len(msg):

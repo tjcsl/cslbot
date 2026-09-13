@@ -27,11 +27,11 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Need a CIDR range.")
+        send('Need a CIDR range.')
         return
     try:
         ipn = ip_network(msg)
     except ValueError:
-        send("Not a valid CIDR range.")
+        send('Not a valid CIDR range.')
         return
-    send(f"{ipn[0]} - {ipn[-1]}")
+    send(f'{ipn[0]} - {ipn[-1]}')

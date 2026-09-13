@@ -20,11 +20,11 @@ from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
 
-@Command('cadmin', ['db', 'handler'], role="admin")
+@Command('cadmin', ['db', 'handler'], role='admin')
 def cmd(send, msg, args):
     """Clears the verified admin list
     Syntax: {command}
     """
     args['db'].execute(update(Permissions).values(registered=False))
     args['handler'].get_admins()
-    send("Verified admins reset.")
+    send('Verified admins reset.')

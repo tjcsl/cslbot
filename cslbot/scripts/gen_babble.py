@@ -26,13 +26,17 @@ from sqlalchemy import text
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('nick', None, 'The nick to generate babble cache for (testing only).')
-flags.DEFINE_bool('incremental', False, 'Whether to build the cache from scratch or incrementally update an existing one.')
+flags.DEFINE_bool(
+    'incremental',
+    False,
+    'Whether to build the cache from scratch or incrementally update an existing one.',
+)
 flags.DEFINE_string('confdir', '/etc/cslbot', 'Where to read the configuration from.')
 
 
 def real_main(argv) -> None:
     if len(argv) > 1:
-        raise app.UsageError("Unexpected argument(s) received: %s" % argv)
+        raise app.UsageError('Unexpected argument(s) received: %s' % argv)
     # If we're running from a git checkout, override paths.
     parent_directory = os.path.join(os.path.dirname(__file__), '../..')
     if os.path.exists(os.path.join(parent_directory, '.git')):
@@ -44,6 +48,7 @@ def real_main(argv) -> None:
         config.read_file(f)
 
     from cslbot.helpers import babble, sql
+
     session = sql.get_session(config)()
     cmdchar = config['core']['cmdchar']
     ctrlchan = config['core']['ctrlchan']
@@ -55,7 +60,14 @@ def real_main(argv) -> None:
         session.execute(text('LOCK TABLE babble_count IN EXCLUSIVE MODE NOWAIT'))
         session.execute(text('LOCK TABLE babble_last IN EXCLUSIVE MODE NOWAIT'))
     t = time.time()
-    babble.build_markov(session, cmdchar, ctrlchan, FLAGS.nick, initial_run=not FLAGS.incremental, debug=True)
+    babble.build_markov(
+        session,
+        cmdchar,
+        ctrlchan,
+        FLAGS.nick,
+        initial_run=not FLAGS.incremental,
+        debug=True,
+    )
     print('Finished markov in %f' % (time.time() - t))
 
 

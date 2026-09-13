@@ -35,7 +35,7 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Calculate what?")
+        send('Calculate what?')
         return
     cursor = args['db']
     scores = get_scores(cursor)
@@ -43,15 +43,20 @@ def cmd(send, msg, args):
         if word in scores:
             msg = msg.replace(word, str(scores[word]))
     msg += '\n'
-    proc = subprocess.Popen(['bc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(
+        ['bc', '-l'],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
     try:
         output = proc.communicate(msg.encode(), timeout=5)[0].decode().splitlines()
     except subprocess.TimeoutExpired:
         proc.terminate()
-        send("Execution took too long, you might have better luck with WolframAlpha.")
+        send('Execution took too long, you might have better luck with WolframAlpha.')
         return
     if len(output) > 3:
-        send("Your output is too long, have you tried mental math?")
+        send('Your output is too long, have you tried mental math?')
     else:
         for line in output:
             send(line)

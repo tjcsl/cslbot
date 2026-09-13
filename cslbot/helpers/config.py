@@ -33,12 +33,12 @@ def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send
     # Check for new sections/options
     for section in example_obj.sections():
         if not config_obj.has_section(section):
-            send("Adding config section %s" % section)
+            send('Adding config section %s' % section)
             config_obj.add_section(section)
             modified = True
         for option in example_obj.options(section):
             if not config_obj.has_option(section, option):
-                send(f"Adding default value for config option {section}.{option}")
+                send(f'Adding default value for config option {section}.{option}')
                 config_obj[section][option] = example_obj[section][option]
                 modified = True
     # Check for removed sections/options
@@ -46,18 +46,18 @@ def migrate_config(config_file: str, config_obj: configparser.ConfigParser, send
         if example_obj.has_section(section):
             for option in config_obj.options(section):
                 if not example_obj.has_option(section, option):
-                    send(f"Obsolete config option {section}.{option}, consider removing.")
+                    send(f'Obsolete config option {section}.{option}, consider removing.')
         else:
-            send("Obsolete config section %s, consider removing." % section)
+            send('Obsolete config section %s, consider removing.' % section)
     if modified:
-        send("Config file automatically migrated, please review.")
+        send('Config file automatically migrated, please review.')
         with open(config_file, 'w') as f:
             config_obj.write(f)
 
 
 def get_config() -> configparser.ConfigParser:
     if _config_file is None:
-        raise Exception("Invalid config")
+        raise Exception('Invalid config')
     config_obj = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(_config_file) as f:
         config_obj.read_file(f)
@@ -75,27 +75,27 @@ def load_config(config_file: str, send: Callable[[str], None]) -> configparser.C
 
 def do_config(config: configparser.ConfigParser) -> None:
     nickregex = config['core']['nickregex']
-    channelregex = "#[^ ,]{1,49}"
-    prompttext = "Please enter a valid %s for the bot: "
+    channelregex = '#[^ ,]{1,49}'
+    prompttext = 'Please enter a valid %s for the bot: '
 
-    nick = ""
+    nick = ''
     while not re.match(nickregex, nick):
-        nick = input(prompttext % "nick")
+        nick = input(prompttext % 'nick')
     config['core']['nick'] = nick
 
-    channel = ""
+    channel = ''
     while not re.match(channelregex, channel):
-        channel = input(prompttext % "primary channel")
+        channel = input(prompttext % 'primary channel')
     config['core']['channel'] = channel
 
-    controlchannel = ""
+    controlchannel = ''
     while not re.match(channelregex, controlchannel):
-        controlchannel = input(prompttext % "control channel")
+        controlchannel = input(prompttext % 'control channel')
     config['core']['ctrlchan'] = controlchannel
 
-    owner = ""
+    owner = ''
     while not re.match(nickregex, owner):
-        owner = input(prompttext % "nick of owner")
+        owner = input(prompttext % 'nick of owner')
     config['auth']['owner'] = owner
 
 
@@ -114,6 +114,6 @@ def do_setup(configfile: str) -> None:
             with open(groupsfile, 'w') as f:
                 f.write(resources.read_text('cslbot.static', 'groups.example'))
     except PermissionError:
-        raise Exception("Please make sure that the user you are running CslBot as has permission to write to %s" % configdir)
+        raise Exception('Please make sure that the user you are running CslBot as has permission to write to %s' % configdir)
     print('WARNING: you must set the db.engine option for the bot to work.')
-    print("Configuration succeded, please review %s and restart the bot." % configfile)
+    print('Configuration succeded, please review %s and restart the bot.' % configfile)

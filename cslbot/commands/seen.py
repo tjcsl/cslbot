@@ -24,12 +24,12 @@ from ..helpers.orm import Log
 
 def get_last(cursor, cmdchar, ctrlchan, nick):
     command = f'{cmdchar}seen {nick}'
-    stmt = select(Log).where(
+    stmt = (select(Log).where(
         Log.source.ilike(nick),
         Log.target != ctrlchan,
         Log.msg != command,
         Log.type != 'join',
-    ).order_by(Log.time.desc())
+    ).order_by(Log.time.desc()))
     return cursor.scalars(stmt).first()
 
 
@@ -41,17 +41,20 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Seen who?")
+        send('Seen who?')
         return
-    cmdchar, ctrlchan = args['config']['core']['cmdchar'], args['config']['core']['ctrlchan']
+    cmdchar, ctrlchan = (
+        args['config']['core']['cmdchar'],
+        args['config']['core']['ctrlchan'],
+    )
     last = get_last(args['db'], cmdchar, ctrlchan, msg)
     if last is None:
-        send("%s has never shown their face." % msg)
+        send('%s has never shown their face.' % msg)
         return
     delta = datetime.now() - last.time
     # We only need second-level precision.
     delta -= delta % timedelta(seconds=1)
-    output = f"{msg} was last seen {delta} ago "
+    output = f'{msg} was last seen {delta} ago '
     if last.type == 'pubmsg' or last.type == 'privmsg':
         output += 'saying "%s"' % last.msg
     elif last.type == 'action':
@@ -71,5 +74,5 @@ def cmd(send, msg, args):
     elif last.type == 'mode':
         output += 'setting mode %s' % last.msg
     else:
-        raise Exception("Invalid type.")
+        raise Exception('Invalid type.')
     send(output)

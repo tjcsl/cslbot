@@ -43,7 +43,7 @@ def setup_db(session, botconfig, confdir):
 
     # Populate permissions table with owner.
     owner_nick = botconfig['auth']['owner']
-    if session.scalars(select(Permissions).where(Permissions.nick == owner_nick)).first() is None:
+    if (session.scalars(select(Permissions).where(Permissions.nick == owner_nick)).first() is None):
         session.add(Permissions(nick=owner_nick, role='owner'))
 
 
@@ -75,7 +75,7 @@ class Polls(Base):
 class Poll_responses(Base):  # noqa
     response = Column(UnicodeText)
     voter = Column(UnicodeText)
-    pid = Column(Integer, ForeignKey("polls.id"))
+    pid = Column(Integer, ForeignKey('polls.id'))
 
 
 class Weather_prefs(Base):  # noqa
@@ -169,6 +169,6 @@ class UrbanBlacklist(Base):
 
 class Permissions(Base):
     nick = Column(UnicodeText)
-    role = Column(Enum("owner", "admin", name="role_enum"))
+    role = Column(Enum('owner', 'admin', name='role_enum'))
     registered = Column(Boolean, default=False)
     time = Column(DateTime)

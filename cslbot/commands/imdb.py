@@ -33,4 +33,4 @@ def cmd(send, msg, args):
     html = fromstring(req.text)
     name = html.find('head/title').text.split('-')[0].strip()
     key = args['config']['api']['bitlykey']
-    send(f"{name} -- {get_short(req.url, key)}")
+    send(f'{name} -- {get_short(req.url, key)}')

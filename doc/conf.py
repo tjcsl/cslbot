@@ -29,7 +29,13 @@ sys.path.insert(0, os.path.abspath('..'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.doctest', 'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.doctest',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
+]
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 # TODO(pefoley): find the new location
@@ -208,13 +214,10 @@ htmlhelp_basename = 'CslBot_doc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
-
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
 }
@@ -258,7 +261,15 @@ man_pages = [(master_doc, 'cslbot', 'CslBot Documentation', [author], 1)]
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [(master_doc, 'CslBot', 'CslBot Documentation', author, 'CslBot', 'An easily extensible, modular irc bot.', 'Miscellaneous')]
+texinfo_documents = [(
+    master_doc,
+    'CslBot',
+    'CslBot Documentation',
+    author,
+    'CslBot',
+    'An easily extensible, modular irc bot.',
+    'Miscellaneous',
+)]
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []

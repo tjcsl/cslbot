@@ -46,12 +46,12 @@ def cmd(send, msg, args):
 
     if cmdargs.author:
         if not cmdargs.query:
-            send("No author specified")
+            send('No author specified')
             return
         searchtype = 'author'
     elif cmdargs.search:
         if not cmdargs.query:
-            send("No search terms specified")
+            send('No search terms specified')
             return
         searchtype = 'search'
     else:
@@ -59,18 +59,20 @@ def cmd(send, msg, args):
 
     if cmdargs.query:
         cmdargs.query = ' '.join(cmdargs.query)
-    req = get("http://www.stands4.com/services/v2/quotes.php",
-              params={
-                  'uid': uid,
-                  'tokenid': token,
-                  'query': cmdargs.query,
-                  'searchtype': searchtype
-              })
+    req = get(
+        'http://www.stands4.com/services/v2/quotes.php',
+        params={
+            'uid': uid,
+            'tokenid': token,
+            'query': cmdargs.query,
+            'searchtype': searchtype,
+        },
+    )
     xml = etree.fromstring(req.content, parser=XMLParser(recover=True))
     if len(xml) == 0:
-        send("No words of wisdom found")
+        send('No words of wisdom found')
         return
     entry = choice(xml)
     quote = entry.find('quote').text
     author = entry.find('author').text
-    send(f"{quote} -- {author}")
+    send(f'{quote} -- {author}')

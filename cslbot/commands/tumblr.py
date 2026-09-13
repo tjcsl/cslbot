@@ -43,21 +43,29 @@ def cmd(send, msg, args):
     if cmdargs.random:
         apikey = args['config']['api']['tumblrconsumerkey']
         # First, get the number of posts
-        response = get('https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname, params={'api_key': apikey, 'type': 'text'}).json()
+        response = get(
+            'https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
+            params={
+                'api_key': apikey,
+                'type': 'text'
+            },
+        ).json()
         postcount = response['response']['total_posts']
         if postcount <= 1:
-            send("No text posts found.")
+            send('No text posts found.')
             return
         # No random post functionality and we can only get 20 posts per API call, so pick a random offset to get the random post
         offset = randint(0, postcount - 1)
-        response = get('https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
-                       params={
-                           'api_key': apikey,
-                           'offset': offset,
-                           'limit': 1,
-                           'type': 'text',
-                           'filter': 'text'
-                       }).json()
+        response = get(
+            'https://api.tumblr.com/v2/blog/%s/posts' % cmdargs.blogname,
+            params={
+                'api_key': apikey,
+                'offset': offset,
+                'limit': 1,
+                'type': 'text',
+                'filter': 'text',
+            },
+        ).json()
         entry = response['response']['posts'][0]['body']
         # Account for possibility of multiple lines
         lines = entry.splitlines()
@@ -73,11 +81,18 @@ def cmd(send, msg, args):
         if args['is_admin']:
             send(post_tumblr(args['config'], cmdargs.blogname, cmdargs.submit)[0])
         else:
-            row = Tumblrs(post=cmdargs.submit, submitter=args['nick'], nick=args['nick'], blogname=cmdargs.blogname)
+            row = Tumblrs(
+                post=cmdargs.submit,
+                submitter=args['nick'],
+                nick=args['nick'],
+                blogname=cmdargs.blogname,
+            )
             args['db'].add(row)
             args['db'].flush()
-            send("New Tumblr Post: {} -- {}, Submitted by {}".format(cmdargs.submit, cmdargs.blogname, args['nick']),
-                 target=args['config']['core']['ctrlchan'])
-            send("Issue submitted for approval.", target=args['nick'])
+            send(
+                'New Tumblr Post: {} -- {}, Submitted by {}'.format(cmdargs.submit, cmdargs.blogname, args['nick']),
+                target=args['config']['core']['ctrlchan'],
+            )
+            send('Issue submitted for approval.', target=args['nick'])
     else:
-        send("Did not get an argument (choices are --random, --submit)")
+        send('Did not get an argument (choices are --random, --submit)')

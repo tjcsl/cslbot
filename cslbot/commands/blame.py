@@ -29,6 +29,6 @@ def cmd(send, msg, args):
     """
     user = choice(get_users(args))
     if msg:
-        msg = " for " + msg
-    msg = "blames " + user + msg
+        msg = ' for ' + msg
+    msg = 'blames ' + user + msg
     send(msg, 'action')

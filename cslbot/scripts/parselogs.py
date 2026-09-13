@@ -46,8 +46,8 @@ class LogProcesser:
 
     def get_path(self, channel: str) -> str:
         if not path.abspath(path.join(self.outdir, channel)).startswith(self.outdir):
-            raise Exception("Bailing out due to possible path traversal attack from %s." % channel)
-        return path.join(self.outdir, "%s.log" % re.sub(r'[^\w#\-_\. ]', '_', channel))
+            raise Exception('Bailing out due to possible path traversal attack from %s.' % channel)
+        return path.join(self.outdir, '%s.log' % re.sub(r'[^\w#\-_\. ]', '_', channel))
 
     def check_day(self, row: Log) -> None:
         # FIXME: print out new day messages for each day, not just the most recent one.
@@ -73,7 +73,7 @@ class LogProcesser:
 
 
 def get_id(outdir: str) -> int:
-    outfile = path.join(outdir, ".dbid")
+    outfile = path.join(outdir, '.dbid')
     if not path.exists(outfile):
         return 0
     with open(outfile) as f:
@@ -93,12 +93,12 @@ def gen_log(row: Log) -> str:
     elif row.type == 'part':
         log = f'{logtime} <-- {nick} ({row.source}) has left {row.target}'
         if row.msg:
-            log = f"{log} ({row.msg})"
+            log = f'{log} ({row.msg})'
     elif row.type == 'quit':
         log = f'{logtime} <-- {nick} ({row.source}) has quit ({row.msg})'
     elif row.type == 'kick':
         args = row.msg.split()
-        log = '{} <-- {} has kicked {} ({})'.format(logtime, nick, args[0], " ".join(args[1:]))
+        log = '{} <-- {} has kicked {} ({})'.format(logtime, nick, args[0], ' '.join(args[1:]))
     elif row.type == 'action':
         log = f'{logtime} * {nick} {row.msg}'
     elif row.type == 'mode':
@@ -117,11 +117,11 @@ def gen_log(row: Log) -> str:
             nick = '+' + nick
         log = f'{logtime} <{nick}> {row.msg}'
     else:
-        raise Exception("Invalid type %s." % row.type)
+        raise Exception('Invalid type %s.' % row.type)
     return log
 
 
-def main(confdir: str = "/etc/cslbot") -> None:
+def main(confdir: str = '/etc/cslbot') -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)

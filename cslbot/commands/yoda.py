@@ -24,6 +24,6 @@ def cmd(send, msg, _):
     Syntax: {command} <msg>
     """
     if not msg:
-        send("A message, Yoda did not receive, hmmmmmm.")
+        send('A message, Yoda did not receive, hmmmmmm.')
         return
     send(gen_yoda(msg))

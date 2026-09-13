@@ -36,7 +36,7 @@ def handle(_, msg, args):
     if args['config']['feature'].getboolean('capskick'):
         nick = args['nick']
         threshold = 0.65
-        text = "shutting caps lock off"
+        text = 'shutting caps lock off'
         upper = [i for i in msg if i in string.ascii_uppercase]
         if len(msg) == 0:
             return

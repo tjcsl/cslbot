@@ -37,18 +37,18 @@ class IrcClient(client.SimpleIRCClient):
     def on_mode(self, c, e):
         if self.loading:
             return
-        if e.arguments[0] == "+o" and e.arguments[1] == self.nick:
+        if e.arguments[0] == '+o' and e.arguments[1] == self.nick:
             cmdchar = self.config['core']['cmdchar']
             c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
 
     def on_join(self, c, _):
-        c.mode(self.config['core']['ctrlchan'], "")
+        c.mode(self.config['core']['ctrlchan'], '')
 
     def on_channelmodeis(self, c, e):
         if self.loading:
             return
-        if "m" not in e.arguments[1]:
+        if 'm' not in e.arguments[1]:
             cmdchar = self.config['core']['cmdchar']
             c.privmsg(self.config['core']['ctrlchan'], '%sreload' % cmdchar)
             self.loading = True
@@ -57,12 +57,12 @@ class IrcClient(client.SimpleIRCClient):
         ctrlchan = self.config['core']['ctrlchan']
         if e.source.nick == self.config['core']['nick']:
             if e.arguments[0] == "Aye Aye Capt'n":
-                print("Reload successful.")
+                print('Reload successful.')
                 c.part(ctrlchan)
                 c.quit()
                 sys.exit(0)
             else:
-                print("Reload failed.")
+                print('Reload failed.')
                 c.part(ctrlchan)
                 c.quit()
                 sys.exit(1)
@@ -73,14 +73,20 @@ def main() -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open('config.cfg') as f:
         config.read_file(f)
-    ctrl_nick = "bot-controller"
+    ctrl_nick = 'bot-controller'
     ircclient = IrcClient(ctrl_nick, config)
     if config.getboolean('core', 'ssl'):
         factory = connection.Factory(wrapper=ssl.wrap_socket, ipv6=config.getboolean('core', 'ipv6'))
     else:
         factory = connection.Factory(ipv6=config.getboolean('core', 'ipv6'))
     for host in config['core']['host'].split(','):
-        ircclient.connect(host.strip(), config.getint('core', 'ircport'), ctrl_nick, config['auth']['serverpass'], connect_factory=factory)
+        ircclient.connect(
+            host.strip(),
+            config.getint('core', 'ircport'),
+            ctrl_nick,
+            config['auth']['serverpass'],
+            connect_factory=factory,
+        )
         ircclient.start()
 
 

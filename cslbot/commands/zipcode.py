@@ -37,8 +37,15 @@ def cmd(send, msg, args):
         send(str(e))
         return
 
-    req = get("http://www.stands4.com/services/v2/zip.php", params={'uid': uid, 'tokenid': token, 'zip': cmdargs.zipcode})
+    req = get(
+        'http://www.stands4.com/services/v2/zip.php',
+        params={
+            'uid': uid,
+            'tokenid': token,
+            'zip': cmdargs.zipcode
+        },
+    )
 
     xml = lxml.etree.fromstring(req.content, parser=lxml.etree.XMLParser(recover=True))
     location = xml.find('location').text
-    send(f"{cmdargs.zipcode}: {location}")
+    send(f'{cmdargs.zipcode}: {location}')

@@ -26,6 +26,6 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Gizoogle what all up in here?")
+        send('Gizoogle what all up in here?')
         return
     send(gen_gizoogle(msg))

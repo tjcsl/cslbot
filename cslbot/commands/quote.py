@@ -30,7 +30,7 @@ def do_get_quote(session, qid=None):
         if not quotes:
             return "There aren't any quotes yet."
         quote = choice(quotes)
-        return "Quote #%d: %s -- %s" % (quote.id, quote.quote, quote.nick)
+        return 'Quote #%d: %s -- %s' % (quote.id, quote.quote, quote.nick)
     else:
         quote = session.get(Quotes, qid)
         if quote is None:
@@ -38,15 +38,15 @@ def do_get_quote(session, qid=None):
         if quote.accepted == 0:
             return "That quote hasn't been accepted yet."
         else:
-            return f"{quote.quote} -- {quote.nick}"
+            return f'{quote.quote} -- {quote.nick}'
 
 
 def get_quotes_nick(session, nick):
     rows = session.scalars(select(Quotes).where(Quotes.nick == nick, Quotes.accepted == 1)).all()
     if not rows:
-        return "No quotes for %s" % nick
+        return 'No quotes for %s' % nick
     row = choice(rows)
-    return "Quote #%d (out of %d): %s -- %s" % (row.id, len(rows), row.quote, nick)
+    return 'Quote #%d (out of %d): %s -- %s' % (row.id, len(rows), row.quote, nick)
 
 
 def do_add_quote(nick, quote, session, isadmin, approve, send, args):
@@ -55,12 +55,15 @@ def do_add_quote(nick, quote, session, isadmin, approve, send, args):
     session.flush()
     if isadmin and approve:
         row.accepted = 1
-        send("Added quote %d!" % row.id)
+        send('Added quote %d!' % row.id)
     else:
         if approve:
-            send("Only admins can auto-approve quotes.")
-        send("Quote submitted for approval.", target=args['nick'])
-        send("New Quote: #%d %s -- %s, Submitted by %s" % (row.id, quote, nick, args['nick']), target=args['config']['core']['ctrlchan'])
+            send('Only admins can auto-approve quotes.')
+        send('Quote submitted for approval.', target=args['nick'])
+        send(
+            'New Quote: #%d %s -- %s, Submitted by %s' % (row.id, quote, nick, args['nick']),
+            target=args['config']['core']['ctrlchan'],
+        )
 
 
 def do_update_quote(session, qid, nick, quote):
@@ -68,15 +71,15 @@ def do_update_quote(session, qid, nick, quote):
     if row is None:
         return "That quote doesn't exist!"
     if quote:
-        row.quote = " ".join(quote)
+        row.quote = ' '.join(quote)
     if nick is not None:
         row.nick = nick
-    return "Updated quote!"
+    return 'Updated quote!'
 
 
 def do_list_quotes(session, quote_url):
     num = session.scalar(select(func.count()).select_from(Quotes).where(Quotes.accepted == 1))
-    return "There are %d quotes. Check them out at %squotes.html" % (num, quote_url)
+    return 'There are %d quotes. Check them out at %squotes.html' % (num, quote_url)
 
 
 def do_delete_quote(args, session, qid):
@@ -93,9 +96,9 @@ def search_quote(session, offset, search):
     term = ' '.join(search)
     quote = session.scalars(select(Quotes).where(Quotes.quote.ilike('%%%s%%' % term)).order_by(Quotes.id.desc()).offset(offset)).first()
     if quote is None:
-        return "No matching quote found."
+        return 'No matching quote found.'
     else:
-        return "Quote #%d: %s -- %s" % (quote.id, quote.quote, quote.nick)
+        return 'Quote #%d: %s -- %s' % (quote.id, quote.quote, quote.nick)
 
 
 @Command('quote', ['db', 'nick', 'is_admin', 'config', 'type'])
@@ -129,16 +132,24 @@ def cmd(send, msg, args):
 
     if cmdargs.add:
         if args['type'] == 'privmsg':
-            send("You want everybody to know about your witty sayings, right?")
+            send('You want everybody to know about your witty sayings, right?')
         else:
             if cmdargs.nick is None:
                 send('You must specify a nick.')
             elif not cmdargs.quote:
                 send('You must specify a quote.')
             else:
-                isadmin = args['is_admin'](args['nick']) or not args['config']['feature']['quoteapprove']
-                approved = cmdargs.approve or not args['config']['feature']['quoteapprove']
-                do_add_quote(cmdargs.nick, " ".join(cmdargs.quote), session, isadmin, approved, send, args)
+                isadmin = (args['is_admin'](args['nick']) or not args['config']['feature']['quoteapprove'])
+                approved = (cmdargs.approve or not args['config']['feature']['quoteapprove'])
+                do_add_quote(
+                    cmdargs.nick,
+                    ' '.join(cmdargs.quote),
+                    session,
+                    isadmin,
+                    approved,
+                    send,
+                    args,
+                )
     elif cmdargs.list:
         send(do_list_quotes(session, args['config']['core']['url']))
     elif cmdargs.delete:
@@ -150,7 +161,7 @@ def cmd(send, msg, args):
             send("You aren't allowed to edit quotes. Please ask a bot admin to do it")
     elif cmdargs.search:
         if cmdargs.approve or cmdargs.nick:
-            send("Invalid option for --search")
+            send('Invalid option for --search')
         else:
             send(search_quote(session, cmdargs.offset, cmdargs.search))
     else:

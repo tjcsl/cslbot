@@ -28,10 +28,10 @@ def set_admin(msg, handler):
     | If NickServ tells us that the nick is authed, mark it as verified.
 
     """
-    if handler.config['feature']['servicestype'] == "ircservices":
-        match = re.match("STATUS (.*) ([0-3])", msg)
-    elif handler.config['feature']['servicestype'] == "atheme":
-        match = re.match("(.*) ACC ([0-3])", msg)
+    if handler.config['feature']['servicestype'] == 'ircservices':
+        match = re.match('STATUS (.*) ([0-3])', msg)
+    elif handler.config['feature']['servicestype'] == 'atheme':
+        match = re.match('(.*) ACC ([0-3])', msg)
     if match:
         status = int(match.group(2))
         nick = match.group(1)

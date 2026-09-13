@@ -28,37 +28,40 @@ def start_poll(args):
     if args.type == 'privmsg':
         return "We don't have secret ballots in this benevolent dictatorship!"
     if not args.msg:
-        return "Polls need a question."
+        return 'Polls need a question.'
     ctrlchan = args.config['core']['ctrlchan']
     poll = Polls(question=args.msg, submitter=args.nick)
     args.session.add(poll)
     args.session.flush()
     if args.isadmin or not args.config.getboolean('adminrestrict', 'poll'):
         poll.accepted = 1
-        return "Poll #%d created!" % poll.id
+        return 'Poll #%d created!' % poll.id
     else:
-        args.send("Poll submitted for approval.", target=args.nick)
-        args.send("New Poll: #%d -- %s, Submitted by %s" % (poll.id, args.msg, args.nick), target=ctrlchan)
-        return ""
+        args.send('Poll submitted for approval.', target=args.nick)
+        args.send(
+            'New Poll: #%d -- %s, Submitted by %s' % (poll.id, args.msg, args.nick),
+            target=ctrlchan,
+        )
+        return ''
 
 
 def delete_poll(args):
     """Deletes a poll."""
     if not args.isadmin:
-        return "Nope, not gonna do it."
+        return 'Nope, not gonna do it.'
     if not args.msg:
-        return "Syntax: !poll delete <pollnum>"
+        return 'Syntax: !poll delete <pollnum>'
     if not args.msg.isdigit():
-        return "Not A Valid Positive Integer."
+        return 'Not A Valid Positive Integer.'
     poll = args.session.scalars(select(Polls).where(Polls.accepted == 1, Polls.id == int(args.msg))).first()
     if poll is None:
-        return "Poll does not exist."
+        return 'Poll does not exist.'
     if poll.active == 1:
         return "You can't delete an active poll!"
     elif poll.deleted == 1:
-        return "Poll already deleted."
+        return 'Poll already deleted.'
     poll.deleted = 1
-    return "Poll deleted."
+    return 'Poll deleted.'
 
 
 def get_open_poll(session, pid):
@@ -68,74 +71,77 @@ def get_open_poll(session, pid):
 def edit_poll(args):
     """Edits a poll."""
     if not args.isadmin:
-        return "Nope, not gonna do it."
+        return 'Nope, not gonna do it.'
     msg = args.msg.split(maxsplit=1)
     if len(msg) < 2:
-        return "Syntax: !vote edit <pollnum> <question>"
+        return 'Syntax: !vote edit <pollnum> <question>'
     if not msg[0].isdigit():
-        return "Not A Valid Positive Integer."
+        return 'Not A Valid Positive Integer.'
     pid = int(msg[0])
     poll = get_open_poll(args.session, pid)
     if poll is None:
-        return "That poll was deleted or does not exist!"
+        return 'That poll was deleted or does not exist!'
     poll.question = msg[1]
-    return "Poll updated!"
+    return 'Poll updated!'
 
 
 def reopen(args):
     """reopens a closed poll."""
     if not args.isadmin:
-        return "Nope, not gonna do it."
+        return 'Nope, not gonna do it.'
     msg = args.msg.split()
     if not msg:
-        return "Syntax: !poll reopen <pollnum>"
+        return 'Syntax: !poll reopen <pollnum>'
     if not msg[0].isdigit():
-        return "Not a valid positve integer."
+        return 'Not a valid positve integer.'
     pid = int(msg[0])
     poll = get_open_poll(args.session, pid)
     if poll is None:
         return "That poll doesn't exist or has been deleted!"
     poll.active = 1
-    return "Poll %d reopened!" % pid
+    return 'Poll %d reopened!' % pid
 
 
 def end_poll(args):
     """Ends a poll."""
     if not args.isadmin:
-        return "Nope, not gonna do it."
+        return 'Nope, not gonna do it.'
     if not args.msg:
-        return "Syntax: !vote end <pollnum>"
+        return 'Syntax: !vote end <pollnum>'
     if not args.msg.isdigit():
-        return "Not A Valid Positive Integer."
+        return 'Not A Valid Positive Integer.'
     poll = get_open_poll(args.session, int(args.msg))
     if poll is None:
         return "That poll doesn't exist or has already been deleted!"
     if poll.active == 0:
-        return "Poll already ended!"
+        return 'Poll already ended!'
     poll.active = 0
-    return "Poll ended!"
+    return 'Poll ended!'
 
 
 def tally_poll(args):
     """Shows the results of poll."""
     if not args.msg:
-        return "Syntax: !vote tally <pollnum>"
+        return 'Syntax: !vote tally <pollnum>'
     if not args.msg.isdigit():
-        return "Not A Valid Positive Integer."
+        return 'Not A Valid Positive Integer.'
     pid = int(args.msg)
     poll = get_open_poll(args.session, pid)
     if poll is None:
-        return "That poll doesn't exist or was deleted. Use !poll list to see valid polls"
-    state = "Active" if poll.active == 1 else "Closed"
+        return ("That poll doesn't exist or was deleted. Use !poll list to see valid polls")
+    state = 'Active' if poll.active == 1 else 'Closed'
     votes = args.session.scalars(select(Poll_responses).where(Poll_responses.pid == pid)).all()
-    args.send("%s poll: %s, %d total votes" % (state, poll.question, len(votes)))
+    args.send('%s poll: %s, %d total votes' % (state, poll.question, len(votes)))
     votemap = collections.defaultdict(list)
     for v in votes:
         votemap[v.response].append(v.voter)
     for x in sorted(votemap.keys()):
-        args.send("%s: %d -- %s" % (x, len(votemap[x]), ", ".join(votemap[x])), target=args.nick)
+        args.send(
+            '%s: %d -- %s' % (x, len(votemap[x]), ', '.join(votemap[x])),
+            target=args.nick,
+        )
     if not votemap:
-        return ""
+        return ''
     ranking = collections.defaultdict(list)
     for x in votemap.keys():
         num = len(votemap[x])
@@ -144,10 +150,10 @@ def tally_poll(args):
     winners = (ranking[high], high)
     if len(winners[0]) == 1:
         winners = (winners[0][0], high)
-        return "The winner is %s with %d votes." % winners
+        return 'The winner is %s with %d votes.' % winners
     else:
-        winners = (", ".join(winners[0]), high)
-        return "Tie between %s with %d votes." % winners
+        winners = (', '.join(winners[0]), high)
+        return 'Tie between %s with %d votes.' % winners
 
 
 def get_response(session, pid, nick):
@@ -157,23 +163,23 @@ def get_response(session, pid, nick):
 def vote(session, nick, pid, response):
     """Votes on a poll."""
     if not response:
-        return "You have to vote something!"
-    if response == "n" or response == "nay":
-        response = "no"
-    elif response == "y" or response == "aye":
-        response = "yes"
+        return 'You have to vote something!'
+    if response == 'n' or response == 'nay':
+        response = 'no'
+    elif response == 'y' or response == 'aye':
+        response = 'yes'
     poll = get_open_poll(session, pid)
     if poll is None:
-        return "That poll doesn't exist or isn't active. Use !poll list to see valid polls"
+        return ("That poll doesn't exist or isn't active. Use !poll list to see valid polls")
     old_vote = get_response(session, pid, nick)
     if old_vote is None:
         session.add(Poll_responses(pid=pid, response=response, voter=nick))
-        return f"{nick} voted {response}."
+        return f'{nick} voted {response}.'
     else:
         if response == old_vote.response:
             return "You've already voted %s." % response
         else:
-            msg = f"{nick} changed their vote from {old_vote.response} to {response}."
+            msg = f'{nick} changed their vote from {old_vote.response} to {response}.'
             old_vote.response = response
             return msg
 
@@ -181,19 +187,22 @@ def vote(session, nick, pid, response):
 def retract(args):
     """Deletes a vote for a poll."""
     if not args.msg:
-        return "Syntax: !vote retract <pollnum>"
+        return 'Syntax: !vote retract <pollnum>'
     if not args.msg.isdigit():
-        return "Not A Valid Positive Integer."
+        return 'Not A Valid Positive Integer.'
     response = get_response(args.session, args.msg, args.nick)
     if response is None:
         return "You haven't voted on that poll yet!"
     args.session.delete(response)
-    return "Vote retracted"
+    return 'Vote retracted'
 
 
 def list_polls(args):
     num = args.session.scalar(select(func.count()).select_from(Polls).where(Polls.active == 1))
-    return "There are %d polls. Check them out at %spolls.html" % (num, args.config['core']['url'])
+    return 'There are %d polls. Check them out at %spolls.html' % (
+        num,
+        args.config['core']['url'],
+    )
 
 
 @Command(['vote', 'poll'], ['db', 'nick', 'is_admin', 'type', 'config'])
@@ -204,9 +213,9 @@ def cmd(send, msg, args):
 
     """
     command = msg.split()
-    msg = " ".join(command[1:])
+    msg = ' '.join(command[1:])
     if not command:
-        send("Which poll?")
+        send('Which poll?')
         return
     else:
         command = command[0]
@@ -222,7 +231,13 @@ def cmd(send, msg, args):
     parser.set_defaults(session=args['db'], msg=msg, nick=args['nick'])
     subparser = parser.add_subparsers()
     start_parser = subparser.add_parser('start', aliases=['open', 'add', 'create'])
-    start_parser.set_defaults(func=start_poll, send=send, isadmin=isadmin, type=args['type'], config=args['config'])
+    start_parser.set_defaults(
+        func=start_poll,
+        send=send,
+        isadmin=isadmin,
+        type=args['type'],
+        config=args['config'],
+    )
     tally_parser = subparser.add_parser('tally')
     tally_parser.set_defaults(func=tally_poll, send=send)
     list_parser = subparser.add_parser('list')

@@ -29,10 +29,10 @@ def do_search(msg, key, searchid):
     params = {'q': msg, 'key': key, 'cx': searchid}
     data = get('https://www.googleapis.com/customsearch/v1', params=params).json()
     if 'items' not in data:
-        output = "No Results found."
+        output = 'No Results found.'
     else:
         data = data['items'][0]
-        output = "{} -- {}".format(data['title'], data['link'])
+        output = '{} -- {}'.format(data['title'], data['link'])
     return output
 
 
@@ -51,12 +51,16 @@ def cmd(send, msg, args):
     elif msg.isdigit():
         msg = int(msg)
         if msg > latest or msg < 1:
-            send("Number out of range")
+            send('Number out of range')
             return
     else:
-        send(do_search(msg, args['config']['api']['googleapikey'], args['config']['api']['xkcdsearchid']))
+        send(do_search(
+            msg,
+            args['config']['api']['googleapikey'],
+            args['config']['api']['xkcdsearchid'],
+        ))
         return
-    url = 'http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json'
+    url = ('http://xkcd.com/%d/info.0.json' % msg if msg != 'latest' else 'http://xkcd.com/info.0.json')
     data = get(url).json()
-    output = "%s -- http://xkcd.com/%d" % (data['safe_title'], data['num'])
+    output = '%s -- http://xkcd.com/%d' % (data['safe_title'], data['num'])
     send(output)

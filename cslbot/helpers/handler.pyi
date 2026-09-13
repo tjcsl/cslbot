@@ -8,10 +8,25 @@ send_type = Callable[..., None]
 
 class BotHandler(object):
 
-    def __init__(self, config: configparser.ConfigParser, connection: client.ServerConnection, channels: Dict[str, str], confdir: str) -> None:
+    def __init__(
+        self,
+        config: configparser.ConfigParser,
+        connection: client.ServerConnection,
+        channels: Dict[str, str],
+        confdir: str,
+    ) -> None:
         ...
 
-    def do_args(self, modargs: List[str], send: send_type, nick: str, target: str, source: str, name: str, msgtype: str) -> Dict[str, Any]:
+    def do_args(
+        self,
+        modargs: List[str],
+        send: send_type,
+        nick: str,
+        target: str,
+        source: str,
+        name: str,
+        msgtype: str,
+    ) -> Dict[str, Any]:
         ...
 
     def get_data(self):
@@ -35,7 +50,15 @@ class BotHandler(object):
     def abusecheck(self, send: send_type, nick: str, target: str, limit: int, cmd: str) -> bool:
         ...
 
-    def send(self, target: str, nick: str, msg: str, msgtype: str, ignore_length=False, filters=None):
+    def send(
+        self,
+        target: str,
+        nick: str,
+        msg: str,
+        msgtype: str,
+        ignore_length=False,
+        filters=None,
+    ):
         ...
 
     def rate_limited_send(self, mtype: str, target: str, msg: Optional[str] = None) -> None:
@@ -95,7 +118,15 @@ class BotHandler(object):
     def get_cmd(self, msg: str) -> Tuple[str, str]:
         ...
 
-    def run_cmd(self, send: send_type, nick: str, target: str, cmd_name: str, cmdargs: str, e: client.Event) -> None:
+    def run_cmd(
+        self,
+        send: send_type,
+        nick: str,
+        target: str,
+        cmd_name: str,
+        cmdargs: str,
+        e: client.Event,
+    ) -> None:
         ...
 
     def handle_kick(self, c: client.ServerConnection, e: client.Event, target: str, send: send_type) -> None:

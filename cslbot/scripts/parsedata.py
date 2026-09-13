@@ -86,11 +86,17 @@ def get_winners(polls: dict[int, str], responses: dict[int, dict[str, list[str]]
         if ranking:
             high = max(ranking)
             if len(ranking[high]) == 1:
-                winners[pid] = "The winner is %s with %d votes." % (ranking[high][0], high)
+                winners[pid] = 'The winner is %s with %d votes.' % (
+                    ranking[high][0],
+                    high,
+                )
             else:
-                winners[pid] = "Tie between %s with %d votes." % (", ".join(ranking[high]), high)
+                winners[pid] = 'Tie between %s with %d votes.' % (
+                    ', '.join(ranking[high]),
+                    high,
+                )
         else:
-            winners[pid] = ""
+            winners[pid] = ''
     return winners
 
 
@@ -111,7 +117,12 @@ def output_scores(env: Environment, session: Session, outdir: str, time: str) ->
 def output_polls(env: Environment, session: Session, outdir: str, time: str) -> None:
     polls = get_polls(session)
     responses = get_responses(session, polls)
-    args = {'polls': polls, 'responses': responses, 'winners': get_winners(polls, responses), 'time': time}
+    args = {
+        'polls': polls,
+        'responses': responses,
+        'winners': get_winners(polls, responses),
+        'time': time,
+    }
     output = env.get_template('polls.html').render(**args)
     with open('%s/polls.html' % outdir, 'w', encoding='utf8') as f:
         f.write(output)
@@ -125,7 +136,7 @@ def output_urls(env: Environment, session: Session, outdir: str, time: str):
         f.write(output)
 
 
-def main(confdir="/etc/cslbot") -> None:
+def main(confdir='/etc/cslbot') -> None:
     config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
     with open(path.join(confdir, 'config.cfg')) as f:
         config.read_file(f)

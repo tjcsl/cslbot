@@ -23,10 +23,10 @@ from ..helpers.orm import Notes
 @Hook('note', ['pubmsg', 'action'], ['nick', 'db'])
 def handle(send, _, args):
     nick = args['nick']
-    notes = args['db'].scalars(select(Notes).where(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc())).all()
+    notes = (args['db'].scalars(select(Notes).where(Notes.nick == nick, Notes.pending == 1).order_by(Notes.time.asc())).all())
     for note in notes:
         time = note.time.strftime('%Y-%m-%d %H:%M:%S')
-        send(f"{nick}: Note from {note.submitter}: <{time}> {note.note}")
+        send(f'{nick}: Note from {note.submitter}: <{time}> {note.note}')
         note.pending = 0
     if notes:
         args['db'].commit()

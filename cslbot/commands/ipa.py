@@ -17,54 +17,54 @@
 from ..helpers.command import Command
 
 nato_codes = {
-    "A": "Alpha",
-    "B": "Bravo",
-    "C": "Charlie",
-    "D": "Delta",
-    "E": "Echo",
-    "F": "Foxtrot",
-    "G": "Golf",
-    "H": "Hotel",
-    "I": "India",
-    "J": "Juliet",
-    "K": "Kilo",
-    "L": "Lima",
-    "M": "Mike",
-    "N": "November",
-    "O": "Oscar",
-    "P": "Papa",
-    "Q": "Quebec",
-    "R": "Romeo",
-    "S": "Sierra",
-    "T": "Tango",
-    "U": "Uniform",
-    "V": "Victor",
-    "W": "Whiskey",
-    "X": "X-ray",
-    "Y": "Yankee",
-    "Z": "Zulu",
-    " ": "Space",
-    "1": "One",
-    "2": "Two",
-    "3": "Three",
-    "4": "Four",
-    "5": "Five",
-    "6": "Six",
-    "7": "Seven",
-    "8": "Eight",
-    "9": "Nine",
-    "0": "Zero"
+    'A': 'Alpha',
+    'B': 'Bravo',
+    'C': 'Charlie',
+    'D': 'Delta',
+    'E': 'Echo',
+    'F': 'Foxtrot',
+    'G': 'Golf',
+    'H': 'Hotel',
+    'I': 'India',
+    'J': 'Juliet',
+    'K': 'Kilo',
+    'L': 'Lima',
+    'M': 'Mike',
+    'N': 'November',
+    'O': 'Oscar',
+    'P': 'Papa',
+    'Q': 'Quebec',
+    'R': 'Romeo',
+    'S': 'Sierra',
+    'T': 'Tango',
+    'U': 'Uniform',
+    'V': 'Victor',
+    'W': 'Whiskey',
+    'X': 'X-ray',
+    'Y': 'Yankee',
+    'Z': 'Zulu',
+    ' ': 'Space',
+    '1': 'One',
+    '2': 'Two',
+    '3': 'Three',
+    '4': 'Four',
+    '5': 'Five',
+    '6': 'Six',
+    '7': 'Seven',
+    '8': 'Eight',
+    '9': 'Nine',
+    '0': 'Zero',
 }
 
 
 def gen_nato(msg):
-    nato = ""
+    nato = ''
     for x in msg:
         x = x.upper()
         if x in nato_codes:
-            nato += "%s " % nato_codes[x]
+            nato += '%s ' % nato_codes[x]
         else:
-            nato += "? "
+            nato += '? '
     return nato
 
 
@@ -76,10 +76,10 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("NATO what?")
+        send('NATO what?')
         return
     nato = gen_nato(msg)
     if len(nato) > 100:
-        send("Your NATO is too long. Have you considered letters?")
+        send('Your NATO is too long. Have you considered letters?')
     else:
         send(nato)

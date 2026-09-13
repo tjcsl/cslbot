@@ -33,7 +33,7 @@ def cmd(send, msg, args):
         if match.group(1) == 'int':
             randtype = 'int'
         else:
-            send("Invalid Flag.")
+            send('Invalid Flag.')
             return
     if randtype == 'hex':
         send(hex(getrandbits(50)))
@@ -44,6 +44,6 @@ def cmd(send, msg, args):
             if msg[1].isdigit():
                 maxlen = int(msg[1])
             else:
-                send("Invalid Length")
+                send('Invalid Length')
                 return
         send(str(randrange(maxlen)))

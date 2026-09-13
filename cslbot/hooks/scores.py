@@ -31,7 +31,7 @@ def handle(send, msg, args):
 
     """
     session = args['db']
-    matches = re.findall(r"\b(?<!-)(%s{2,16})(\+\+|--)" % args['config']['core']['nickregex'], msg)
+    matches = re.findall(r'\b(?<!-)(%s{2,16})(\+\+|--)' % args['config']['core']['nickregex'], msg)
     if not matches:
         return
     if args['type'] == 'privmsg':
@@ -42,10 +42,10 @@ def handle(send, msg, args):
         if args['abuse'](args['nick'], 5, 'scores'):
             return
         name, direction = match[0].lower(), match[1]
-        if direction == "++":
+        if direction == '++':
             score = 1
             if name == args['nick'].lower():
-                send("%s: No self promotion! You lose 10 points." % args['nick'])
+                send('%s: No self promotion! You lose 10 points.' % args['nick'])
                 score = -10
         else:
             score = -1

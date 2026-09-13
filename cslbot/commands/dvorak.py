@@ -22,7 +22,7 @@ from ..helpers.orm import Log
 
 
 def get_log(conn, user, target):
-    stmt = select(Log.msg).where(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc())
+    stmt = (select(Log.msg).where(Log.type == 'pubmsg', Log.target == target).order_by(Log.time.desc()))
     if user is None:
         return conn.scalar(stmt.offset(1).limit(1))
     else:
@@ -30,8 +30,12 @@ def get_log(conn, user, target):
 
 
 def translate(msg, encode=True):
-    dv_orig = r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'  # noqa
-    dv_dvor = r'[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'  # noqa
+    dv_orig = (
+        r'-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'  # noqa
+    )
+    dv_dvor = (
+        r'[]\',.pyfgcrl/=\\aoeuidhtns-;qjkxbmwvz{}"<>PYFGCRL?+|AOEUIDHTNS_:QJKXBMWVZ'  # noqa
+    )
     dv_encode = str.maketrans(dv_orig, dv_dvor)
     dv_decode = str.maketrans(dv_dvor, dv_orig)
     return msg.translate(dv_encode) if encode else msg.translate(dv_decode)
@@ -56,7 +60,7 @@ def cmd(send, msg, args):
         if cmdargs.nick:
             send('--nick cannot be combined with a message')
         else:
-            send(translate(" ".join(cmdargs.msg), False).strip())
+            send(translate(' '.join(cmdargs.msg), False).strip())
     else:
         log = get_log(args['db'], cmdargs.nick, args['target'])
         if not log:

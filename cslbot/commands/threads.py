@@ -34,7 +34,7 @@ def cmd(send, *_):
             tid = int(res.group(1))
             # Handle the main server thread (permanently listed as _worker)
             if x.name == '_worker':
-                thread_names.append((tid, "%s running server thread" % x.name))
+                thread_names.append((tid, '%s running server thread' % x.name))
         # Handle everything else including MainThread and deferred threads
         else:
             res = re.match(r'Thread.*(\d+)', x.name)

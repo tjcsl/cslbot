@@ -37,18 +37,21 @@ def cmd(send, msg, args):
         send(str(e))
         return
     stmt = select(Log.msg, Log.source)
-    nick = ' '.join(cmdargs.nick) if cmdargs.nick else ""
+    nick = ' '.join(cmdargs.nick) if cmdargs.nick else ''
     if nick:
         stmt = stmt.where(Log.source == nick)
     else:
         stmt = stmt.where(Log.source != args['botnick'])
-    target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel']
-    stmt = stmt.where(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), Log.target == target,
-                      func.length(Log.msg) > 5).order_by(func.random()).limit(1)
+    target = (cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['config']['core']['channel'])
+    stmt = (stmt.where(
+        or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'),
+        Log.target == target,
+        func.length(Log.msg) > 5,
+    ).order_by(func.random()).limit(1))
     quote = args['db'].execute(stmt).first()
     if quote:
-        send("%s -- %s" % quote)
+        send('%s -- %s' % quote)
     elif nick:
         send("%s isn't very quotable." % nick)
     else:
-        send("Nobody is very quotable :(")
+        send('Nobody is very quotable :(')

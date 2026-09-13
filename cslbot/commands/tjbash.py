@@ -45,7 +45,7 @@ def cmd(send, msg, _):
     doc = fromstring(req.text)
     quotes = doc.find_class('quote-body')
     if not quotes:
-        send("There were no results.")
+        send('There were no results.')
         return
     quote = choice(quotes)
     lines = [x.strip() for x in map(operator.methodcaller('strip'), quote.itertext())]
@@ -56,6 +56,6 @@ def cmd(send, msg, _):
     postid = quote.getparent().getparent().get('id').replace('quote-', '')
     if tags:
         tags = [x.text for x in tags[0].findall('.//a')]
-        send(" -- {} -- {}http://tjbash.org/{}".format(', '.join(tags), "continued: " if (len(lines) > 3) else "", postid))
+        send(' -- {} -- {}http://tjbash.org/{}'.format(', '.join(tags), 'continued: ' if (len(lines) > 3) else '', postid))
     else:
-        send(f" -- http://tjbash.org/{postid}")
+        send(f' -- http://tjbash.org/{postid}')

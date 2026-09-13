@@ -29,21 +29,21 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Ping what?")
+        send('Ping what?')
         return
     channel = args['target'] if args['target'] != 'private' else args['nick']
     # CTCP PING
-    if "." not in msg and ":" not in msg:
+    if '.' not in msg and ':' not in msg:
         targets = set(msg.split())
         if len(targets) > 3:
-            send("Please specify three or fewer people to ping.")
+            send('Please specify three or fewer people to ping.')
             return
         for target in targets:
             if not re.match(args['config']['core']['nickregex'], target):
-                send("Invalid nick %s" % target)
+                send('Invalid nick %s' % target)
             else:
                 args['handler'].ping_map[target] = channel
-                args['handler'].connection.ctcp("PING", target, " ".join(str(time()).split('.')))
+                args['handler'].connection.ctcp('PING', target, ' '.join(str(time()).split('.')))
         return
     try:
         answer = subprocess.check_output([args['name'], '-W', '1', '-c', '1', msg], stderr=subprocess.STDOUT)
@@ -52,6 +52,6 @@ def cmd(send, msg, args):
         send(answer[1])
     except subprocess.CalledProcessError as e:
         if e.returncode == 2:
-            send("ping: unknown host " + msg)
+            send('ping: unknown host ' + msg)
         elif e.returncode == 1:
             send(e.output.decode().splitlines()[-2])

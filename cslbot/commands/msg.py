@@ -18,7 +18,7 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('msg', ['nick', 'config'], role="admin")
+@Command('msg', ['nick', 'config'], role='admin')
 def cmd(send, msg, args):
     """Sends a message to a channel
     Syntax: {command} <channel> <message>
@@ -33,4 +33,7 @@ def cmd(send, msg, args):
         return
     cmdargs.message = ' '.join(cmdargs.message)
     send(cmdargs.message, target=cmdargs.channels[0])
-    send("{} sent message {} to {}".format(args['nick'], cmdargs.message, cmdargs.channels[0]), target=args['config']['core']['ctrlchan'])
+    send(
+        '{} sent message {} to {}'.format(args['nick'], cmdargs.message, cmdargs.channels[0]),
+        target=args['config']['core']['ctrlchan'],
+    )

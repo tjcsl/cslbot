@@ -21,7 +21,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('abuse', ['config', 'db', 'handler'], role="admin")
+@Command('abuse', ['config', 'db', 'handler'], role='admin')
 def cmd(send, msg, args):
     """Shows or clears the abuse list
     Syntax: {command} <--clear|--show>
@@ -37,15 +37,15 @@ def cmd(send, msg, args):
         return
     if cmdargs.clear:
         args['handler'].abuselist.clear()
-        send("Abuse list cleared.")
+        send('Abuse list cleared.')
     elif cmdargs.show:
         abusers = []
         for x in args['handler'].abuselist.keys():
             if args['db'].scalar(select(func.count()).select_from(Ignore).where(Ignore.nick == x)):
                 abusers.append(x)
         if abusers:
-            send(", ".join(abusers))
+            send(', '.join(abusers))
         else:
-            send("No abusers.")
+            send('No abusers.')
     else:
-        send("Please specify an option.")
+        send('Please specify an option.')

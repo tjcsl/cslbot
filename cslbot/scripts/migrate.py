@@ -25,7 +25,7 @@ if exists(join(dirname(__file__), '../../.git')):
 from alembic import command, config  # noqa
 
 
-def main(confdir: str = "/etc/cslbot") -> None:
+def main(confdir: str = '/etc/cslbot') -> None:
     conf_obj = config.Config(join(confdir, 'config.cfg'))
     command.upgrade(conf_obj, 'head')
 

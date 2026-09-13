@@ -18,7 +18,7 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('mode', ['nick', 'handler', 'botnick', 'target', 'config'], role="admin")
+@Command('mode', ['nick', 'handler', 'botnick', 'target', 'config'], role='admin')
 def cmd(send, msg, args):
     """Sets a mode.
 
@@ -33,7 +33,7 @@ def cmd(send, msg, args):
         send(str(e))
         return
     target = cmdargs.channels[0] if hasattr(cmdargs, 'channels') else args['target']
-    mode = " ".join(extra)
+    mode = ' '.join(extra)
     if not mode:
         send('Please specify a mode.')
     elif target == 'private':
@@ -41,10 +41,13 @@ def cmd(send, msg, args):
     else:
         with args['handler'].data_lock:
             if target not in args['handler'].channels:
-                send("Bot not in channel %s" % target)
+                send('Bot not in channel %s' % target)
             elif args['botnick'] not in args['handler'].opers[target]:
-                send("Bot must be opped in channel %s" % target)
+                send('Bot must be opped in channel %s' % target)
             else:
                 args['handler'].connection.mode(target, mode)
                 if args['target'] != args['config']['core']['ctrlchan']:
-                    send('Mode "{}" on {} by {}'.format(mode, target, args['nick']), target=args['config']['core']['ctrlchan'])
+                    send(
+                        'Mode "{}" on {} by {}'.format(mode, target, args['nick']),
+                        target=args['config']['core']['ctrlchan'],
+                    )

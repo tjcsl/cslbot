@@ -27,6 +27,12 @@ def cmd(send, msg, args):
     Syntax: {command}
 
     """
-    req = get("http://api.fmylife.com/view/random", params={'language': 'en', 'key': args['config']['api']['fmlkey']})
+    req = get(
+        'http://api.fmylife.com/view/random',
+        params={
+            'language': 'en',
+            'key': args['config']['api']['fmlkey']
+        },
+    )
     doc = fromstring(req.content)
     send(doc.xpath('//text')[0].text)

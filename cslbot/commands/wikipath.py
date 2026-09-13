@@ -25,7 +25,13 @@ from ..helpers.command import Command
 
 def gen_path(cmdargs):
     epoch = datetime.now().timestamp()
-    params = {'a1': cmdargs.first, 'linktype': 1, 'a2': cmdargs.second, 'allowsideboxes': 1, 'submit': epoch}
+    params = {
+        'a1': cmdargs.first,
+        'linktype': 1,
+        'a2': cmdargs.second,
+        'allowsideboxes': 1,
+        'submit': epoch,
+    }
     html = get('http://beta.degreesofwikipedia.com/', params=params).text
     path = fromstring(html).find('pre')
     if path is None:
@@ -34,18 +40,30 @@ def gen_path(cmdargs):
     for x in path.text.splitlines():
         if '=>' in x:
             output.append(x.split('=>')[1].strip())
-    return " -> ".join(output)
+    return ' -> '.join(output)
 
 
 def get_article():
-    params = {'action': 'query', 'list': 'random', 'rnlimit': 1, 'rnnamespace': 0, 'format': 'json'}
+    params = {
+        'action': 'query',
+        'list': 'random',
+        'rnlimit': 1,
+        'rnnamespace': 0,
+        'format': 'json',
+    }
     data = get('http://en.wikipedia.org/w/api.php', params=params).json()
     data = data['query']['random']
     return data[0]['title'].replace(' ', '_')
 
 
 def check_article(name):
-    params = {'format': 'json', 'action': 'query', 'list': 'search', 'srlimit': '1', 'srsearch': name}
+    params = {
+        'format': 'json',
+        'action': 'query',
+        'list': 'search',
+        'srlimit': '1',
+        'srsearch': name,
+    }
     data = get('http://en.wikipedia.org/w/api.php', params=params).json()
     return data['query']['search']
 
@@ -82,5 +100,5 @@ def cmd(send, msg, args):
     if path:
         send(path.replace('_', ' '))
     else:
-        send("No path found between {} and {}. Do you need to add more links?".format(cmdargs.first.replace('_', ' '),
+        send('No path found between {} and {}. Do you need to add more links?'.format(cmdargs.first.replace('_', ' '),
                                                                                       cmdargs.second.replace('_', ' ')))

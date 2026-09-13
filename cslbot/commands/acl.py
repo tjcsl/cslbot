@@ -21,7 +21,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Permissions
 
 
-@Command('acl', ['config', 'db'], role="owner")
+@Command('acl', ['config', 'db'], role='owner')
 def cmd(send, msg, args):
     """Handles permissions
     Syntax: {command} (--add|--remove) --nick (nick) --role (admin)
@@ -42,12 +42,12 @@ def cmd(send, msg, args):
     if cmdargs.add:
         if admin is None:
             session.add(Permissions(nick=cmdargs.nick, role=cmdargs.role))
-            send(f"{cmdargs.nick} is now an {cmdargs.role}.")
+            send(f'{cmdargs.nick} is now an {cmdargs.role}.')
         else:
-            send(f"{admin.nick} is already an {admin.role}.")
+            send(f'{admin.nick} is already an {admin.role}.')
     else:
         if admin is None:
-            send(f"{cmdargs.nick} was not an {cmdargs.role}.")
+            send(f'{cmdargs.nick} was not an {cmdargs.role}.')
         else:
             session.delete(admin)
-            send(f"{admin.nick} is no longer an {admin.role}.")
+            send(f'{admin.nick} is no longer an {admin.role}.')

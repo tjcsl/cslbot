@@ -25,6 +25,6 @@ def handle(send, msg, args):
     if output is None:
         return
     if args['type'] == 'action':
-        send("correction: * {} {}".format(args['nick'], output))
+        send('correction: * {} {}'.format(args['nick'], output))
     else:
-        send("{} actually meant: {}".format(args['nick'], output))
+        send('{} actually meant: {}'.format(args['nick'], output))

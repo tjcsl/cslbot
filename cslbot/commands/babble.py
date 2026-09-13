@@ -43,8 +43,12 @@ def build_msg(cursor, speaker, length, start):
     location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
     # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
     escaped_speaker = escape(speaker)
-    count = cursor.scalar(select(Babble_count.count).where(Babble_count.type == location, Babble_count.length == length,
-                                                           Babble_count.key == escaped_speaker))
+    count = cursor.scalar(
+        select(Babble_count.count).where(
+            Babble_count.type == location,
+            Babble_count.length == length,
+            Babble_count.key == escaped_speaker,
+        ))
     if count is None:
         return "%s hasn't said anything =(" % speaker
     if start is None:
@@ -56,28 +60,28 @@ def build_msg(cursor, speaker, length, start):
             if len(start) == 1:
                 markov = markov.where(table.key.like('%s %%' % escape(start[0])))
             elif len(start) == 2:
-                markov = markov.where(table.key == escape(" ".join(start)))
+                markov = markov.where(table.key == escape(' '.join(start)))
             else:
-                return "Please specify either one or two words for --start"
+                return 'Please specify either one or two words for --start'
         elif len(start) == 1:
             markov = markov.where(table.key == escape(start[0]))
         else:
-            return "Please specify one word for --start"
+            return 'Please specify one word for --start'
         prev = cursor.scalar(markov.where(getattr(table, location) == escaped_speaker).order_by(func.random()).limit(1))
         if prev is None:
-            return "{} hasn't said {}".format(speaker, " ".join(start))
+            return "{} hasn't said {}".format(speaker, ' '.join(start))
     msg = prev
     while len(msg) < 400:
         data = cursor.execute(select(table.freq, table.word).where(table.key == prev, getattr(table, location) == escaped_speaker)).all()
         if not data:
             break
         next_word = weighted_next(data)
-        msg = f"{msg} {next_word}"
+        msg = f'{msg} {next_word}'
         if length == 2:
-            prev = f"{prev.split()[1]} {next_word}"
+            prev = f'{prev.split()[1]} {next_word}'
         else:
             prev = next_word
-    return f"{speaker} says: {msg}"
+    return f'{speaker} says: {msg}'
 
 
 @Command('babble', ['db', 'config', 'handler'])
@@ -97,4 +101,4 @@ def cmd(send, msg, args):
     if args['db'].scalar(select(func.count()).select_from(Babble)):
         send(build_msg(args['db'], cmdargs.speaker, cmdargs.length, cmdargs.start))
     else:
-        send("Please run ./scripts/gen_babble.py to initialize the babble cache")
+        send('Please run ./scripts/gen_babble.py to initialize the babble cache')

@@ -39,19 +39,24 @@ def get_nick_totals(session, command=None):
 def get_nick(session, nick):
     totals = get_nick_totals(session)
     if nick not in totals.keys():
-        return "%s has never used a bot command." % nick
+        return '%s has never used a bot command.' % nick
     else:
-        return "%s has used %d bot commands." % (nick, totals[nick])
+        return '%s has used %d bot commands.' % (nick, totals[nick])
 
 
 def get_command(session, command, totals):
     nicktotals = get_nick_totals(session, command)
     maxuser = sorted(nicktotals, key=nicktotals.get)
     if not maxuser:
-        return "Nobody has used that command."
+        return 'Nobody has used that command.'
     else:
         maxuser = maxuser[-1]
-        return "%s is the most frequent user of %s with %d out of %d uses." % (maxuser, command, nicktotals[maxuser], totals[command])
+        return '%s is the most frequent user of %s with %d out of %d uses.' % (
+            maxuser,
+            command,
+            nicktotals[maxuser],
+            totals[command],
+        )
 
 
 @Command('stats', ['config', 'db'])
@@ -79,19 +84,19 @@ def cmd(send, msg, args):
     if command_registry.is_registered(cmdargs.command):
         send(get_command(session, cmdargs.command, totals))
     elif cmdargs.command and not command_registry.is_registered(cmdargs.command):
-        send("Command %s not found." % cmdargs.command)
+        send('Command %s not found.' % cmdargs.command)
     elif cmdargs.high:
         send('Most Used Commands:')
         high = list(reversed(sortedtotals))
         for x in range(3):
             if x < len(high):
-                send(f"{high[x]}: {totals[high[x]]}")
+                send(f'{high[x]}: {totals[high[x]]}')
     elif cmdargs.low:
         send('Least Used Commands:')
         low = sortedtotals
         for x in range(3):
             if x < len(low):
-                send(f"{low[x]}: {totals[low[x]]}")
+                send(f'{low[x]}: {totals[low[x]]}')
     elif cmdargs.userhigh:
         totals = get_nick_totals(session)
         sortedtotals = sorted(totals, key=totals.get)
@@ -99,9 +104,9 @@ def cmd(send, msg, args):
         send('Most active bot users:')
         for x in range(3):
             if x < len(high):
-                send(f"{high[x]}: {totals[high[x]]}")
+                send(f'{high[x]}: {totals[high[x]]}')
     elif cmdargs.nick:
         send(get_nick(session, cmdargs.nick))
     else:
         command = choice(list(totals.keys()))
-        send(f"{command} has been used {totals[command]} times.")
+        send(f'{command} has been used {totals[command]} times.')

@@ -27,11 +27,11 @@ def cmd(send, msg, args):
 
     """
     if not msg or len(msg.split()) < 2:
-        send("Pester needs at least two arguments.")
+        send('Pester needs at least two arguments.')
         return
     match = re.match('(%s+) (.*)' % args['config']['core']['nickregex'], msg)
     if match:
-        message = match.group(2) + " "
+        message = match.group(2) + ' '
         send(f'{match.group(1)}: {message * 3}')
     else:
-        send("Invalid Syntax.")
+        send('Invalid Syntax.')

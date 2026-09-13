@@ -31,7 +31,7 @@ class Registry:
         if name is None:
             name = obj.name
         if name in self.known_objects:
-            raise ValueError("There is already a object registered with the name %s" % obj)
+            raise ValueError('There is already a object registered with the name %s' % obj)
         self.known_objects[name] = obj
 
     def scan_for_objects(self, obj_type):
@@ -42,24 +42,24 @@ class Registry:
 
     def disable_object(self, obj_type, obj):
         if obj not in self.known_objects:
-            return f"{obj} is not a loaded {obj_type}"
+            return f'{obj} is not a loaded {obj_type}'
         if obj not in self.disabled_objects:
             self.disabled_objects.add(obj)
-            return f"Disabled {obj_type} {obj}"
+            return f'Disabled {obj_type} {obj}'
         else:
-            return "That %s is already disabled!" % obj_type
+            return 'That %s is already disabled!' % obj_type
 
     def enable_object(self, obj_type, obj):
-        if obj == "all":
+        if obj == 'all':
             self.disabled_objects.clear()
-            return "Enabled all %ss." % obj_type
+            return 'Enabled all %ss.' % obj_type
         elif obj in self.disabled_objects:
             self.disabled_objects.remove(obj)
-            return f"Enabled {obj_type} {obj}"
+            return f'Enabled {obj_type} {obj}'
         elif obj in self.known_objects:
             return "That %s isn't disabled!" % obj_type
         else:
-            return f"{obj} is not a loaded {obj_type}"
+            return f'{obj} is not a loaded {obj_type}'
 
 
 class HookRegistry(Registry):
@@ -71,7 +71,7 @@ class HookRegistry(Registry):
         :return: A list of modules that failed to reload
 
         """
-        return self.scan_for_objects("hooks")
+        return self.scan_for_objects('hooks')
 
     # FIXME: generalize these
     def get_known_hooks(self):
@@ -88,11 +88,11 @@ class HookRegistry(Registry):
 
     def disable_hook(self, hook):
         """Adds a hook to the disabled hooks list."""
-        return self.disable_object("hook", hook)
+        return self.disable_object('hook', hook)
 
     def enable_hook(self, hook):
         """Removes a command from the disabled hooks list."""
-        return self.enable_object("hook", hook)
+        return self.enable_object('hook', hook)
 
 
 hook_registry = HookRegistry()
@@ -107,7 +107,7 @@ class CommandRegistry(Registry):
         :return: A list of modules that failed to reload
 
         """
-        return self.scan_for_objects("commands")
+        return self.scan_for_objects('commands')
 
     def get_known_commands(self):
         return self.known_objects
@@ -126,11 +126,11 @@ class CommandRegistry(Registry):
 
     def disable_command(self, command):
         """Adds a command to the disabled commands list."""
-        self.disable_object("command", command)
+        self.disable_object('command', command)
 
     def enable_command(self, command):
         """Removes a command from the disabled commands list."""
-        return self.enable_object("command", command)
+        return self.enable_object('command', command)
 
 
 command_registry = CommandRegistry()

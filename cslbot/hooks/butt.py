@@ -21,16 +21,16 @@ from ..helpers.hook import Hook
 
 @Hook('butt', 'pubmsg', ['type', 'nick'])
 def handle(send, msg, args):
-    if "the cloud" in msg:
-        msg = msg.replace("the cloud", "my butt")
-    elif "cloud" in msg:
-        msg = msg.replace("cloud", "butt")
+    if 'the cloud' in msg:
+        msg = msg.replace('the cloud', 'my butt')
+    elif 'cloud' in msg:
+        msg = msg.replace('cloud', 'butt')
     else:
         return
     # make it more random.
     if random() > 0.005:
         return
     if args['type'] == 'pubmsg':
-        send("{} actually meant: {}".format(args['nick'], msg))
+        send('{} actually meant: {}'.format(args['nick'], msg))
     else:
-        send("correction: * {} {}".format(args['nick'], msg))
+        send('correction: * {} {}'.format(args['nick'], msg))

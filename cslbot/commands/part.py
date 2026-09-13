@@ -18,7 +18,7 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('part', ['handler', 'config', 'nick', 'type', 'target'], role="admin")
+@Command('part', ['handler', 'config', 'nick', 'type', 'target'], role='admin')
 def cmd(send, msg, args):
     """Orders the bot to leave a channel
     Syntax: {command} <channel>
@@ -31,4 +31,11 @@ def cmd(send, msg, args):
         send(str(e))
         return
     for chan in cmdargs.channels:
-        args['handler'].do_part(chan, args['nick'], args['target'], args['type'], send, args['handler'].connection)
+        args['handler'].do_part(
+            chan,
+            args['nick'],
+            args['target'],
+            args['type'],
+            send,
+            args['handler'].connection,
+        )

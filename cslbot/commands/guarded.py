@@ -26,6 +26,6 @@ def cmd(send, _, args):
     """
     guarded = args['handler'].guarded
     if not guarded:
-        send("Nobody is guarded.")
+        send('Nobody is guarded.')
     else:
-        send(", ".join(guarded))
+        send(', '.join(guarded))

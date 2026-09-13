@@ -31,28 +31,33 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Evaluate what?")
+        send('Evaluate what?')
         return
-    params = {'format': 'plaintext', 'reinterpret': 'true', 'input': msg, 'appid': args['config']['api']['wolframapikey']}
+    params = {
+        'format': 'plaintext',
+        'reinterpret': 'true',
+        'input': msg,
+        'appid': args['config']['api']['wolframapikey'],
+    }
     req = get('http://api.wolframalpha.com/v2/query', params=params)
     if req.status_code == 403:
-        send("WolframAlpha is having issues.")
+        send('WolframAlpha is having issues.')
         return
     if not req.content:
-        send("WolframAlpha returned an empty response.")
+        send('WolframAlpha returned an empty response.')
         return
     xml = fromstring(req.content)
     output = xml.findall('./pod')
     key = args['config']['api']['bitlykey']
-    url = get_short("http://www.wolframalpha.com/input/?i=%s" % quote(msg), key)
-    text = "No output found."
+    url = get_short('http://www.wolframalpha.com/input/?i=%s' % quote(msg), key)
+    text = 'No output found.'
     for x in output:
         if 'primary' in x.keys():
             text = x.find('./subpod/plaintext').text
     if text is None:
-        send("No Output parsable")
+        send('No Output parsable')
     else:
         # Only send the first three lines of output
         for t in text.splitlines()[:3]:
             send(t)
-    send("See %s for more info" % url)
+    send('See %s for more info' % url)

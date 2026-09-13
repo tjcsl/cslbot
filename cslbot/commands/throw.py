@@ -29,14 +29,14 @@ def cmd(send, msg, args):
 
     """
     users = get_users(args)
-    if " into " in msg and msg != "into":
+    if ' into ' in msg and msg != 'into':
         match = re.match('(.*) into (.*)', msg)
         if match:
             msg = f'throws {match.group(1)} into {match.group(2)}'
             send(msg, 'action')
         else:
             return
-    elif " at " in msg and msg != "at":
+    elif ' at ' in msg and msg != 'at':
         match = re.match('(.*) at (.*)', msg)
         if match:
             msg = f'throws {match.group(1)} at {match.group(2)}'
@@ -47,5 +47,5 @@ def cmd(send, msg, args):
         msg = f'throws {msg} at {choice(users)}'
         send(msg, 'action')
     else:
-        send("Throw what?")
+        send('Throw what?')
         return

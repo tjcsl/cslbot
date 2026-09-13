@@ -32,7 +32,7 @@ from sqlalchemy import select
 
 if sys.version_info < (3, 7):
     # Dependency on importlib.resources
-    raise Exception("Need Python 3.7 or higher.")
+    raise Exception('Need Python 3.7 or higher.')
 
 from . import backtrace, config, handler, misc, orm, reloader, server  # noqa
 
@@ -57,11 +57,11 @@ class IrcBot(bot.SingleServerIRCBot):
         self.reactor_class = functools.partial(client.Reactor, on_connect=self.do_cap)
         super().__init__([spec], nick, nick, connect_factory=factory)
         # These allow reload events to be processed when a reload has failed.
-        self.connection.add_global_handler("pubmsg", self.reload_handler, -30)
-        self.connection.add_global_handler("privmsg", self.reload_handler, -30)
-        self.connection.add_global_handler("all_events", self.handle_event, 10)
+        self.connection.add_global_handler('pubmsg', self.reload_handler, -30)
+        self.connection.add_global_handler('privmsg', self.reload_handler, -30)
+        self.connection.add_global_handler('all_events', self.handle_event, 10)
         # We need to get the channels that a nick is currently in before the regular quit event is processed and the nick is removed from self.channels.
-        self.connection.add_global_handler("quit", self.handle_quit, -21)
+        self.connection.add_global_handler('quit', self.handle_quit, -21)
         self.event_queue = queue.Queue()
         # Are we running in bare-bones, reload-only mode?
         self.reload_event = threading.Event()
@@ -69,7 +69,7 @@ class IrcBot(bot.SingleServerIRCBot):
         self.connection.buffer_class.errors = 'replace'
 
         if not reloader.load_modules(self.config, confdir):
-            raise Exception("Failed to load modules.")
+            raise Exception('Failed to load modules.')
 
         self.handler = handler.BotHandler(self.config, self.connection, self.channels, confdir, self.idx)
         if self.config['feature'].getboolean('server'):
@@ -77,8 +77,28 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def handle_event(self, c, e):
         handled_types = [
-            'account', 'action', 'authenticate', 'bannedfromchan', 'cap', 'ctcpreply', 'error', 'featurelist', 'join', 'kick', 'mode',
-            'nicknameinuse', 'nosuchnick', 'nick', 'part', 'privmsg', 'privnotice', 'pubnotice', 'pubmsg', 'topic', 'welcome', 'whospcrpl'
+            'account',
+            'action',
+            'authenticate',
+            'bannedfromchan',
+            'cap',
+            'ctcpreply',
+            'error',
+            'featurelist',
+            'join',
+            'kick',
+            'mode',
+            'nicknameinuse',
+            'nosuchnick',
+            'nick',
+            'part',
+            'privmsg',
+            'privnotice',
+            'pubnotice',
+            'pubmsg',
+            'topic',
+            'welcome',
+            'whospcrpl',
         ]
         # We only need to do stuff for a sub-set of events.
         if e.type not in handled_types:
@@ -99,7 +119,7 @@ class IrcBot(bot.SingleServerIRCBot):
         if version is None:
             return "Can't get the version."
         else:
-            return "cslbot - %s" % version
+            return 'cslbot - %s' % version
 
     def do_cap(self, _):
         self.connection.cap('REQ', 'account-notify')
@@ -127,7 +147,7 @@ class IrcBot(bot.SingleServerIRCBot):
 
     def shutdown(self, *_):
         if hasattr(self, 'connection'):
-            self.connection.disconnect("Bot received SIGTERM")
+            self.connection.disconnect('Bot received SIGTERM')
         shutdown.set()
 
     def shutdown_mp(self, clean=True):
@@ -155,8 +175,11 @@ class IrcBot(bot.SingleServerIRCBot):
             self.handler.do_log(channel, e.source, e.arguments[0], 'quit')
         # If we're the one quiting, shut things down cleanly.
         # If it's an Excess Flood or other server-side quit we want to reconnect.
-        if e.source.nick == self.connection.real_nickname and e.arguments[0] in ['Client Quit', 'Quit: Goodbye, Cruel World!']:
-            print("shutdown")
+        if e.source.nick == self.connection.real_nickname and e.arguments[0] in [
+                'Client Quit',
+                'Quit: Goodbye, Cruel World!',
+        ]:
+            print('shutdown')
             shutdown.set()
 
     def handle_msg(self, c, e):
@@ -196,7 +219,7 @@ class IrcBot(bot.SingleServerIRCBot):
                 with self.handler.db.session_scope() as session:
                     admins = [x.nick for x in session.scalars(select(orm.Permissions)).all()]
             if e.source.nick not in admins:
-                c.privmsg(self.get_target(e), "Nope, not gonna do it.")
+                c.privmsg(self.get_target(e), 'Nope, not gonna do it.')
                 return
             importlib.reload(reloader)
             self.reload_event.set()
@@ -206,12 +229,12 @@ class IrcBot(bot.SingleServerIRCBot):
                     if self.config.getboolean('feature', 'server'):
                         self.server = server.init_server(self)
                     self.reload_event.clear()
-                logging.info("Successfully reloaded %s", self.connection.server)
+                logging.info('Successfully reloaded %s', self.connection.server)
             except Exception as ex:
                 backtrace.handle_traceback(ex, c, self.get_target(e), self.config)
 
 
-def init(confdir="/etc/cslbot"):
+def init(confdir='/etc/cslbot'):
     """The bot's main entry point.
 
     | Initialize the bot and start processing messages.
@@ -219,16 +242,20 @@ def init(confdir="/etc/cslbot"):
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--debug', help='Enable debug logging.', action='store_true')
-    parser.add_argument('--validate', help='Initialize the db and perform other sanity checks.', action='store_true')
+    parser.add_argument(
+        '--validate',
+        help='Initialize the db and perform other sanity checks.',
+        action='store_true',
+    )
     args = parser.parse_args()
     loglevel = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(level=loglevel, format="%(asctime)s %(levelname)s:%(module)s:%(message)s")
+    logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s:%(module)s:%(message)s')
     # We don't need a bunch of output from the requests module.
-    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger('requests').setLevel(logging.WARNING)
 
     config_file = path.join(confdir, 'config.cfg')
     if not path.exists(config_file):
-        logging.info("Setting up config file")
+        logging.info('Setting up config file')
         config.do_setup(config_file)
         sys.exit(0)
 
@@ -246,7 +273,7 @@ def init(confdir="/etc/cslbot"):
     if args.validate:
         for cslbot in bots:
             cslbot.shutdown_mp()
-        print("Everything is ready to go!")
+        print('Everything is ready to go!')
         return
 
     threads = []
@@ -267,8 +294,8 @@ def init(confdir="/etc/cslbot"):
     except Exception as ex:
         cslbot.disconnect('Bot died.')
         cslbot.shutdown_mp(False)
-        logging.error("The bot died! %s", ex)
-        output = "".join(traceback.format_exc()).strip()
+        logging.error('The bot died! %s', ex)
+        output = ''.join(traceback.format_exc()).strip()
         for line in output.split('\n'):
             logging.error(line)
         shutdown.set()

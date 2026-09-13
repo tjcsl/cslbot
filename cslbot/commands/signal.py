@@ -28,4 +28,4 @@ def cmd(send, msg, _):
     try:
         send(parse_header('signal', msg))
     except FileNotFoundError:
-        send("Please install gcc.")
+        send('Please install gcc.')

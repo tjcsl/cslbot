@@ -18,7 +18,7 @@ from ..helpers import arguments
 from ..helpers.command import Command
 
 
-@Command('join', ['handler', 'config', 'nick', 'type'], role="admin")
+@Command('join', ['handler', 'config', 'nick', 'type'], role='admin')
 def cmd(send, msg, args):
     """Orders the bot to join a channel
     Syntax: {command} <channel> [channel] ...

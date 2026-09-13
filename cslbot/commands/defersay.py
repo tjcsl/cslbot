@@ -19,7 +19,7 @@ from ..helpers.command import Command
 from ..helpers.misc import parse_time
 
 
-@Command('defersay', ['nick', 'handler', 'config'], role="admin")
+@Command('defersay', ['nick', 'handler', 'config'], role='admin')
 def cmd(send, msg, args):
     """Says something at a later time.
 
@@ -38,9 +38,9 @@ def cmd(send, msg, args):
         cmdargs.msg = ' '.join(cmdargs.msg)
     cmdargs.delay = parse_time(cmdargs.delay)
     if cmdargs.delay is None:
-        send("Invalid unit.")
+        send('Invalid unit.')
     elif cmdargs.delay < 0:
-        send("Time travel not yet implemented, sorry.")
+        send('Time travel not yet implemented, sorry.')
     else:
         ident = args['handler'].workers.defer(cmdargs.delay, False, send, cmdargs.msg)
-        send("Message deferred, ident: %s" % ident)
+        send('Message deferred, ident: %s' % ident)

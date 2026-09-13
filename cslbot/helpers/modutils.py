@@ -53,7 +53,7 @@ def load_groups(confdir: str) -> configparser.ConfigParser:
     example_obj = configparser.ConfigParser()
     example_obj.read_string(resources.files('cslbot.static').joinpath('groups.example').read_text())
     if config_obj.sections() != example_obj.sections():
-        raise Exception("Invalid or missing section in groups.cfg, only valid sections are %s" % ",".join(example_obj.sections()))
+        raise Exception('Invalid or missing section in groups.cfg, only valid sections are %s' % ','.join(example_obj.sections()))
     return config_obj
 
 
@@ -103,17 +103,17 @@ def get_disabled(mod_type: str) -> set[str]:
 
 def get_enabled(mod_type: str, package='cslbot') -> tuple[list[str], list[str]]:
     enabled, disabled = [], []
-    for f in resources.files(f"{package}.{mod_type}").iterdir():
+    for f in resources.files(f'{package}.{mod_type}').iterdir():
         if not f.name.endswith('.py'):
             continue
         name = basename(f.name).split('.')[0]
-        mod_name = f"{package.lower()}.{mod_type}.{name}"
+        mod_name = f'{package.lower()}.{mod_type}.{name}'
         if group_enabled(mod_type, name):
             enabled.append(mod_name)
         elif group_disabled(mod_type, name):
             disabled.append(mod_name)
         elif name != '__init__':
-            logging.error("%s must be either enabled or disabled in groups.cfg" % mod_name)
+            logging.error('%s must be either enabled or disabled in groups.cfg' % mod_name)
             # default to disabled
             disabled.append(mod_name)
     return enabled, disabled
@@ -144,7 +144,7 @@ def safe_reload(modname: types.ModuleType) -> None | str:
         importlib.reload(modname)
         return None
     except Exception as e:
-        logging.error("Failed to reimport module: %s", modname)
+        logging.error('Failed to reimport module: %s', modname)
         msg, _ = backtrace.output_traceback(e)
         return msg
 
@@ -159,7 +159,7 @@ def safe_load(modname: str) -> None | str:
         importlib.import_module(modname)
         return None
     except Exception as ex:
-        logging.error("Failed to import module: %s", modname)
+        logging.error('Failed to import module: %s', modname)
         msg, _ = backtrace.output_traceback(ex)
         return msg
 

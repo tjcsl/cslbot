@@ -26,7 +26,7 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Explain What?")
+        send('Explain What?')
         return
     msg = msg.replace(' ', '+')
     msg = 'http://lmgtfy.com/?q=%s' % msg

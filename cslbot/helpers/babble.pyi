@@ -34,12 +34,14 @@ def delete_tables(cursor):
     ...
 
 
-def build_markov(cursor: orm.Session,
-                 cmdchar: str,
-                 ctrlchan: str,
-                 speaker: Optional[str] = None,
-                 initial_run: bool = False,
-                 debug: bool = False) -> None:
+def build_markov(
+    cursor: orm.Session,
+    cmdchar: str,
+    ctrlchan: str,
+    speaker: Optional[str] = None,
+    initial_run: bool = False,
+    debug: bool = False,
+) -> None:
     ...
 
 

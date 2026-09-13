@@ -35,8 +35,14 @@ def get_chain(session, nick, limit=datetime.min):
     curr_time = datetime.now()
     curr = nick
     while curr is not None:
-        row = session.scalars(select(Log).where(Log.msg == curr, Log.type == 'nick', ~Log.source.startswith('Guest'), Log.time < curr_time, Log.time
-                                                >= limit).order_by(Log.time.desc()).limit(1)).first()
+        row = session.scalars(
+            select(Log).where(
+                Log.msg == curr,
+                Log.type == 'nick',
+                ~Log.source.startswith('Guest'),
+                Log.time < curr_time,
+                Log.time >= limit,
+            ).order_by(Log.time.desc()).limit(1)).first()
         if row is not None:
             curr = row.source
             chain.append(curr)

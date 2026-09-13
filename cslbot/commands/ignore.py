@@ -21,7 +21,7 @@ from ..helpers.command import Command
 from ..helpers.orm import Ignore
 
 
-@Command('ignore', ['config', 'db', 'nick'], role="admin")
+@Command('ignore', ['config', 'db', 'nick'], role='admin')
 def cmd(send, msg, args):
     """Handles ignoring/unignoring people
     Syntax: {command} <--clear|--show/--list|--delete|nick>
@@ -40,25 +40,28 @@ def cmd(send, msg, args):
     session = args['db']
     if cmdargs.clear:
         session.execute(delete(Ignore))
-        send("Ignore list cleared.")
+        send('Ignore list cleared.')
     elif cmdargs.show:
         ignored = session.scalars(select(Ignore)).all()
         if ignored:
-            send(", ".join([x.nick for x in ignored]))
+            send(', '.join([x.nick for x in ignored]))
         else:
-            send("Nobody is ignored.")
+            send('Nobody is ignored.')
     elif cmdargs.delete:
         if not cmdargs.nick:
-            send("Unignore who?")
+            send('Unignore who?')
         else:
             row = session.scalars(select(Ignore).where(Ignore.nick == cmdargs.nick)).first()
             if row is None:
-                send("%s is not ignored." % cmdargs.nick)
+                send('%s is not ignored.' % cmdargs.nick)
             else:
                 session.delete(row)
-                send("%s is no longer ignored." % cmdargs.nick)
+                send('%s is no longer ignored.' % cmdargs.nick)
     elif cmdargs.nick:
-        send("{} ignored {}".format(args['nick'], cmdargs.nick), target=args['config']['core']['ctrlchan'])
+        send(
+            '{} ignored {}'.format(args['nick'], cmdargs.nick),
+            target=args['config']['core']['ctrlchan'],
+        )
         send(misc.ignore(session, cmdargs.nick))
     else:
-        send("Ignore who?")
+        send('Ignore who?')

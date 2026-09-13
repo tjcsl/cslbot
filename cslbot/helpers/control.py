@@ -23,7 +23,7 @@ from . import arguments, orm, registry, web
 
 
 def handle_chanserv(args):
-    args.send("{} {}".format(args.cmd, " ".join(args.args)), target="ChanServ")
+    args.send('{} {}'.format(args.cmd, ' '.join(args.args)), target='ChanServ')
 
 
 def toggle_logging(level):
@@ -36,78 +36,78 @@ def toggle_logging(level):
 
 def toggle_module(type, name, enable=True):
     if not name:
-        return "Missing argument."
-    reg = getattr(registry, "%s_registry" % type)
-    return reg.enable_object(type, name[0]) if enable else reg.disable_object(type, name[0])
+        return 'Missing argument.'
+    reg = getattr(registry, '%s_registry' % type)
+    return (reg.enable_object(type, name[0]) if enable else reg.disable_object(type, name[0]))
 
 
 def handle_disable(args):
-    if args.cmd == "kick":
+    if args.cmd == 'kick':
         if not args.handler.kick_enabled:
-            args.send("Kick already disabled.")
+            args.send('Kick already disabled.')
         else:
             args.handler.kick_enabled = False
-            args.send("Kick disabled.")
-    elif args.cmd in ["command", "hook"]:
+            args.send('Kick disabled.')
+    elif args.cmd in ['command', 'hook']:
         args.send(toggle_module(args.cmd, args.args, False))
-    elif args.cmd == "logging":
+    elif args.cmd == 'logging':
         if toggle_logging(logging.INFO):
-            args.send("Logging disabled.")
+            args.send('Logging disabled.')
         else:
-            args.send("logging already disabled.")
-    elif args.cmd == "chanlog":
+            args.send('logging already disabled.')
+    elif args.cmd == 'chanlog':
         if args.handler.log_to_ctrlchan:
             args.handler.log_to_ctrlchan = False
-            args.send("Control channel logging disabled.")
+            args.send('Control channel logging disabled.')
         else:
-            args.send("Control channel logging is already disabled.")
+            args.send('Control channel logging is already disabled.')
 
 
 def handle_enable(args):
-    if args.cmd == "kick":
+    if args.cmd == 'kick':
         if args.handler.kick_enabled:
-            args.send("Kick already enabled.")
+            args.send('Kick already enabled.')
         else:
             args.handler.kick_enabled = True
-            args.send("Kick enabled.")
-    elif args.cmd in ["command", "hook"]:
+            args.send('Kick enabled.')
+    elif args.cmd in ['command', 'hook']:
         args.send(toggle_module(args.cmd, args.args))
-    elif args.cmd == "all":
+    elif args.cmd == 'all':
         if not args.args:
-            args.send("Missing argument.")
-        elif args.args[0] == "commands":
+            args.send('Missing argument.')
+        elif args.args[0] == 'commands':
             args.send(registry.command_registry.enable_command(args.cmd))
-        elif args.args[0] == "hooks":
+        elif args.args[0] == 'hooks':
             args.send(registry.hook_registry.enable_hook(args.cmd))
         else:
-            args.send("Invalid argument.")
-    elif args.cmd == "logging":
+            args.send('Invalid argument.')
+    elif args.cmd == 'logging':
         if toggle_logging(logging.DEBUG):
-            args.send("Logging enabled.")
+            args.send('Logging enabled.')
         else:
-            args.send("logging already enabled.")
-    elif args.cmd == "chanlog":
+            args.send('logging already enabled.')
+    elif args.cmd == 'chanlog':
         if not args.handler.log_to_ctrlchan:
             args.handler.log_to_ctrlchan = True
-            args.send("Control channel logging enabled.")
+            args.send('Control channel logging enabled.')
         else:
-            args.send("Control channel logging is already enabled.")
+            args.send('Control channel logging is already enabled.')
 
 
 def handle_guard(args):
     if args.nick in args.handler.guarded:
-        args.send("Already guarding %s" % args.nick)
+        args.send('Already guarding %s' % args.nick)
     else:
         args.handler.guarded.append(args.nick)
-        args.send("Guarding %s" % args.nick)
+        args.send('Guarding %s' % args.nick)
 
 
 def handle_unguard(args):
     if args.nick not in args.handler.guarded:
-        args.send("%s is not being guarded" % args.nick)
+        args.send('%s is not being guarded' % args.nick)
     else:
         args.handler.guarded.remove(args.nick)
-        args.send("No longer guarding %s" % args.nick)
+        args.send('No longer guarding %s' % args.nick)
 
 
 def handle_show_pending(args):
@@ -116,81 +116,81 @@ def handle_show_pending(args):
     if pending:
         show_pending_items(args.cmd, pending, args.send)
     else:
-        args.send("No pending %s." % args.cmd)
+        args.send('No pending %s.' % args.cmd)
 
 
 def handle_show(args):
-    if args.cmd == "guarded":
+    if args.cmd == 'guarded':
         if args.handler.guarded:
-            args.send(", ".join(args.handler.guarded))
+            args.send(', '.join(args.handler.guarded))
         else:
-            args.send("Nobody is guarded.")
-    elif args.cmd in ["issues", "quotes", "polls", "tumblrs"]:
+            args.send('Nobody is guarded.')
+    elif args.cmd in ['issues', 'quotes', 'polls', 'tumblrs']:
         handle_show_pending(args)
-    elif args.cmd == "pending":
+    elif args.cmd == 'pending':
         if args.args:
-            args.send("Invalid argument %s." % args.args[0])
+            args.send('Invalid argument %s.' % args.args[0])
         else:
             show_pending(args.db, args.send)
-    elif args.cmd == "enabled":
+    elif args.cmd == 'enabled':
         if not args.args:
-            args.send("Missing argument.")
-        elif args.args[0] == "commands":
-            mods = ", ".join(sorted(registry.command_registry.get_enabled_commands()))
+            args.send('Missing argument.')
+        elif args.args[0] == 'commands':
+            mods = ', '.join(sorted(registry.command_registry.get_enabled_commands()))
             args.send(mods, ignore_length=True)
-        elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(registry.hook_registry.get_enabled_hooks()))
+        elif args.args[0] == 'hooks':
+            mods = ', '.join(sorted(registry.hook_registry.get_enabled_hooks()))
             args.send(mods)
         else:
-            args.send("Invalid argument.")
-    elif args.cmd == "disabled":
+            args.send('Invalid argument.')
+    elif args.cmd == 'disabled':
         if not args.args:
-            args.send("Missing argument.")
-        elif args.args[0] == "commands":
-            mods = ", ".join(sorted(registry.command_registry.get_disabled_commands()))
-            args.send(mods if mods else "No disabled commands.")
-        elif args.args[0] == "hooks":
-            mods = ", ".join(sorted(registry.hook_registry.get_disabled_hooks()))
-            args.send(mods if mods else "No disabled hooks.")
+            args.send('Missing argument.')
+        elif args.args[0] == 'commands':
+            mods = ', '.join(sorted(registry.command_registry.get_disabled_commands()))
+            args.send(mods if mods else 'No disabled commands.')
+        elif args.args[0] == 'hooks':
+            mods = ', '.join(sorted(registry.hook_registry.get_disabled_hooks()))
+            args.send(mods if mods else 'No disabled hooks.')
         else:
-            args.send("Invalid argument.")
+            args.send('Invalid argument.')
 
 
 def show_pending_items(type, items, send):
     for x in items:
         if type == 'quotes':
-            send("#%d %s -- %s, Submitted by %s" % (x.id, x.quote, x.nick, x.submitter))
+            send('#%d %s -- %s, Submitted by %s' % (x.id, x.quote, x.nick, x.submitter))
         elif type == 'issues':
             nick = x.source.split('!')[0]
-            send("#%d %s, Submitted by %s" % (x.id, x.title, nick))
+            send('#%d %s, Submitted by %s' % (x.id, x.title, nick))
         elif type == 'polls':
-            send("#%d -- %s, Submitted by %s" % (x.id, x.question, x.submitter))
+            send('#%d -- %s, Submitted by %s' % (x.id, x.question, x.submitter))
         elif type == 'tumblrs':
-            send("#%d -- %s for %s, Submitted by %s" % (x.id, x.post, x.blogname, x.submitter))
+            send('#%d -- %s for %s, Submitted by %s' % (x.id, x.post, x.blogname, x.submitter))
 
 
 def show_pending(db, send, ping=False):
-    admins = ": ".join([x.nick for x in db.scalars(select(orm.Permissions)).all()])
+    admins = ': '.join([x.nick for x in db.scalars(select(orm.Permissions)).all()])
     pending = {'issues': [], 'quotes': [], 'polls': [], 'tumblrs': []}
     for name in pending:
         table = getattr(orm, name.capitalize())
         pending[name] = db.scalars(select(table).where(table.accepted == 0)).all()
     if any(pending.values()):
         if ping:
-            send("%s: Items are Pending Approval" % admins)
+            send('%s: Items are Pending Approval' % admins)
     elif not ping:
-        send("No items are Pending")
+        send('No items are Pending')
     for type, items in pending.items():
         if items:
-            send("%s:" % type.capitalize())
+            send('%s:' % type.capitalize())
             show_pending_items(type, items, send)
 
 
 def handle_accept(args):
-    table = getattr(orm, args.cmd.capitalize() + "s")
+    table = getattr(orm, args.cmd.capitalize() + 's')
     pending = args.db.scalars(select(table).where(table.accepted == 0, table.id == args.num)).first()
     if pending is None:
-        args.send("Not a valid %s" % args.cmd)
+        args.send('Not a valid %s' % args.cmd)
         return
     msg, success = get_accept_msg(args.handler, pending, args.cmd)
     if not success:
@@ -208,30 +208,43 @@ def handle_accept(args):
 def get_accept_msg(handler, pending, type):
     success = True
     if type == 'quote':
-        msg = "Quote #%d Accepted: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
+        msg = 'Quote #%d Accepted: %s -- %s, Submitted by %s' % (
+            pending.id,
+            pending.quote,
+            pending.nick,
+            pending.submitter,
+        )
     elif type == 'poll':
-        msg = "Poll #%d accepted: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
+        msg = 'Poll #%d accepted: %s, Submitted by %s' % (
+            pending.id,
+            pending.question,
+            pending.submitter,
+        )
     elif type == 'issue':
         repo = handler.config['api']['githubrepo']
         apikey = handler.config['api']['githubapikey']
         msg, success = web.create_issue(pending.title, pending.description, pending.source, repo, apikey)
         if success:
-            msg = f"Issue Created -- {msg} -- {pending.title}"
+            msg = f'Issue Created -- {msg} -- {pending.title}'
     elif type == 'tumblr':
         msg, success = web.post_tumblr(handler.config, pending.blog, pending.post)
         if success:
-            msg = "Tumblr post #%d accepted: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
+            msg = 'Tumblr post #%d accepted: %s, Submitted by %s' % (
+                pending.id,
+                pending.post,
+                pending.submitter,
+            )
     return msg, success
 
 
 def handle_reject(args):
-    table = getattr(orm, args.cmd.capitalize() + "s")
+    table = getattr(orm, args.cmd.capitalize() + 's')
     pending = args.db.get(table, args.num)
     if pending is None:
-        args.send("Not a valid %s" % args.cmd)
+        args.send('Not a valid %s' % args.cmd)
         return
     if pending.accepted == 1:
-        args.send("%s already accepted" % args.cmd.capitialize())
+        args.send('%s already accepted' % args.cmd.capitialize())
         return
     ctrlchan = args.handler.config['core']['ctrlchan']
     channel = args.handler.config['core']['channel']
@@ -246,31 +259,44 @@ def handle_reject(args):
 def get_reject_msg(pending, type):
     if type == 'issue':
         nick = pending.source.split('!')[0]
-        return f"Issue Rejected -- {pending.title}, Submitted by {nick}"
+        return f'Issue Rejected -- {pending.title}, Submitted by {nick}'
     elif type == 'quote':
-        return "Quote #%d Rejected: %s -- %s, Submitted by %s" % (pending.id, pending.quote, pending.nick, pending.submitter)
+        return 'Quote #%d Rejected: %s -- %s, Submitted by %s' % (
+            pending.id,
+            pending.quote,
+            pending.nick,
+            pending.submitter,
+        )
     elif type == 'poll':
-        return "Poll #%d rejected: %s, Submitted by %s" % (pending.id, pending.question, pending.submitter)
+        return 'Poll #%d rejected: %s, Submitted by %s' % (
+            pending.id,
+            pending.question,
+            pending.submitter,
+        )
     elif type == 'tumblr':
-        return "Tumblr #%d rejected: %s, Submitted by %s" % (pending.id, pending.post, pending.submitter)
+        return 'Tumblr #%d rejected: %s, Submitted by %s' % (
+            pending.id,
+            pending.post,
+            pending.submitter,
+        )
 
 
 def handle_quote(args):
-    if not args.handler.is_admin(None, args.nick, "owner"):
-        args.send("Only owner can use quote.")
-    elif args.cmd[0] == "join":
-        args.send("quote join is not suported, use !join.")
+    if not args.handler.is_admin(None, args.nick, 'owner'):
+        args.send('Only owner can use quote.')
+    elif args.cmd[0] == 'join':
+        args.send('quote join is not suported, use !join.')
     else:
-        args.handler.connection.send_raw(" ".join(args.cmd))
+        args.handler.connection.send_raw(' '.join(args.cmd))
 
 
 def handle_help(args):
-    args.send("quote <raw command>")
-    args.send("cs|chanserv <chanserv command>")
-    args.send("disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>")
-    args.send("show <guarded|issues|quotes|polls|pending|tumblr> <disabled|enabled> <commands|hooks>")
-    args.send("accept|reject <issue|quote|poll> <num>")
-    args.send("guard|unguard <nick>")
+    args.send('quote <raw command>')
+    args.send('cs|chanserv <chanserv command>')
+    args.send('disable|enable <kick|command <command>|hook <hook>|all <commands|hooks>|logging|chanlog>')
+    args.send('show <guarded|issues|quotes|polls|pending|tumblr> <disabled|enabled> <commands|hooks>')
+    args.send('accept|reject <issue|quote|poll> <num>')
+    args.send('guard|unguard <nick>')
 
 
 def init_parser(send, handler, nick, db):
@@ -315,7 +341,18 @@ def init_parser(send, handler, nick, db):
     unguard_parser.namespace.config = handler.config
 
     show_parser = subparser.add_parser('show')
-    show_parser.add_argument('cmd', choices=['guarded', 'issues', 'quotes', 'polls', 'pending', 'disabled', 'enabled'])
+    show_parser.add_argument(
+        'cmd',
+        choices=[
+            'guarded',
+            'issues',
+            'quotes',
+            'polls',
+            'pending',
+            'disabled',
+            'enabled',
+        ],
+    )
     show_parser.add_argument('args', nargs='*')
     show_parser.set_defaults(func=handle_show)
 

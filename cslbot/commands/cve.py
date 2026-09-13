@@ -30,25 +30,25 @@ def cmd(send, msg, args):
     """
     elements = msg.split('-')
     if len(elements) > 3 or len(elements) < 2:
-        send("Invalid CVE format")
+        send('Invalid CVE format')
         return
     # If there are three fields, ignore the first (we don't actually need to send CVE-
     if len(elements) == 3:
         if elements[0].upper() != 'CVE':
-            send("Invalid CVE format")
+            send('Invalid CVE format')
             return
         elements.pop(0)
     # The first digit field should be exactly four digits long, the second is 4+
-    if not re.search(r"^[\d]{4}$", elements[0]) or not re.search(r"^[\d]{4,}$", elements[1]):
-        send("Invalid CVE format")
+    if not re.search(r'^[\d]{4}$', elements[0]) or not re.search(r'^[\d]{4,}$', elements[1]):
+        send('Invalid CVE format')
         return
-    search = f"{elements[0]}-{elements[1]}"
+    search = f'{elements[0]}-{elements[1]}'
     url = 'http://cve.mitre.org/cgi-bin/cvename.cgi?name=%s' % search
     html = fromstring(get(url).text)
-    title = html.find(".//title").text.splitlines()[2]
+    title = html.find('.//title').text.splitlines()[2]
     if title.startswith('ERROR'):
         output = 'Invalid CVE Number'
     else:
         key = args['config']['api']['bitlykey']
-        output = f"{title} -- {get_short(url, key)}"
+        output = f'{title} -- {get_short(url, key)}'
     send(output)

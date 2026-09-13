@@ -38,21 +38,21 @@ def cmd(send, msg, args):
         send(str(e))
         return
     if not cmdargs.date:
-        send("Time until when?")
+        send('Time until when?')
         return
     delta = dateutil.relativedelta.relativedelta(cmdargs.date, datetime.datetime.now())
-    diff = "%s is " % cmdargs.date.strftime("%x")
+    diff = '%s is ' % cmdargs.date.strftime('%x')
     if delta.years:
-        diff += "%d years " % (delta.years)
+        diff += '%d years ' % (delta.years)
     if delta.months:
-        diff += "%d months " % (delta.months)
+        diff += '%d months ' % (delta.months)
     if delta.days:
-        diff += "%d days " % (delta.days)
+        diff += '%d days ' % (delta.days)
     if delta.hours:
-        diff += "%d hours " % (delta.hours)
+        diff += '%d hours ' % (delta.hours)
     if delta.minutes:
-        diff += "%d minutes " % (delta.minutes)
+        diff += '%d minutes ' % (delta.minutes)
     if delta.seconds:
-        diff += "%d seconds " % (delta.seconds)
-    diff += "away"
+        diff += '%d seconds ' % (delta.seconds)
+    diff += 'away'
     send(diff)

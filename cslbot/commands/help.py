@@ -30,13 +30,13 @@ def cmd(send, msg, args):
         if msg.startswith(cmdchar):
             msg = msg[len(cmdchar):]
         if len(msg.split()) > 1:
-            send("One argument only")
+            send('One argument only')
         elif not command_registry.is_registered(msg):
-            send("Not a module.")
+            send('Not a module.')
         else:
             doc = command_registry.get_command(msg).get_doc()
             if doc is None:
-                send("No documentation found.")
+                send('No documentation found.')
             else:
                 for line in doc.splitlines():
                     send(line.format(command=cmdchar + msg), target=args['nick'])
@@ -44,4 +44,7 @@ def cmd(send, msg, args):
         modules = sorted(command_registry.get_enabled_commands())
         cmdlist = (' %s' % cmdchar).join(modules)
         send(f'Commands: {cmdchar}{cmdlist}', target=args['nick'], ignore_length=True)
-        send('%shelp <command> for more info on a command.' % cmdchar, target=args['nick'])
+        send(
+            '%shelp <command> for more info on a command.' % cmdchar,
+            target=args['nick'],
+        )

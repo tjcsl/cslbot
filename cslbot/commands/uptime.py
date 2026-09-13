@@ -32,5 +32,5 @@ def cmd(send, _, args):
     load_avg = ', '.join([str(x) for x in os.getloadavg()])
     starttime = curr - uptime['start']
     reloaded = curr - uptime['reloaded']
-    send(f"Time since start: {starttime}, load average: {load_avg}")
-    send("Time since reload: %s" % reloaded)
+    send(f'Time since start: {starttime}, load average: {load_avg}')
+    send('Time since reload: %s' % reloaded)

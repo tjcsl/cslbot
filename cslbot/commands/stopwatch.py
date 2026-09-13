@@ -27,13 +27,13 @@ def create_stopwatch(args):
     row = Stopwatches(time=datetime.now())
     args.session.add(row)
     args.session.flush()
-    return "Created new stopwatch with ID %d" % row.id
+    return 'Created new stopwatch with ID %d' % row.id
 
 
 def get_elapsed(session, sw):
     stopwatch = session.get(Stopwatches, sw)
     if stopwatch is None:
-        return "No stopwatch exists with that ID!"
+        return 'No stopwatch exists with that ID!'
     etime = stopwatch.elapsed
     if stopwatch.active == 1:
         etime = datetime.now() - stopwatch.time
@@ -43,36 +43,36 @@ def get_elapsed(session, sw):
 def stop_stopwatch(args):
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
-        return "No stopwatch exists with that ID!"
+        return 'No stopwatch exists with that ID!'
     if stopwatch.active == 0:
-        return "That stopwatch is already stopped!"
+        return 'That stopwatch is already stopped!'
     etime = datetime.now() - stopwatch.time
     stopwatch.elapsed = etime.total_seconds()
     stopwatch.active = 0
-    return "Stopwatch stopped at %s" % get_elapsed(args.session, args.id)
+    return 'Stopwatch stopped at %s' % get_elapsed(args.session, args.id)
 
 
 def delete_stopwatch(args):
     if not args.isadmin:
-        return "Nope, not gonna do it!"
+        return 'Nope, not gonna do it!'
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
-        return "No stopwatch exists with that ID!"
+        return 'No stopwatch exists with that ID!'
     if stopwatch.active == 1:
-        return "That stopwatch is currently running!"
+        return 'That stopwatch is currently running!'
     args.session.delete(stopwatch)
-    return "Stopwatch deleted!"
+    return 'Stopwatch deleted!'
 
 
 def resume_stopwatch(args):
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
-        return "No stopwatch exists with that ID!"
+        return 'No stopwatch exists with that ID!'
     if stopwatch.active == 1:
-        return "That stopwatch is not paused!"
+        return 'That stopwatch is not paused!'
     stopwatch.active = 1
     stopwatch.time = datetime.now()
-    return "Stopwatch resumed!"
+    return 'Stopwatch resumed!'
 
 
 def list_stopwatch(args):
@@ -81,16 +81,19 @@ def list_stopwatch(args):
     for x in active:
         args.send('Active stopwatch #%d started at %s' % (x.id, x.time), target=args.nick)
     for x in paused:
-        args.send('Paused stopwatch #%d started at %s time elapsed %d' % (x.id, x.time, x.elapsed), target=args.nick)
-    return "%d active and %d paused stopwatches." % (len(active), len(paused))
+        args.send(
+            'Paused stopwatch #%d started at %s time elapsed %d' % (x.id, x.time, x.elapsed),
+            target=args.nick,
+        )
+    return '%d active and %d paused stopwatches.' % (len(active), len(paused))
 
 
 def get_stopwatch(args):
     stopwatch = args.session.get(Stopwatches, args.id)
     if stopwatch is None:
-        return "Invalid ID!"
-    status = "Active" if stopwatch.active == 1 else "Paused"
-    return f"{status} {get_elapsed(args.session, args.id)}"
+        return 'Invalid ID!'
+    status = 'Active' if stopwatch.active == 1 else 'Paused'
+    return f'{status} {get_elapsed(args.session, args.id)}'
 
 
 @Command(['stopwatch', 'sw'], ['config', 'db', 'is_admin', 'nick'])
@@ -120,7 +123,7 @@ def cmd(send, msg, args):
     list_parser.set_defaults(func=list_stopwatch, nick=args['nick'], send=send)
 
     if not msg:
-        send("Please specify a command.")
+        send('Please specify a command.')
         return
 
     try:

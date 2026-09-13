@@ -30,7 +30,11 @@ from .orm import Babble, Babble2, Babble_count, Babble_last, Log
 def get_messages(cursor, cmdchar, ctrlchan, speaker, newer_than_id):
     stmt = select(Log).where(Log.id > newer_than_id)
     # Ignore commands, and messages addressed to the ctrlchan
-    stmt = stmt.where(or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'), ~Log.msg.startswith(cmdchar), Log.target != ctrlchan)
+    stmt = stmt.where(
+        or_(Log.type == 'pubmsg', Log.type == 'privmsg', Log.type == 'action'),
+        ~Log.msg.startswith(cmdchar),
+        Log.target != ctrlchan,
+    )
     if speaker is not None:
         location = 'target' if speaker.startswith(('#', '+', '@')) else 'source'
         stmt = stmt.where(getattr(Log, location).ilike(speaker, escape='$'))
@@ -78,7 +82,7 @@ def generate_markov(cursor, length, messages, initial_run):
             if length == 1:
                 prev = msg[i - 1]
             else:
-                prev = f"{msg[i - 2]} {msg[i - 1]}"
+                prev = f'{msg[i - 2]} {msg[i - 1]}'
             node = (prev, escape(row.source), row.target)
             if node not in markov:
                 markov[node] = get_markov(cursor, length, node, initial_run)
@@ -120,11 +124,11 @@ def build_rows(cursor, length, markov, initial_run):
 
 
 def postgres_hack(cursor, length, data):
-    table = "babble" if length == 1 else "babble2"
+    table = 'babble' if length == 1 else 'babble2'
     # Crazy magic to insert a ton of data really fast, drops runtime in half on large datasets.
     raw_cursor = cursor.connection().connection.cursor()
     prev = 0
-    insert_str = "INSERT INTO " + table + " (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);"
+    insert_str = ('INSERT INTO ' + table + ' (source,target,key,word,freq) VALUES(%s,%s,%s,%s,%s);')
     for i in range(20000, len(data), 20000):
         args_str = '\n'.join([raw_cursor.mogrify(insert_str, x).decode() for x in data[prev:i]])
         # Don't die on empty log table.

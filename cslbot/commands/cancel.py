@@ -17,7 +17,7 @@
 from ..helpers.command import Command
 
 
-@Command('cancel', ['nick', 'handler'], role="admin")
+@Command('cancel', ['nick', 'handler'], role='admin')
 def cmd(send, msg, args):
     """Cancels a deferred action with the given id.
 
@@ -27,9 +27,9 @@ def cmd(send, msg, args):
     try:
         args['handler'].workers.cancel(int(msg))
     except ValueError:
-        send("Index must be a digit.")
+        send('Index must be a digit.')
         return
     except KeyError:
-        send("No such event.")
+        send('No such event.')
         return
-    send("Event canceled.")
+    send('Event canceled.')

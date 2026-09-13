@@ -18,8 +18,10 @@ import twitter
 
 
 def get_api(config):
-    api = config["api"]
-    return twitter.Api(consumer_key=api["twitterconsumerkey"],
-                       consumer_secret=api["twitterconsumersecret"],
-                       access_token_key=api["twitteraccesstoken"],
-                       access_token_secret=api["twitteraccesstokensecret"])
+    api = config['api']
+    return twitter.Api(
+        consumer_key=api['twitterconsumerkey'],
+        consumer_secret=api['twitterconsumersecret'],
+        access_token_key=api['twitteraccesstoken'],
+        access_token_secret=api['twitteraccesstokensecret'],
+    )

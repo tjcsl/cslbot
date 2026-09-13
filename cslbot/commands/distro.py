@@ -33,4 +33,4 @@ def cmd(send, *_):
     if match:
         send(match.group(1))
     else:
-        send("no distro found")
+        send('no distro found')

@@ -25,7 +25,7 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("kill who?")
+        send('kill who?')
         return
     if msg.lower() == args['botnick'].lower():
         send('%s is not feeling suicidal right now.' % msg)

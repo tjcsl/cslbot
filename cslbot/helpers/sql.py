@@ -27,11 +27,11 @@ from .orm import Log, setup_db
 
 def get_session(config: configparser.ConfigParser) -> sessionmaker:
     if not config['db']['sqlalchemy.url']:
-        raise Exception("You must specify a valid url in the sqlalchemy.url option.")
+        raise Exception('You must specify a valid url in the sqlalchemy.url option.')
     return sessionmaker(bind=engine_from_config(config['db']))
 
 
-class Sql():
+class Sql:
 
     def __init__(self, config: configparser.ConfigParser, confdir: str) -> None:
         """Set everything up."""
@@ -63,7 +63,15 @@ class Sql():
         | time: The current time (Unix Epoch).
 
         """
-        entry = Log(source=str(source), target=target, server=server, flags=flags, msg=msg, type=mtype, time=datetime.now())
+        entry = Log(
+            source=str(source),
+            target=target,
+            server=server,
+            flags=flags,
+            msg=msg,
+            type=mtype,
+            time=datetime.now(),
+        )
         with self.session_scope() as session:
             session.add(entry)
             session.flush()

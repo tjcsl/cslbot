@@ -24,6 +24,6 @@ def cmd(send, msg, args):
     Syntax: {command} <text>
     """
     if not msg:
-        send("Translate what?")
+        send('Translate what?')
         return
     send(gen_random_translate(msg))

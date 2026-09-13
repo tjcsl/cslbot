@@ -27,7 +27,7 @@ from ..helpers.orm import Log
 
 def get_log(conn, target, user):
     type_filter = or_(Log.type == 'privmsg', Log.type == 'pubmsg', Log.type == 'action')
-    stmt = select(Log).where(type_filter, Log.target == target).order_by(Log.time.desc())
+    stmt = (select(Log).where(type_filter, Log.target == target).order_by(Log.time.desc()))
     if user is None:
         return conn.scalars(stmt.offset(1).limit(500)).all()
     else:
@@ -38,12 +38,12 @@ def get_modifiers(msg, nick, nickregex):
     mods = {'ignorecase': False, 'allnicks': False, 'nick': nick}
     if not msg:
         return mods
-    elif msg == "i":
+    elif msg == 'i':
         mods['ignorecase'] = True
-    elif msg == "g":
+    elif msg == 'g':
         mods['allnicks'] = True
         mods['nick'] = None
-    elif msg == "ig" or msg == "gi":
+    elif msg == 'ig' or msg == 'gi':
         mods['allnicks'] = True
         mods['ignorecase'] = True
         mods['nick'] = None
@@ -68,9 +68,9 @@ def do_replace(log, config, char, regex, replacement):
         if regex.search(line.msg):
             output = regex.sub(replacement, line.msg)
             if line.type == 'action':
-                return f"correction: * {line.source} {output}"
+                return f'correction: * {line.source} {output}'
             elif line.type != 'mode':
-                return f"{line.source} actually meant: {output}"
+                return f'{line.source} actually meant: {output}'
 
 
 @Command('s', ['db', 'type', 'nick', 'config', 'botnick', 'target', 'handler'])
@@ -81,7 +81,7 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("Invalid Syntax.")
+        send('Invalid Syntax.')
         return
     char = msg[0]
     msg = [x.replace(r'\/', '/') for x in re.split(r'(?<!\\)\%s' % char, msg[1:], maxsplit=2)]
@@ -90,7 +90,7 @@ def cmd(send, msg, args):
         msg.append('')
     # not a valid sed statement.
     if not msg or len(msg) < 3:
-        send("Invalid Syntax.")
+        send('Invalid Syntax.')
         return
     if args['type'] == 'privmsg':
         send("Don't worry, %s is not a grammar Nazi." % args['botnick'])
@@ -99,22 +99,22 @@ def cmd(send, msg, args):
     replacement = msg[1]
     modifiers = get_modifiers(msg[2], args['nick'], args['config']['core']['nickregex'])
     if modifiers is None:
-        send("Invalid modifiers.")
+        send('Invalid modifiers.')
         return
 
     try:
-        regex = re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string)
+        regex = (re.compile(string, re.IGNORECASE) if modifiers['ignorecase'] else re.compile(string))
         log = get_log(args['db'], args['target'], modifiers['nick'])
         workers = args['handler'].workers
         result = workers.start_thread(do_replace, log, args['config']['core'], char, regex, replacement)
         try:
             msg = result.result(5)
         except concurrent.futures.TimeoutError:
-            send("Sed regex timed out.")
+            send('Sed regex timed out.')
             return
         if msg:
             send(msg)
         else:
-            send("No match found.")
+            send('No match found.')
     except re.error as ex:
         raise CommandFailedException(ex)

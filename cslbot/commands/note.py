@@ -29,16 +29,16 @@ def cmd(send, msg, args):
 
     """
     if not args['config']['feature'].getboolean('hooks'):
-        send("Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).")
+        send('Hooks are disabled, and this command depends on hooks. Please contact the bot admin(s).')
         return
     if args['type'] == 'privmsg':
-        send("Note-passing should be done in public.")
+        send('Note-passing should be done in public.')
         return
     try:
         nick, note = msg.split(maxsplit=1)
         nicks = {x for x in nick.split(',') if x}
     except ValueError:
-        send("Not enough arguments.")
+        send('Not enough arguments.')
         return
     nickregex = args['config']['core']['nickregex'] + '+$'
     successful_nicks = []
@@ -51,6 +51,6 @@ def cmd(send, msg, args):
         else:
             failed_nicks.append(nick)
     if successful_nicks:
-        send("Note left for %s." % ", ".join(successful_nicks))
+        send('Note left for %s.' % ', '.join(successful_nicks))
     if failed_nicks:
-        send("Invalid nick(s): %s." % ", ".join(failed_nicks))
+        send('Invalid nick(s): %s.' % ', '.join(failed_nicks))

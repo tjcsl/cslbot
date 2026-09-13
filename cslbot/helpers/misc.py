@@ -32,8 +32,8 @@ from . import orm
 
 
 def get_users(args):
-    with args["handler"].data_lock:
-        users = list(args["handler"].channels[args["target"]].users()) if args["target"] != "private" else ["you"]
+    with args['handler'].data_lock:
+        users = (list(args['handler'].channels[args['target']].users()) if args['target'] != 'private' else ['you'])
     return users
 
 
@@ -44,12 +44,12 @@ def parse_time(time):
     else:
         return None
     conv = {
-        "s": 1,
-        "m": 60,
-        "h": timedelta(hours=1).total_seconds(),
-        "d": timedelta(days=1).total_seconds(),
-        "w": timedelta(weeks=1).total_seconds(),
-        "y": timedelta(weeks=52).total_seconds(),
+        's': 1,
+        'm': 60,
+        'h': timedelta(hours=1).total_seconds(),
+        'd': timedelta(days=1).total_seconds(),
+        'w': timedelta(weeks=1).total_seconds(),
+        'y': timedelta(weeks=52).total_seconds(),
     }
     if unit in conv.keys():
         return time * conv[unit]
@@ -62,7 +62,7 @@ def do_pull(srcdir=None, repo=None):
         if repo is None:
             # This is a god-awful hack to unbreak reload pull.
             proc = subprocess.run(
-                ["sudo", "-u", "peter", "/etc/cslbot/pull.sh"],
+                ['sudo', '-u', 'peter', '/etc/cslbot/pull.sh'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
@@ -72,11 +72,11 @@ def do_pull(srcdir=None, repo=None):
         else:
             proc = subprocess.run(
                 [
-                    "pip",
-                    "install",
-                    "--process-dependency-links",
-                    "-U",
-                    "git+git://github.com/%s" % repo,
+                    'pip',
+                    'install',
+                    '--process-dependency-links',
+                    '-U',
+                    'git+git://github.com/%s' % repo,
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -86,7 +86,7 @@ def do_pull(srcdir=None, repo=None):
             )
             output = proc.stdout.splitlines()[-1]
             # Strip ascii color codes
-            return re.sub(r"\x1b[^m]*h", "", output)
+            return re.sub(r'\x1b[^m]*h', '', output)
     except subprocess.CalledProcessError as e:
         for line in e.output.splitlines():
             logging.error(line)
@@ -94,43 +94,43 @@ def do_pull(srcdir=None, repo=None):
 
 
 def do_nuke(c, nick, target, channel):
-    c.privmsg(channel, "Please Stand By, Nuking " + target)
-    c.privmsg_many([nick, target], "        ____________________         ")
+    c.privmsg(channel, 'Please Stand By, Nuking ' + target)
+    c.privmsg_many([nick, target], '        ____________________         ')
     c.privmsg_many([nick, target], "     :-'     ,   '; .,   )  '-:      ")
-    c.privmsg_many([nick, target], "    /    (          /   /      \\    ")
+    c.privmsg_many([nick, target], '    /    (          /   /      \\    ')
     c.privmsg_many([nick, target], "   /  ;'  \\   , .  /        )   \\  ")
     c.privmsg_many([nick, target], "  (  ( .   ., ;        ;  '    ; )   ")
-    c.privmsg_many([nick, target], "   \\    ,---:----------:---,    /   ")
+    c.privmsg_many([nick, target], '   \\    ,---:----------:---,    /   ')
     c.privmsg_many([nick, target], "    '--'     \\ \\     / /    '--'   ")
-    c.privmsg_many([nick, target], "              \\ \\   / /            ")
-    c.privmsg_many([nick, target], "               \\     /              ")
-    c.privmsg_many([nick, target], "               |  .  |               ")
+    c.privmsg_many([nick, target], '              \\ \\   / /            ')
+    c.privmsg_many([nick, target], '               \\     /              ')
+    c.privmsg_many([nick, target], '               |  .  |               ')
     c.privmsg_many([nick, target], "               |, '; |               ")
-    c.privmsg_many([nick, target], "               |  ,. |               ")
-    c.privmsg_many([nick, target], "               | ., ;|               ")
-    c.privmsg_many([nick, target], "               |:; ; |               ")
+    c.privmsg_many([nick, target], '               |  ,. |               ')
+    c.privmsg_many([nick, target], '               | ., ;|               ')
+    c.privmsg_many([nick, target], '               |:; ; |               ')
     c.privmsg_many([nick, target], "      ________/;';,.',\\ ________    ")
     c.privmsg_many([nick, target], "     (  ;' . ;';,.;', ;  ';  ;  )    ")
 
 
 def ping(ping_map, c, e, pongtime):
-    if e.arguments[1] == "No such nick/channel":
+    if e.arguments[1] == 'No such nick/channel':
         nick = e.arguments[0]
         if nick not in ping_map:
             return
         target = ping_map.pop(nick)
-        c.privmsg(target, f"{e.arguments[1]}: {e.arguments[0]}")
+        c.privmsg(target, f'{e.arguments[1]}: {e.arguments[0]}')
         return
-    nick = e.source.split("!")[0]
-    response = e.arguments[1].replace(" ", ".")
+    nick = e.source.split('!')[0]
+    response = e.arguments[1].replace(' ', '.')
     try:
         pingtime = float(response)
         delta = pongtime - datetime.fromtimestamp(pingtime)
-        elapsed = f"{delta.seconds}.{delta.microseconds} seconds"
+        elapsed = f'{delta.seconds}.{delta.microseconds} seconds'
     except (ValueError, OverflowError):
         elapsed = response
     target = ping_map.pop(nick) if nick in ping_map else nick
-    c.privmsg(target, f"CTCP reply from {nick}: {elapsed}")
+    c.privmsg(target, f'CTCP reply from {nick}: {elapsed}')
 
 
 def get_channels(chanlist, nick):
@@ -147,18 +147,18 @@ def get_cmdchar(
     msg: str,
     msgtype: str,
 ) -> str:
-    cmdchar = config["core"]["cmdchar"]
-    botnick = "%s: " % connection.real_nickname
+    cmdchar = config['core']['cmdchar']
+    botnick = '%s: ' % connection.real_nickname
     if msg.startswith(botnick):
         msg = msg.replace(botnick, cmdchar, 1)
 
-    altchars = [x.strip() for x in config["core"]["altcmdchars"].split(",")]
-    if altchars and altchars[0] != "":
+    altchars = [x.strip() for x in config['core']['altcmdchars'].split(',')]
+    if altchars and altchars[0] != '':
         for i in altchars:
             if msg.startswith(i):
                 msg = msg.replace(i, cmdchar, 1)
     # Don't require cmdchar in PMs.
-    if msgtype == "privmsg" and not msg.startswith(cmdchar):
+    if msgtype == 'privmsg' and not msg.startswith(cmdchar):
         msg = cmdchar + msg
     return msg
 
@@ -166,40 +166,40 @@ def get_cmdchar(
 def parse_header(header, msg):
     proc = subprocess.run(
         [
-            "gcc",
-            "-include",
-            "%s.h" % header,
-            "-fdirectives-only",
-            "-E",
-            "-xc",
-            "/dev/null",
+            'gcc',
+            '-include',
+            '%s.h' % header,
+            '-fdirectives-only',
+            '-E',
+            '-xc',
+            '/dev/null',
         ],
         stdout=subprocess.PIPE,
         text=True,
         check=True,
     )
-    if header == "errno":
-        defines = re.findall("^#define (E[A-Z]*) ([0-9]+)", proc.stdout, re.MULTILINE)
+    if header == 'errno':
+        defines = re.findall('^#define (E[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     else:
-        defines = re.findall("^#define (SIG[A-Z]*) ([0-9]+)", proc.stdout, re.MULTILINE)
+        defines = re.findall('^#define (SIG[A-Z]*) ([0-9]+)', proc.stdout, re.MULTILINE)
     deftoval = {x: y for x, y in defines}
     valtodef = {y: x for x, y in defines}
     if not msg:
         msg = choice(list(valtodef.keys()))
-    if msg == "list":
-        return ", ".join(sorted(deftoval.keys()))
+    if msg == 'list':
+        return ', '.join(sorted(deftoval.keys()))
     elif msg in deftoval:
-        return f"#define {msg} {deftoval[msg]}"
+        return f'#define {msg} {deftoval[msg]}'
     elif msg in valtodef:
-        return f"#define {valtodef[msg]} {msg}"
+        return f'#define {valtodef[msg]} {msg}'
     else:
-        return f"{msg} not found in {header}.h"
+        return f'{msg} not found in {header}.h'
 
 
 def list_fortunes(offensive=False):
-    cmd = ["fortune", "-f"]
+    cmd = ['fortune', '-f']
     if offensive:
-        cmd.append("-o")
+        cmd.append('-o')
     proc = subprocess.run(
         cmd,
         stdout=subprocess.PIPE,
@@ -207,28 +207,28 @@ def list_fortunes(offensive=False):
         text=True,
         check=True,
     )
-    output = re.sub(r"[0-9]{1,2}\.[0-9]{2}%", "", proc.stdout)
+    output = re.sub(r'[0-9]{1,2}\.[0-9]{2}%', '', proc.stdout)
     fortunes = [x.strip() for x in output.splitlines()[1:]]
     if offensive:
-        fortunes = ["off/%s" % x for x in fortunes]
+        fortunes = ['off/%s' % x for x in fortunes]
     return sorted(fortunes)
 
 
-def get_fortune(msg, name="fortune"):
+def get_fortune(msg, name='fortune'):
     fortunes = list_fortunes() + list_fortunes(True)
-    cmd = ["fortune", "-s"]
-    match = re.match("(-[ao])( .+|$)", msg)
+    cmd = ['fortune', '-s']
+    match = re.match('(-[ao])( .+|$)', msg)
     if match:
         cmd.append(match.group(1))
         msg = match.group(2).strip()
-    if "bofh" in name or "excuse" in name:
+    if 'bofh' in name or 'excuse' in name:
         if random() < 0.05:
             return "BOFH Excuse #1337:\nYou don't exist, go away!"
-        cmd.append("bofh-excuses")
+        cmd.append('bofh-excuses')
     elif msg in fortunes:
         cmd.append(msg)
     elif msg:
-        return "%s is not a valid fortune module" % msg
+        return '%s is not a valid fortune module' % msg
     return subprocess.check_output(cmd).decode()
 
 
@@ -237,18 +237,18 @@ def ignore(session, nick):
     if row is None:
         # FIXME: support expiration times for ignores
         session.add(orm.Ignore(nick=nick, expire=datetime.min))
-        return "Now ignoring %s" % nick
+        return 'Now ignoring %s' % nick
     else:
-        return "%s is already ignored." % nick
+        return '%s is already ignored.' % nick
 
 
 def get_version(srcdir):
-    gitdir = join(srcdir, ".git")
+    gitdir = join(srcdir, '.git')
     if not exists(gitdir):
-        return None, metadata.version("CslBot")
+        return None, metadata.version('CslBot')
     try:
-        commit = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "rev-parse", "HEAD"]).decode().splitlines()[0]
-        version = subprocess.check_output(["git", "--git-dir=%s" % gitdir, "describe", "--tags"]).decode().splitlines()[0]
+        commit = (subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'rev-parse', 'HEAD']).decode().splitlines()[0])
+        version = (subprocess.check_output(['git', '--git-dir=%s' % gitdir, 'describe', '--tags']).decode().splitlines()[0])
         return commit, version
     except subprocess.CalledProcessError:
         return None, None
@@ -256,13 +256,13 @@ def get_version(srcdir):
 
 def split_msg(msgs: list[bytes], max_len: int) -> tuple[str, list[bytes]]:
     """Splits as close to the end as possible."""
-    msg = ""
+    msg = ''
     while len(msg.encode()) < max_len:
         if len(msg.encode()) + len(msgs[0]) > max_len:
             return msg, msgs
         char = msgs.pop(0).decode()
         # If we have a space within 15 chars of the length limit, split there to avoid words being broken up.
-        if char == " " and len(msg.encode()) > max_len - 15:
+        if char == ' ' and len(msg.encode()) > max_len - 15:
             return msg, msgs
         msg += char
     return msg, msgs
@@ -272,20 +272,20 @@ def truncate_msg(msg: str, max_len: int) -> str:
     if len(msg.encode()) > max_len:
         msg_enc = [x.encode() for x in msg]
         msg, _ = split_msg(msg_enc, max_len - 3)
-        return msg + "..."
+        return msg + '...'
     return msg
 
 
 def escape(data):
     # handle arguments that end in '\', which is valid in irc, but causes issues with sql.
-    return data.replace("\\", "\\\\")
+    return data.replace('\\', '\\\\')
 
 
 def get_max_length(target: str, msgtype: str) -> int:
-    overhead = r"PRIVMSG %s: \r\n" % target
+    overhead = r'PRIVMSG %s: \r\n' % target
     # FIXME: what the hell is up w/ message length limits?
-    if msgtype == "action":
-        overhead += "\001ACTION \001"
+    if msgtype == 'action':
+        overhead += '\001ACTION \001'
         max_len = 454  # 512
     else:
         max_len = 453  # 512

@@ -98,16 +98,16 @@ class BotTest(unittest.TestCase):
         elif cmd == 'REQ' and arg is not None:
             self.cap_list.append(arg)
         else:
-            raise Exception(f"Unhandled CAP {cmd} {arg}")
+            raise Exception(f'Unhandled CAP {cmd} {arg}')
 
     def user_mock(self, username, realname):
-        self.bot.connection.send_raw(f"USER {username} 0 * :{realname}")
+        self.bot.connection.send_raw(f'USER {username} 0 * :{realname}')
         for cap in self.cap_list:
             self.send_msg('cap', self.server, '*', ['ACK', cap])
         self.cap_list.clear()
 
     def raw_handler(self, msg):
-        logging.debug("TO SERVER: %s", msg)
+        logging.debug('TO SERVER: %s', msg)
         msg = msg.split()
         if msg == ['AUTHENTICATE', 'PLAIN']:
             self.send_msg('authenticate', None, '+')
@@ -140,7 +140,14 @@ class BotTest(unittest.TestCase):
         calls = self.send_msg('join', nick, channel)
         expected_calls = [(nick, channel, 0, '', 'join', self.server)]
         if nick == self.nick:
-            expected_calls.append((nick, self.ctrlchan, 0, 'Joined channel %s' % channel, 'privmsg', self.server))
+            expected_calls.append((
+                nick,
+                self.ctrlchan,
+                0,
+                'Joined channel %s' % channel,
+                'privmsg',
+                self.server,
+            ))
         self.assertEqual(calls, expected_calls)
         self.log_mock.reset_mock()
 
@@ -162,16 +169,41 @@ class BotTest(unittest.TestCase):
 
     def do_welcome(self):
         with self.assertLogs('cslbot.helpers.handler') as mock_log:
-            calls = self.send_msg('welcome', self.server, self.nick, ['Welcome to TestIRC, %s!' % self.nick])
-        self.assertEqual(mock_log.output, ['INFO:cslbot.helpers.handler:Connected to server %s' % self.server])
+            calls = self.send_msg(
+                'welcome',
+                self.server,
+                self.nick,
+                ['Welcome to TestIRC, %s!' % self.nick],
+            )
+        self.assertEqual(
+            mock_log.output,
+            ['INFO:cslbot.helpers.handler:Connected to server %s' % self.server],
+        )
         self.assertTrue(self.bot.handler.features['account-notify'])
         self.assertTrue(self.bot.handler.features['extended-join'])
         # We support WHOX!
         self.send_msg('featurelist', self.server, self.nick, ['WHOX'])
         self.assertTrue(self.bot.handler.features['whox'])
-        expected_calls = [(self.nick, self.channel, 0, '', 'join', self.server), (self.nick, self.ctrlchan, 0, '', 'join', self.server),
-                          (self.nick, self.ctrlchan, 0, 'Joined channel %s' % self.ctrlchan, 'privmsg', self.server),
-                          (self.nick, 'private', 0, 'Joined channel %s' % self.channel, 'privmsg', self.server)]
+        expected_calls = [
+            (self.nick, self.channel, 0, '', 'join', self.server),
+            (self.nick, self.ctrlchan, 0, '', 'join', self.server),
+            (
+                self.nick,
+                self.ctrlchan,
+                0,
+                'Joined channel %s' % self.ctrlchan,
+                'privmsg',
+                self.server,
+            ),
+            (
+                self.nick,
+                'private',
+                0,
+                'Joined channel %s' % self.channel,
+                'privmsg',
+                self.server,
+            ),
+        ]
         self.assertEqual(calls, expected_calls)
         self.assertEqual(
             sorted(x[0] for x in self.raw_mock.call_args_list),
@@ -181,13 +213,21 @@ class BotTest(unittest.TestCase):
                 ('NICK %s' % self.nick,),
                 (f'PRIVMSG {self.ctrlchan} :Joined channel {self.channel}',),
                 (f'PRIVMSG {self.ctrlchan} :Joined channel {self.ctrlchan}',),
-                (f'USER {self.nick} 0 * :{self.nick}',)
-            ])
+                (f'USER {self.nick} 0 * :{self.nick}',),
+            ],
+        )
         self.log_mock.reset_mock()
 
     def send_msg(self, mtype, source, target, arguments=None):
         e = irc.client.Event(mtype, irc.client.NickMask(source), target, arguments or [])
-        logging.debug("type: %s, source: %s, target: %s, arguments: %s, tags: %s", e.type, e.source, e.target, e.arguments, e.tags)
+        logging.debug(
+            'type: %s, source: %s, target: %s, arguments: %s, tags: %s',
+            e.type,
+            e.source,
+            e.target,
+            e.arguments,
+            e.tags,
+        )
         # We mocked out the actual irc processing, so call the internal method here.
         self.bot.connection._handle_event(e)
         # Make hermetic

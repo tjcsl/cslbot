@@ -26,6 +26,6 @@ def cmd(send, msg, _):
 
     """
     if not msg:
-        send("Forsooth! What shalt I translate?")
+        send('Forsooth! What shalt I translate?')
         return
     send(gen_shakespeare(msg))

@@ -22,7 +22,7 @@ from ..helpers.command import Command
 from ..helpers.misc import do_pull
 
 
-@Command('pull', ['config', 'handler'], role="owner")
+@Command('pull', ['config', 'handler'], role='owner')
 def cmd(send, _, args):
     """Pull changes.
 

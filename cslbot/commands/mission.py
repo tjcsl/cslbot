@@ -24,4 +24,7 @@ def cmd(send, *_):
     Syntax: {command}
 
     """
-    send("'s mission is to provide all functionality necessary so that you never have to leave IRC again.", "action")
+    send(
+        "'s mission is to provide all functionality necessary so that you never have to leave IRC again.",
+        'action',
+    )

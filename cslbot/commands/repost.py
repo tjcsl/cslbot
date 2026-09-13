@@ -28,4 +28,4 @@ def cmd(send, msg, args):
 
     """
     result = args['db'].scalars(select(Urls).order_by(func.random())).first()
-    send("%s" % result.url)
+    send('%s' % result.url)

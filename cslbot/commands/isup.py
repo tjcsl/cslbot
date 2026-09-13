@@ -27,13 +27,13 @@ def cmd(send, msg, args):
 
     """
     if not msg:
-        send("What are you trying to get to?")
+        send('What are you trying to get to?')
         return
     nick = args['nick']
-    isup = get("http://isup.me/%s" % msg).text
-    if "looks down from here" in isup:
-        send(f"{nick}: {msg} is down")
-    elif "like a site on the interwho" in isup:
-        send(f"{nick}: {msg} is not a valid url")
+    isup = get('http://isup.me/%s' % msg).text
+    if 'looks down from here' in isup:
+        send(f'{nick}: {msg} is down')
+    elif 'like a site on the interwho' in isup:
+        send(f'{nick}: {msg} is not a valid url')
     else:
-        send(f"{nick}: {msg} is up")
+        send(f'{nick}: {msg} is up')

@@ -41,9 +41,9 @@ def cmd(send, msg, args):
         short = fromstring(html.text).find('.//meta[@name="description"]')
         if short is not None:
             short = short.get('content')
-            send(f"{short} -- http://linux.die.net/man/{cmdargs.section}/{cmdargs.command}")
+            send(f'{short} -- http://linux.die.net/man/{cmdargs.section}/{cmdargs.command}')
         else:
-            send(f"No manual entry for {cmdargs.command} in section {cmdargs.section}")
+            send(f'No manual entry for {cmdargs.command} in section {cmdargs.section}')
     else:
         for section in range(0, 8):
             html = get('http://linux.die.net/man/%d/%s' % (section, cmdargs.command))
@@ -51,6 +51,6 @@ def cmd(send, msg, args):
                 short = fromstring(html.text).find('.//meta[@name="description"]')
                 if short is not None:
                     short = short.get('content')
-                    send("%s -- http://linux.die.net/man/%d/%s" % (short, section, cmdargs.command))
+                    send('%s -- http://linux.die.net/man/%d/%s' % (short, section, cmdargs.command))
                     return
-        send("No manual entry for %s" % cmdargs.command)
+        send('No manual entry for %s' % cmdargs.command)

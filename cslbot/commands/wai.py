@@ -26,13 +26,46 @@ def cmd(send, *_):
     Syntax: {command}
 
     """
-    a = ["primary", "secondary", "tertiary", "hydraulic", "compressed", "required", "pseudo", "intangible", "flux"]
+    a = [
+        'primary',
+        'secondary',
+        'tertiary',
+        'hydraulic',
+        'compressed',
+        'required',
+        'pseudo',
+        'intangible',
+        'flux',
+    ]
     b = [
-        "compressor", "engine", "lift", "elevator", "irc bot", "stabilizer", "computer", "fwilson", "csl", "4506", "router", "switch", "thingy",
-        "capacitor"
+        'compressor',
+        'engine',
+        'lift',
+        'elevator',
+        'irc bot',
+        'stabilizer',
+        'computer',
+        'fwilson',
+        'csl',
+        '4506',
+        'router',
+        'switch',
+        'thingy',
+        'capacitor',
     ]
     c = [
-        "broke", "exploded", "corrupted", "melted", "froze", "died", "reset", "was seen by the godofskies", "burned", "corroded", "reversed polarity",
-        "was accidentallied", "nuked"
+        'broke',
+        'exploded',
+        'corrupted',
+        'melted',
+        'froze',
+        'died',
+        'reset',
+        'was seen by the godofskies',
+        'burned',
+        'corroded',
+        'reversed polarity',
+        'was accidentallied',
+        'nuked',
     ]
-    send(f"because {choice(a)} {choice(b)} {choice(c)}")
+    send(f'because {choice(a)} {choice(b)} {choice(c)}')

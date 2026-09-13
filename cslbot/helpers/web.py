@@ -39,7 +39,7 @@ def get_urban(msg, session, key):
     if not msg:
         msg = get_rand_word(session)
         defn, url = get_urban_definition(msg, key)
-        defn = f"{msg}: {defn}"
+        defn = f'{msg}: {defn}'
     else:
         defn, url = get_urban_definition(msg, key)
     return defn, url
@@ -48,20 +48,24 @@ def get_urban(msg, session, key):
 def get_urban_definition(msg, key):
     msg = msg.split()
     index = msg[0][1:] if msg[0].startswith('#') else None
-    term = " ".join(msg[1:]) if index is not None else " ".join(msg)
+    term = ' '.join(msg[1:]) if index is not None else ' '.join(msg)
     try:
-        req = get('http://api.urbandictionary.com/v0/define', params={'term': term}, timeout=10)
+        req = get(
+            'http://api.urbandictionary.com/v0/define',
+            params={'term': term},
+            timeout=10,
+        )
         data = req.json()['list']
     except json.JSONDecodeError:
-        return "UrbanDictionary is having problems.", None
+        return 'UrbanDictionary is having problems.', None
     except ReadTimeout:
-        return "UrbanDictionary timed out.", None
+        return 'UrbanDictionary timed out.', None
     if len(data) == 0:
         return "UrbanDictionary doesn't have an answer for you.", None
     elif index is None:
         output = data[0]['definition']
     elif not index.isdigit() or int(index) > len(data) or int(index) == 0:
-        output = "Invalid Index"
+        output = 'Invalid Index'
     else:
         output = data[int(index) - 1]['definition']
     output = ' '.join(output.splitlines()).strip()
@@ -73,30 +77,46 @@ def get_urban_definition(msg, key):
 
 
 def create_issue(title, desc, nick, repo, apikey):
-    body = {"title": title, "body": f"{desc}\nIssue created by {nick}", "labels": ["bot"]}
+    body = {
+        'title': title,
+        'body': f'{desc}\nIssue created by {nick}',
+        'labels': ['bot'],
+    }
     headers = {'Authorization': 'token %s' % apikey}
-    req = post('https://api.github.com/repos/%s/issues' % repo, headers=headers, data=json.dumps(body))
+    req = post(
+        'https://api.github.com/repos/%s/issues' % repo,
+        headers=headers,
+        data=json.dumps(body),
+    )
     data = req.json()
     if 'html_url' in data.keys():
         return data['html_url'], True
     elif 'message' in data.keys():
         return data['message'], False
     else:
-        return "Unknown error", False
+        return 'Unknown error', False
 
 
 def post_tumblr(config, blog, body):
-    tumblr = OAuth1Session(client_key=config['api']['tumblrconsumerkey'],
-                           client_secret=config['api']['tumblrconsumersecret'],
-                           resource_owner_key=config['api']['tumblroauthkey'],
-                           resource_owner_secret=config['api']['tumblroauthsecret'])
+    tumblr = OAuth1Session(
+        client_key=config['api']['tumblrconsumerkey'],
+        client_secret=config['api']['tumblrconsumersecret'],
+        resource_owner_key=config['api']['tumblroauthkey'],
+        resource_owner_secret=config['api']['tumblroauthsecret'],
+    )
     data = {'body': body}
-    response = tumblr.post('https://api.tumblr.com/v2/blog/%s/post' % blog, params={'type': 'text'}, data=data).json()
+    response = tumblr.post(
+        'https://api.tumblr.com/v2/blog/%s/post' % blog,
+        params={
+            'type': 'text'
+        },
+        data=data,
+    ).json()
     if response['meta']['status'] == 201:
-        return "Posted!", True
+        return 'Posted!', True
     else:
         if isinstance(response['response'], dict):
             error = response['response']['errors'][0]
         else:
             error = response['meta']['msg']
-    return "Got error %d from Tumblr: %s" % (response['meta']['status'], error), False
+    return 'Got error %d from Tumblr: %s' % (response['meta']['status'], error), False
