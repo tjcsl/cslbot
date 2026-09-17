@@ -27,7 +27,7 @@ dependencies = [
     "requests (>=2.34.2)",
     "requests-oauthlib (>=2.0.0)",
     "sphinx (>=9.1.0)",
-    "sqlalchemy (>=2.0.52)",
+    "sqlalchemy (>=2.0.54)",
     "TwitterSearch>=1.0.2",
     "yapf>=0.43.0",
 ]
