@@ -31,7 +31,7 @@ pip install -U --no-deps . ../cslbot-tjhsst
 sudo /etc/cslbot/fixperms.sh
 cslbot-migrate
 if [ "$1" == "restart" ]; then
-	sudo /etc/init.d/ircbot restart
+	sudo systemctl restart ircbot
 else
 	#sudo ip netns exec pia /usr/local/virtualenvs/cslbot/bin/cslbot-reload
         cslbot-reload
