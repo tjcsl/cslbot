@@ -31,6 +31,7 @@ dependencies = [
     "TwitterSearch>=1.0.2",
     "yapf>=0.43.0",
     "cslbot-tjhsst @ git+https://github.com/tjcsl/cslbot-tjhsst",
+    "tensorflow (>=2.21.0)",
 ]
 
 [project.urls]
@@ -46,6 +47,7 @@ cslbot-migrate = "cslbot.scripts.migrate:main"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.15"
+tensorflow = {allow-prereleases = true}
 
 [tool.pytype]
 inputs = ['cslbot']
