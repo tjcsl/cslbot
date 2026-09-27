@@ -30,6 +30,7 @@ dependencies = [
     "sqlalchemy (>=2.0.54)",
     "TwitterSearch>=1.0.2",
     "yapf>=0.43.0",
+    "cslbot-tjhsst @ git+https://github.com/tjcsl/cslbot-tjhsst",
 ]
 
 [project.urls]
@@ -45,7 +46,6 @@ cslbot-migrate = "cslbot.scripts.migrate:main"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.15"
-cslbot-tjhsst = {git = "https://github.com/tjcsl/cslbot-tjhsst"}
 
 [tool.pytype]
 inputs = ['cslbot']
