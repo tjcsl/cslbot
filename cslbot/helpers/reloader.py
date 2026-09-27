@@ -92,8 +92,9 @@ def do_reload(bot, target, cmdargs, server_send=None) -> bool | None:
 
     # preserve data
     data = bot.handler.get_data()
+    db = bot.handler.db
     bot.shutdown_mp()
-    bot.handler = handler.BotHandler(bot.config, bot.connection, bot.channels, confdir, bot.idx)
+    bot.handler = handler.BotHandler(bot.config, bot.connection, bot.channels, confdir, bot.idx, db=db)
     bot.handler.set_data(data)
     bot.handler.connection = bot.connection
     bot.handler.channels = bot.channels

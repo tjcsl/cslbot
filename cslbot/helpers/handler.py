@@ -45,6 +45,7 @@ class BotHandler:
         channels: list[str],
         confdir: str,
         idx: int,
+        db: sql.Sql | None = None,
     ) -> None:
         """Set everything up.
 
@@ -60,7 +61,7 @@ class BotHandler:
         self.channels = channels
         self.config = config
         self.idx = idx
-        self.db = sql.Sql(config, confdir)
+        self.db = db or sql.Sql(config, confdir)
         # FIXME: don't pass in self
         self.workers = workers.Workers(self)
         self.guarded: list[str] = []

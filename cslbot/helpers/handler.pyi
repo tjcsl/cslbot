@@ -3,6 +3,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from irc import client
 
+from .sql import Sql
+
 send_type = Callable[..., None]
 
 
@@ -14,6 +16,8 @@ class BotHandler(object):
         connection: client.ServerConnection,
         channels: Dict[str, str],
         confdir: str,
+        idx: int = ...,
+        db: Optional[Sql] = ...,
     ) -> None:
         ...
 

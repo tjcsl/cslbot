@@ -19,25 +19,33 @@ import configparser
 from contextlib import contextmanager
 from datetime import datetime
 
-from sqlalchemy import engine_from_config
+from sqlalchemy import Engine, engine_from_config
 from sqlalchemy.orm import sessionmaker
 
 from .orm import Log, setup_db
 
 
-def get_session(config: configparser.ConfigParser) -> sessionmaker:
+def get_engine(config: configparser.ConfigParser) -> Engine:
     if not config['db']['sqlalchemy.url']:
         raise Exception('You must specify a valid url in the sqlalchemy.url option.')
-    return sessionmaker(bind=engine_from_config(config['db']))
+    return engine_from_config(config['db'])
+
+
+def get_session(config: configparser.ConfigParser) -> sessionmaker:
+    return sessionmaker(bind=get_engine(config))
 
 
 class Sql:
 
     def __init__(self, config: configparser.ConfigParser, confdir: str) -> None:
         """Set everything up."""
-        self.session = get_session(config)
+        self.engine = get_engine(config)
+        self.session = sessionmaker(bind=self.engine)
         with self.session_scope() as session:
             setup_db(session, config, confdir)
+
+    def close(self) -> None:
+        self.engine.pool.dispose()
 
     @contextmanager
     def session_scope(self):

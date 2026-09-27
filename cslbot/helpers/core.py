@@ -137,7 +137,7 @@ class IrcBot(bot.SingleServerIRCBot):
         threading.current_thread().name = '%s message loop' % self.connection.server
         while not shutdown.is_set():
             self.reactor.process_once(timeout=0.2)
-        self.shutdown_mp()
+        self.close()
         self.connection.close()
 
     @staticmethod
@@ -151,6 +151,11 @@ class IrcBot(bot.SingleServerIRCBot):
         if hasattr(self, 'connection'):
             self.connection.disconnect('Bot received SIGTERM')
         shutdown.set()
+
+    def close(self) -> None:
+        self.shutdown_mp()
+        if hasattr(self, 'handler') and hasattr(self.handler, 'db'):
+            self.handler.db.close()
 
     def shutdown_mp(self, clean: bool = True) -> None:
         """Shutdown all the multiprocessing.

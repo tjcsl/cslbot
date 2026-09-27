@@ -125,7 +125,7 @@ class BotTest(unittest.TestCase):
         self.do_welcome()
 
     def tearDown(self) -> None:
-        self.bot.shutdown_mp()
+        self.bot.close()
 
     def setup_handler(self) -> None:
         # We don't need to rate-limit sending.
