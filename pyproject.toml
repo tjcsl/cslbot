@@ -72,6 +72,6 @@ dev = [
     "pytest>=9.1.1",
     "autopep8>=2.3.2",
     "yapf>=0.43.0",
-    "isort>=9.0.1",
+    "isort>=9.0.2",
     "Sphinx>=9.1.0",
 ]
