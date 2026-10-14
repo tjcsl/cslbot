@@ -2,14 +2,14 @@
 
 [[package]]
 name = "absl-py"
-version = "2.5.0"
+version = "2.5.1"
 description = "Abseil Python Common Libraries, see https://github.com/abseil/abseil-py."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "absl_py-2.5.0-py3-none-any.whl", hash = "sha256:0f17b89f2a4eaaedc4f28c622998aa690564b3012a396a4ffad0821007fe03ba"},
-    {file = "absl_py-2.5.0.tar.gz", hash = "sha256:0c996f25c0490700fadabe6351630f6111534fa0ae252cc6d2014ea3b141135f"},
+    {file = "absl_py-2.5.1-py3-none-any.whl", hash = "sha256:721200f2f0e9960f2ca9dc3a2a706b201f5f75d812c158f059cbbe29eeafbdb8"},
+    {file = "absl_py-2.5.1.tar.gz", hash = "sha256:286e71c82c1a38e75bbcf185f9b37d0305ad7786535107cb49bf4df9ff2e1f95"},
 ]
 
 [[package]]
@@ -3339,4 +3339,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.15"
-content-hash = "cbdb0dadcedd555d740b03835566b166c8cc75bf437d04f7fb9dd1490755716c"
+content-hash = "aac6f1ae5ae66bedef8b27686eebfdab1d3ec534ad5e4a4d5706c36349a98ace"
