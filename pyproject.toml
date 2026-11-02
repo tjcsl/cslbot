@@ -69,7 +69,7 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "pytest>=9.1.1",
+    "pytest>=9.2.0",
     "autopep8>=2.3.2",
     "yapf>=0.43.0",
     "isort>=9.0.2",
