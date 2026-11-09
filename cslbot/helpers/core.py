@@ -51,8 +51,8 @@ class IrcBot(bot.SingleServerIRCBot):
         self.idx = idx
         if self.config.getboolean('core', 'ssl'):
             ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            factory = connection.Factory(wrapper=ctx.wrap_socket, ipv6=self.config.getboolean('core', 'ipv6'))
+            wrapper = functools.partial(ctx.wrap_socket, server_hostname=spec.host)
+            factory = connection.Factory(wrapper=wrapper, ipv6=self.config.getboolean('core', 'ipv6'))
         else:
             factory = connection.Factory(ipv6=self.config.getboolean('core', 'ipv6'))
         nick = self.config['core']['nick']
