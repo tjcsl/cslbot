@@ -28,7 +28,6 @@ setup(
     author_email='cslbot@pefoley.com',
     url='https://github.com/tjcsl/cslbot',
     version='0.21',
-    license='GPL',
     zip_safe=False,
     packages=find_packages(exclude=['cslbot.tjhsst']),
     package_data={
@@ -44,33 +43,6 @@ setup(
             'templates/sorttable.js',
             'templates/*.html',
         ]
-    },
-    install_requires=[
-        'SQLAlchemy>=1.0.0',  # bulk_insert_mappings
-        'requests>=2.4.0',  # ConnectTimeout
-        'absl-py',
-        'alembic',
-        'geoip2',
-        'irc>=12.2',  # WHOX support
-        'jinja2',
-        'lxml',
-        'python-dateutil',
-        'requests_oauthlib',
-        'sphinx>=1.4.8',  # search index fix
-        'TwitterSearch',
-        'python-twitter',
-    ],
-    extras_require={
-        'analysis': [
-            'flake8-debugger',
-            'flake8-import-order',
-            'flake8-string-format',
-            'flake8-coding',
-            'pep8-naming',
-            'radon',
-            'autopep8',
-            'docformatter',
-        ],
     },
     classifiers=[
         'Development Status :: 4 - Beta',
