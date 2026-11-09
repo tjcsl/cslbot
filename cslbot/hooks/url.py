@@ -54,8 +54,10 @@ def handle(send, msg, args) -> None:
         if (args['db'].scalar(select(func.count()).select_from(Urls).where(Urls.url == url, Urls.time > datetime.now() - timedelta(seconds=10))) > 1):
             return
 
-        if url.startswith('https://twitter.com'):
-            tid = urlparse(url).path.split('/')[-1]
+        parsed = urlparse(url)
+        host = (parsed.hostname or '').lower()
+        if parsed.scheme in ('http', 'https') and host == 'twitter.com':
+            tid = parsed.path.split('/')[-1]
             twitter_api = get_api(args['config'])
             if tid.isdigit():
                 status = twitter_api.GetStatus(tid)
