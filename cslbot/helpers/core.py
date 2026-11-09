@@ -279,7 +279,7 @@ def init(confdir: str = '/etc/cslbot') -> None:
 
     if args.validate:
         for cslbot in bots:
-            cslbot.shutdown_mp()
+            cslbot.close()
         print('Everything is ready to go!')
         return
 
