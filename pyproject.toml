@@ -49,8 +49,8 @@ cslbot-migrate = "cslbot.scripts.migrate:main"
 python = ">=3.12,<3.15"
 tensorflow = {allow-prereleases = true}
 
-[tool.pytype]
-inputs = ['cslbot']
+[tool.uv]
+prerelease-package = { tensorflow = "allow" }
 
 [tool.yapfignore]
 ignore_patterns = [
